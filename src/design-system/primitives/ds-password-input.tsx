@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { EyeIcon, LockIcon } from "@phosphor-icons/react";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/design-system/ui/input";
@@ -16,15 +16,15 @@ function DsPasswordInput({ className, ...props }: DsPasswordInputProps) {
 
   return (
     <div className="relative">
-      <Input type={visible ? "text" : "password"} className={cn("pr-10", className)} {...props} />
+      <Input type={visible ? "text" : "password"} className={cn("pr-12", className)} {...props} />
       <button
         type="button"
-        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-nova-gray-400 transition-colors hover:text-foreground"
         onClick={() => setVisible((prev) => !prev)}
         tabIndex={-1}
         aria-label={visible ? "Hide password" : "Show password"}
       >
-        <DsIcon icon={visible ? EyeIcon : LockIcon} size="sm" />
+        <DsIcon icon={visible ? EyeSlash : Eye} size="md" />
       </button>
     </div>
   );
