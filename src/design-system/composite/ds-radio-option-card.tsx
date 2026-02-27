@@ -20,7 +20,7 @@ function DsRadioOptionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative flex h-14 shrink-0 cursor-pointer items-center gap-3 rounded-[10px] border p-4 transition-colors",
+        "relative flex h-14 shrink-0 cursor-pointer items-center gap-3 rounded-[8px] border p-4 transition-colors",
         selected ? "border-primary bg-nova-primary-lighter" : "border-nova-gray-200 bg-white",
         className,
       )}
