@@ -81,3 +81,45 @@ export { DsFormGroup, type DsFormGroupProps } from "./forms";
 export { DsDatePicker, type DsDatePickerProps } from "./forms";
 export { DsFilterDropdown, type DsFilterDropdownProps, type DsFilterDropdownOption } from "./forms";
 export { DsSearchInput, type DsSearchInputProps } from "./forms";
+
+// Composite
+export { DsStepper, type DsStepperProps, type DsStepperStep } from "./composite";
+export { DsServiceOptionCard, type DsServiceOptionCardProps } from "./composite";
+export { DsRadioOptionCard, type DsRadioOptionCardProps } from "./composite";
+export { DsConfigSection, type DsConfigSectionProps } from "./composite";
+export { DsInfoPanel, type DsInfoPanelProps } from "./composite";
+export { DsFlowCard, type DsFlowCardProps } from "./composite";
+export { DsFlowHeader, type DsFlowHeaderProps } from "./composite";
+export { DsPopup, type DsPopupProps } from "./composite";
+export { DsTimeSlotPicker, type DsTimeSlotPickerProps } from "./composite";
+export { DsDateTimePicker, type DsDateTimePickerProps } from "./composite";
+export { DsPaymentMethodOption, type DsPaymentMethodOptionProps } from "./composite";
+export { DsSecurePaymentBanner, type DsSecurePaymentBannerProps } from "./composite";
+export { DsAuthLayout, type DsAuthLayoutProps } from "./composite";
+export { DsDiscountCard, type DsDiscountCardProps } from "./composite";
+export { DsSavedCardItem, type DsSavedCardItemProps } from "./composite";
+export { DsSavedCardList, type DsSavedCardListProps } from "./composite";
+export { DsStatusPill, type DsStatusPillProps, type DsStatusPillVariant } from "./composite";
+export {
+  DsTransactionTable,
+  type DsTransactionTableProps,
+  type DsTransactionTableColumn,
+} from "./composite";
+export { DsTransactionCard, type DsTransactionCardProps } from "./composite";
+export { DsReceiptButton, type DsReceiptButtonProps } from "./composite";
+export { DsHighlightCard, type DsHighlightCardProps } from "./composite";
+export { DsServiceHistoryItem, type DsServiceHistoryItemProps } from "./composite";
+export { DsRegisteredCardItem, type DsRegisteredCardItemProps } from "./composite";
+export {
+  DsRecentPaymentItem,
+  type DsRecentPaymentItemProps,
+  type DsRecentPaymentStatus,
+} from "./composite";
+export { DsServiceDetailPopup, type DsServiceDetailPopupProps } from "./composite";
+export { DsServiceDetailRow, type DsServiceDetailRowProps } from "./composite";
+export {
+  DsUpcomingServiceCard,
+  type DsUpcomingServiceCardProps,
+  type DsUpcomingServiceCardAction,
+} from "./composite";
+export { DsRecurrenceCard, type DsRecurrenceCardProps } from "./composite";
