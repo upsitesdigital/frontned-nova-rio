@@ -5,25 +5,39 @@ interface DsSidebarItemProps {
   icon: DsIconComponent;
   label: string;
   active?: boolean;
-  href: string;
+  collapsed?: boolean;
+  href?: string;
+  onClick?: () => void;
   className?: string;
 }
 
-function DsSidebarItem({ icon, label, active = false, href, className }: DsSidebarItemProps) {
+function DsSidebarItem({
+  icon,
+  label,
+  active = false,
+  collapsed = false,
+  href,
+  onClick,
+  className,
+}: DsSidebarItemProps) {
+  const Component = href ? "a" : "button";
+
   return (
-    <a
+    <Component
       href={href}
+      onClick={onClick}
+      type={href ? undefined : "button"}
+      title={collapsed ? label : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-        active
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        "flex h-14 w-full items-center rounded-[10px] text-base font-medium leading-[1.3] text-nova-gray-700 transition-all",
+        active ? "bg-nova-primary-lighter" : "hover:bg-nova-gray-100",
+        collapsed ? "justify-center px-0" : "gap-2 px-6 py-4",
         className,
       )}
     >
-      <DsIcon icon={icon} size="md" />
-      <span>{label}</span>
-    </a>
+      <DsIcon icon={icon} size="md" className="shrink-0" />
+      {!collapsed && <span className="whitespace-nowrap">{label}</span>}
+    </Component>
   );
 }
 
