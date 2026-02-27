@@ -38,3 +38,9 @@ export {
   type DsUpcomingServiceCardAction,
 } from "./ds-upcoming-service-card";
 export { DsRecurrenceCard, type DsRecurrenceCardProps } from "./ds-recurrence-card";
+export { DsSchedulePopup, type DsSchedulePopupProps } from "./ds-schedule-popup";
+export {
+  DsProfileSection,
+  type DsProfileSectionProps,
+  type DsProfileField,
+} from "./ds-profile-section";
