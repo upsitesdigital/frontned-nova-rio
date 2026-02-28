@@ -50,6 +50,8 @@ export { DsSidebarItem, type DsSidebarItemProps } from "./navigation";
 export { DsTopbar, type DsTopbarProps } from "./navigation";
 export { DsNavLink, type DsNavLinkProps } from "./navigation";
 export { DsLogo, type DsLogoProps } from "./navigation";
+export { DsUserMenu, type DsUserMenuProps } from "./navigation";
+export { DsUserMenuItem, type DsUserMenuItemProps } from "./navigation";
 
 // Data Display
 export { DsCard, type DsCardProps } from "./data-display";
@@ -110,6 +112,7 @@ export { DsReceiptButton, type DsReceiptButtonProps } from "./composite";
 export { DsHighlightCard, type DsHighlightCardProps } from "./composite";
 export { DsServiceHistoryItem, type DsServiceHistoryItemProps } from "./composite";
 export { DsRegisteredCardItem, type DsRegisteredCardItemProps } from "./composite";
+export { DsRegisteredCardList, type DsRegisteredCardListProps } from "./composite";
 export {
   DsRecentPaymentItem,
   type DsRecentPaymentItemProps,
@@ -123,3 +126,16 @@ export {
   type DsUpcomingServiceCardAction,
 } from "./composite";
 export { DsRecurrenceCard, type DsRecurrenceCardProps } from "./composite";
+export {
+  DsPaymentInfoCard,
+  type DsPaymentInfoCardProps,
+  type DsPaymentInfoCardStatus,
+} from "./composite";
+export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composite";
+export { DsUserActions, type DsUserActionsProps } from "./composite";
+export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
+export {
+  DsProfileCard,
+  type DsProfileCardProps,
+  type DsProfileCardAction,
+} from "./composite";

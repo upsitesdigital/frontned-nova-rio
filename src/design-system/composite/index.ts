@@ -25,6 +25,7 @@ export { DsReceiptButton, type DsReceiptButtonProps } from "./ds-receipt-button"
 export { DsHighlightCard, type DsHighlightCardProps } from "./ds-highlight-card";
 export { DsServiceHistoryItem, type DsServiceHistoryItemProps } from "./ds-service-history-item";
 export { DsRegisteredCardItem, type DsRegisteredCardItemProps } from "./ds-registered-card-item";
+export { DsRegisteredCardList, type DsRegisteredCardListProps } from "./ds-registered-card-list";
 export {
   DsRecentPaymentItem,
   type DsRecentPaymentItemProps,
@@ -39,8 +40,21 @@ export {
 } from "./ds-upcoming-service-card";
 export { DsRecurrenceCard, type DsRecurrenceCardProps } from "./ds-recurrence-card";
 export { DsSchedulePopup, type DsSchedulePopupProps } from "./ds-schedule-popup";
+export { DsUserActions, type DsUserActionsProps } from "./ds-user-actions";
 export {
   DsProfileSection,
   type DsProfileSectionProps,
   type DsProfileField,
 } from "./ds-profile-section";
+export {
+  DsPaymentInfoCard,
+  type DsPaymentInfoCardProps,
+  type DsPaymentInfoCardStatus,
+} from "./ds-payment-info-card";
+export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./ds-collapsible-section";
+export { DsAdminSidebar, type DsAdminSidebarProps } from "./ds-admin-sidebar";
+export {
+  DsProfileCard,
+  type DsProfileCardProps,
+  type DsProfileCardAction,
+} from "./ds-profile-card";
