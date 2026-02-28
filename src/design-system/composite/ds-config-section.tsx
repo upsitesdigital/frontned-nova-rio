@@ -1,17 +1,25 @@
 import { cn } from "@/lib/utils";
 
 interface DsConfigSectionProps {
+  bordered?: boolean;
   title: string;
   subtitle?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-function DsConfigSection({ title, subtitle, children, className }: DsConfigSectionProps) {
+function DsConfigSection({
+  bordered = true,
+  title,
+  subtitle,
+  children,
+  className,
+}: DsConfigSectionProps) {
   return (
     <div
       className={cn(
-        "flex flex-col items-start gap-8 rounded-2xl border border-nova-gray-300 px-10 py-12",
+        "flex flex-col items-start",
+        bordered ? "gap-8 rounded-2xl border border-nova-gray-300 px-10 py-12" : "gap-6",
         className,
       )}
     >

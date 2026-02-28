@@ -5,7 +5,8 @@ interface DsRegisteredCardItemProps {
   brandSrc: string;
   lastDigits: string;
   expiry: string;
-  onEdit?: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
   className?: string;
 }
 
@@ -13,7 +14,8 @@ function DsRegisteredCardItem({
   brandSrc,
   lastDigits,
   expiry,
-  onEdit,
+  actionLabel = "Remover",
+  onAction,
   className,
 }: DsRegisteredCardItemProps) {
   return (
@@ -41,13 +43,13 @@ function DsRegisteredCardItem({
           </p>
         </div>
       </div>
-      {onEdit && (
+      {onAction && (
         <button
           type="button"
-          onClick={onEdit}
+          onClick={onAction}
           className="cursor-pointer text-base font-medium leading-[1.3] text-nova-gray-400 transition-colors hover:text-nova-gray-700"
         >
-          Editar
+          {actionLabel}
         </button>
       )}
     </div>
