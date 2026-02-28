@@ -34,6 +34,10 @@ import {
   UsersIcon,
   UsersThreeIcon,
   MapPinIcon,
+  UserIcon,
+  UserCircleCheckIcon,
+  EnvelopeSimpleIcon,
+  LockKeyOpenIcon,
 } from "@phosphor-icons/react";
 import {
   DsButton,
@@ -96,11 +100,18 @@ import {
   DsHighlightCard,
   DsServiceHistoryItem,
   DsRegisteredCardItem,
+  DsRegisteredCardList,
   DsRecentPaymentItem,
   DsServiceDetailPopup,
   DsServiceDetailRow,
   DsUpcomingServiceCard,
   DsRecurrenceCard,
+  DsPaymentInfoCard,
+  DsCollapsibleSection,
+  DsUserMenu,
+  DsUserMenuItem,
+  DsAdminSidebar,
+  DsProfileCard,
 } from "@/design-system";
 
 const selectOptions = [
@@ -581,6 +592,12 @@ export default function DesignSystemPage() {
             </DsSidebar>
           </div>
         </ComponentRow>
+
+        <ComponentRow label="DsAdminSidebar — Admin Navigation">
+          <div className="h-[900px] overflow-hidden rounded-lg border">
+            <DsAdminSidebar activePath="/admin" />
+          </div>
+        </ComponentRow>
       </DsSection>
 
       <DsSeparator className="my-8" />
@@ -1054,26 +1071,25 @@ export default function DesignSystemPage() {
           </div>
         </ComponentRow>
 
-        <ComponentRow label="DsRegisteredCardItem + DsRecentPaymentItem — Cartões e Pagamentos">
-          <div className="flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8">
-            <p className="text-[20px] font-medium leading-[1.3] text-black">
-              Cartões cadastrados
-            </p>
-            <div className="flex flex-col gap-2 rounded-[10px]">
-              <DsRegisteredCardItem
-                brandSrc="/icons/mastercard.svg"
-                lastDigits="0123"
-                expiry="01/30"
-                onEdit={() => {}}
-              />
-              <DsRegisteredCardItem
-                brandSrc="/icons/mastercard.svg"
-                lastDigits="0123"
-                expiry="01/30"
-                onEdit={() => {}}
-              />
-            </div>
-            <DsSeparator />
+        <ComponentRow label="DsRegisteredCardList — Cartões cadastrados">
+          <DsRegisteredCardList onAdd={() => {}} className="w-full max-w-[500px]">
+            <DsRegisteredCardItem
+              brandSrc="/icons/mastercard.svg"
+              lastDigits="0123"
+              expiry="01/30"
+              onAction={() => {}}
+            />
+            <DsRegisteredCardItem
+              brandSrc="/icons/mastercard.svg"
+              lastDigits="0123"
+              expiry="01/30"
+              onAction={() => {}}
+            />
+          </DsRegisteredCardList>
+        </ComponentRow>
+
+        <ComponentRow label="DsRecentPaymentItem — Pagamentos recentes">
+          <div className="flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8 w-full max-w-[500px]">
             <p className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-black">
               Pagamentos recentes
             </p>
@@ -1122,6 +1138,7 @@ export default function DesignSystemPage() {
             date="16/10"
             onClose={() => {}}
             onReceipt={() => {}}
+            className="w-[540px]"
           >
             <DsServiceDetailRow>
               <div className="flex items-start gap-2">
@@ -1167,6 +1184,89 @@ export default function DesignSystemPage() {
               Continuar
             </DsButton>
           </DsPopup>
+        </ComponentRow>
+      </DsSection>
+
+      <DsSection>
+        <SectionTitle>New Composite Components</SectionTitle>
+        <ComponentRow label="DsPaymentInfoCard — Payment Info">
+          <div className="flex w-[400px] flex-col gap-4">
+            <DsPaymentInfoCard
+              icon={CreditCardIcon}
+              description="Terminado em 0123"
+              amount="R$ 57,00"
+              status="approved"
+              statusLabel="Aprovado"
+            />
+            <DsPaymentInfoCard
+              icon={PixLogoIcon}
+              description="PIX"
+              amount="R$ 53,00"
+              status="pending"
+              statusLabel="Pendente"
+            />
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsCollapsibleSection — Collapsible">
+          <div className="flex w-[400px] flex-col gap-4">
+            <DsCollapsibleSection icon={MapPinIcon} title="Condominio Le Monde">
+              <p className="text-sm text-nova-gray-700">
+                Rua Exemplo, 123 - Bloco A, Apt 101
+              </p>
+              <p className="text-sm text-nova-gray-700">Barra da Tijuca, Rio de Janeiro</p>
+            </DsCollapsibleSection>
+            <DsCollapsibleSection
+              icon={GearIcon}
+              title="Configurações"
+              defaultOpen={false}
+            >
+              <p className="text-sm text-nova-gray-700">Conteúdo recolhido por padrão</p>
+            </DsCollapsibleSection>
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsConfigSection — Borderless Variant">
+          <div className="flex gap-6">
+            <DsConfigSection
+              title="Com Borda"
+              subtitle="Variante padrão com borda"
+              className="w-[300px]"
+            >
+              <p className="text-sm text-nova-gray-700">Conteúdo com borda</p>
+            </DsConfigSection>
+            <DsConfigSection
+              bordered={false}
+              title="Sem Borda"
+              subtitle="Variante sem borda"
+              className="w-[300px]"
+            >
+              <p className="text-sm text-nova-gray-700">Conteúdo sem borda</p>
+            </DsConfigSection>
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsUserMenu + DsUserMenuItem">
+          <div className="w-[240px] rounded-lg bg-nova-gray-100 p-4">
+            <DsUserMenu>
+              <DsUserMenuItem icon={UserIcon} label="Perfil" active />
+              <DsUserMenuItem icon={UserCircleCheckIcon} label="Minha conta" />
+            </DsUserMenu>
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsProfileCard — Profile Actions">
+          <DsProfileCard
+            initials="C"
+            name="Caio"
+            email="email@example.com"
+            actions={[
+              { icon: EnvelopeSimpleIcon, label: "Alterar e-mail", onClick: () => {} },
+              { icon: LockKeyOpenIcon, label: "Alterar senha", onClick: () => {} },
+              { icon: TrashIcon, label: "Deletar conta", variant: "destructive", onClick: () => {} },
+            ]}
+            className="w-[500px]"
+          />
         </ComponentRow>
       </DsSection>
 
