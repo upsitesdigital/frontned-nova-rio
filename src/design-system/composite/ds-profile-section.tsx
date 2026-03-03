@@ -71,13 +71,13 @@ function DsProfileSection({
       <div className="flex flex-col gap-6">
         {fields.map((field) => (
           <div key={field.label} className="flex flex-col gap-1.5">
-            <p className="text-[18px] font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700">
+            <p className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
               {field.label}
             </p>
             <div className="flex items-center rounded-[6px] border border-nova-gray-200 px-4 py-3">
               <p
                 className={cn(
-                  "text-base leading-[1.5]",
+                  "text-base leading-normal",
                   field.value && field.value !== "-"
                     ? "text-black"
                     : "text-nova-gray-400",

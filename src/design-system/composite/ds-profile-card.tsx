@@ -40,7 +40,7 @@ function DsProfileCard({
           <p className="text-[24px] font-medium leading-[1.3] tracking-[-0.96px]">
             {name}
           </p>
-          <p className="text-base leading-[1.5]">{email}</p>
+          <p className="text-base leading-normal">{email}</p>
         </div>
       </div>
 
@@ -58,7 +58,7 @@ function DsProfileCard({
             )}
           >
             <DsIcon icon={action.icon} size="lg" className="shrink-0" />
-            <span className="flex-1 text-left text-[18px] font-medium leading-[1.5] tracking-[-0.72px]">
+            <span className="flex-1 text-left text-[18px] font-medium leading-normal tracking-[-0.72px]">
               {action.label}
             </span>
           </button>

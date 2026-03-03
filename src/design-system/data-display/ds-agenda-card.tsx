@@ -156,14 +156,14 @@ function DsAgendaCard({
       <div className="flex w-full items-center justify-center gap-2 rounded-full border border-nova-gray-100 px-6 py-3">
         <div className="flex flex-1 items-center justify-center gap-2">
           <div className="size-3 rounded-full bg-nova-primary" />
-          <span className="text-base font-normal leading-[1.5] tracking-[-0.64px] text-black">
+          <span className="text-base font-normal leading-normal tracking-[-0.64px] text-black">
             Ocupado
           </span>
         </div>
         <div className="h-4 w-px rotate-0 bg-nova-gray-100" />
         <div className="flex flex-1 items-center justify-center gap-2">
           <div className="size-3 rounded-full bg-nova-gray-700" />
-          <span className="text-base font-normal leading-[1.5] tracking-[-0.64px] text-black">
+          <span className="text-base font-normal leading-normal tracking-[-0.64px] text-black">
             Livre
           </span>
         </div>
