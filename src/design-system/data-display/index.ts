@@ -10,3 +10,6 @@ export {
 } from "./ds-credit-card-display";
 export { DsDateBadge, type DsDateBadgeProps } from "./ds-date-badge";
 export { DsEmptyState, type DsEmptyStateProps } from "./ds-empty-state";
+export { DsInfoChip, type DsInfoChipProps } from "./ds-info-chip";
+export { DsMetricCard, type DsMetricCardProps } from "./ds-metric-card";
+export { DsAgendaCard, type DsAgendaCardProps } from "./ds-agenda-card";

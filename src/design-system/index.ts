@@ -37,6 +37,7 @@ export { DsSeparator, type DsSeparatorProps } from "./primitives";
 export { DsSkeleton, type DsSkeletonProps } from "./primitives";
 export { DsTooltip, type DsTooltipProps } from "./primitives";
 export { DsScrollArea, type DsScrollAreaProps } from "./primitives";
+export { DsToggleButton, type DsToggleButtonProps } from "./primitives";
 
 // Layout
 export { DsPageContainer, type DsPageContainerProps } from "./layout";
@@ -66,6 +67,9 @@ export {
 } from "./data-display";
 export { DsDateBadge, type DsDateBadgeProps } from "./data-display";
 export { DsEmptyState, type DsEmptyStateProps } from "./data-display";
+export { DsInfoChip, type DsInfoChipProps } from "./data-display";
+export { DsMetricCard, type DsMetricCardProps } from "./data-display";
+export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";
