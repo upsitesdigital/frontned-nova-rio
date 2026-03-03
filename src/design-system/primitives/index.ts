@@ -17,3 +17,4 @@ export { DsSeparator, type DsSeparatorProps } from "./ds-separator";
 export { DsSkeleton, type DsSkeletonProps } from "./ds-skeleton";
 export { DsTooltip, type DsTooltipProps } from "./ds-tooltip";
 export { DsScrollArea, type DsScrollAreaProps } from "./ds-scroll-area";
+export { DsToggleButton, type DsToggleButtonProps } from "./ds-toggle-button";
