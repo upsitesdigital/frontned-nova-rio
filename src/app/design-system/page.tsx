@@ -39,6 +39,12 @@ import {
   EnvelopeSimpleIcon,
   LockKeyOpenIcon,
   TimerIcon,
+  CaretUpIcon,
+  CaretDownIcon,
+  IdentificationCardIcon,
+  WhatsappLogoIcon,
+  CheckIcon,
+  SketchLogoIcon,
 } from "@phosphor-icons/react";
 import {
   DsButton,
@@ -117,6 +123,22 @@ import {
   DsInfoChip,
   DsMetricCard,
   DsAgendaCard,
+  DsAlert,
+  DsServiceInfoCard,
+  DsSchedulePopup,
+  DsProfileSection,
+  DsEmployeeScheduleCard,
+  DsEmployeeInfoCard,
+  DsApprovalPopup,
+  DsLineChart,
+  DsChartSection,
+  DsOptionsMenu,
+  DsServiceManageCard,
+  DsServiceEditPopup,
+  type DsServiceEditPopupPaymentOption,
+  DsServiceFormCard,
+  DsPaymentOptionsCard,
+  type DsPaymentOptionsCardOption,
 } from "@/design-system";
 
 const selectOptions = [
@@ -175,6 +197,45 @@ export default function DesignSystemPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [txFilter, setTxFilter] = useState("todos");
   const [historyFilter, setHistoryFilter] = useState("recentes");
+  const [detailSelectedOption, setDetailSelectedOption] = useState("avulso");
+  const [detailAddressExpanded, setDetailAddressExpanded] = useState(true);
+  const [schedulePopupOpen, setSchedulePopupOpen] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState<Date | undefined>();
+  const [scheduleTime, setScheduleTime] = useState<string | undefined>();
+  const [chartTab, setChartTab] = useState("faturamento");
+  const [chartPeriod, setChartPeriod] = useState("mes");
+  const [chartRegion, setChartRegion] = useState("cond-le-monde");
+  const [svcEditName, setSvcEditName] = useState("Faxina Regular");
+  const [svcEditDesc, setSvcEditDesc] = useState("Limpeza completa e manutenção periódica.");
+  const [svcEditPrice, setSvcEditPrice] = useState("50,00");
+  const [svcEditPayments, setSvcEditPayments] = useState<DsServiceEditPopupPaymentOption[]>([
+    { id: "avulso", label: "Avulso", enabled: true },
+    { id: "pacote", label: "Pacote", enabled: false },
+    {
+      id: "recorrencia",
+      label: "Recorrência",
+      enabled: true,
+      frequencies: [
+        { label: "Semanal", value: "semanal", selected: true },
+        { label: "Quinzenal", value: "quinzenal", selected: false },
+        { label: "Mensal", value: "mensal", selected: true },
+      ],
+    },
+  ]);
+  const [payOptCards, setPayOptCards] = useState<DsPaymentOptionsCardOption[]>([
+    { id: "avulso", label: "Avulso", enabled: true },
+    { id: "pacote", label: "Pacote", enabled: false },
+    {
+      id: "recorrencia",
+      label: "Recorrência",
+      enabled: true,
+      frequencies: [
+        { label: "Semanal", value: "semanal", selected: true },
+        { label: "Quinzenal", value: "quinzenal", selected: false },
+        { label: "Mensal", value: "mensal", selected: true },
+      ],
+    },
+  ]);
 
   return (
     <DsPageContainer className="py-10">
@@ -478,6 +539,69 @@ export default function DesignSystemPage() {
             ]}
           />
         </ComponentRow>
+
+        <ComponentRow label="DsChartSection + DsLineChart — Transaction History">
+          <DsChartSection
+            title="Histórico de transações"
+            tabs={[
+              { label: "Faturamento", value: "faturamento" },
+              { label: "Horas por serviço", value: "horas" },
+            ]}
+            activeTab={chartTab}
+            onTabChange={setChartTab}
+            filters={[
+              {
+                label: "Período",
+                options: [
+                  { value: "mes", label: "Mês" },
+                  { value: "semana", label: "Semana" },
+                  { value: "ano", label: "Ano" },
+                ],
+                value: chartPeriod,
+                onValueChange: setChartPeriod,
+                placeholder: "Mês",
+              },
+              {
+                label: "Região",
+                options: [
+                  { value: "cond-le-monde", label: "Condomínio Le Monde" },
+                  { value: "cond-riviera", label: "Condomínio Riviera" },
+                ],
+                value: chartRegion,
+                onValueChange: setChartRegion,
+                placeholder: "Condomínio Le Monde",
+              },
+            ]}
+            onOptionsClick={() => {}}
+          >
+            <DsLineChart
+              data={[
+                { label: "Jan", value: 500 },
+                { label: "Fev", value: 800 },
+                { label: "Mar", value: 2500 },
+                { label: "Abr", value: 4200 },
+                { label: "Mai", value: 3800 },
+                { label: "Jun", value: 3500 },
+                { label: "Jul", value: 6500 },
+                { label: "Ago", value: 9000 },
+                { label: "Out", value: 18000 },
+                { label: "Nov", value: 30000 },
+                { label: "Dez", value: 38000 },
+              ]}
+              yAxisTicks={[0, 1000, 5000, 10000, 50000, 100000]}
+              yAxisFormatter={(v) =>
+                v >= 1000 ? `${(v / 1000).toLocaleString("pt-BR")}mil` : String(v)
+              }
+              tooltipFormatter={(v) => `R$ ${v.toLocaleString("pt-BR")}`}
+              height={400}
+              className="p-6"
+            />
+          </DsChartSection>
+        </ComponentRow>
+
+        <ComponentRow label="DsOptionsMenu — Dropdown Options Popover">
+          <DsOptionsMenu items={[{ icon: FileCsvIcon, label: "Exportar", onClick: () => {} }]} />
+        </ComponentRow>
       </DsSection>
 
       <DsSeparator className="my-8" />
@@ -535,6 +659,32 @@ export default function DesignSystemPage() {
           <DsNotificationBell count={0} />
           <DsNotificationBell count={5} />
           <DsNotificationBell count={150} />
+        </ComponentRow>
+
+        <ComponentRow label="DsAlert — Variants">
+          <div className="flex w-full max-w-md flex-col gap-4">
+            <DsAlert
+              variant="error"
+              title="Conflito de horário"
+              description="Verifique o funcionário selecionado para o serviço e tente novamente"
+            />
+            <DsAlert
+              variant="warning"
+              title="Atenção"
+              description="O horário selecionado está próximo do limite de agendamento"
+            />
+            <DsAlert
+              variant="success"
+              title="Agendamento confirmado"
+              description="Seu serviço foi agendado com sucesso"
+            />
+            <DsAlert
+              variant="info"
+              title="Informação"
+              description="Novos horários disponíveis para agendamento"
+            />
+            <DsAlert variant="error" title="Erro sem descrição" />
+          </div>
         </ComponentRow>
 
         <ComponentRow label="DsDialog / DsConfirmDialog / DsSheet">
@@ -612,7 +762,10 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsSidebar + DsSidebarItem — Collapsible">
-          <div className="h-[700px] overflow-hidden rounded-lg border transition-all duration-300" style={{ width: sidebarCollapsed ? 88 : 260 }}>
+          <div
+            className="h-[700px] overflow-hidden rounded-lg border transition-all duration-300"
+            style={{ width: sidebarCollapsed ? 88 : 260 }}
+          >
             <DsSidebar collapsed={sidebarCollapsed} className="h-full">
               <div className="flex flex-col gap-14">
                 <div className="flex flex-col gap-12 border-b border-nova-gray-300 pb-6">
@@ -644,9 +797,25 @@ export default function DesignSystemPage() {
                   )}
                 </div>
                 <nav className="flex flex-col gap-2">
-                  <DsSidebarItem icon={HouseIcon} label="Minha Área" active collapsed={sidebarCollapsed} href="#" />
-                  <DsSidebarItem icon={BroomIcon} label="Meus serviços" collapsed={sidebarCollapsed} href="#" />
-                  <DsSidebarItem icon={CurrencyDollarSimpleIcon} label="Pagamentos" collapsed={sidebarCollapsed} href="#" />
+                  <DsSidebarItem
+                    icon={HouseIcon}
+                    label="Minha Área"
+                    active
+                    collapsed={sidebarCollapsed}
+                    href="#"
+                  />
+                  <DsSidebarItem
+                    icon={BroomIcon}
+                    label="Meus serviços"
+                    collapsed={sidebarCollapsed}
+                    href="#"
+                  />
+                  <DsSidebarItem
+                    icon={CurrencyDollarSimpleIcon}
+                    label="Pagamentos"
+                    collapsed={sidebarCollapsed}
+                    href="#"
+                  />
                 </nav>
               </div>
               <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={sidebarCollapsed} />
@@ -724,6 +893,114 @@ export default function DesignSystemPage() {
               onClick={() => setSelectedService(2)}
             />
           </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsServiceManageCard — Variants">
+          <div className="flex flex-wrap gap-6">
+            <DsServiceManageCard
+              icon={BroomIcon}
+              title="Faxina Regular"
+              description="Limpeza completa e manutenção periódica"
+              price="A partir de R$ 50,00"
+              onEdit={() => {}}
+              onDelete={() => {}}
+              className="w-[340px]"
+            />
+            <DsServiceManageCard
+              icon={SketchLogoIcon}
+              iconColor="text-nova-warning"
+              iconBgColor="bg-nova-warning/10"
+              title="Faxina Premium"
+              description="Inclui limpeza de vidros e estofados"
+              price="A partir de R$ 120,00"
+              onEdit={() => {}}
+              onDelete={() => {}}
+              className="w-[340px]"
+            />
+            <DsServiceManageCard
+              icon={StarFourIcon}
+              iconColor="text-nova-info"
+              iconBgColor="bg-nova-info/10"
+              title="Faxina Pós-Obra"
+              description="Limpeza pesada após reformas ou construções"
+              price="A partir de R$ 200,00"
+              onEdit={() => {}}
+              onDelete={() => {}}
+              className="w-[340px]"
+            />
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsServiceEditPopup — Service Edit Form">
+          <DsServiceEditPopup
+            icon={BroomIcon}
+            onClose={() => {}}
+            onChangeIcon={() => {}}
+            name={svcEditName}
+            onNameChange={setSvcEditName}
+            description={svcEditDesc}
+            onDescriptionChange={setSvcEditDesc}
+            price={svcEditPrice}
+            onPriceChange={setSvcEditPrice}
+            paymentOptions={svcEditPayments}
+            onPaymentOptionToggle={(id, enabled) =>
+              setSvcEditPayments((prev) => prev.map((o) => (o.id === id ? { ...o, enabled } : o)))
+            }
+            onFrequencyToggle={(optionId, freqValue, selected) =>
+              setSvcEditPayments((prev) =>
+                prev.map((o) =>
+                  o.id === optionId
+                    ? {
+                        ...o,
+                        frequencies: o.frequencies?.map((f) =>
+                          f.value === freqValue ? { ...f, selected } : f,
+                        ),
+                      }
+                    : o,
+                ),
+              )
+            }
+            onSave={() => {}}
+            className="w-[600px] rounded-[20px] border border-nova-gray-100 shadow-[0px_16px_24px_0px_rgba(75,75,75,0.1)]"
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsServiceFormCard — Service Edit Card">
+          <DsServiceFormCard
+            icon={BroomIcon}
+            onChangeIcon={() => {}}
+            name={svcEditName}
+            onNameChange={setSvcEditName}
+            description={svcEditDesc}
+            onDescriptionChange={setSvcEditDesc}
+            price={svcEditPrice}
+            onPriceChange={setSvcEditPrice}
+            className="w-[600px] border border-nova-gray-100"
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsPaymentOptionsCard — Toggle Options with Frequencies">
+          <DsPaymentOptionsCard
+            options={payOptCards}
+            onOptionToggle={(id, enabled) =>
+              setPayOptCards((prev) => prev.map((o) => (o.id === id ? { ...o, enabled } : o)))
+            }
+            onFrequencyToggle={(optionId, freqValue, selected) =>
+              setPayOptCards((prev) =>
+                prev.map((o) =>
+                  o.id === optionId
+                    ? {
+                        ...o,
+                        frequencies: o.frequencies?.map((f) =>
+                          f.value === freqValue ? { ...f, selected } : f,
+                        ),
+                      }
+                    : o,
+                ),
+              )
+            }
+            className="w-[600px] border border-nova-gray-100"
+          />
         </ComponentRow>
 
         <ComponentRow label="DsRadioOptionCard — With Badge">
@@ -848,7 +1125,17 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsTimeSlotPicker — Standalone">
           <DsTimeSlotPicker
-            slots={["07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00"]}
+            slots={[
+              "07:00",
+              "07:30",
+              "08:00",
+              "08:30",
+              "09:00",
+              "09:30",
+              "10:00",
+              "10:30",
+              "11:00",
+            ]}
             value={pickerTime}
             onChange={setPickerTime}
           />
@@ -1004,27 +1291,77 @@ export default function DesignSystemPage() {
               ]}
               data={[
                 {
-                  date: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">25/09/2025</span>,
-                  service: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">Faxina Pós-Obra</span>,
-                  method: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">PIX</span>,
+                  date: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      25/09/2025
+                    </span>
+                  ),
+                  service: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      Faxina Pós-Obra
+                    </span>
+                  ),
+                  method: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      PIX
+                    </span>
+                  ),
                   status: <DsStatusPill icon={HourglassIcon} label="Pendente" variant="pending" />,
-                  value: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">R$ 53,00</span>,
+                  value: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      R$ 53,00
+                    </span>
+                  ),
                   receipt: <DsReceiptButton disabled />,
                 },
                 {
-                  date: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">25/09/2025</span>,
-                  service: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">Faxina Pós-Obra</span>,
-                  method: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">PIX</span>,
+                  date: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      25/09/2025
+                    </span>
+                  ),
+                  service: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      Faxina Pós-Obra
+                    </span>
+                  ),
+                  method: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      PIX
+                    </span>
+                  ),
                   status: <DsStatusPill icon={XIcon} label="Cancelado" variant="cancelled" />,
-                  value: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">R$ 57,00</span>,
+                  value: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      R$ 57,00
+                    </span>
+                  ),
                   receipt: <DsReceiptButton disabled />,
                 },
                 {
-                  date: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">25/09/2025</span>,
-                  service: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">Limpeza Residencial</span>,
-                  method: <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">Cartão</span>,
-                  status: <DsStatusPill icon={CheckCircleIcon} label="Aprovado" variant="approved" />,
-                  value: <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">R$ 120,00</span>,
+                  date: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      25/09/2025
+                    </span>
+                  ),
+                  service: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      Limpeza Residencial
+                    </span>
+                  ),
+                  method: (
+                    <span className="text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+                      Cartão
+                    </span>
+                  ),
+                  status: (
+                    <DsStatusPill icon={CheckCircleIcon} label="Aprovado" variant="approved" />
+                  ),
+                  value: (
+                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]">
+                      R$ 120,00
+                    </span>
+                  ),
                   receipt: <DsReceiptButton />,
                 },
               ]}
@@ -1047,6 +1384,25 @@ export default function DesignSystemPage() {
               subtitle="Nos últimos 2 meses"
               onOptionsClick={() => {}}
               className="w-[501px]"
+            />
+            <DsHighlightCard
+              title="Horas vendidas por serviço"
+              value="70h"
+              icon={ClockIcon}
+              iconColor="text-[#e39725]"
+              iconBgColor="bg-[rgba(227,151,37,0.1)]"
+              valueColor="text-[#e39725]"
+              className="w-[501px] p-10"
+            />
+            <DsHighlightCard
+              title="Vendas concluídas"
+              value="12"
+              inlineLabel="no último mês"
+              icon={CurrencyDollarSimpleIcon}
+              iconColor="text-nova-success"
+              iconBgColor="bg-nova-success/10"
+              valueColor="text-nova-success"
+              className="w-[501px] p-10"
             />
           </div>
         </ComponentRow>
@@ -1121,9 +1477,24 @@ export default function DesignSystemPage() {
                 Setembro 2025
               </p>
               <div className="flex flex-col">
-                <DsServiceHistoryItem date="30/10" label="Faxina Pós-Obra" onView={() => {}} onEdit={() => {}} />
-                <DsServiceHistoryItem date="23/10" label="Faxina Pós-Obra" onView={() => {}} onEdit={() => {}} />
-                <DsServiceHistoryItem date="16/10" label="Faxina Pós-Obra" onView={() => {}} onEdit={() => {}} />
+                <DsServiceHistoryItem
+                  date="30/10"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                  onEdit={() => {}}
+                />
+                <DsServiceHistoryItem
+                  date="23/10"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                  onEdit={() => {}}
+                />
+                <DsServiceHistoryItem
+                  date="16/10"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                  onEdit={() => {}}
+                />
                 <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
                 <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
                 <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
@@ -1272,16 +1643,10 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsCollapsibleSection — Collapsible">
           <div className="flex w-[400px] flex-col gap-4">
             <DsCollapsibleSection icon={MapPinIcon} title="Condominio Le Monde">
-              <p className="text-sm text-nova-gray-700">
-                Rua Exemplo, 123 - Bloco A, Apt 101
-              </p>
+              <p className="text-sm text-nova-gray-700">Rua Exemplo, 123 - Bloco A, Apt 101</p>
               <p className="text-sm text-nova-gray-700">Barra da Tijuca, Rio de Janeiro</p>
             </DsCollapsibleSection>
-            <DsCollapsibleSection
-              icon={GearIcon}
-              title="Configurações"
-              defaultOpen={false}
-            >
+            <DsCollapsibleSection icon={GearIcon} title="Configurações" defaultOpen={false}>
               <p className="text-sm text-nova-gray-700">Conteúdo recolhido por padrão</p>
             </DsCollapsibleSection>
           </div>
@@ -1324,9 +1689,320 @@ export default function DesignSystemPage() {
             actions={[
               { icon: EnvelopeSimpleIcon, label: "Alterar e-mail", onClick: () => {} },
               { icon: LockKeyOpenIcon, label: "Alterar senha", onClick: () => {} },
-              { icon: TrashIcon, label: "Deletar conta", variant: "destructive", onClick: () => {} },
+              {
+                icon: TrashIcon,
+                label: "Deletar conta",
+                variant: "destructive",
+                onClick: () => {},
+              },
             ]}
             className="w-[500px]"
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsServiceDetailPopup — Full Preview">
+          <div className="w-full max-w-[640px] overflow-hidden rounded-[20px] bg-white shadow-2xl">
+            <DsServiceDetailPopup
+              icon={BroomIcon}
+              serviceName="Faxina Regular"
+              date="16/10"
+              onClose={() => {}}
+              onReceipt={() => {}}
+            >
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-2">
+                  <p className="text-[20px] font-medium leading-[1.3] text-black">
+                    Configurar Recorrência
+                  </p>
+                  <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                    Escolha como deseja agendar seus serviços de limpeza
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <DsRadioOptionCard
+                    label="Avulso"
+                    selected={detailSelectedOption === "avulso"}
+                    onClick={() => setDetailSelectedOption("avulso")}
+                  />
+                  <DsRadioOptionCard
+                    label="Pacote"
+                    selected={detailSelectedOption === "pacote"}
+                    onClick={() => setDetailSelectedOption("pacote")}
+                  />
+                  <DsRadioOptionCard
+                    label="Recorrência"
+                    selected={detailSelectedOption === "recorrencia"}
+                    onClick={() => setDetailSelectedOption("recorrencia")}
+                    badge="5% OFF"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between overflow-hidden rounded-[10px] border border-nova-gray-100 p-4">
+                  <div className="flex items-start gap-2">
+                    <DsIcon icon={CreditCardIcon} size="lg" className="text-nova-gray-700" />
+                    <p className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                      Terminado em 0123
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end text-center leading-[1.3]">
+                    <p className="text-base font-medium text-nova-gray-700">R$ 57,00</p>
+                    <p className="text-xs tracking-[-0.48px] text-nova-primary">Aprovado</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 overflow-hidden rounded-[10px] border border-nova-gray-100 p-4">
+                  <button
+                    type="button"
+                    onClick={() => setDetailAddressExpanded(!detailAddressExpanded)}
+                    className="flex w-full cursor-pointer items-center justify-between"
+                  >
+                    <div className="flex flex-1 items-center gap-2">
+                      <DsIcon icon={MapPinIcon} size="lg" className="text-nova-gray-700" />
+                      <p className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                        Condominio Le Monde
+                      </p>
+                    </div>
+                    <DsIcon
+                      icon={detailAddressExpanded ? CaretUpIcon : CaretDownIcon}
+                      size="md"
+                      className="text-nova-gray-700"
+                    />
+                  </button>
+                  {detailAddressExpanded && (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-base font-medium leading-[1.3] text-nova-gray-700">
+                          CEP
+                        </p>
+                        <div className="flex items-center rounded-[6px] border border-nova-gray-400 px-4 py-3">
+                          <p className="text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+                            22640-102
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-base font-medium leading-[1.3] text-nova-gray-700">
+                          Endereço
+                        </p>
+                        <div className="flex items-center rounded-[6px] border border-nova-gray-400 px-4 py-3">
+                          <p className="text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+                            Av. das Américas, 3500
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-base font-medium leading-[1.3] text-nova-gray-700">
+                          Complemento
+                        </p>
+                        <div className="flex items-center rounded-[6px] border border-nova-gray-400 px-4 py-3">
+                          <p className="text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+                            Sala 305
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-6">
+                  <button
+                    type="button"
+                    onClick={() => setSchedulePopupOpen(true)}
+                    className="flex h-14 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 transition-colors hover:bg-nova-gray-200"
+                  >
+                    <span className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
+                      Reagendar
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="flex h-14 cursor-pointer items-center justify-center rounded-[10px] border border-nova-gray-300 px-8 py-4 transition-colors hover:bg-nova-gray-50"
+                  >
+                    <span className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
+                      Cancelar
+                    </span>
+                  </button>
+                </div>
+                <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">
+                  Cancelamento com 1h de antecedência
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="flex h-[60px] cursor-pointer items-center justify-center gap-1 self-start rounded-[12px] bg-primary px-8 py-4 transition-colors hover:bg-nova-primary-dark"
+              >
+                <DsIcon icon={FloppyDiskIcon} size="lg" className="text-white" />
+                <span className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-white">
+                  Salvar alterações
+                </span>
+              </button>
+            </DsServiceDetailPopup>
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsProfileSection — Profile Fields">
+          <DsProfileSection
+            initials="C"
+            onEdit={() => {}}
+            onChangeImage={() => {}}
+            fields={[
+              { label: "Nome", value: "Caio" },
+              { label: "E-mail", value: "email@example.com" },
+              { label: "Telefone", value: "-" },
+              { label: "Empresa", value: "-" },
+              { label: "Endereço", value: "Av. das Américas, 3500" },
+            ]}
+            className="w-full max-w-[640px]"
+          />
+        </ComponentRow>
+
+        <DsSchedulePopup
+          open={schedulePopupOpen}
+          date={scheduleDate}
+          time={scheduleTime}
+          onDateChange={setScheduleDate}
+          onTimeChange={setScheduleTime}
+          onClose={() => setSchedulePopupOpen(false)}
+          onConfirm={() => setSchedulePopupOpen(false)}
+        />
+
+        <ComponentRow label="DsServiceInfoCard — Service Info Form">
+          <DsServiceInfoCard
+            className="w-[500px]"
+            fields={[
+              {
+                label: "Tipo de Serviço",
+                options: [
+                  { value: "faxina-regular", label: "Faxina Regular" },
+                  { value: "faxina-pos-obra", label: "Faxina Pós-Obra" },
+                  { value: "limpeza-residencial", label: "Limpeza Residencial" },
+                ],
+                value: "faxina-regular",
+              },
+              {
+                label: "Pacote",
+                options: [
+                  { value: "avulso", label: "Avulso" },
+                  { value: "mensal", label: "Mensal" },
+                  { value: "trimestral", label: "Trimestral" },
+                ],
+                value: "avulso",
+              },
+              {
+                label: "Duração",
+                options: [
+                  { value: "1h", label: "1 h" },
+                  { value: "2h", label: "2 h" },
+                  { value: "4h", label: "4 h" },
+                ],
+                value: "1h",
+              },
+            ]}
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsEmployeeScheduleCard — Employee Agenda">
+          <DsEmployeeScheduleCard
+            name="Carlos Magno"
+            busyDates={[
+              new Date(2025, 8, 1),
+              new Date(2025, 8, 2),
+              new Date(2025, 8, 3),
+              new Date(2025, 8, 8),
+              new Date(2025, 8, 9),
+              new Date(2025, 8, 10),
+              new Date(2025, 8, 11),
+              new Date(2025, 8, 15),
+              new Date(2025, 8, 18),
+              new Date(2025, 8, 19),
+              new Date(2025, 8, 22),
+              new Date(2025, 8, 23),
+              new Date(2025, 8, 24),
+              new Date(2025, 8, 29),
+            ]}
+            onClose={() => {}}
+            className="w-[370px]"
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsEmployeeInfoCard — Employee Info Row">
+          <DsEmployeeInfoCard
+            name="Carlos Magno"
+            contacts={[
+              { icon: IdentificationCardIcon, value: "444.222.111-09" },
+              { icon: WhatsappLogoIcon, value: "21 98765 4321" },
+              { icon: EnvelopeSimpleIcon, value: "carlos.magno@gmail.com" },
+            ]}
+            status={{
+              icon: CheckIcon,
+              label: "Ativo",
+              color: "text-nova-success",
+              bgColor: "bg-[rgba(0,167,126,0.1)]",
+            }}
+            details={[
+              { label: "Disponibilidade", value: "7h às 18h" },
+              { label: "Horas trabalhadas/ Semana", value: "40h" },
+            ]}
+            actions={[{ label: "Agenda", icon: CalendarBlankIcon }, { label: "Editar" }]}
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsApprovalPopup — Registration Approval">
+          <DsApprovalPopup
+            title="Registro de clientes"
+            subtitle="Solicitação de novo cadastro de cliente"
+            entityName="Fábio Moraes"
+            status={{
+              icon: HourglassIcon,
+              label: "Pendente",
+              color: "text-[#e39725]",
+              bgColor: "bg-[rgba(227,151,37,0.1)]",
+            }}
+            details={[
+              { label: "Empresa", value: "GreenLeaf Innovations" },
+              { label: "CPF", value: "222.555.888-07" },
+              { label: "Unidade", value: "Condomínio Le Monde" },
+              { label: "E-mail", value: "fabio.moraes@gmail.com" },
+            ]}
+            onReject={() => {}}
+            onApprove={() => {}}
+            onClose={() => {}}
+            className="w-[520px]"
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsApprovalPopup — Payment Detail (destructive)">
+          <DsApprovalPopup
+            title="Pagamento"
+            subtitle="Detalhes da cobrança"
+            entityName="Fernanda Caldas"
+            description="Pagamento recusado por saldo insuficiente."
+            status={{
+              icon: XIcon,
+              label: "Cancelado",
+              color: "text-nova-error",
+              bgColor: "bg-[rgba(219,65,70,0.1)]",
+            }}
+            details={[
+              { label: "Serviço", value: "Faxina Pós-Obra" },
+              { label: "CPF", value: "222.555.888-07" },
+              { label: "Unidade", value: "Condomínio Le Monde" },
+              { label: "E-mail", value: "fabio.moraes@gmail.com" },
+              { label: "Método de Pagamento", value: "Pix" },
+            ]}
+            rejectLabel="Excluir"
+            rejectIcon={TrashIcon}
+            rejectDestructive
+            approveLabel="Aprovar pagamento"
+            onReject={() => {}}
+            onApprove={() => {}}
+            onClose={() => {}}
+            className="w-[520px]"
           />
         </ComponentRow>
       </DsSection>
