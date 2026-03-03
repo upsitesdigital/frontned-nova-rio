@@ -38,6 +38,7 @@ import {
   UserCircleCheckIcon,
   EnvelopeSimpleIcon,
   LockKeyOpenIcon,
+  TimerIcon,
 } from "@phosphor-icons/react";
 import {
   DsButton,
@@ -112,6 +113,10 @@ import {
   DsUserMenuItem,
   DsAdminSidebar,
   DsProfileCard,
+  DsToggleButton,
+  DsInfoChip,
+  DsMetricCard,
+  DsAgendaCard,
 } from "@/design-system";
 
 const selectOptions = [
@@ -166,6 +171,7 @@ export default function DesignSystemPage() {
   const [pickerTime, setPickerTime] = useState<string | undefined>(undefined);
   const [paymentMethod, setPaymentMethod] = useState("credit");
   const [selectedCard, setSelectedCard] = useState(0);
+  const [activeToggle, setActiveToggle] = useState("hoje");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [txFilter, setTxFilter] = useState("todos");
   const [historyFilter, setHistoryFilter] = useState("recentes");
@@ -302,6 +308,31 @@ export default function DesignSystemPage() {
             </div>
           </DsScrollArea>
         </ComponentRow>
+
+        <ComponentRow label="DsToggleButton — Active / Inactive">
+          <div className="flex gap-4">
+            <DsToggleButton
+              label="Hoje"
+              active={activeToggle === "hoje"}
+              onClick={() => setActiveToggle("hoje")}
+            />
+            <DsToggleButton
+              label="Semana"
+              active={activeToggle === "semana"}
+              onClick={() => setActiveToggle("semana")}
+            />
+            <DsToggleButton
+              label="Funcionário"
+              active={activeToggle === "funcionario"}
+              onClick={() => setActiveToggle("funcionario")}
+            />
+            <DsToggleButton
+              label="Unidade"
+              active={activeToggle === "unidade"}
+              onClick={() => setActiveToggle("unidade")}
+            />
+          </div>
+        </ComponentRow>
       </DsSection>
 
       <DsSeparator className="my-8" />
@@ -415,6 +446,36 @@ export default function DesignSystemPage() {
             title="No cleaning scheduled"
             description="Book your first cleaning service to get started."
             action={<DsButton size="sm">Book Now</DsButton>}
+          />
+        </ComponentRow>
+
+        <ComponentRow label="DsInfoChip — Icon + Label + Value">
+          <DsInfoChip icon={ClockIcon} label="Horário" value="16 Horas" />
+          <DsInfoChip icon={TimerIcon} label="Duração" value="50 min" />
+        </ComponentRow>
+
+        <ComponentRow label="DsMetricCard — Label + Large Value">
+          <div className="flex gap-4">
+            <DsMetricCard label="Horas trabalhadas/ Semana" value="40h" className="w-[300px]" />
+            <DsMetricCard label="Serviços realizados/ Mês" value="128" className="w-[300px]" />
+          </div>
+        </ComponentRow>
+
+        <ComponentRow label="DsAgendaCard — Schedule Calendar with Busy/Free Legend">
+          <DsAgendaCard
+            className="max-w-xs"
+            busyDates={[
+              new Date(2026, 2, 2),
+              new Date(2026, 2, 3),
+              new Date(2026, 2, 4),
+              new Date(2026, 2, 9),
+              new Date(2026, 2, 10),
+              new Date(2026, 2, 11),
+              new Date(2026, 2, 16),
+              new Date(2026, 2, 18),
+              new Date(2026, 2, 23),
+              new Date(2026, 2, 25),
+            ]}
           />
         </ComponentRow>
       </DsSection>
