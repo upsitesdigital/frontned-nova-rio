@@ -1,11 +1,16 @@
 import { DotsThreeVerticalIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { DsIcon } from "@/design-system/media";
+import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsHighlightCardProps {
   title: string;
   value: string;
-  subtitle: string;
+  subtitle?: string;
+  inlineLabel?: string;
+  icon?: DsIconComponent;
+  iconColor?: string;
+  iconBgColor?: string;
+  valueColor?: string;
   onOptionsClick?: () => void;
   className?: string;
 }
@@ -14,6 +19,11 @@ function DsHighlightCard({
   title,
   value,
   subtitle,
+  inlineLabel,
+  icon,
+  iconColor,
+  iconBgColor,
+  valueColor,
   onOptionsClick,
   className,
 }: DsHighlightCardProps) {
@@ -24,16 +34,38 @@ function DsHighlightCard({
         className,
       )}
     >
-      <p className="text-[20px] font-medium leading-[1.3] text-black">
-        {title}
-      </p>
+      <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
       <div className="flex flex-col gap-2">
-        <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-primary">
-          {value}
-        </p>
-        <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">
-          {subtitle}
-        </p>
+        <div className="flex items-center gap-4">
+          {icon && (
+            <div
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center rounded-full",
+                iconBgColor,
+              )}
+            >
+              <DsIcon icon={icon} size="lg" className={iconColor} />
+            </div>
+          )}
+          <p
+            className={cn(
+              "text-[48px] font-medium leading-none tracking-[-1.92px]",
+              valueColor ?? "text-primary",
+            )}
+          >
+            {value}
+          </p>
+          {inlineLabel && (
+            <p className="text-sm leading-[1.3] tracking-[-0.56px] text-nova-gray-400">
+              {inlineLabel}
+            </p>
+          )}
+        </div>
+        {subtitle && (
+          <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">
+            {subtitle}
+          </p>
+        )}
       </div>
       {onOptionsClick && (
         <button
