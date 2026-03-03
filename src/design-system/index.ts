@@ -70,6 +70,7 @@ export { DsEmptyState, type DsEmptyStateProps } from "./data-display";
 export { DsInfoChip, type DsInfoChipProps } from "./data-display";
 export { DsMetricCard, type DsMetricCardProps } from "./data-display";
 export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
+export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";
@@ -80,6 +81,7 @@ export {
 } from "./feedback";
 export { DsSheet, type DsSheetProps, type DsSheetSide } from "./feedback";
 export { DsNotificationBell, type DsNotificationBellProps } from "./feedback";
+export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./feedback";
 
 // Forms
 export { DsFormField, type DsFormFieldProps } from "./forms";
@@ -130,6 +132,8 @@ export {
   type DsUpcomingServiceCardAction,
 } from "./composite";
 export { DsRecurrenceCard, type DsRecurrenceCardProps } from "./composite";
+export { DsSchedulePopup, type DsSchedulePopupProps } from "./composite";
+export { DsProfileSection, type DsProfileSectionProps, type DsProfileField } from "./composite";
 export {
   DsPaymentInfoCard,
   type DsPaymentInfoCardProps,
@@ -138,8 +142,45 @@ export {
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composite";
 export { DsUserActions, type DsUserActionsProps } from "./composite";
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
+export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction } from "./composite";
 export {
-  DsProfileCard,
-  type DsProfileCardProps,
-  type DsProfileCardAction,
+  DsServiceInfoCard,
+  type DsServiceInfoCardProps,
+  type DsServiceInfoField,
+} from "./composite";
+export { DsEmployeeScheduleCard, type DsEmployeeScheduleCardProps } from "./composite";
+export {
+  DsEmployeeInfoCard,
+  type DsEmployeeInfoCardProps,
+  type DsEmployeeInfoCardContact,
+  type DsEmployeeInfoCardDetail,
+  type DsEmployeeInfoCardAction,
+  type DsEmployeeInfoCardStatus,
+} from "./composite";
+export {
+  DsApprovalPopup,
+  type DsApprovalPopupProps,
+  type DsApprovalPopupDetail,
+  type DsApprovalPopupStatus,
+} from "./composite";
+export {
+  DsChartSection,
+  type DsChartSectionProps,
+  type DsChartSectionTab,
+  type DsChartSectionFilter,
+} from "./composite";
+export { DsOptionsMenu, type DsOptionsMenuProps, type DsOptionsMenuItem } from "./composite";
+export { DsServiceManageCard, type DsServiceManageCardProps } from "./composite";
+export {
+  DsServiceEditPopup,
+  type DsServiceEditPopupProps,
+  type DsServiceEditPopupPaymentOption,
+  type DsServiceEditPopupFrequency,
+} from "./composite";
+export { DsServiceFormCard, type DsServiceFormCardProps } from "./composite";
+export {
+  DsPaymentOptionsCard,
+  type DsPaymentOptionsCardProps,
+  type DsPaymentOptionsCardOption,
+  type DsPaymentOptionsCardFrequency,
 } from "./composite";
