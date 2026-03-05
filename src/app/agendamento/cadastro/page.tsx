@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -32,6 +32,11 @@ export default function CadastroPage() {
   const setPhone = useRegistrationStore((s) => s.setPhone);
   const setPassword = useRegistrationStore((s) => s.setPassword);
   const submit = useRegistrationStore((s) => s.submit);
+  const reset = useRegistrationStore((s) => s.reset);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
 
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +126,7 @@ export default function CadastroPage() {
           <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
             E-mail cadastrado com sucesso!
           </h2>
-          <p className="text-base leading-[1.5] text-nova-gray-700">
+          <p className="text-base leading-normal text-nova-gray-700">
             Prossiga para o pagamento e conclua seu agendamento.
           </p>
         </div>
