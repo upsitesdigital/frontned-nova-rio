@@ -22,4 +22,13 @@ interface CoverageResult {
   unitName: string | null;
 }
 
-export type { RecurrenceType, RecurrenceFrequency, TimeSlot, Address, CoverageResult };
+type PaymentMethod = "credit" | "pix" | "debit";
+
+export type {
+  RecurrenceType,
+  RecurrenceFrequency,
+  TimeSlot,
+  Address,
+  CoverageResult,
+  PaymentMethod,
+};
