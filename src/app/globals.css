@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-work-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Nova Rio brand colors */
+  --color-nova-primary: var(--nova-primary);
+  --color-nova-primary-dark: var(--nova-primary-dark);
+  --color-nova-primary-light: var(--nova-primary-light);
+  --color-nova-primary-lighter: var(--nova-primary-lighter);
+  --color-nova-primary-foreground: var(--nova-primary-foreground);
+  --color-nova-surface: var(--nova-surface);
+  --color-nova-surface-foreground: var(--nova-surface-foreground);
+  --color-nova-success: var(--nova-success);
+  --color-nova-warning: var(--nova-warning);
+  --color-nova-warning-light: var(--nova-warning-light);
+  --color-nova-error: var(--nova-error);
+  --color-nova-info: var(--nova-info);
+
+  /* Nova Rio gray scale */
+  --color-nova-gray-900: var(--nova-gray-900);
+  --color-nova-gray-800: var(--nova-gray-800);
+  --color-nova-gray-700: var(--nova-gray-700);
+  --color-nova-gray-600: var(--nova-gray-600);
+  --color-nova-gray-500: var(--nova-gray-500);
+  --color-nova-gray-400: var(--nova-gray-400);
+  --color-nova-gray-300: var(--nova-gray-300);
+  --color-nova-gray-200: var(--nova-gray-200);
+  --color-nova-gray-100: var(--nova-gray-100);
+  --color-nova-gray-50: var(--nova-gray-50);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  /* ── Base ── */
+  --background: #ffffff;
+  --foreground: #14181f;
+  --card: #ffffff;
+  --card-foreground: #14181f;
+  --popover: #ffffff;
+  --popover-foreground: #14181f;
+
+  /* ── Primary (brand green) ── */
+  --primary: #00a77e;
+  --primary-foreground: #ffffff;
+
+  /* ── Secondary ── */
+  --secondary: #f6f7f9;
+  --secondary-foreground: #4d4d4f;
+
+  /* ── Muted ── */
+  --muted: #f6f7f9;
+  --muted-foreground: #6f7c8e;
+
+  /* ── Accent (primary tint) ── */
+  --accent: #e6f6f2;
+  --accent-foreground: #00a77e;
+
+  /* ── Destructive ── */
+  --destructive: #db4146;
+
+  /* ── Borders & ring ── */
+  --border: #dcddde;
+  --input: #dcddde;
+  --ring: #00a77e;
+
+  /* ── Charts ── */
+  --chart-1: #00a77e;
+  --chart-2: #00a0d2;
+  --chart-3: #e39725;
+  --chart-4: #f5d025;
+  --chart-5: #db4146;
+
+  /* ── Sidebar (dark) ── */
+  --sidebar: #14181f;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #00a77e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(0, 167, 126, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #00a77e;
+
+  /* ── Nova Rio brand tokens ── */
+  --nova-primary: #00a77e;
+  --nova-primary-dark: #008053;
+  --nova-primary-light: rgba(0, 167, 126, 0.1);
+  --nova-primary-lighter: rgba(0, 167, 126, 0.05);
+  --nova-primary-foreground: #ffffff;
+  --nova-surface: #f6f7f9;
+  --nova-surface-foreground: #14181f;
+  --nova-success: #008053;
+  --nova-warning: #e39725;
+  --nova-warning-light: #f5d025;
+  --nova-error: #db4146;
+  --nova-info: #00a0d2;
+
+  /* ── Nova Rio gray scale ── */
+  --nova-gray-900: #14181f;
+  --nova-gray-800: #444444;
+  --nova-gray-700: #4b4b4b;
+  --nova-gray-600: #4d4d4f;
+  --nova-gray-500: #6f7c8e;
+  --nova-gray-400: #9a9a9a;
+  --nova-gray-300: #dcddde;
+  --nova-gray-200: #dedede;
+  --nova-gray-100: #efefef;
+  --nova-gray-50: #f6f7f9;
+
+  /* ── Spacing tokens ── */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 64px;
+  --topbar-height: 64px;
+  --page-padding: 1.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
