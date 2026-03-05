@@ -12,7 +12,19 @@ interface AgendamentoLayoutProps {
 export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) {
   const pathname = usePathname();
   const segment = pathname.split("/").pop() ?? "servico";
+  const isConfirmation = segment === "confirmacao";
   const currentStep = STEP_PATH_MAP[segment] ?? 0;
+
+  if (isConfirmation) {
+    return (
+      <div className="relative min-h-screen bg-nova-gray-50">
+        <DsLogo className="fixed left-[80px] top-[60px] h-[84px]! w-[156px]!" />
+        <main className="flex min-h-screen items-center justify-center px-(--page-padding)">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-white">
