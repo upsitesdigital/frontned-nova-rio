@@ -1,0 +1,46 @@
+import { appConfig } from "@/config/app";
+
+interface CreatePublicAppointmentRequest {
+  email: string;
+  date: string;
+  startTime: string;
+  duration: number;
+  serviceId: number;
+  recurrenceType?: string;
+  locationZip?: string;
+  locationAddress?: string;
+}
+
+interface AppointmentResponse {
+  id: number;
+  uuid: string;
+  date: string;
+  startTime: string;
+  duration: number;
+  status: string;
+  service: { id: number; name: string };
+  client: { id: number; name: string; email: string };
+}
+
+async function createPublicAppointment(
+  data: CreatePublicAppointmentRequest,
+): Promise<AppointmentResponse> {
+  const response = await fetch(`${appConfig.apiBaseUrl}/appointments/public`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null);
+    const message =
+      errorBody && typeof errorBody === "object" && "message" in errorBody
+        ? String(errorBody.message)
+        : `POST /appointments/public failed: ${response.statusText}`;
+    throw new Error(message);
+  }
+
+  return response.json() as Promise<AppointmentResponse>;
+}
+
+export { createPublicAppointment, type CreatePublicAppointmentRequest, type AppointmentResponse };

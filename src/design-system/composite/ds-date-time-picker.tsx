@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Matcher } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/design-system/ui/calendar";
 import { DsTimeSlotPicker } from "./ds-time-slot-picker";
@@ -15,8 +16,11 @@ interface DsDateTimePickerProps {
   onCancel?: () => void;
   onConfirm?: () => void;
   timeSlots?: string[];
+  disabledSlots?: string[];
+  disabledDays?: Matcher | Matcher[];
   cancelLabel?: string;
   confirmLabel?: string;
+  showActions?: boolean;
   className?: string;
 }
 
@@ -54,8 +58,11 @@ function DsDateTimePicker({
   onCancel,
   onConfirm,
   timeSlots = DEFAULT_TIME_SLOTS,
+  disabledSlots,
+  disabledDays,
   cancelLabel = "Cancelar",
   confirmLabel = "Ok",
+  showActions = true,
   className,
 }: DsDateTimePickerProps) {
   const [internalDate, setInternalDate] = useState<Date | undefined>(date);
@@ -86,6 +93,7 @@ function DsDateTimePicker({
           mode="single"
           selected={selectedDate}
           onSelect={handleDateChange}
+          disabled={disabledDays}
           className="p-4"
         />
         <DsSeparator orientation="vertical" className="h-auto" />
@@ -94,18 +102,23 @@ function DsDateTimePicker({
             slots={timeSlots}
             value={selectedTime}
             onChange={handleTimeChange}
+            disabledSlots={disabledSlots}
           />
         </div>
       </div>
-      <DsSeparator />
-      <div className="flex items-center justify-end gap-2 px-4 py-3">
-        <DsButton variant="ghost" size="sm" onClick={onCancel}>
-          {cancelLabel}
-        </DsButton>
-        <DsButton size="sm" onClick={onConfirm}>
-          {confirmLabel}
-        </DsButton>
-      </div>
+      {showActions && (
+        <>
+          <DsSeparator />
+          <div className="flex items-center justify-end gap-2 px-4 py-3">
+            <DsButton variant="ghost" size="sm" onClick={onCancel}>
+              {cancelLabel}
+            </DsButton>
+            <DsButton size="sm" onClick={onConfirm}>
+              {confirmLabel}
+            </DsButton>
+          </div>
+        </>
+      )}
     </div>
   );
 }

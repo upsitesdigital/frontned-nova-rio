@@ -53,6 +53,7 @@ export {
 } from "./ds-payment-info-card";
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./ds-collapsible-section";
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./ds-admin-sidebar";
+export { DsClientSidebar, type DsClientSidebarProps } from "./ds-client-sidebar";
 export {
   DsProfileCard,
   type DsProfileCardProps,

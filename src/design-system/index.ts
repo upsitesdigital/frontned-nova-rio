@@ -142,6 +142,7 @@ export {
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composite";
 export { DsUserActions, type DsUserActionsProps } from "./composite";
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
+export { DsClientSidebar, type DsClientSidebarProps } from "./composite";
 export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction } from "./composite";
 export {
   DsServiceInfoCard,
