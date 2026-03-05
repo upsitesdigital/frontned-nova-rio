@@ -3,20 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { DsLogo, DsStepper } from "@/design-system";
-
-const SCHEDULING_STEPS = [
-  { label: "Agendar serviço" },
-  { label: "Dia e horário" },
-  { label: "Cadastro" },
-  { label: "Pagamento" },
-];
-
-const STEP_PATH_MAP: Record<string, number> = {
-  servico: 0,
-  "dia-horario": 1,
-  cadastro: 2,
-  pagamento: 3,
-};
+import { SCHEDULING_STEPS, STEP_PATH_MAP } from "@/config/scheduling";
 
 interface AgendamentoLayoutProps {
   children: React.ReactNode;
@@ -38,7 +25,7 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
           className="w-full max-w-[1008px]"
         />
       </header>
-      <main className="mx-auto w-full max-w-[1008px] px-(--page-padding) pb-8 pt-16">
+      <main className="mx-auto w-full max-w-[1216px] px-(--page-padding) pb-8 pt-16">
         {children}
       </main>
     </div>

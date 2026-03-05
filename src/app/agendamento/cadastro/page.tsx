@@ -12,97 +12,92 @@ import {
   DsPasswordInput,
   DsPopup,
 } from "@/design-system";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-
-function formatPhone(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 11);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-}
+import { FLOW_INPUT_CLASS } from "@/lib/constants";
+import { formatPhone } from "@/lib/formatters";
+import { useRegistrationStore } from "@/stores/registration-store";
 
 export default function CadastroPage() {
   const router = useRouter();
 
-  const registerName = useSchedulingStore((s) => s.registerName);
-  const registerEmail = useSchedulingStore((s) => s.registerEmail);
-  const registerPhone = useSchedulingStore((s) => s.registerPhone);
-  const registerPassword = useSchedulingStore((s) => s.registerPassword);
-  const isRegistering = useSchedulingStore((s) => s.isRegistering);
-  const registerErrors = useSchedulingStore((s) => s.registerErrors);
-  const registerSuccess = useSchedulingStore((s) => s.registerSuccess);
+  const name = useRegistrationStore((s) => s.name);
+  const email = useRegistrationStore((s) => s.email);
+  const phone = useRegistrationStore((s) => s.phone);
+  const password = useRegistrationStore((s) => s.password);
+  const isRegistering = useRegistrationStore((s) => s.isRegistering);
+  const errors = useRegistrationStore((s) => s.errors);
+  const success = useRegistrationStore((s) => s.success);
 
-  const setRegisterName = useSchedulingStore((s) => s.setRegisterName);
-  const setRegisterEmail = useSchedulingStore((s) => s.setRegisterEmail);
-  const setRegisterPhone = useSchedulingStore((s) => s.setRegisterPhone);
-  const setRegisterPassword = useSchedulingStore((s) => s.setRegisterPassword);
-  const submitRegistration = useSchedulingStore((s) => s.submitRegistration);
+  const setName = useRegistrationStore((s) => s.setName);
+  const setEmail = useRegistrationStore((s) => s.setEmail);
+  const setPhone = useRegistrationStore((s) => s.setPhone);
+  const setPassword = useRegistrationStore((s) => s.setPassword);
+  const submit = useRegistrationStore((s) => s.submit);
 
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setRegisterPhone(formatPhone(e.target.value));
+      setPhone(formatPhone(e.target.value));
     },
-    [setRegisterPhone],
+    [setPhone],
   );
 
   const canSubmit =
-    registerName.trim().length > 0 &&
-    registerEmail.trim().length > 0 &&
-    registerPassword.trim().length >= 8 &&
+    name.trim().length > 0 &&
+    email.trim().length > 0 &&
+    password.trim().length >= 8 &&
     !isRegistering;
 
   const handleSubmit = useCallback(async () => {
-    await submitRegistration();
-  }, [submitRegistration]);
+    await submit();
+  }, [submit]);
 
   return (
     <>
-      <DsFlowCard>
+      <DsFlowCard className="mx-auto max-w-[1008px]">
         <DsFlowHeader
           title="Cadastrar e-mail"
           subtitle="Cadastre seu e-mail para prosseguir com o pagamento."
         />
 
         <div className="flex w-full flex-col gap-4">
-          <DsFormField label="Nome" error={registerErrors.name}>
+          <DsFormField label="Nome" error={errors.name}>
             <DsInput
               placeholder="Digite seu Nome"
-              value={registerName}
-              onChange={(e) => setRegisterName(e.target.value)}
-              aria-invalid={!!registerErrors.name}
-              className="rounded-[6px] border-nova-gray-500 px-4 py-3 text-base leading-normal tracking-[-0.64px] shadow-none data-[size=default]:h-auto"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-invalid={!!errors.name}
+              className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
 
-          <DsFormField label="E-mail" error={registerErrors.email}>
+          <DsFormField label="E-mail" error={errors.email}>
             <DsInput
               type="email"
               placeholder="Digite seu e-mail"
-              value={registerEmail}
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              aria-invalid={!!registerErrors.email}
-              className="rounded-[6px] border-nova-gray-500 px-4 py-3 text-base leading-normal tracking-[-0.64px] shadow-none data-[size=default]:h-auto"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={!!errors.email}
+              className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
 
-          <DsFormField label="Telefone" error={registerErrors.phone}>
+          <DsFormField label="Telefone" error={errors.phone}>
             <DsInput
               type="tel"
               placeholder="(00) 00000-0000"
-              value={registerPhone}
+              value={phone}
               onChange={handlePhoneChange}
-              aria-invalid={!!registerErrors.phone}
-              className="rounded-[6px] border-nova-gray-500 px-4 py-3 text-base leading-normal tracking-[-0.64px] shadow-none data-[size=default]:h-auto"
+              aria-invalid={!!errors.phone}
+              className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
 
-          <DsFormField label="Senha" error={registerErrors.password}>
+          <DsFormField label="Senha" error={errors.password}>
             <DsPasswordInput
               placeholder="Digite sua senha"
-              value={registerPassword}
-              onChange={(e) => setRegisterPassword(e.target.value)}
-              aria-invalid={!!registerErrors.password}
-              className="rounded-[6px] border-nova-gray-500 px-4 py-3 text-base leading-normal tracking-[-0.64px] shadow-none data-[size=default]:h-auto"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={!!errors.password}
+              className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
         </div>
@@ -121,7 +116,7 @@ export default function CadastroPage() {
         </DsButton>
       </DsFlowCard>
 
-      <DsPopup open={registerSuccess}>
+      <DsPopup open={success}>
         <div className="flex flex-col items-center gap-4 text-center">
           <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
             E-mail cadastrado com sucesso!

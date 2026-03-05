@@ -4,16 +4,19 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 
-import { DsButton, DsFlowCard, DsFlowHeader, DsFormField, DsInput } from "@/design-system";
-import { DsDateTimePicker } from "@/design-system/composite/ds-date-time-picker";
-import { DsSkeleton } from "@/design-system";
+import {
+  DsButton,
+  DsDateTimePicker,
+  DsFlowCard,
+  DsFlowHeader,
+  DsFormField,
+  DsInput,
+  DsSkeleton,
+} from "@/design-system";
+import { FLOW_INPUT_CLASS } from "@/lib/constants";
+import { formatCep } from "@/lib/formatters";
+import { useAddressStore } from "@/stores/address-store";
 import { useSchedulingStore } from "@/stores/scheduling-store";
-
-function formatCep(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 8);
-  if (digits.length <= 5) return digits;
-  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-}
 
 export default function DiaHorarioPage() {
   const router = useRouter();
@@ -21,17 +24,17 @@ export default function DiaHorarioPage() {
   const selectedDate = useSchedulingStore((s) => s.selectedDate);
   const selectedTime = useSchedulingStore((s) => s.selectedTime);
   const timeSlots = useSchedulingStore((s) => s.timeSlots);
-  const cep = useSchedulingStore((s) => s.cep);
-  const address = useSchedulingStore((s) => s.address);
-  const isLoadingAddress = useSchedulingStore((s) => s.isLoadingAddress);
-  const cepError = useSchedulingStore((s) => s.cepError);
-
   const setSelectedDate = useSchedulingStore((s) => s.setSelectedDate);
   const setSelectedTime = useSchedulingStore((s) => s.setSelectedTime);
   const loadTimeSlots = useSchedulingStore((s) => s.loadTimeSlots);
-  const setCep = useSchedulingStore((s) => s.setCep);
-  const loadAddressByCep = useSchedulingStore((s) => s.loadAddressByCep);
-  const clearAddress = useSchedulingStore((s) => s.clearAddress);
+
+  const cep = useAddressStore((s) => s.cep);
+  const address = useAddressStore((s) => s.address);
+  const isLoadingAddress = useAddressStore((s) => s.isLoadingAddress);
+  const cepError = useAddressStore((s) => s.cepError);
+  const setCep = useAddressStore((s) => s.setCep);
+  const loadAddressByCep = useAddressStore((s) => s.loadAddressByCep);
+  const clearAddress = useAddressStore((s) => s.clearAddress);
 
   const allSlots = useMemo(() => timeSlots.map((slot) => slot.time), [timeSlots]);
 
@@ -94,7 +97,7 @@ export default function DiaHorarioPage() {
   const canProceed = selectedDate !== null && selectedTime !== null && address !== null;
 
   return (
-    <DsFlowCard>
+    <DsFlowCard className="mx-auto max-w-[1008px]">
       <DsFlowHeader title="Dia, horário e local da limpeza" />
 
       <div className="flex w-full items-start gap-16">
@@ -120,7 +123,7 @@ export default function DiaHorarioPage() {
               placeholder="Digite seu CEP"
               value={cep}
               onChange={handleCepChange}
-              className="rounded-[6px] border-nova-gray-500 px-4 py-3 text-base leading-normal tracking-[-0.64px] shadow-none data-[size=default]:h-auto"
+              className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
 

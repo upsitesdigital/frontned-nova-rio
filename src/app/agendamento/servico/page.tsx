@@ -11,44 +11,24 @@ import {
   DsSelect,
   DsServiceOptionCard,
   DsSkeleton,
-  type DsSelectOption,
 } from "@/design-system";
+import { FREQUENCY_OPTIONS, RECURRENCE_OPTIONS } from "@/config/scheduling";
+import { formatPrice } from "@/lib/formatters";
 import { getServiceIcon } from "@/lib/icon-map";
 import { useSchedulingStore } from "@/stores/scheduling-store";
-import type { RecurrenceFrequency, RecurrenceType } from "@/types/scheduling";
-import type { Service } from "@/types/service";
-
-interface RecurrenceOption {
-  type: RecurrenceType;
-  label: string;
-  badge?: string;
-  field: keyof Pick<Service, "allowSingle" | "allowPackage" | "allowRecurrence">;
-}
-
-const RECURRENCE_OPTIONS: RecurrenceOption[] = [
-  { type: "avulso", label: "Avulso", field: "allowSingle" },
-  { type: "pacote", label: "Pacote", field: "allowPackage" },
-  { type: "recorrencia", label: "Recorrência", badge: "5% OFF", field: "allowRecurrence" },
-];
-
-const FREQUENCY_OPTIONS: DsSelectOption[] = [
-  { value: "semanal", label: "Semanal" },
-  { value: "quinzenal", label: "Quinzenal" },
-  { value: "mensal", label: "Mensal" },
-];
-
-function formatPrice(price: number): string {
-  return `A partir de R$ ${price.toFixed(2).replace(".", ",")}`;
-}
+import { useServicesStore } from "@/stores/services-store";
+import type { RecurrenceFrequency } from "@/types/scheduling";
 
 export default function ServicoPage() {
   const router = useRouter();
-  const services = useSchedulingStore((s) => s.services);
-  const isLoadingServices = useSchedulingStore((s) => s.isLoadingServices);
-  const selectedServiceId = useSchedulingStore((s) => s.selectedServiceId);
+
+  const services = useServicesStore((s) => s.services);
+  const isLoadingServices = useServicesStore((s) => s.isLoadingServices);
+  const selectedServiceId = useServicesStore((s) => s.selectedServiceId);
+  const loadServices = useServicesStore((s) => s.loadServices);
+  const setSelectedServiceId = useServicesStore((s) => s.setSelectedServiceId);
+
   const recurrenceType = useSchedulingStore((s) => s.recurrenceType);
-  const loadServices = useSchedulingStore((s) => s.loadServices);
-  const setSelectedServiceId = useSchedulingStore((s) => s.setSelectedServiceId);
   const recurrenceFrequency = useSchedulingStore((s) => s.recurrenceFrequency);
   const setRecurrenceType = useSchedulingStore((s) => s.setRecurrenceType);
   const setRecurrenceFrequency = useSchedulingStore((s) => s.setRecurrenceFrequency);
@@ -71,7 +51,7 @@ export default function ServicoPage() {
     (recurrenceType !== "recorrencia" || recurrenceFrequency !== null);
 
   return (
-    <DsFlowCard>
+    <DsFlowCard className="mx-auto max-w-[1008px]">
       <DsFlowHeader
         title="Agendar serviço"
         subtitle="Selecione o tipo de serviço e a duração desejada."
