@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 import type { PaymentMethod } from "@/types/scheduling";
+import { submitPayment } from "@/use-cases/submit-payment";
+import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
 
 interface PaymentState {
   paymentMethod: PaymentMethod | null;
@@ -12,6 +14,9 @@ interface PaymentState {
   billingDocument: string;
   billingAddress: string;
   billingComplement: string;
+  errors: PaymentFieldErrors;
+  isSubmitting: boolean;
+  submitError: string | null;
 }
 
 interface PaymentActions {
@@ -24,6 +29,8 @@ interface PaymentActions {
   setBillingDocument: (value: string) => void;
   setBillingAddress: (value: string) => void;
   setBillingComplement: (value: string) => void;
+  validate: () => boolean;
+  pay: () => Promise<boolean>;
   reset: () => void;
 }
 
@@ -39,20 +46,66 @@ const initialState: PaymentState = {
   billingDocument: "",
   billingAddress: "",
   billingComplement: "",
+  errors: {},
+  isSubmitting: false,
+  submitError: null,
 };
 
 const usePaymentStore = create<PaymentStore>()((set) => ({
   ...initialState,
 
-  setPaymentMethod: (method) => set({ paymentMethod: method }),
-  setCardNumber: (value) => set({ cardNumber: value }),
-  setCardExpiry: (value) => set({ cardExpiry: value }),
-  setCardCvv: (value) => set({ cardCvv: value }),
-  setCardName: (value) => set({ cardName: value }),
-  setBillingName: (value) => set({ billingName: value }),
-  setBillingDocument: (value) => set({ billingDocument: value }),
-  setBillingAddress: (value) => set({ billingAddress: value }),
-  setBillingComplement: (value) => set({ billingComplement: value }),
+  setPaymentMethod: (method) => set({ paymentMethod: method, errors: {}, submitError: null }),
+  setCardNumber: (value) => set({ cardNumber: value, errors: {} }),
+  setCardExpiry: (value) => set({ cardExpiry: value, errors: {} }),
+  setCardCvv: (value) => set({ cardCvv: value, errors: {} }),
+  setCardName: (value) => set({ cardName: value, errors: {} }),
+  setBillingName: (value) => set({ billingName: value, errors: {} }),
+  setBillingDocument: (value) => set({ billingDocument: value, errors: {} }),
+  setBillingAddress: (value) => set({ billingAddress: value, errors: {} }),
+  setBillingComplement: (value) => set({ billingComplement: value, errors: {} }),
+
+  validate: () => {
+    const state = usePaymentStore.getState();
+    const isCardMethod = state.paymentMethod === "credit" || state.paymentMethod === "debit";
+
+    const errors = validatePayment(
+      isCardMethod,
+      {
+        cardNumber: state.cardNumber,
+        cardExpiry: state.cardExpiry,
+        cardCvv: state.cardCvv,
+        cardName: state.cardName,
+      },
+      {
+        billingName: state.billingName,
+        billingDocument: state.billingDocument,
+        billingAddress: state.billingAddress,
+      },
+    );
+
+    if (Object.keys(errors).length > 0) {
+      set({ errors });
+      return false;
+    }
+
+    return true;
+  },
+
+  pay: async () => {
+    const isValid = usePaymentStore.getState().validate();
+    if (!isValid) return false;
+
+    set({ isSubmitting: true, submitError: null });
+    const result = await submitPayment();
+
+    if (result.success) {
+      set({ isSubmitting: false });
+      return true;
+    }
+
+    set({ isSubmitting: false, submitError: result.error });
+    return false;
+  },
 
   reset: () => set(initialState),
 }));
