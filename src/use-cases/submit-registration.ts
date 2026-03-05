@@ -13,11 +13,6 @@ interface RegistrationInput {
   password: string;
 }
 
-interface SubmitRegistrationResult {
-  success: boolean;
-  errors: RegisterFieldErrors;
-}
-
 function validateRegistrationInput(input: RegistrationInput): RegisterFieldErrors {
   return validateRegister({
     name: input.name,
@@ -34,6 +29,7 @@ async function executeRegistration(input: RegistrationInput): Promise<RegisterFi
       phone: input.phone || undefined,
       password: input.password,
     });
+
     return {};
   } catch (error) {
     if (error instanceof HttpClientError) {
@@ -43,9 +39,4 @@ async function executeRegistration(input: RegistrationInput): Promise<RegisterFi
   }
 }
 
-export {
-  validateRegistrationInput,
-  executeRegistration,
-  type RegistrationInput,
-  type SubmitRegistrationResult,
-};
+export { validateRegistrationInput, executeRegistration, type RegistrationInput };
