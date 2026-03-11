@@ -1,3 +1,4 @@
+import { httpAuthPatch, httpAuthPost } from "./http-client";
 import { appConfig } from "@/config/app";
 
 interface CreatePublicAppointmentRequest {
@@ -43,4 +44,32 @@ async function createPublicAppointment(
   return response.json() as Promise<AppointmentResponse>;
 }
 
-export { createPublicAppointment, type CreatePublicAppointmentRequest, type AppointmentResponse };
+interface RescheduleAppointmentRequest {
+  date: string;
+  startTime: string;
+}
+
+async function rescheduleAppointment(
+  token: string,
+  appointmentId: number,
+  data: RescheduleAppointmentRequest,
+): Promise<AppointmentResponse> {
+  return httpAuthPost<AppointmentResponse>(
+    `/appointments/${appointmentId}/reschedule`,
+    data,
+    token,
+  );
+}
+
+async function cancelAppointment(token: string, appointmentId: number): Promise<void> {
+  return httpAuthPatch(`/appointments/${appointmentId}/cancel`, token);
+}
+
+export {
+  createPublicAppointment,
+  rescheduleAppointment,
+  cancelAppointment,
+  type CreatePublicAppointmentRequest,
+  type RescheduleAppointmentRequest,
+  type AppointmentResponse,
+};

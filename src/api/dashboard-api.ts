@@ -15,6 +15,8 @@ interface ServiceHistoryEntry {
   canEdit: boolean;
   recurrenceType: string;
   locationName: string | null;
+  locationZip: string | null;
+  locationAddress: string | null;
   payment: ServiceHistoryEntryPayment | null;
 }
 
@@ -26,6 +28,7 @@ interface ServiceHistoryMonth {
 interface ClientDashboardSummary {
   clientName: string;
   nextAppointment: {
+    id: number;
     date: string;
     cancellationNote: string;
   } | null;
