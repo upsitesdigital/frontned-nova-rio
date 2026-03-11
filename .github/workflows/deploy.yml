@@ -50,14 +50,14 @@ jobs:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          printf '%s' "$VPS_SSH_KEY" | base64 -d > ~/.ssh/deploy_key
+          python3 -c "
+import os, pathlib
+key = os.environ['VPS_SSH_KEY']
+if not key.endswith('\n'):
+    key += '\n'
+pathlib.Path(os.path.expanduser('~/.ssh/deploy_key')).write_text(key)
+"
           chmod 600 ~/.ssh/deploy_key
-          echo "=== Key file info ==="
-          wc -c ~/.ssh/deploy_key
-          head -1 ~/.ssh/deploy_key
-          tail -1 ~/.ssh/deploy_key
-          ssh-keygen -l -f ~/.ssh/deploy_key || echo "ERRO: chave inválida"
-          echo "===================="
           ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" '
