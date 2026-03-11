@@ -1,7 +1,16 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { DsFilterDropdown, DsServiceHistoryItem, DsPagination } from "@/design-system";
+import { useMemo } from "react";
+import {
+  DsFilterDropdown,
+  DsServiceHistoryItem,
+  DsPagination,
+  DsEmptyState,
+} from "@/design-system";
+import {
+  useServicesHistoryStore,
+  type ServiceHistoryFilter,
+} from "@/stores/services-history-store";
 
 interface ServiceHistoryEntryPayment {
   cardLastFour: string | null;
@@ -17,6 +26,8 @@ interface ServiceHistoryEntry {
   canEdit: boolean;
   recurrenceType: string;
   locationName: string | null;
+  locationZip: string | null;
+  locationAddress: string | null;
   payment: ServiceHistoryEntryPayment | null;
 }
 
@@ -40,8 +51,7 @@ const filterOptions = [
 ];
 
 function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHistoryPanelProps) {
-  const [filter, setFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+  const { filter, currentPage, setFilter, setCurrentPage } = useServicesHistoryStore();
 
   const allEntries = useMemo(
     () => months.flatMap((m) => m.entries.map((e) => ({ ...e, monthLabel: m.monthLabel }))),
@@ -77,18 +87,13 @@ function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHist
           label="Filtrar por"
           options={filterOptions}
           value={filter}
-          onValueChange={(v) => {
-            setFilter(v);
-            setCurrentPage(1);
-          }}
+          onValueChange={(v) => setFilter(v as ServiceHistoryFilter)}
           placeholder="Todos"
         />
       </div>
 
       {months.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-[10px] bg-nova-gray-50 px-6 py-12">
-          <p className="text-sm text-nova-gray-400">Nenhum serviço registrado ainda.</p>
-        </div>
+        <DsEmptyState message="Nenhum serviço registrado ainda." />
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
           {groupedByMonth.map((group) => (

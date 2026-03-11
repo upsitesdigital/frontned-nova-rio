@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { DsFilterDropdown, DsServiceHistoryItem } from "@/design-system";
+import { DsFilterDropdown, DsServiceHistoryItem, DsEmptyState } from "@/design-system";
+import { useDashboardStore } from "@/stores/dashboard-store";
 
 interface ServiceHistoryEntryPayment {
   cardLastFour: string | null;
@@ -17,6 +17,8 @@ interface ServiceHistoryEntry {
   canEdit: boolean;
   recurrenceType: string;
   locationName: string | null;
+  locationZip: string | null;
+  locationAddress: string | null;
   payment: ServiceHistoryEntryPayment | null;
 }
 
@@ -42,7 +44,7 @@ function DashboardServiceHistory({
   onViewEntry,
   onEditEntry,
 }: DashboardServiceHistoryProps) {
-  const [filter, setFilter] = useState("recent");
+  const { serviceHistoryFilter, setServiceHistoryFilter } = useDashboardStore();
 
   return (
     <div className="flex flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
@@ -51,16 +53,14 @@ function DashboardServiceHistory({
         <DsFilterDropdown
           label="Filtrar por"
           options={filterOptions}
-          value={filter}
-          onValueChange={setFilter}
+          value={serviceHistoryFilter}
+          onValueChange={setServiceHistoryFilter}
           placeholder="Mais recentes"
         />
       </div>
 
       {months.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-[10px] bg-nova-gray-50 px-6 py-12">
-          <p className="text-sm text-nova-gray-400">Nenhum serviço registrado ainda.</p>
-        </div>
+        <DsEmptyState message="Nenhum serviço registrado ainda." />
       ) : (
         months.map((month) => (
           <div

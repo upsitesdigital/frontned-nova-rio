@@ -3,6 +3,7 @@ import {
   DsRegisteredCardItem,
   DsRecentPaymentItem,
   DsSeparator,
+  DsEmptyState,
   type DsRecentPaymentStatus,
 } from "@/design-system";
 
@@ -47,7 +48,7 @@ function DashboardPaymentsPanel({
 
       <div className="flex flex-col gap-2">
         {cards.length === 0 ? (
-          <p className="py-4 text-center text-sm text-nova-gray-400">Nenhum cartão cadastrado.</p>
+          <DsEmptyState message="Nenhum cartão cadastrado." className="py-4" />
         ) : (
           cards.map((card) => (
             <DsRegisteredCardItem
@@ -73,7 +74,7 @@ function DashboardPaymentsPanel({
           {paymentsMonthLabel}
         </p>
         {payments.length === 0 ? (
-          <p className="py-4 text-center text-sm text-nova-gray-400">Nenhum pagamento recente.</p>
+          <DsEmptyState message="Nenhum pagamento recente." className="py-4" />
         ) : (
           <div className="flex flex-col gap-4">
             {payments.map((payment) => (
