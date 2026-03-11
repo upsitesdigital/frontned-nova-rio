@@ -2,22 +2,22 @@
 
 ---
 
-## 1. Design System First (REGRA DE OURO)
+## 1. Design System First (GOLDEN RULE)
 
-ANTES de implementar QUALQUER tela ou componente de UI, seguir OBRIGATORIAMENTE este fluxo:
+BEFORE implementing ANY screen or UI component, follow this flow MANDATORILY:
 
-### Passo a passo
+### Step by step
 
-1. **Listar componentes DS candidatos** — percorrer `src/design-system/` e identificar TODOS os componentes que podem corresponder à tela ou seção a ser implementada
-2. **Ler cada componente** — abrir o arquivo e entender suas props, variantes, slots (`children`) e comportamento
-3. **Compor a tela usando componentes DS** — montar a tela combinando componentes existentes
-4. **Só usar HTML/Tailwind raw** para wrappers de layout (`div`, `section`, `main`) ou espaçamentos entre blocos
-5. **Se o componente DS é parecido mas não exato** — estender com novas props opcionais, NUNCA criar uma versão paralela
+1. **List candidate DS components** — browse `src/design-system/` and identify ALL components that may match the screen or section to be implemented
+2. **Read each component** — open the file and understand its props, variants, slots (`children`) and behavior
+3. **Compose the screen using DS components** — assemble the screen by combining existing components
+4. **Only use raw HTML/Tailwind** for layout wrappers (`div`, `section`, `main`) or spacing between blocks
+5. **If the DS component is close but not exact** — extend it with new optional props, NEVER create a parallel version
 
-### Exemplo ERRADO
+### WRONG Example
 
 ```tsx
-// ERRADO: recriou header com ícone + nome + recibo inline
+// WRONG: recreated header with icon + name + receipt inline
 <div className="flex items-center justify-between">
   <div className="flex items-center gap-4">
     <div className="flex size-12 items-center justify-center rounded-full bg-nova-primary-light">
@@ -33,221 +33,221 @@ ANTES de implementar QUALQUER tela ou componente de UI, seguir OBRIGATORIAMENTE 
 <p className="text-[48px] font-medium">{entry.date}</p>
 ```
 
-### Exemplo CORRETO
+### CORRECT Example
 
 ```tsx
-// CORRETO: usa o DsServiceDetailPopup que já tem ícone + nome + recibo + data
+// CORRECT: uses DsServiceDetailPopup which already has icon + name + receipt + date
 <DsServiceDetailPopup
   icon={serviceIcon}
   serviceName={entry.label}
   date={entry.date}
   onReceipt={() => {}}
 >
-  {/* conteúdo específico da tela */}
+  {/* screen-specific content */}
 </DsServiceDetailPopup>
 ```
 
-### Catálogo completo de componentes DS
+### Full DS Component Catalog
 
 #### Primitives (`src/design-system/primitives/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsButton` | Botões primários, secundários, ghost, link |
-| `DsIconButton` | Botão apenas com ícone |
-| `DsInput` | Campo de texto |
-| `DsPasswordInput` | Campo de senha com toggle de visibilidade |
-| `DsTextarea` | Campo de texto multilinha |
-| `DsSelect` | Select/dropdown nativo |
+| `DsButton` | Primary, secondary, ghost, link buttons |
+| `DsIconButton` | Icon-only button |
+| `DsInput` | Text input field |
+| `DsPasswordInput` | Password field with visibility toggle |
+| `DsTextarea` | Multiline text field |
+| `DsSelect` | Native select/dropdown |
 | `DsCheckbox` | Checkbox |
 | `DsSwitch` | Toggle on/off |
-| `DsToggleButton` | Botão toggle |
+| `DsToggleButton` | Toggle button |
 | `DsBadge` | Badge/tag |
-| `DsLabel` | Label de formulário |
-| `DsSeparator` | Linha divisória |
-| `DsSkeleton` | Placeholder de loading |
-| `DsScrollArea` | Área com scroll customizado |
+| `DsLabel` | Form label |
+| `DsSeparator` | Divider line |
+| `DsSkeleton` | Loading placeholder |
+| `DsScrollArea` | Custom scroll area |
 | `DsTooltip` | Tooltip |
 
 #### Media (`src/design-system/media/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsIcon` | Wrapper de ícones Phosphor com sizes padronizados |
-| `DsImage` | Imagem com fallback |
+| `DsIcon` | Phosphor icon wrapper with standardized sizes |
+| `DsImage` | Image with fallback |
 
 #### Forms (`src/design-system/forms/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsFormField` | Wrapper label + input + erro |
-| `DsFormGroup` | Grupo de campos com título |
-| `DsDatePicker` | Seletor de data |
-| `DsFilterDropdown` | Dropdown com filtros |
-| `DsSearchInput` | Campo de busca com ícone |
+| `DsFormField` | Label + input + error wrapper |
+| `DsFormGroup` | Field group with title |
+| `DsDatePicker` | Date selector |
+| `DsFilterDropdown` | Dropdown with filters |
+| `DsSearchInput` | Search field with icon |
 
 #### Data Display (`src/design-system/data-display/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsCard` | Card genérico |
-| `DsAvatar` | Avatar circular |
-| `DsStatCard` | Card de estatística com título + valor |
-| `DsMetricCard` | Card de métrica |
-| `DsDateBadge` | Badge com data formatada |
-| `DsInfoChip` | Chip informativo |
-| `DsEmptyState` | Estado vazio com ícone + mensagem |
-| `DsDataTable` | Tabela de dados |
-| `DsTableRowItem` | Linha de tabela |
-| `DsPagination` | Paginação |
-| `DsLineChart` | Gráfico de linha |
-| `DsAgendaCard` | Card de agenda |
-| `DsCreditCardDisplay` | Exibição visual de cartão de crédito |
+| `DsCard` | Generic card |
+| `DsAvatar` | Circular avatar |
+| `DsStatCard` | Stat card with title + value |
+| `DsMetricCard` | Metric card |
+| `DsDateBadge` | Badge with formatted date |
+| `DsInfoChip` | Info chip |
+| `DsEmptyState` | Empty state with icon + message |
+| `DsDataTable` | Data table |
+| `DsTableRowItem` | Table row |
+| `DsPagination` | Pagination |
+| `DsLineChart` | Line chart |
+| `DsAgendaCard` | Agenda card |
+| `DsCreditCardDisplay` | Visual credit card display |
 
 #### Feedback (`src/design-system/feedback/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
 | `DsDialog` | Modal/dialog |
-| `DsConfirmDialog` | Dialog de confirmação com ações |
-| `DsSheet` | Drawer lateral (wrapper do Sheet) |
-| `DsAlert` | Alerta/notificação inline |
-| `DsNotificationBell` | Sino de notificações com badge |
+| `DsConfirmDialog` | Confirmation dialog with actions |
+| `DsSheet` | Side drawer (Sheet wrapper) |
+| `DsAlert` | Inline alert/notification |
+| `DsNotificationBell` | Notification bell with badge |
 
 #### Navigation (`src/design-system/navigation/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsSidebar` | Sidebar principal |
-| `DsSidebarItem` | Item da sidebar |
-| `DsTopbar` | Barra superior |
-| `DsNavLink` | Link de navegação |
-| `DsLogo` | Logo da marca |
-| `DsUserMenu` | Menu dropdown do usuário |
-| `DsUserMenuItem` | Item do menu do usuário |
+| `DsSidebar` | Main sidebar |
+| `DsSidebarItem` | Sidebar item |
+| `DsTopbar` | Top bar |
+| `DsNavLink` | Navigation link |
+| `DsLogo` | Brand logo |
+| `DsUserMenu` | User dropdown menu |
+| `DsUserMenuItem` | User menu item |
 
 #### Layout (`src/design-system/layout/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsPageContainer` | Container de página com padding padrão |
-| `DsSection` | Seção com título |
-| `DsSectionHeader` | Header de seção |
-| `DsSidebarLayout` | Layout com sidebar + conteúdo |
+| `DsPageContainer` | Page container with standard padding |
+| `DsSection` | Section with title |
+| `DsSectionHeader` | Section header |
+| `DsSidebarLayout` | Layout with sidebar + content |
 
 #### Composite (`src/design-system/composite/`)
-| Componente | Uso |
+| Component | Usage |
 |---|---|
-| `DsAuthLayout` | Layout de autenticação (login, registro) |
-| `DsServiceDetailPopup` | Popup com ícone + nome do serviço + data + recibo + children |
-| `DsServiceEditPopup` | Popup de edição de serviço |
-| `DsSchedulePopup` | Popup de agendamento |
-| `DsDeleteConfirmPopup` | Popup de confirmação de exclusão |
-| `DsPopup` | Popup genérico |
-| `DsUserFormPopup` | Popup de formulário de usuário |
-| `DsApprovalPopup` | Popup de aprovação |
-| `DsCollapsibleSection` | Seção colapsável com ícone + título |
-| `DsRadioOptionCard` | Card de opção radio com badge opcional |
-| `DsPaymentInfoCard` | Card de info de pagamento (ícone + descrição + valor + status) |
-| `DsReceiptButton` | Botão de download de recibo |
-| `DsHighlightCard` | Card destaque (título + valor grande + subtítulo) |
-| `DsUpcomingServiceCard` | Card de próximo serviço com ações e recibo |
-| `DsDiscountCard` | Card de desconto promocional |
-| `DsServiceHistoryItem` | Linha de histórico de serviço (data + label + ações) |
-| `DsServiceInfoCard` | Card informativo de serviço |
-| `DsServiceOptionCard` | Card de opção de serviço |
-| `DsServiceFormCard` | Card com formulário de serviço |
-| `DsServiceManageCard` | Card de gerenciamento de serviço |
-| `DsRecurrenceCard` | Card de configuração de recorrência |
-| `DsFlowCard` | Card de fluxo/step |
-| `DsFlowHeader` | Header de fluxo |
-| `DsStepper` | Stepper de progresso |
-| `DsProfileCard` | Card de perfil |
-| `DsProfileSection` | Seção de perfil |
-| `DsInfoPanel` | Painel informativo |
-| `DsConfigSection` | Seção de configurações |
-| `DsOptionsMenu` | Menu de opções |
-| `DsDateTimePicker` | Seletor de data e hora |
-| `DsTimeSlotPicker` | Seletor de horário |
-| `DsChartSection` | Seção com gráfico |
-| `DsStatusPill` | Pill de status (ativo, inativo, etc.) |
-| `DsPaymentMethodOption` | Opção de método de pagamento |
-| `DsPaymentOptionsCard` | Card com opções de pagamento |
-| `DsSecurePaymentBanner` | Banner de pagamento seguro |
-| `DsRecentPaymentItem` | Item de pagamento recente |
-| `DsRegisteredCardItem` | Item de cartão cadastrado |
-| `DsRegisteredCardList` | Lista de cartões cadastrados |
-| `DsSavedCardItem` | Item de cartão salvo |
-| `DsSavedCardList` | Lista de cartões salvos |
-| `DsTransactionCard` | Card de transação |
-| `DsTransactionTable` | Tabela de transações |
-| `DsEmployeeInfoCard` | Card de info de funcionário |
-| `DsEmployeeScheduleCard` | Card de agenda de funcionário |
-| `DsUserTable` | Tabela de usuários |
-| `DsUserActions` | Menu de ações do usuário (avatar dropdown) |
-| `DsServiceDetailRow` | Linha de detalhe de serviço |
-| `DsClientDashboardShell` | Shell do dashboard do cliente |
-| `DsAdminSidebar` | Sidebar do admin |
-| `DsClientSidebar` | Sidebar do cliente |
+| `DsAuthLayout` | Auth layout (login, register) |
+| `DsServiceDetailPopup` | Popup with icon + service name + date + receipt + children |
+| `DsServiceEditPopup` | Service edit popup |
+| `DsSchedulePopup` | Scheduling popup |
+| `DsDeleteConfirmPopup` | Delete confirmation popup |
+| `DsPopup` | Generic popup |
+| `DsUserFormPopup` | User form popup |
+| `DsApprovalPopup` | Approval popup |
+| `DsCollapsibleSection` | Collapsible section with icon + title |
+| `DsRadioOptionCard` | Radio option card with optional badge |
+| `DsPaymentInfoCard` | Payment info card (icon + description + value + status) |
+| `DsReceiptButton` | Receipt download button |
+| `DsHighlightCard` | Highlight card (title + large value + subtitle) |
+| `DsUpcomingServiceCard` | Upcoming service card with actions and receipt |
+| `DsDiscountCard` | Promotional discount card |
+| `DsServiceHistoryItem` | Service history row (date + label + actions) |
+| `DsServiceInfoCard` | Service info card |
+| `DsServiceOptionCard` | Service option card |
+| `DsServiceFormCard` | Card with service form |
+| `DsServiceManageCard` | Service management card |
+| `DsRecurrenceCard` | Recurrence configuration card |
+| `DsFlowCard` | Flow/step card |
+| `DsFlowHeader` | Flow header |
+| `DsStepper` | Progress stepper |
+| `DsProfileCard` | Profile card |
+| `DsProfileSection` | Profile section |
+| `DsInfoPanel` | Info panel |
+| `DsConfigSection` | Settings section |
+| `DsOptionsMenu` | Options menu |
+| `DsDateTimePicker` | Date and time selector |
+| `DsTimeSlotPicker` | Time slot selector |
+| `DsChartSection` | Chart section |
+| `DsStatusPill` | Status pill (active, inactive, etc.) |
+| `DsPaymentMethodOption` | Payment method option |
+| `DsPaymentOptionsCard` | Card with payment options |
+| `DsSecurePaymentBanner` | Secure payment banner |
+| `DsRecentPaymentItem` | Recent payment item |
+| `DsRegisteredCardItem` | Registered card item |
+| `DsRegisteredCardList` | Registered card list |
+| `DsSavedCardItem` | Saved card item |
+| `DsSavedCardList` | Saved card list |
+| `DsTransactionCard` | Transaction card |
+| `DsTransactionTable` | Transaction table |
+| `DsEmployeeInfoCard` | Employee info card |
+| `DsEmployeeScheduleCard` | Employee schedule card |
+| `DsUserTable` | User table |
+| `DsUserActions` | User actions menu (avatar dropdown) |
+| `DsServiceDetailRow` | Service detail row |
+| `DsClientDashboardShell` | Client dashboard shell |
+| `DsAdminSidebar` | Admin sidebar |
+| `DsClientSidebar` | Client sidebar |
 
 ---
 
 ## 2. Imports
 
-### Componentes DS
+### DS Components
 
 ```tsx
-// CORRETO: importar do barrel root
+// CORRECT: import from root barrel
 import { DsButton, DsInput, DsFormField, DsCollapsibleSection } from "@/design-system";
 
-// CORRETO: importar do barrel de categoria
+// CORRECT: import from category barrel
 import { DsIcon } from "@/design-system/media";
 
-// ERRADO: importar direto do arquivo
+// WRONG: import directly from file
 import { DsButton } from "@/design-system/primitives/ds-button";
 ```
 
-### Ícones Phosphor
+### Phosphor Icons
 
 ```tsx
-// CORRETO: sempre do /dist/ssr para SSR compatibility
+// CORRECT: always from /dist/ssr for SSR compatibility
 import { MapPinIcon, CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
 
-// ERRADO: importar da raiz
+// WRONG: import from root
 import { MapPinIcon } from "@phosphor-icons/react";
 ```
 
-### Sheet/Dialog (componentes UI base)
+### Sheet/Dialog (base UI components)
 
 ```tsx
-// CORRETO: Sheet é o único caso onde importamos de ui/
+// CORRECT: Sheet is the only case where we import from ui/
 import { Sheet, SheetContent } from "@/design-system/ui/sheet";
 
-// Ou usar o wrapper DsSheet se disponível
+// Or use the DsSheet wrapper if available
 import { DsSheet } from "@/design-system";
 ```
 
 ---
 
-## 3. Arquivos e Organização
+## 3. Files and Organization
 
-### Regras
+### Rules
 
-- **1 componente por arquivo** — sem exceções
-- **1 widget/componente por arquivo** — extrair composições inline em arquivos separados quando representam uma seção distinta de UI
-- Arquivos de UI NÃO devem conter lógica/funções — apenas handlers inline quando inevitável
-- Preferir editar arquivos existentes a criar novos
-- Máximo **800 linhas** por arquivo, ideal **200-400**
+- **1 component per file** — no exceptions
+- **1 widget/component per file** — extract inline compositions into separate files when they represent a distinct UI section
+- UI files MUST NOT contain logic/functions — only inline handlers when unavoidable
+- Prefer editing existing files over creating new ones
+- Maximum **800 lines** per file, ideal **200-400**
 
-### Estrutura de páginas
+### Page structure
 
 ```
 src/app/dashboard/servicos/
-  ├── page.tsx                        # Página principal (composição de componentes)
+  ├── page.tsx                        # Main page (component composition)
   └── _components/
-      ├── services-history-panel.tsx   # Painel de histórico
-      ├── services-side-panel.tsx      # Painel lateral
-      ├── service-detail-modal.tsx     # Modal de detalhe
-      └── service-edit-drawer.tsx      # Drawer de edição
+      ├── services-history-panel.tsx   # History panel
+      ├── services-side-panel.tsx      # Side panel
+      ├── service-detail-modal.tsx     # Detail modal
+      └── service-edit-drawer.tsx      # Edit drawer
 ```
 
-### Exemplo ERRADO
+### WRONG Example
 
 ```tsx
-// ERRADO: lógica de formatação dentro do componente de UI
+// WRONG: formatting logic inside UI component
 function ServiceCard({ entry }) {
   function formatDate(date: string) {
     return date.split("-").reverse().join("/");
@@ -259,10 +259,10 @@ function ServiceCard({ entry }) {
 }
 ```
 
-### Exemplo CORRETO
+### CORRECT Example
 
 ```tsx
-// CORRETO: lógica em utils ou hooks, UI apenas renderiza
+// CORRECT: logic in utils or hooks, UI only renders
 import { formatDate } from "@/lib/date-utils";
 import { calculateDiscount } from "@/lib/pricing";
 
@@ -273,47 +273,60 @@ function ServiceCard({ entry }) {
 
 ---
 
-## 4. Estado e Hooks
+## 4. State Management
 
-### Zustand para estado compartilhado
+### NEVER use useState — EVER — FORBIDDEN
+
+**useState is FORBIDDEN.** All state — without exception — MUST be managed with **Zustand**.
+
+This includes state that seems "local" like `isOpen`, `searchQuery`, `selectedTab`. Create a dedicated store for each component/page that needs state.
+
+This rule applies to ALL layers: pages, `_components/`, **and Design System components**.
 
 ```tsx
-// CORRETO: estado compartilhado com Zustand
+// FORBIDDEN: any use of useState — anywhere in the codebase
+const [isOpen, setIsOpen] = useState(false);        // FORBIDDEN
+const [searchQuery, setSearchQuery] = useState("");  // FORBIDDEN
+const [selectedTab, setSelectedTab] = useState("all"); // FORBIDDEN
+const [user, setUser] = useState(null);              // FORBIDDEN
+const [services, setServices] = useState([]);        // FORBIDDEN
+```
+
+### Zustand for ALL state
+
+```tsx
+// CORRECT: state managed with Zustand
 import { useDashboardStore } from "@/stores/dashboard-store";
 
 function DashboardPage() {
   const { summary, isLoading } = useDashboardStore();
   // ...
 }
+
+// CORRECT: even local UI state uses Zustand
+import { useServiceEditStore } from "@/stores/service-edit-store";
+
+function ServiceEditDrawer() {
+  const { isOpen, setIsOpen, selectedTab, setSelectedTab } = useServiceEditStore();
+  // ...
+}
 ```
 
-### useState APENAS para estado local de UI
-
-```tsx
-// CORRETO: estado local temporário
-const [isOpen, setIsOpen] = useState(false);
-const [searchQuery, setSearchQuery] = useState("");
-const [selectedTab, setSelectedTab] = useState("all");
-
-// ERRADO: estado compartilhado com useState
-const [user, setUser] = useState(null); // deveria ser Zustand
-const [services, setServices] = useState([]); // deveria ser Zustand
-```
-
-### Stores em `src/stores/`
+### Stores in `src/stores/`
 
 ```
 src/stores/
-  ├── dashboard-store.ts    # Estado do dashboard
-  ├── auth-store.ts         # Estado de autenticação
-  └── ...
+  ├── dashboard-store.ts    # Dashboard state
+  ├── auth-store.ts         # Authentication state
+  ├── login-store.ts        # Login flow
+  └── ...                   # One store per domain/component
 ```
 
 ---
 
-## 5. Componentes DS — Convenções
+## 5. DS Components — Conventions
 
-### Criação de novo componente DS
+### Creating a new DS component
 
 ```tsx
 // src/design-system/composite/ds-my-component.tsx
@@ -338,24 +351,48 @@ function DsMyComponent({ title, children, className }: DsMyComponentProps) {
 export { DsMyComponent, type DsMyComponentProps };
 ```
 
-### Checklist de convenções
+### State in DS components — ALWAYS Zustand
 
-- [ ] Prefixo `Ds` no nome
-- [ ] Interface de props com nome `{ComponentName}Props`
-- [ ] Export nomeado (NUNCA default export)
-- [ ] Type export separado: `type DsMyComponentProps`
-- [ ] `cn()` para merge de classes
-- [ ] `className?: string` como prop opcional
-- [ ] `"use client"` APENAS se usa hooks/estado
-- [ ] Arquivo adicionado ao barrel `index.ts` da categoria
+Interactive DS components that need state **MUST use Zustand**, NEVER `useState`. Create a dedicated store in `src/stores/` for the component.
 
-### DsIcon — Uso correto
+```tsx
+// FORBIDDEN: useState inside DS component
+"use client";
+function DsFilterDropdown({ options }: DsFilterDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);       // FORBIDDEN
+  const [selected, setSelected] = useState<string>(); // FORBIDDEN
+  // ...
+}
+
+// CORRECT: Zustand store for the DS component
+"use client";
+import { useFilterDropdownStore } from "@/stores/filter-dropdown-store";
+
+function DsFilterDropdown({ options }: DsFilterDropdownProps) {
+  const { isOpen, setIsOpen, selected, setSelected } = useFilterDropdownStore();
+  // ...
+}
+```
+
+### Conventions checklist
+
+- [ ] `Ds` prefix in the name
+- [ ] Props interface named `{ComponentName}Props`
+- [ ] Named export (NEVER default export)
+- [ ] Separate type export: `type DsMyComponentProps`
+- [ ] `cn()` for class merging
+- [ ] `className?: string` as optional prop
+- [ ] `"use client"` ONLY if it uses hooks/state
+- [ ] **Zustand** for any state (NEVER `useState`)
+- [ ] File added to the category barrel `index.ts`
+
+### DsIcon — Correct usage
 
 ```tsx
 import { MapPinIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsIcon } from "@/design-system/media";
 
-// Sizes disponíveis: xs(12), sm(16), md(20), lg(24), xl(32)
+// Available sizes: xs(12), sm(16), md(20), lg(24), xl(32)
 <DsIcon icon={MapPinIcon} size="md" />
 <DsIcon icon={MapPinIcon} size="lg" className="text-primary" />
 <DsIcon icon={MapPinIcon} size="md" weight="bold" className="text-nova-gray-700" />
@@ -363,40 +400,40 @@ import { DsIcon } from "@/design-system/media";
 
 ---
 
-## 6. Design Tokens e Cores
+## 6. Design Tokens and Colors
 
-### Cores da marca (usar via Tailwind)
+### Brand colors (use via Tailwind)
 
 ```tsx
-// Primárias
-className="text-nova-primary"         // Verde principal
-className="text-nova-primary-dark"    // Verde escuro (datas, destaques)
-className="bg-nova-primary-light"     // Verde claro (backgrounds de ícones)
-className="bg-nova-primary-lighter"   // Verde mais claro (seleção)
+// Primary
+className="text-nova-primary"         // Main green
+className="text-nova-primary-dark"    // Dark green (dates, highlights)
+className="bg-nova-primary-light"     // Light green (icon backgrounds)
+className="bg-nova-primary-lighter"   // Lighter green (selection)
 
-// Semânticas
+// Semantic
 className="text-nova-success"
 className="text-nova-warning"
 className="text-nova-error"
 className="text-nova-info"
 
-// Escala de cinza
-className="text-nova-gray-400"   // Texto secundário, disabled
-className="text-nova-gray-700"   // Texto principal em cards
-className="text-nova-gray-900"   // Texto mais escuro
-className="bg-nova-gray-50"      // Background sutil
-className="bg-nova-gray-100"     // Background de botões secundários
-className="border-nova-gray-100" // Bordas de cards
-className="border-nova-gray-300" // Bordas de botões outlined
+// Gray scale
+className="text-nova-gray-400"   // Secondary text, disabled
+className="text-nova-gray-700"   // Primary text in cards
+className="text-nova-gray-900"   // Darkest text
+className="bg-nova-gray-50"      // Subtle background
+className="bg-nova-gray-100"     // Secondary button background
+className="border-nova-gray-100" // Card borders
+className="border-nova-gray-300" // Outlined button borders
 ```
 
-### Exemplo: estado disabled
+### Example: disabled state
 
 ```tsx
-// CORRETO: disabled sem opacity, usando cores específicas
+// CORRECT: disabled without opacity, using specific colors
 className={disabled ? "text-nova-gray-400 cursor-not-allowed" : "text-nova-gray-700 cursor-pointer"}
 
-// ERRADO: não usar opacity para disabled
+// WRONG: do not use opacity for disabled
 className={disabled ? "opacity-50" : ""}
 ```
 
@@ -404,39 +441,39 @@ className={disabled ? "opacity-50" : ""}
 
 ## 7. Commits
 
-### Formato
+### Format
 
 ```
-<type>: <descrição curta em inglês>
+<type>: <short description in English>
 ```
 
-### Tipos
+### Types
 
-| Tipo | Uso |
+| Type | Usage |
 |---|---|
-| `feat` | Nova funcionalidade |
-| `fix` | Correção de bug |
-| `refactor` | Refatoração sem mudança de comportamento |
-| `style` | Formatação, espaçamento (sem mudança de código) |
-| `chore` | Configuração, dependências |
-| `docs` | Documentação |
-| `test` | Testes |
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `refactor` | Refactoring without behavior change |
+| `style` | Formatting, spacing (no code change) |
+| `chore` | Configuration, dependencies |
+| `docs` | Documentation |
+| `test` | Tests |
 | `perf` | Performance |
 
-### Exemplos
+### Examples
 
 ```bash
-# CORRETO
+# CORRECT
 git commit -m "feat: add receipt button to upcoming service card"
 git commit -m "fix: disable receipt when no scheduled service"
 git commit -m "refactor: use DsServiceDetailPopup in edit drawer"
 
-# ERRADO
+# WRONG
 git commit -m "feat: add receipt button to upcoming service card
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
-# ERRADO: mensagem genérica
+# WRONG: generic message
 git commit -m "update files"
 git commit -m "fix stuff"
 ```
@@ -444,83 +481,345 @@ git commit -m "fix stuff"
 ### Staging
 
 ```bash
-# CORRETO: staged por arquivo específico
+# CORRECT: stage specific files
 git add src/design-system/composite/ds-upcoming-service-card.tsx
 git commit -m "feat: add receiptDisabled prop to upcoming service card"
 
 git add src/app/dashboard/servicos/_components/services-side-panel.tsx
 git commit -m "feat: wire receiptDisabled to services side panel"
 
-# ERRADO: nunca usar
+# WRONG: never use
 git add -A
 git add .
 ```
 
 ---
 
-## 8. Verificação
+## 8. Verification
 
-SEMPRE rodar antes de considerar trabalho finalizado:
+ALWAYS run before considering work done:
 
 ```bash
-pnpm typecheck    # Verifica tipos TypeScript
-pnpm lint         # Verifica ESLint + Prettier
+pnpm typecheck    # TypeScript type checking
+pnpm lint         # ESLint + Prettier
 ```
 
-Se ambos passarem sem erros, o trabalho está pronto.
+If both pass without errors, the work is ready.
 
 ---
 
-## 9. Idioma
+## 9. Language
 
-| Contexto | Idioma |
+| Context | Language |
 |---|---|
-| Strings visíveis ao usuário | Português (pt-BR) |
-| Nomes de variáveis, funções, tipos | Inglês |
-| Commits | Inglês |
-| Comentários no código | Inglês |
-| Documentação técnica | Inglês |
-| Labels de botões, títulos, mensagens | Português |
+| User-facing strings | Portuguese (pt-BR) |
+| Variable, function, type names | English |
+| Commits | English |
+| Code comments | English |
+| Technical documentation | English |
+| Button labels, titles, messages | Portuguese |
 
-### Exemplos
+### Examples
 
 ```tsx
-// CORRETO
+// CORRECT
 <DsButton>Salvar alterações</DsButton>
 <p>Cancelamento com 1h de antecedência</p>
 const appointmentsCount = summary?.appointmentsCount ?? 0;
 
-// ERRADO
-<DsButton>Save changes</DsButton>  // UI deve ser pt-BR
-const contadorAgendamentos = 0;     // variáveis devem ser em inglês
+// WRONG
+<DsButton>Save changes</DsButton>  // UI must be pt-BR
+const contadorAgendamentos = 0;     // variables must be in English
 ```
 
 ---
 
-## 10. Composição de Telas — Workflow Completo
+## 10. Screen Composition — Full Workflow
 
-Ao receber um design (Figma) para implementar:
+When receiving a design (Figma) to implement:
 
-1. **Analisar o design** — identificar cada seção/bloco visual
-2. **Mapear para componentes DS** — para cada bloco, encontrar o componente DS correspondente
-3. **Verificar props** — ler o componente DS e confirmar que as props atendem ao design
-4. **Estender se necessário** — adicionar props opcionais se o componente quase atende
-5. **Compor a página** — montar usando apenas componentes DS + wrappers de layout
-6. **Verificar** — `pnpm typecheck && pnpm lint`
+1. **Analyze the design** — identify each section/visual block
+2. **Map to DS components** — for each block, find the corresponding DS component
+3. **Check props** — read the DS component and confirm props match the design
+4. **Extend if needed** — add optional props if the component almost fits
+5. **Compose the page** — build using only DS components + layout wrappers
+6. **Verify** — `pnpm typecheck && pnpm lint`
 
-### Exemplo prático: Drawer de edição de serviço
+### Practical example: Service edit drawer
 
-**Design mostra:** close button, ícone + nome + recibo, data, recorrência (radio), pagamento, localização (colapsável), ações, salvar
+**Design shows:** close button, icon + name + receipt, date, recurrence (radio), payment, location (collapsible), actions, save
 
-**Mapeamento:**
+**Mapping:**
 
-| Seção do design | Componente DS |
+| Design section | DS Component |
 |---|---|
 | Drawer container | `Sheet` + `SheetContent` |
-| Ícone + nome + recibo + data | `DsServiceDetailPopup` |
-| Radio options (Avulso/Pacote/Recorrência) | `DsRadioOptionCard` |
-| Info de pagamento | `DsPaymentInfoCard` |
-| Localização colapsável | `DsCollapsibleSection` + `DsFormField` + `DsInput` |
-| Botão salvar | `DsButton` |
+| Icon + name + receipt + date | `DsServiceDetailPopup` |
+| Radio options (Single/Package/Recurrence) | `DsRadioOptionCard` |
+| Payment info | `DsPaymentInfoCard` |
+| Collapsible location | `DsCollapsibleSection` + `DsFormField` + `DsInput` |
+| Save button | `DsButton` |
 
-**Resultado:** zero HTML inline para seções que já existem no DS.
+**Result:** zero inline HTML for sections that already exist in the DS.
+
+---
+
+## 11. Backend Connection (MANDATORY)
+
+**ALWAYS connect to the backend when creating app components.** No UI component should exist without its corresponding backend integration.
+
+### Rule
+
+Every interactive component that creates, reads, updates, or deletes data MUST be connected to the backend through the proper architecture layers:
+
+1. **API Layer** (`src/api/`) — Create typed request/response interfaces and API functions using `httpAuth*` helpers
+2. **Store** (`src/stores/`) — Add async actions that call the API functions, handle loading/error states
+3. **Component** (`src/app/**/`) — Wire the store actions to UI events (buttons, forms, etc.)
+
+### WRONG Example
+
+```tsx
+// WRONG: drawer with save button that does nothing / only calls a local callback
+<DsButton onClick={() => { onSave?.(entry); onClose(); }}>
+  Salvar alterações
+</DsButton>
+```
+
+### CORRECT Example
+
+```tsx
+// CORRECT: drawer calls store action → store calls API → API calls backend
+<DsButton onClick={() => saveServiceEdit(entry.id)}>
+  Salvar alterações
+</DsButton>
+
+// In store:
+saveServiceEdit: async (id) => {
+  const token = useAuthStore.getState().accessToken;
+  await rescheduleAppointment(token, id, { date, startTime });
+  await loadSummary(); // refresh data
+}
+
+// In API layer:
+async function rescheduleAppointment(token, id, data) {
+  return httpAuthPost(`/appointments/${id}/reschedule`, data, token);
+}
+```
+
+### Checklist
+
+- [ ] API function exists in `src/api/`
+- [ ] Store action exists in `src/stores/`
+- [ ] Component wires store action to UI event
+- [ ] Loading and error states handled
+- [ ] Data refreshed after mutation
+
+---
+
+## 12. Clean Architecture — Frontend Layers
+
+The frontend follows Clean Architecture principles (Uncle Bob) adapted to the React/Next.js context. Dependencies always point inward — outer layers know about inner layers, never the reverse.
+
+### Layer diagram
+
+```
+┌─────────────────────────────────────────────────┐
+│  Pages / _components/   (Interface Adapters)    │ ← src/app/**/page.tsx, _components/
+│  Screen composition using DS + stores           │
+├─────────────────────────────────────────────────┤
+│  Stores                 (Application Layer)     │ ← src/stores/
+│  Orchestrate logic, call API, manage state      │
+├─────────────────────────────────────────────────┤
+│  API Layer              (Infrastructure)        │ ← src/api/
+│  HTTP client, endpoints, serialization          │
+├─────────────────────────────────────────────────┤
+│  Design System          (Presentation)          │ ← src/design-system/
+│  Pure components, no business logic             │
+│  Interactive state managed via Zustand stores   │
+├─────────────────────────────────────────────────┤
+│  Shared / Domain        (Domain)                │ ← src/lib/, types, interfaces
+│  Types, utilities, contracts                    │
+└─────────────────────────────────────────────────┘
+```
+
+### Dependency Rule
+
+| Layer | Can import from | CANNOT import from |
+|---|---|---|
+| Pages / _components | stores, design-system, lib | — |
+| Stores | api, lib | pages, design-system |
+| API Layer | lib | pages, stores, design-system |
+| Design System | stores, lib (`cn()`) | pages, api |
+| Shared / Domain | nothing (innermost layer) | everything above |
+
+### WRONG Example
+
+```tsx
+// WRONG: page calling fetch directly (skips store and api layer)
+function DashboardPage() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch("/api/dashboard").then(r => r.json()).then(setData);
+  }, []);
+}
+```
+
+### CORRECT Example
+
+```tsx
+// CORRECT: page uses store → store uses api layer
+// src/app/dashboard/page.tsx
+function DashboardPage() {
+  const { summary, isLoading, fetchSummary } = useDashboardStore();
+  useEffect(() => { fetchSummary(); }, [fetchSummary]);
+}
+
+// src/stores/dashboard-store.ts
+const useDashboardStore = create((set) => ({
+  fetchSummary: async () => {
+    const summary = await getDashboardSummary(token);
+    set({ summary });
+  },
+}));
+
+// src/api/dashboard-api.ts
+async function getDashboardSummary(token: string) {
+  return httpAuthGet("/dashboard/summary", token);
+}
+```
+
+---
+
+## 13. SOLID — Principles in the Frontend
+
+### S — Single Responsibility Principle (SRP)
+
+Each unit has ONE responsibility:
+
+| Unit | Responsibility |
+|---|---|
+| DS Component | Render pure UI, no business logic |
+| Page (`page.tsx`) | Compose components and connect to store |
+| `_components/*` | Isolated page section |
+| Store (Zustand) | Orchestrate state and logic for ONE domain |
+| API function | ONE HTTP call for ONE endpoint |
+| Utility (`lib/`) | ONE transformation or calculation |
+
+```tsx
+// WRONG: store does everything (auth + dashboard + services)
+const useAppStore = create((set) => ({
+  user: null, services: [], payments: [],
+  login: async () => { /* ... */ },
+  fetchServices: async () => { /* ... */ },
+  fetchPayments: async () => { /* ... */ },
+}));
+
+// CORRECT: stores separated by domain
+// src/stores/auth-store.ts     → authentication
+// src/stores/dashboard-store.ts → dashboard data
+// src/stores/login-store.ts    → login flow
+```
+
+### O — Open/Closed Principle (OCP)
+
+DS components are **open for extension** (new optional props) and **closed for modification** (don't change existing behavior).
+
+```tsx
+// CORRECT: extend DsButton with new variant without breaking existing ones
+// Before: variant = "primary" | "secondary" | "ghost"
+// After:  variant = "primary" | "secondary" | "ghost" | "danger"
+// Existing props keep working the same
+
+// WRONG: create <DsButtonV2> or <CustomButton> in parallel
+// WRONG: change variant="primary" behavior to accommodate new use case
+```
+
+### L — Liskov Substitution Principle (LSP)
+
+DS components that share an interface must be interchangeable in the expected context.
+
+```tsx
+// All card components accept className and children
+// and behave consistently:
+<DsCard className="p-4">{content}</DsCard>
+<DsStatCard title="Total" value="42" />
+<DsHighlightCard title="Receita" value="R$ 1.200" />
+
+// If a component accepts a prop, it must have the same semantic effect
+// as in other components of the same type.
+// Ex: className always merges via cn(), never replaces base classes.
+```
+
+### I — Interface Segregation Principle (ISP)
+
+Stores and prop interfaces must be focused — consumers use only what they need.
+
+```tsx
+// CORRECT: segregated stores, each with minimal interface
+const { accessToken } = useAuthStore();           // only needs the token
+const { summary, isLoading } = useDashboardStore(); // only needs the summary
+
+// WRONG: god-store that forces everyone to know everything
+const { user, services, payments, notifications, settings } = useAppStore();
+
+// CORRECT: DS component props with minimal interface
+interface DsEmptyStateProps {
+  icon: React.ElementType;
+  title: string;
+  description?: string;
+}
+
+// WRONG: component that requires unnecessary props to work
+interface DsEmptyStateProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;  // required even when not used
+  onRetry: () => void;  // required even without retry action
+  theme: "light" | "dark"; // required even with obvious default
+}
+```
+
+### D — Dependency Inversion Principle (DIP)
+
+Upper layers depend on abstractions (interfaces/types), not implementation details.
+
+```tsx
+// CORRECT: page depends on store (abstraction), not on fetch/API directly
+function DashboardPage() {
+  const { summary } = useDashboardStore(); // doesn't know where data comes from
+}
+
+// CORRECT: store depends on api layer function, not on raw fetch
+const useDashboardStore = create((set) => ({
+  fetchSummary: async () => {
+    const data = await getDashboardSummary(token); // abstraction
+    set({ summary: data });
+  },
+}));
+
+// CORRECT: api layer encapsulates HTTP details
+async function getDashboardSummary(token: string) {
+  return httpAuthGet<DashboardSummary>("/dashboard/summary", token);
+}
+
+// WRONG: store knows HTTP implementation details
+const useDashboardStore = create((set) => ({
+  fetchSummary: async () => {
+    const res = await fetch("http://localhost:3001/dashboard/summary", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    set({ summary: data });
+  },
+}));
+```
+
+### Practical summary
+
+| Principle | Frontend rule |
+|---|---|
+| **SRP** | 1 component/file, 1 store/domain, 1 function/endpoint |
+| **OCP** | Extend DS with optional props, never create parallel version |
+| **LSP** | DS components with same interface behave consistently |
+| **ISP** | Stores focused per domain, minimal and optional props when possible |
+| **DIP** | Page → Store → API → HTTP Client (each layer abstracts the next) |
