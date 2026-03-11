@@ -502,12 +502,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsEmptyState">
-          <DsEmptyState
-            icon={BroomIcon}
-            title="No cleaning scheduled"
-            description="Book your first cleaning service to get started."
-            action={<DsButton size="sm">Book Now</DsButton>}
-          />
+          <DsEmptyState message="Nenhum serviço registrado ainda." />
         </ComponentRow>
 
         <ComponentRow label="DsInfoChip — Icon + Label + Value">
