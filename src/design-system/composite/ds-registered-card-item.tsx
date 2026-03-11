@@ -26,21 +26,14 @@ function DsRegisteredCardItem({
       )}
     >
       <div className="flex items-center gap-4">
-        <div className="flex size-[50px] shrink-0 items-center justify-center rounded-[10px] bg-white">
-          <DsImage
-            src={brandSrc}
-            alt="Card brand"
-            width={22}
-            height={15}
-          />
+        <div className="flex size-12.5 shrink-0 items-center justify-center rounded-[10px] bg-white">
+          <DsImage src={brandSrc} alt="Card brand" width={50} height={50} />
         </div>
-        <div className="flex w-[143px] flex-col gap-1 leading-[1.3]">
+        <div className="flex w-35.75 flex-col gap-1 leading-[1.3]">
           <p className="text-base font-medium tracking-[-0.64px] text-black">
             Terminado em {lastDigits}
           </p>
-          <p className="text-xs tracking-[-0.48px] text-nova-gray-700">
-            Vencimento: {expiry}
-          </p>
+          <p className="text-xs tracking-[-0.48px] text-nova-gray-700">Vencimento: {expiry}</p>
         </div>
       </div>
       {onAction && (
