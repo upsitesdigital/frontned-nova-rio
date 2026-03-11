@@ -43,24 +43,18 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - name: Deploy via SSH
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+      - name: Preparar chave SSH
         run: |
-          mkdir -p ~/.ssh
-          python3 -c "
-import os, pathlib
-key = os.environ['VPS_SSH_KEY']
-if not key.endswith('\n'):
-    key += '\n'
-pathlib.Path(os.path.expanduser('~/.ssh/deploy_key')).write_text(key)
-"
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          echo "${{ secrets.VPS_SSH_KEY }}" | base64 -d > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
 
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" '
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key_path: /tmp/deploy_key
+          script: |
             set -e
 
             if [ ! -d "/root/frontend-nova-rio" ]; then
@@ -77,4 +71,3 @@ pathlib.Path(os.path.expanduser('~/.ssh/deploy_key')).write_text(key)
             docker compose -p nova-rio-frontend --env-file .env.production -f docker-compose.production.yml up --build -d
 
             echo "✅ Deploy concluído!"
-          '
