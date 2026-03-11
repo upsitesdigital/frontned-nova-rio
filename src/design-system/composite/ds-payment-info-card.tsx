@@ -14,7 +14,7 @@ interface DsPaymentInfoCardProps {
 
 const statusColors: Record<DsPaymentInfoCardStatus, string> = {
   approved: "text-primary",
-  pending: "text-[#e39725]",
+  pending: "text-nova-warning",
 };
 
 function DsPaymentInfoCard({
@@ -28,7 +28,7 @@ function DsPaymentInfoCard({
   return (
     <div
       className={cn(
-        "flex items-center justify-between overflow-clip rounded-[10px] border border-nova-gray-100 p-4",
+        "flex items-center justify-between overflow-clip rounded-2.5 border border-nova-gray-100 p-4",
         className,
       )}
     >

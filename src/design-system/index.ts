@@ -72,6 +72,7 @@ export { DsMetricCard, type DsMetricCardProps } from "./data-display";
 export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./data-display";
 export { DsPagination, type DsPaginationProps } from "./data-display";
+export { DsTableCell, type DsTableCellProps, type DsTableCellVariant } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";

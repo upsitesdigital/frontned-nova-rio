@@ -44,7 +44,7 @@ function DsPagination({
             type="button"
             onClick={() => onPageChange(page)}
             className={cn(
-              "flex size-9 cursor-pointer items-center justify-center rounded-[6px] text-base leading-[1.3] tracking-[-0.64px] text-[#4d4d4f]",
+              "flex size-9 cursor-pointer items-center justify-center rounded-1.5 text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-600",
               page === currentPage
                 ? "border border-nova-primary bg-white"
                 : "bg-white hover:bg-nova-gray-50",
