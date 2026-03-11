@@ -55,6 +55,10 @@ export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./ds-colla
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./ds-admin-sidebar";
 export { DsClientSidebar, type DsClientSidebarProps } from "./ds-client-sidebar";
 export {
+  DsClientDashboardShell,
+  type DsClientDashboardShellProps,
+} from "./ds-client-dashboard-shell";
+export {
   DsProfileCard,
   type DsProfileCardProps,
   type DsProfileCardAction,

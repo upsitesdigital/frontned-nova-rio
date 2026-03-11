@@ -71,6 +71,7 @@ export { DsInfoChip, type DsInfoChipProps } from "./data-display";
 export { DsMetricCard, type DsMetricCardProps } from "./data-display";
 export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./data-display";
+export { DsPagination, type DsPaginationProps } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";
@@ -143,6 +144,7 @@ export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composit
 export { DsUserActions, type DsUserActionsProps } from "./composite";
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
 export { DsClientSidebar, type DsClientSidebarProps } from "./composite";
+export { DsClientDashboardShell, type DsClientDashboardShellProps } from "./composite";
 export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction } from "./composite";
 export {
   DsServiceInfoCard,

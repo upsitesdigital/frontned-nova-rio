@@ -14,3 +14,4 @@ export { DsInfoChip, type DsInfoChipProps } from "./ds-info-chip";
 export { DsMetricCard, type DsMetricCardProps } from "./ds-metric-card";
 export { DsAgendaCard, type DsAgendaCardProps } from "./ds-agenda-card";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./ds-line-chart";
+export { DsPagination, type DsPaginationProps } from "./ds-pagination";
