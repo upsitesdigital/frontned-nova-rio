@@ -5,13 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-  DsButton,
-  DsFormField,
-  DsInput,
-  DsLogo,
-  DsPasswordInput,
-} from "@/design-system";
+import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { formatPhone } from "@/lib/formatters";
 import { useCreateAccountStore } from "@/stores/create-account-store";
@@ -63,9 +57,9 @@ export default function CriarContaPage() {
   return (
     <div className="flex min-h-screen">
       <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-[61px]" />
+        <DsLogo className="mt-15.25" />
 
-        <div className="mt-12 flex w-full max-w-[589px] flex-col items-center gap-12">
+        <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
           <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
             Crie sua conta
           </h1>
@@ -129,7 +123,7 @@ export default function CriarContaPage() {
               size="flow"
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="w-[257px]"
+              className="w-64.25"
             >
               {isSubmitting ? "Criando conta..." : "Criar conta"}
             </DsButton>
@@ -143,8 +137,8 @@ export default function CriarContaPage() {
           </div>
         </div>
 
-        <p className="mt-auto pb-[104px] text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
-          ©2025 Nova Rio Pay Per Use
+        <p className="mt-auto pb-26 text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+          ©{new Date().getFullYear()} Nova Rio Pay Per Use
         </p>
       </div>
 
