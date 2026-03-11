@@ -42,4 +42,89 @@ async function httpPost<T>(path: string, body: unknown): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export { httpGet, httpPost, HttpClientError };
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+async function tryRefreshToken(): Promise<string | null> {
+  const { useAuthStore } = await import("@/stores/auth-store");
+  const { refreshToken } = useAuthStore.getState();
+
+  if (!refreshToken) {
+    useAuthStore.getState().reset();
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${appConfig.apiBaseUrl}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      useAuthStore.getState().reset();
+      return null;
+    }
+
+    const tokens = (await response.json()) as { accessToken: string; refreshToken: string };
+    useAuthStore.getState().setTokens(tokens.accessToken, tokens.refreshToken);
+    return tokens.accessToken;
+  } catch {
+    useAuthStore.getState().reset();
+    return null;
+  }
+}
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = tryRefreshToken().finally(() => {
+    isRefreshing = false;
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+}
+
+async function httpAuthGet<T>(path: string, token: string): Promise<T> {
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    if (!newToken) {
+      throw new HttpClientError(401, `GET ${path} failed: Unauthorized`);
+    }
+
+    const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+
+    if (!retryResponse.ok) {
+      throw new HttpClientError(retryResponse.status, `GET ${path} failed: ${retryResponse.statusText}`);
+    }
+
+    return retryResponse.json() as Promise<T>;
+  }
+
+  if (!response.ok) {
+    throw new HttpClientError(response.status, `GET ${path} failed: ${response.statusText}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export { httpGet, httpPost, httpAuthGet, HttpClientError };
