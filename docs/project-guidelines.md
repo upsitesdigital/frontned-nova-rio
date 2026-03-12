@@ -657,41 +657,225 @@ async function rescheduleAppointment(token, id, data) {
 
 ## 12. Clean Architecture — Frontend Layers
 
-The frontend follows Clean Architecture principles (Uncle Bob) adapted to the React/Next.js context. Dependencies always point inward — outer layers know about inner layers, never the reverse.
+The frontend follows **Clean Architecture** principles (Robert C. Martin / Uncle Bob) adapted to the React/Next.js context. The core idea: organize code into concentric layers where **dependencies always point inward** — outer layers know about inner layers, never the reverse.
+
+### Foundational principles
+
+1. **Separation of Concerns** — Each layer handles ONE distinct responsibility, making the codebase easier to understand, modify, and maintain.
+2. **Dependency Rule** — Inner layers NEVER depend on outer layers. This keeps core logic framework-agnostic, modular, and easy to refactor.
+3. **Testability** — Business rules can be tested in isolation, without UI, database, or external services.
+4. **Framework Independence** — Core logic uses plain TypeScript. Next.js, React, and Zustand are implementation details confined to their respective layers.
 
 ### Layer diagram
 
 ```
-┌─────────────────────────────────────────────────┐
-│  Pages / _components/   (Interface Adapters)    │ ← src/app/**/page.tsx, _components/
-│  Screen composition using DS + stores           │
-├─────────────────────────────────────────────────┤
-│  Stores                 (Application Layer)     │ ← src/stores/
-│  Orchestrate logic, call API, manage state      │
-├─────────────────────────────────────────────────┤
-│  API Layer              (Infrastructure)        │ ← src/api/
-│  HTTP client, endpoints, serialization          │
-├─────────────────────────────────────────────────┤
-│  Design System          (Presentation)          │ ← src/design-system/
-│  Pure components, no business logic             │
-│  Interactive state managed via Zustand stores   │
-├─────────────────────────────────────────────────┤
-│  Shared / Domain        (Domain)                │ ← src/lib/, types, interfaces
-│  Types, utilities, contracts                    │
-└─────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  Frameworks & Drivers           (Outermost Layer)                │
+│  Next.js pages, server actions, React components, styles         │
+│  ← src/app/**/page.tsx, _components/                             │
+│  ONLY consumes: stores, design-system, lib                       │
+├──────────────────────────────────────────────────────────────────┤
+│  Interface Adapters             (Controllers / Presenters)       │
+│  Stores orchestrate use cases, format data for UI                │
+│  ← src/stores/                                                   │
+│  ONLY consumes: api, lib                                         │
+├──────────────────────────────────────────────────────────────────┤
+│  Application Layer              (Use Cases)                      │
+│  Business logic: what the system CAN DO                          │
+│  API functions = one use case per endpoint                        │
+│  ← src/api/                                                      │
+│  ONLY consumes: lib                                              │
+├──────────────────────────────────────────────────────────────────┤
+│  Design System                  (Presentation)                   │
+│  Pure UI components, no business logic                           │
+│  Interactive state managed via Zustand stores                    │
+│  ← src/design-system/                                            │
+│  ONLY consumes: stores, lib (cn())                               │
+├──────────────────────────────────────────────────────────────────┤
+│  Domain / Entities              (Innermost Layer)                │
+│  Types, interfaces, models, utilities, contracts                 │
+│  Enterprise Business Rules — rarely change                       │
+│  ← src/lib/, src/types/, src/interfaces/                         │
+│  IMPORTS NOTHING from outer layers                               │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-### Dependency Rule
+### Layer responsibilities in detail
 
-| Layer | Can import from | CANNOT import from |
-|---|---|---|
-| Pages / _components | stores, design-system, lib | — |
-| Stores | api, lib | pages, design-system |
-| API Layer | lib | pages, stores, design-system |
-| Design System | stores, lib (`cn()`) | pages, api |
-| Shared / Domain | nothing (innermost layer) | everything above |
+#### Domain / Entities (`src/lib/`, `src/types/`)
 
-### WRONG Example
+The **innermost layer**. Defines core business models, type contracts, validation rules, and utility functions using plain TypeScript. These represent "Enterprise Business Rules" — rules that rarely change when external factors (UI framework, database, API provider) shift.
+
+```tsx
+// src/types/appointment.ts — Domain entity (plain TypeScript, no framework imports)
+interface Appointment {
+  id: string;
+  clientId: string;
+  serviceId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: "scheduled" | "completed" | "cancelled";
+}
+
+// src/lib/appointment-rules.ts — Enterprise business rule
+function canCancelAppointment(appointment: Appointment): boolean {
+  const appointmentDate = new Date(`${appointment.date}T${appointment.startTime}`);
+  const now = new Date();
+  const hoursUntil = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+  return hoursUntil >= 1 && appointment.status === "scheduled";
+}
+```
+
+**Rules:**
+- NEVER import from pages, stores, api, or design-system
+- NEVER use React, Next.js, or Zustand here
+- Only plain TypeScript: types, interfaces, pure functions
+
+#### Application Layer / Use Cases (`src/api/`)
+
+Defines what the system **can do**. Each API function represents ONE use case (one HTTP call for one endpoint). Accepts typed input, returns typed output, and encapsulates all HTTP implementation details.
+
+```tsx
+// src/api/appointments-api.ts — One use case per function
+async function getAppointments(token: string): Promise<Appointment[]> {
+  return httpAuthGet<Appointment[]>("/appointments", token);
+}
+
+async function cancelAppointment(token: string, id: string): Promise<void> {
+  return httpAuthPost(`/appointments/${id}/cancel`, {}, token);
+}
+
+async function rescheduleAppointment(
+  token: string,
+  id: string,
+  data: { date: string; startTime: string }
+): Promise<Appointment> {
+  return httpAuthPost<Appointment>(`/appointments/${id}/reschedule`, data, token);
+}
+```
+
+**Rules:**
+- ONE function per endpoint (Single Responsibility)
+- Use cases MUST NOT call other use cases directly
+- ONLY imports from `lib/` (types, http helpers)
+- NEVER imports from pages, stores, or design-system
+- Encapsulates ALL HTTP details (headers, base URL, serialization)
+
+#### Interface Adapters / Controllers (`src/stores/`)
+
+Zustand stores act as **controllers** in Clean Architecture. They orchestrate use cases (API calls), manage application state, handle loading/error states, and format data for UI consumption (presenter role).
+
+```tsx
+// src/stores/appointments-store.ts — Controller + Presenter
+import { create } from "zustand";
+import { getAppointments, cancelAppointment } from "@/api/appointments-api";
+import { canCancelAppointment } from "@/lib/appointment-rules";
+import { useAuthStore } from "@/stores/auth-store";
+
+interface AppointmentsState {
+  appointments: Appointment[];
+  isLoading: boolean;
+  error: string | null;
+  fetchAppointments: () => Promise<void>;
+  cancel: (id: string) => Promise<void>;
+}
+
+const useAppointmentsStore = create<AppointmentsState>((set, get) => ({
+  appointments: [],
+  isLoading: false,
+  error: null,
+
+  fetchAppointments: async () => {
+    const token = useAuthStore.getState().accessToken;
+    set({ isLoading: true, error: null });
+    try {
+      const appointments = await getAppointments(token);
+      set({ appointments });
+    } catch {
+      set({ error: "Erro ao carregar agendamentos" });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  cancel: async (id: string) => {
+    const token = useAuthStore.getState().accessToken;
+    const appointment = get().appointments.find((a) => a.id === id);
+    if (!appointment || !canCancelAppointment(appointment)) return;
+    await cancelAppointment(token, id);
+    await get().fetchAppointments(); // refresh data
+  },
+}));
+```
+
+**Rules:**
+- ONE store per domain (appointments, auth, dashboard, etc.)
+- Stores call API functions (use cases), NEVER raw `fetch`
+- Stores use domain rules from `lib/`, NEVER implement business logic inline
+- Stores handle loading, error, and success states
+- NEVER imports from pages or design-system
+
+#### Frameworks & Drivers (`src/app/**/`, `src/design-system/`)
+
+The **outermost layer**. Next.js pages, `_components/`, and DS components. Pages compose UI using design-system components and connect to stores. They NEVER contain business logic or HTTP calls.
+
+```tsx
+// src/app/dashboard/agendamentos/page.tsx — Thin UI layer
+"use client";
+
+import { useEffect } from "react";
+import { useAppointmentsStore } from "@/stores/appointments-store";
+import { DsPageContainer, DsEmptyState, DsSkeleton } from "@/design-system";
+
+function AppointmentsPage() {
+  const { appointments, isLoading, fetchAppointments } = useAppointmentsStore();
+
+  useEffect(() => { fetchAppointments(); }, [fetchAppointments]);
+
+  if (isLoading) return <DsSkeleton className="h-40" />;
+  if (!appointments.length) return <DsEmptyState icon={CalendarIcon} title="Sem agendamentos" />;
+
+  return (
+    <DsPageContainer title="Agendamentos">
+      {appointments.map((a) => (
+        <AppointmentCard key={a.id} appointment={a} />
+      ))}
+    </DsPageContainer>
+  );
+}
+```
+
+**Rules:**
+- Pages are THIN — compose DS components and connect to stores
+- NEVER call `fetch`, axios, or HTTP directly
+- NEVER implement business logic (validation, calculations, formatting)
+- Design System components are PURE — no business logic, no API calls
+
+### Dependency Rule (strict)
+
+| Layer | Path | Can import from | CANNOT import from |
+|---|---|---|---|
+| Frameworks & Drivers | `src/app/**/` | stores, design-system, lib | api (directly) |
+| Interface Adapters | `src/stores/` | api, lib | pages, design-system |
+| Application (Use Cases) | `src/api/` | lib | pages, stores, design-system |
+| Presentation | `src/design-system/` | stores, lib (`cn()`) | pages, api |
+| Domain / Entities | `src/lib/`, `src/types/` | nothing (innermost) | everything above |
+
+### Data flow
+
+```
+User clicks button
+  → Page calls store action           (Frameworks → Interface Adapters)
+    → Store calls API function         (Interface Adapters → Application)
+      → API function calls httpAuth*   (Application → Infrastructure detail)
+        → HTTP response returns
+      → API returns typed data
+    → Store updates state
+  → Page re-renders with new data      (React reactivity)
+```
+
+### WRONG Examples
 
 ```tsx
 // WRONG: page calling fetch directly (skips store and api layer)
@@ -701,9 +885,34 @@ function DashboardPage() {
     fetch("/api/dashboard").then(r => r.json()).then(setData);
   }, []);
 }
+
+// WRONG: store knows HTTP implementation details (skips api layer)
+const useDashboardStore = create((set) => ({
+  fetchSummary: async () => {
+    const res = await fetch("http://localhost:3001/dashboard/summary", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    set({ summary: data });
+  },
+}));
+
+// WRONG: business logic inside a React component
+function AppointmentCard({ appointment }: { appointment: Appointment }) {
+  const hoursUntil = (new Date(appointment.date).getTime() - Date.now()) / 3600000;
+  const canCancel = hoursUntil >= 1 && appointment.status === "scheduled";
+  // ...
+}
+
+// WRONG: API function importing from store
+import { useAuthStore } from "@/stores/auth-store"; // FORBIDDEN in api layer
+async function getAppointments() {
+  const token = useAuthStore.getState().accessToken;
+  return httpAuthGet("/appointments", token);
+}
 ```
 
-### CORRECT Example
+### CORRECT Examples
 
 ```tsx
 // CORRECT: page uses store → store uses api layer
@@ -713,19 +922,48 @@ function DashboardPage() {
   useEffect(() => { fetchSummary(); }, [fetchSummary]);
 }
 
-// src/stores/dashboard-store.ts
+// src/stores/dashboard-store.ts — store orchestrates, calls api
 const useDashboardStore = create((set) => ({
   fetchSummary: async () => {
+    const token = useAuthStore.getState().accessToken;
     const summary = await getDashboardSummary(token);
     set({ summary });
   },
 }));
 
-// src/api/dashboard-api.ts
+// src/api/dashboard-api.ts — api encapsulates HTTP details
 async function getDashboardSummary(token: string) {
-  return httpAuthGet("/dashboard/summary", token);
+  return httpAuthGet<DashboardSummary>("/dashboard/summary", token);
 }
+
+// CORRECT: business logic in domain layer, consumed by store
+// src/lib/appointment-rules.ts
+function canCancelAppointment(appointment: Appointment): boolean { /* ... */ }
+
+// src/stores/appointments-store.ts
+import { canCancelAppointment } from "@/lib/appointment-rules";
+// store uses the domain rule, doesn't reimplement it
 ```
+
+### Why this matters
+
+| Benefit | How Clean Architecture achieves it |
+|---|---|
+| **UI Independence** | Business logic works regardless of React, Next.js, or any UI framework |
+| **Testability** | Domain rules and use cases can be unit tested without rendering components |
+| **Maintainability** | Changing the HTTP client or API provider only touches `src/api/` |
+| **Team scalability** | Developers can work on different layers in parallel without conflicts |
+| **Refactoring safety** | Replacing Zustand with another state manager only touches `src/stores/` |
+
+### Checklist for every feature
+
+- [ ] Domain types defined in `src/types/` or `src/lib/`
+- [ ] Business rules as pure functions in `src/lib/`
+- [ ] API function (one per endpoint) in `src/api/`
+- [ ] Store action orchestrates API + state in `src/stores/`
+- [ ] Page/component is thin — only composes DS + connects to store
+- [ ] No layer imports from a layer above it
+- [ ] Loading and error states handled in the store
 
 ---
 
