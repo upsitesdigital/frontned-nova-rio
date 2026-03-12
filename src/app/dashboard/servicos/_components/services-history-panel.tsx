@@ -21,6 +21,7 @@ interface ServiceHistoryEntryPayment {
 interface ServiceHistoryEntry {
   id: number;
   date: string;
+  startTime: string;
   label: string;
   icon: string | null;
   canEdit: boolean;

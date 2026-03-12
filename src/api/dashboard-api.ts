@@ -9,6 +9,7 @@ interface ServiceHistoryEntryPayment {
 interface ServiceHistoryEntry {
   id: number;
   date: string;
+  startTime: string;
   label: string;
   icon: string | null;
   status: string;
@@ -30,6 +31,7 @@ interface ClientDashboardSummary {
   nextAppointment: {
     id: number;
     date: string;
+    dateTime: string;
     cancellationNote: string;
   } | null;
   appointmentsCount: number;
