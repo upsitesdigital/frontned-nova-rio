@@ -5,6 +5,7 @@ import { DsIcon } from "@/design-system/media";
 interface DsUpcomingServiceCardAction {
   label: string;
   variant: "filled" | "outlined";
+  disabled?: boolean;
   onClick?: () => void;
 }
 
@@ -81,12 +82,19 @@ function DsUpcomingServiceCard({
             <button
               key={action.label}
               type="button"
+              disabled={action.disabled}
               onClick={action.onClick}
               className={cn(
-                "flex h-14 cursor-pointer items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors",
-                action.variant === "filled"
-                  ? "bg-nova-gray-100 hover:bg-nova-gray-200"
-                  : "border border-nova-gray-300 hover:bg-nova-gray-50",
+                "flex h-14 items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] transition-colors",
+                action.disabled
+                  ? "cursor-not-allowed text-nova-gray-400"
+                  : "cursor-pointer text-nova-gray-700",
+                action.variant === "filled" &&
+                  (action.disabled ? "bg-nova-gray-50" : "bg-nova-gray-100 hover:bg-nova-gray-200"),
+                action.variant === "outlined" &&
+                  (action.disabled
+                    ? "border border-nova-gray-200"
+                    : "border border-nova-gray-300 hover:bg-nova-gray-50"),
               )}
             >
               {action.label}
