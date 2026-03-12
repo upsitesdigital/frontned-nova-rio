@@ -38,7 +38,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-[155px]" />
+        <DsLogo className="mt-[155px] " />
 
         <div className="mt-12 flex w-full max-w-[589px] flex-col items-center gap-12">
           <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
