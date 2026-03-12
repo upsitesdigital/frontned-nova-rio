@@ -1,8 +1,11 @@
 import { cn } from "@/lib/utils";
+import { DsInput } from "@/design-system/primitives";
 
 interface DsProfileField {
   label: string;
   value: string;
+  editable?: boolean;
+  onChange?: (value: string) => void;
 }
 
 interface DsProfileSectionProps {
@@ -12,6 +15,7 @@ interface DsProfileSectionProps {
   onEdit?: () => void;
   onChangeImage?: () => void;
   editLabel?: string;
+  editDisabled?: boolean;
   changeImageLabel?: string;
   className?: string;
 }
@@ -23,26 +27,31 @@ function DsProfileSection({
   onEdit,
   onChangeImage,
   editLabel = "Editar",
+  editDisabled = false,
   changeImageLabel = "Alterar imagem",
   className,
 }: DsProfileSectionProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-8 rounded-[20px] border border-nova-gray-100 bg-white p-6",
+        "flex flex-col gap-8 rounded-4xl border border-nova-gray-100 bg-white p-6",
         className,
       )}
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-[20px] font-medium leading-[1.3] text-black">
-          {title}
-        </p>
+        <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
         {onEdit && (
           <button
             type="button"
             onClick={onEdit}
-            className="cursor-pointer text-base font-medium leading-[1.3] text-nova-gray-400 transition-colors hover:text-nova-gray-700"
+            disabled={editDisabled}
+            className={cn(
+              "text-base font-medium leading-[1.3] transition-colors",
+              editDisabled
+                ? "cursor-not-allowed text-nova-gray-300"
+                : "cursor-pointer text-nova-primary hover:text-nova-primary-dark",
+            )}
           >
             {editLabel}
           </button>
@@ -74,18 +83,20 @@ function DsProfileSection({
             <p className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
               {field.label}
             </p>
-            <div className="flex items-center rounded-[6px] border border-nova-gray-200 px-4 py-3">
-              <p
-                className={cn(
-                  "text-base leading-normal",
-                  field.value && field.value !== "-"
-                    ? "text-black"
-                    : "text-nova-gray-400",
-                )}
-              >
-                {field.value || "-"}
-              </p>
-            </div>
+            {field.editable ? (
+              <DsInput value={field.value} onChange={(e) => field.onChange?.(e.target.value)} />
+            ) : (
+              <div className="flex items-center rounded-[6px] border border-nova-gray-200 px-4 py-3">
+                <p
+                  className={cn(
+                    "text-base leading-normal",
+                    field.value && field.value !== "-" ? "text-black" : "text-nova-gray-400",
+                  )}
+                >
+                  {field.value || "-"}
+                </p>
+              </div>
+            )}
           </div>
         ))}
       </div>

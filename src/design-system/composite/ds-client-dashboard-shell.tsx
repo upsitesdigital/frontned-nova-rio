@@ -12,6 +12,8 @@ interface DsClientDashboardShellProps {
   onNavigate?: (path: string) => void;
   onScheduleService?: () => void;
   onSignOut?: () => void;
+  onProfileClick?: () => void;
+  onAccountClick?: () => void;
   children: React.ReactNode;
 }
 
@@ -22,6 +24,8 @@ function DsClientDashboardShell({
   onNavigate,
   onScheduleService,
   onSignOut,
+  onProfileClick,
+  onAccountClick,
   children,
 }: DsClientDashboardShellProps) {
   return (
@@ -38,7 +42,12 @@ function DsClientDashboardShell({
       <div className="flex h-screen flex-col">
         <DsTopbar>
           <div />
-          <DsUserActions initials={userInitials} notificationCount={notificationCount} />
+          <DsUserActions
+            initials={userInitials}
+            notificationCount={notificationCount}
+            onProfileClick={onProfileClick}
+            onAccountClick={onAccountClick}
+          />
         </DsTopbar>
 
         <div className="flex-1 overflow-y-auto bg-nova-gray-50 p-8">{children}</div>
