@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { parse } from "date-fns";
 import { CreditCardIcon, FloppyDiskIcon, MapPinIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsRadioOptionCard,
@@ -8,14 +9,18 @@ import {
   DsPaymentInfoCard,
   DsServiceDetailPopup,
   DsSchedulePopup,
+  DsSelect,
   DsInput,
   DsFormField,
   DsButton,
+  DsCancelConfirmPopup,
+  DsAlert,
 } from "@/design-system";
 import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
 import { getServiceIcon } from "@/lib/icon-map";
 import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
+import { useToastStore } from "@/stores/toast-store";
 import type { ServiceHistoryEntry } from "./services-history-panel";
 
 interface ServiceEditDrawerProps {
@@ -38,6 +43,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
     rescheduleOpen,
     rescheduleDate,
     rescheduleTime,
+    cancelOpen,
     isSaving,
     saveError,
     openReschedule,
@@ -45,15 +51,20 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
     setRescheduleDate,
     setRescheduleTime,
     confirmReschedule,
-    cancelAppointment,
+    openCancel,
+    closeCancel,
+    confirmCancel,
     reset,
   } = useServiceEditStore();
+  const showToast = useToastStore((s) => s.showToast);
 
   useEffect(() => {
     if (entry) {
       initRecurrence((entry.recurrenceType as RecurrenceType) ?? "SINGLE");
     }
-    return () => reset();
+    return () => {
+      reset();
+    };
   }, [entry, initRecurrence, reset]);
 
   if (!entry) return null;
@@ -127,6 +138,23 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                 onClick={() => setRecurrence("MONTHLY")}
               />
             </div>
+            {(recurrence === "WEEKLY" || recurrence === "BIWEEKLY" || recurrence === "MONTHLY") && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                  Selecione o tipo de recorrência
+                </p>
+                <DsSelect
+                  options={[
+                    { value: "MONTHLY", label: "Mensal" },
+                    { value: "BIWEEKLY", label: "Quinzenal" },
+                    { value: "WEEKLY", label: "Semanal" },
+                  ]}
+                  value={recurrence}
+                  onValueChange={(v) => setRecurrence(v as RecurrenceType)}
+                  className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f] shadow-none data-[size=default]:h-auto"
+                />
+              </div>
+            )}
           </div>
 
           {/* Payment + Location */}
@@ -170,7 +198,10 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                 variant="secondary"
                 size="flow-sm"
                 className="bg-nova-gray-100 text-nova-gray-700 hover:bg-nova-gray-200"
-                onClick={openReschedule}
+                disabled={!entry.canEdit || isSaving}
+                onClick={() =>
+                  openReschedule(parse(entry.date, "dd/MM", new Date()), entry.startTime)
+                }
               >
                 Reagendar
               </DsButton>
@@ -178,14 +209,8 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                 variant="outline"
                 size="flow-sm"
                 className="border-nova-gray-300 text-nova-gray-700 shadow-none hover:bg-nova-gray-50"
-                disabled={isSaving}
-                onClick={async () => {
-                  const success = await cancelAppointment(entry.id);
-                  if (success) {
-                    onSaved?.();
-                    onClose();
-                  }
-                }}
+                disabled={!entry.canEdit || isSaving}
+                onClick={openCancel}
               >
                 Cancelar
               </DsButton>
@@ -195,17 +220,21 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
             </p>
           </div>
 
-          {/* Error */}
-          {saveError && <p className="text-sm text-nova-error">{saveError}</p>}
+          {/* Feedback */}
+          {saveError && <DsAlert variant="error" title={saveError} />}
 
           {/* Save */}
           <DsButton
             size="flow"
             className="self-start"
-            disabled={isSaving}
-            onClick={() => {
-              onSaved?.();
-              onClose();
+            disabled={!entry.canEdit || isSaving || (!rescheduleDate && !rescheduleTime)}
+            onClick={async () => {
+              const success = await confirmReschedule(entry.id);
+              if (success) {
+                onClose();
+                showToast("Agendamento atualizado com sucesso!");
+                onSaved?.();
+              }
             }}
           >
             <DsIcon icon={FloppyDiskIcon} size="lg" className="text-white" />
@@ -221,9 +250,18 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
           onTimeChange={setRescheduleTime}
           onCancel={closeReschedule}
           onClose={closeReschedule}
+          onConfirm={closeReschedule}
+        />
+
+        <DsCancelConfirmPopup
+          open={cancelOpen}
+          onCancel={closeCancel}
+          onClose={closeCancel}
           onConfirm={async () => {
-            const success = await confirmReschedule(entry.id);
+            const success = await confirmCancel(entry.id);
             if (success) {
+              onClose();
+              showToast("Agendamento cancelado com sucesso!");
               onSaved?.();
             }
           }}

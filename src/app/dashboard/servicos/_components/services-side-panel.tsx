@@ -6,19 +6,30 @@ import {
   DsRecurrenceCard,
   DsSelect,
   DsSchedulePopup,
+  DsCancelConfirmPopup,
 } from "@/design-system";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useSidePanelRescheduleStore } from "@/stores/side-panel-reschedule-store";
+import { useToastStore } from "@/stores/toast-store";
 
 interface ServicesSidePanelProps {
   nextServiceDate: string;
   nextServiceSubtitle: string;
   nextAppointmentId: number | null;
+  nextAppointmentDateTime: string | null;
   appointmentsCount: number;
   appointmentsLabel: string;
   hasNextService: boolean;
   onChanged?: () => void;
   onReceipt?: () => void;
+}
+
+const CANCELLATION_WINDOW_MS = 60 * 60 * 1000;
+
+function isCancelBlocked(dateTime: string | null): boolean {
+  if (!dateTime) return true;
+  const appointmentTime = new Date(dateTime).getTime();
+  return appointmentTime - Date.now() < CANCELLATION_WINDOW_MS;
 }
 
 const recurrenceOptions = [
@@ -31,6 +42,7 @@ function ServicesSidePanel({
   nextServiceDate,
   nextServiceSubtitle,
   nextAppointmentId,
+  nextAppointmentDateTime,
   appointmentsCount,
   appointmentsLabel,
   hasNextService,
@@ -42,13 +54,17 @@ function ServicesSidePanel({
     rescheduleOpen,
     rescheduleDate,
     rescheduleTime,
+    cancelOpen,
     openReschedule,
     closeReschedule,
     setRescheduleDate,
     setRescheduleTime,
     confirmReschedule,
-    cancelAppointment,
+    openCancel,
+    closeCancel,
+    confirmCancel,
   } = useSidePanelRescheduleStore();
+  const showToast = useToastStore((s) => s.showToast);
 
   return (
     <div className="flex w-125 shrink-0 flex-col gap-4">
@@ -58,15 +74,20 @@ function ServicesSidePanel({
         onReceipt={onReceipt}
         receiptDisabled={!hasNextService}
         actions={[
-          { label: "Reagendar", variant: "filled", onClick: openReschedule },
+          {
+            label: "Reagendar",
+            variant: "filled",
+            onClick: () =>
+              openReschedule(
+                nextAppointmentDateTime ? new Date(nextAppointmentDateTime) : undefined,
+                nextAppointmentDateTime ? nextAppointmentDateTime.slice(11, 16) : undefined,
+              ),
+          },
           {
             label: "Cancelar",
             variant: "outlined",
-            onClick: async () => {
-              if (!nextAppointmentId) return;
-              const success = await cancelAppointment(nextAppointmentId);
-              if (success) onChanged?.();
-            },
+            disabled: isCancelBlocked(nextAppointmentDateTime),
+            onClick: openCancel,
           },
         ]}
       />
@@ -110,7 +131,24 @@ function ServicesSidePanel({
         onConfirm={async () => {
           if (!nextAppointmentId) return;
           const success = await confirmReschedule(nextAppointmentId);
-          if (success) onChanged?.();
+          if (success) {
+            showToast("Agendamento atualizado com sucesso!");
+            onChanged?.();
+          }
+        }}
+      />
+
+      <DsCancelConfirmPopup
+        open={cancelOpen}
+        onCancel={closeCancel}
+        onClose={closeCancel}
+        onConfirm={async () => {
+          if (!nextAppointmentId) return;
+          const success = await confirmCancel(nextAppointmentId);
+          if (success) {
+            showToast("Agendamento cancelado com sucesso!");
+            onChanged?.();
+          }
         }}
       />
     </div>

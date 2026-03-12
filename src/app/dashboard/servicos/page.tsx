@@ -18,14 +18,13 @@ export default function ServicesPage() {
     loadSummary,
   } = useDashboardStore();
 
-  const allEntries = summary?.serviceHistory?.flatMap((m) => m.entries) ?? [];
-
   const handleEditEntry = useCallback(
     (id: number) => {
-      const found = allEntries.find((e) => e.id === id) ?? null;
+      const entries = summary?.serviceHistory?.flatMap((m) => m.entries) ?? [];
+      const found = entries.find((e) => e.id === id) ?? null;
       setEditEntry(found);
     },
-    [allEntries, setEditEntry],
+    [summary?.serviceHistory, setEditEntry],
   );
 
   if (isLoading) {
@@ -49,6 +48,7 @@ export default function ServicesPage() {
         nextServiceDate={summary?.nextAppointment?.date ?? "—"}
         nextServiceSubtitle={summary?.nextAppointment?.cancellationNote ?? "Nenhum agendamento"}
         nextAppointmentId={summary?.nextAppointment?.id ?? null}
+        nextAppointmentDateTime={summary?.nextAppointment?.dateTime ?? null}
         appointmentsCount={summary?.appointmentsCount ?? 0}
         appointmentsLabel={summary?.appointmentsCountLabel ?? "Nos últimos 2 meses"}
         hasNextService={summary?.nextAppointment !== null && summary?.nextAppointment !== undefined}
