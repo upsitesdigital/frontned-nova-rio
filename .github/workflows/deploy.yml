@@ -57,11 +57,6 @@ jobs:
           script: |
             set -e
 
-            if [ ! -d "/root/frontend-nova-rio" ]; then
-              echo "📥 Clonando repositório..."
-              git clone https://github.com/upsitesdigital/frontned-nova-rio.git /root/frontend-nova-rio
-            fi
-
             cd /root/frontend-nova-rio
 
             echo "📥 Atualizando código..."
