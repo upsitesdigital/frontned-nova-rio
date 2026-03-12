@@ -108,6 +108,7 @@ export {
   type DsPaymentOptionsCardFrequency,
 } from "./ds-payment-options-card";
 export { DsDeleteConfirmPopup, type DsDeleteConfirmPopupProps } from "./ds-delete-confirm-popup";
+export { DsCancelConfirmPopup, type DsCancelConfirmPopupProps } from "./ds-cancel-confirm-popup";
 export {
   DsUserTable,
   type DsUserTableProps,

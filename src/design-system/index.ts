@@ -84,6 +84,7 @@ export {
 export { DsSheet, type DsSheetProps, type DsSheetSide } from "./feedback";
 export { DsNotificationBell, type DsNotificationBellProps } from "./feedback";
 export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./feedback";
+export { DsToastContainer } from "./feedback";
 
 // Forms
 export { DsFormField, type DsFormFieldProps } from "./forms";
@@ -188,3 +189,5 @@ export {
   type DsPaymentOptionsCardOption,
   type DsPaymentOptionsCardFrequency,
 } from "./composite";
+export { DsDeleteConfirmPopup, type DsDeleteConfirmPopupProps } from "./composite";
+export { DsCancelConfirmPopup, type DsCancelConfirmPopupProps } from "./composite";
