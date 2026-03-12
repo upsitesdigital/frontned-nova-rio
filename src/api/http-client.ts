@@ -90,11 +90,14 @@ async function refreshAccessToken(): Promise<string | null> {
 }
 
 async function httpAuthGet<T>(path: string, token: string): Promise<T> {
+  const { useAuthStore } = await import("@/stores/auth-store");
+  const latestToken = useAuthStore.getState().accessToken ?? token;
+
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${latestToken}`,
     },
   });
 
@@ -131,11 +134,14 @@ async function httpAuthGet<T>(path: string, token: string): Promise<T> {
 }
 
 async function httpAuthPost<T>(path: string, body: unknown, token: string): Promise<T> {
+  const { useAuthStore } = await import("@/stores/auth-store");
+  const latestToken = useAuthStore.getState().accessToken ?? token;
+
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${latestToken}`,
     },
     body: JSON.stringify(body),
   });
@@ -181,11 +187,14 @@ async function httpAuthPost<T>(path: string, body: unknown, token: string): Prom
 }
 
 async function httpAuthPatch(path: string, token: string): Promise<void> {
+  const { useAuthStore } = await import("@/stores/auth-store");
+  const latestToken = useAuthStore.getState().accessToken ?? token;
+
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${latestToken}`,
     },
   });
 
