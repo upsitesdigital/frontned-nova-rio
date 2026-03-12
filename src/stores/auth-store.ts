@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { configureAuthProvider } from "@/api/http-client";
 
 interface AuthState {
   accessToken: string | null;
@@ -48,5 +49,12 @@ function waitForAuthHydration(): Promise<void> {
     });
   });
 }
+
+configureAuthProvider({
+  getAccessToken: () => useAuthStore.getState().accessToken,
+  getRefreshToken: () => useAuthStore.getState().refreshToken,
+  setTokens: (accessToken, refreshToken) => useAuthStore.getState().setTokens(accessToken, refreshToken),
+  reset: () => useAuthStore.getState().reset(),
+});
 
 export { useAuthStore, waitForAuthHydration, type AuthStore };
