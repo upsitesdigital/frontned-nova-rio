@@ -301,6 +301,56 @@ async function httpAuthPatch(path: string, token: string): Promise<void> {
   }
 }
 
+async function httpAuthDelete<T>(path: string, token: string): Promise<T> {
+  const auth = getAuthProvider();
+  const latestToken = auth.getAccessToken() ?? token;
+
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${latestToken}`,
+    },
+  });
+
+  if (response.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    if (!newToken) {
+      throw new HttpClientError(401, `DELETE ${path} failed: Unauthorized`);
+    }
+
+    const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+
+    if (!retryResponse.ok) {
+      throw new HttpClientError(
+        retryResponse.status,
+        `DELETE ${path} failed: ${retryResponse.statusText}`,
+      );
+    }
+
+    if (retryResponse.status === 204 || retryResponse.headers.get("content-length") === "0") {
+      return undefined as T;
+    }
+    return retryResponse.json() as Promise<T>;
+  }
+
+  if (!response.ok) {
+    throw new HttpClientError(response.status, `DELETE ${path} failed: ${response.statusText}`);
+  }
+
+  if (response.status === 204 || response.headers.get("content-length") === "0") {
+    return undefined as T;
+  }
+  return response.json() as Promise<T>;
+}
+
 export {
   httpGet,
   httpPost,
@@ -308,6 +358,7 @@ export {
   httpAuthPost,
   httpAuthPatch,
   httpAuthPatchWithBody,
+  httpAuthDelete,
   configureAuthProvider,
   HttpClientError,
   type AuthProvider,
