@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         onScheduleService={() => router.push("/agendamento")}
         onSignOut={handleSignOut}
         onProfileClick={() => router.push("/dashboard/perfil")}
-        onAccountClick={() => router.push("/dashboard/perfil")}
+        onAccountClick={() => router.push("/dashboard/conta")}
       >
         {children}
       </DsClientDashboardShell>
