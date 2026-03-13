@@ -1,5 +1,7 @@
+"use client";
+
 import * as React from "react";
-import { MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/design-system/ui/input";

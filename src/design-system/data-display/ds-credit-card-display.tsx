@@ -1,4 +1,6 @@
-import { CreditCardIcon } from "@phosphor-icons/react";
+"use client";
+
+import { CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { DsImage } from "@/design-system/media";
