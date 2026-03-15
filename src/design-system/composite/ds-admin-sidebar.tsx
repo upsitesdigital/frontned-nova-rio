@@ -13,9 +13,7 @@ import {
   CaretRightIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { DsSidebar } from "@/design-system/navigation";
-import { DsSidebarItem } from "@/design-system/navigation";
-import { DsLogo } from "@/design-system/navigation";
+import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
 
 interface DsAdminSidebarProps {
