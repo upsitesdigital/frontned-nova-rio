@@ -15,14 +15,17 @@ function validatePasswordStrength(password: string): string | null {
   return result.error.issues[0]?.message ?? MESSAGES.password.weak;
 }
 
-function validatePasswordMatch(
-  password: string,
-  confirmPassword: string,
-): string | null {
+function validatePasswordMatch(password: string, confirmPassword: string): string | null {
   if (password !== confirmPassword) {
     return MESSAGES.password.mismatch;
   }
   return null;
 }
 
-export { validatePasswordStrength, validatePasswordMatch, passwordSchema };
+function isStrongPassword(v: string): boolean {
+  return (
+    v.length >= 8 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /[0-9]/.test(v) && /[^A-Za-z0-9]/.test(v)
+  );
+}
+
+export { validatePasswordStrength, validatePasswordMatch, isStrongPassword, passwordSchema };

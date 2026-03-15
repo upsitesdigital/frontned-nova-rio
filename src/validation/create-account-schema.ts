@@ -1,14 +1,6 @@
 import { z } from "zod/v4";
 
-function isStrongPassword(v: string): boolean {
-  return (
-    v.length >= 8 &&
-    /[A-Z]/.test(v) &&
-    /[a-z]/.test(v) &&
-    /[0-9]/.test(v) &&
-    /[^A-Za-z0-9]/.test(v)
-  );
-}
+import { isStrongPassword } from "@/validation/password-strength-schema";
 
 const createAccountSchema = z
   .object({
@@ -62,8 +54,4 @@ function mapApiErrorToField(status: number, message: string): CreateAccountField
   return { email: "Erro ao cadastrar. Tente novamente." };
 }
 
-export {
-  validateCreateAccount,
-  mapApiErrorToField,
-  type CreateAccountFieldErrors,
-};
+export { validateCreateAccount, mapApiErrorToField, type CreateAccountFieldErrors };

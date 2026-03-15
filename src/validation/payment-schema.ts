@@ -1,12 +1,33 @@
-import isCreditCard from "validator/es/lib/isCreditCard";
 import { z } from "zod/v4";
+
+function luhnCheck(value: string): boolean {
+  let sum = 0;
+  let alternate = false;
+  for (let i = value.length - 1; i >= 0; i--) {
+    let n = parseInt(value.charAt(i), 10);
+    if (isNaN(n)) return false;
+    if (alternate) {
+      n *= 2;
+      if (n > 9) n -= 9;
+    }
+    sum += n;
+    alternate = !alternate;
+  }
+  return sum % 10 === 0;
+}
 
 const cardSchema = z.object({
   cardNumber: z
     .string()
     .min(1, "Número do cartão é obrigatório")
     .transform((v) => v.replace(/\s/g, ""))
-    .refine(isCreditCard, "Número do cartão inválido"),
+    .pipe(
+      z
+        .string()
+        .min(13, "Número do cartão inválido")
+        .max(19, "Número do cartão inválido")
+        .refine(luhnCheck, "Número do cartão inválido"),
+    ),
   cardExpiry: z
     .string()
     .min(1, "Validade é obrigatória")
@@ -58,13 +79,22 @@ function extractErrors(issues: z.core.$ZodIssue[]): PaymentFieldErrors {
   return errors;
 }
 
-function validateCard(data: { cardNumber: string; cardExpiry: string; cardCvv: string; cardName: string }): PaymentFieldErrors {
+function validateCard(data: {
+  cardNumber: string;
+  cardExpiry: string;
+  cardCvv: string;
+  cardName: string;
+}): PaymentFieldErrors {
   const result = cardSchema.safeParse(data);
   if (result.success) return {};
   return extractErrors(result.error.issues);
 }
 
-function validateBilling(data: { billingName: string; billingDocument: string; billingAddress: string }): PaymentFieldErrors {
+function validateBilling(data: {
+  billingName: string;
+  billingDocument: string;
+  billingAddress: string;
+}): PaymentFieldErrors {
   const result = billingSchema.safeParse(data);
   if (result.success) return {};
   return extractErrors(result.error.issues);
@@ -80,9 +110,4 @@ function validatePayment(
   return { ...validateCard(card), ...billingErrors };
 }
 
-export {
-  validatePayment,
-  validateCard,
-  validateBilling,
-  type PaymentFieldErrors,
-};
+export { validatePayment, validateCard, validateBilling, type PaymentFieldErrors };

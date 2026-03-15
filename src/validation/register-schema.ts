@@ -1,14 +1,6 @@
 import { z } from "zod/v4";
 
-function isStrongPassword(v: string): boolean {
-  return (
-    v.length >= 8 &&
-    /[A-Z]/.test(v) &&
-    /[a-z]/.test(v) &&
-    /[0-9]/.test(v) &&
-    /[^A-Za-z0-9]/.test(v)
-  );
-}
+import { isStrongPassword } from "@/validation/password-strength-schema";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
