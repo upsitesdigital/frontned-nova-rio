@@ -126,3 +126,5 @@ export {
   type DsUserFormPopupProps,
   type DsUserFormPopupValues,
 } from "./ds-user-form-popup";
+export { DsQuickActionCard, type DsQuickActionCardProps } from "./ds-quick-action-card";
+export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./ds-admin-dashboard-shell";

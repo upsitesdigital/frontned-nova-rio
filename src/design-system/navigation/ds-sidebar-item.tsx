@@ -1,3 +1,6 @@
+"use client";
+
+import type { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
@@ -22,14 +25,21 @@ function DsSidebarItem({
 }: DsSidebarItemProps) {
   const Component = href ? "a" : "button";
 
+  const handleClick = (e: MouseEvent) => {
+    if (href && onClick) {
+      e.preventDefault();
+    }
+    onClick?.();
+  };
+
   return (
     <Component
       href={href}
-      onClick={onClick}
+      onClick={handleClick}
       type={href ? undefined : "button"}
       title={collapsed ? label : undefined}
       className={cn(
-        "flex h-14 w-full items-center rounded-[10px] text-base font-medium leading-[1.3] transition-all",
+        "flex h-14 w-full items-center rounded-[10px] text-base font-medium leading-[1.3] transition-all focus-visible:ring-2 focus-visible:ring-nova-primary focus-visible:outline-none",
         active ? "bg-nova-primary-lighter text-black" : "text-nova-gray-700 hover:bg-nova-gray-100",
         collapsed ? "justify-center px-0" : "gap-2 px-6 py-4",
         className,

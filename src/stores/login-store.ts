@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { loginClient } from "@/api/auth-api";
+import { login, type UserType } from "@/api/auth-api";
 import { HttpClientError } from "@/api/http-client";
 import { MESSAGES } from "@/lib/messages";
 import { useAuthStore } from "@/stores/auth-store";
@@ -17,7 +17,7 @@ interface LoginState {
 interface LoginActions {
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
-  submit: () => Promise<boolean>;
+  submit: () => Promise<UserType | null>;
   dismissPendingApproval: () => void;
   reset: () => void;
 }
@@ -45,20 +45,20 @@ const useLoginStore = create<LoginStore>()((set) => ({
     const validationError = validateLoginInput({ email, password });
     if (validationError) {
       set({ error: validationError });
-      return false;
+      return null;
     }
 
     set({ isSubmitting: true, error: null });
 
     try {
-      const tokens = await loginClient({ email, password });
-      useAuthStore.getState().setTokens(tokens.accessToken, tokens.refreshToken);
+      const result = await login({ email, password });
+      useAuthStore.getState().setTokens(result.accessToken, result.refreshToken, result.userType);
       set({ isSubmitting: false });
-      return true;
+      return result.userType;
     } catch (error) {
       if (error instanceof HttpClientError && error.status === 403) {
         set({ isSubmitting: false, pendingApproval: true });
-        return false;
+        return null;
       }
 
       const message =
@@ -69,7 +69,7 @@ const useLoginStore = create<LoginStore>()((set) => ({
           : MESSAGES.auth.loginError;
 
       set({ isSubmitting: false, error: message });
-      return false;
+      return null;
     }
   },
 

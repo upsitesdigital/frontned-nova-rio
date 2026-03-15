@@ -36,6 +36,10 @@ const MESSAGES = {
     loadError: "Erro ao carregar o painel. Tente novamente.",
   },
 
+  adminDashboard: {
+    loadError: "Erro ao carregar o painel administrativo. Tente novamente.",
+  },
+
   appointments: {
     selectDateTime: "Selecione a data e o horário.",
     rescheduleSuccess: "Agendamento atualizado com sucesso!",
