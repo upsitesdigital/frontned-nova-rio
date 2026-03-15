@@ -1,12 +1,11 @@
 "use client";
 
-import {
-  CreditCardIcon,
-  MapPinIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { CreditCardIcon, MapPinIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsIcon } from "@/design-system/media";
 import { DsPopup, DsServiceDetailPopup, DsServiceDetailRow } from "@/design-system";
 import { getServiceIcon } from "@/lib/icon-map";
+import { resolvePaymentStatus } from "@/lib/payment-status-map";
+import { resolveRecurrenceLabel } from "@/lib/recurrence-labels";
 
 interface ServiceDetailModalEntry {
   label: string;
@@ -26,25 +25,11 @@ interface ServiceDetailModalProps {
   onClose: () => void;
 }
 
-const RECURRENCE_LABELS: Record<string, string> = {
-  SINGLE: "Avulso",
-  PACKAGE: "Pacote",
-  WEEKLY: "Semanal",
-  BIWEEKLY: "Quinzenal",
-  MONTHLY: "Mensal",
-};
-
-const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  APPROVED: "Aprovado",
-  PENDING: "Pendente",
-  CANCELLED: "Cancelado",
-};
-
 function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
   if (!entry) return null;
 
   const serviceIcon = getServiceIcon(entry.icon);
-  const recurrenceLabel = RECURRENCE_LABELS[entry.recurrenceType] ?? entry.recurrenceType;
+  const recurrenceLabel = resolveRecurrenceLabel(entry.recurrenceType);
 
   return (
     <DsPopup open>
@@ -70,7 +55,7 @@ function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
                 {entry.payment.amount}
               </span>
               <span className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-primary">
-                {PAYMENT_STATUS_LABELS[entry.payment.status] ?? entry.payment.status}
+                {resolvePaymentStatus(entry.payment.status).label}
               </span>
             </div>
           </DsServiceDetailRow>

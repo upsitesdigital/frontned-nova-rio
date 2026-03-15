@@ -19,6 +19,7 @@ import {
 import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
 import { getServiceIcon } from "@/lib/icon-map";
+import { resolvePaymentStatus } from "@/lib/payment-status-map";
 import { downloadReceipt } from "@/api/receipts-api";
 import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
 import { useToastStore } from "@/stores/toast-store";
@@ -29,12 +30,6 @@ interface ServiceEditDrawerProps {
   onClose: () => void;
   onSaved?: () => void;
 }
-
-const PAYMENT_STATUS_MAP: Record<string, { label: string; status: "approved" | "pending" }> = {
-  APPROVED: { label: "Aprovado", status: "approved" },
-  PENDING: { label: "Pendente", status: "pending" },
-  CANCELLED: { label: "Cancelado", status: "pending" },
-};
 
 function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) {
   const {
@@ -73,12 +68,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
   if (!entry) return null;
 
   const serviceIcon = getServiceIcon(entry.icon);
-  const paymentStatus = entry.payment
-    ? (PAYMENT_STATUS_MAP[entry.payment.status] ?? {
-        label: entry.payment.status,
-        status: "pending" as const,
-      })
-    : null;
+  const paymentStatus = entry.payment ? resolvePaymentStatus(entry.payment.status) : null;
 
   return (
     <Sheet

@@ -8,6 +8,7 @@ import {
   DsSchedulePopup,
   DsCancelConfirmPopup,
 } from "@/design-system";
+import { isCancelBlocked } from "@/lib/appointment-rules";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useSidePanelRescheduleStore } from "@/stores/side-panel-reschedule-store";
 import { useToastStore } from "@/stores/toast-store";
@@ -22,14 +23,6 @@ interface ServicesSidePanelProps {
   hasNextService: boolean;
   onChanged?: () => void;
   onReceipt?: () => void;
-}
-
-const CANCELLATION_WINDOW_MS = 60 * 60 * 1000;
-
-function isCancelBlocked(dateTime: string | null): boolean {
-  if (!dateTime) return true;
-  const appointmentTime = new Date(dateTime).getTime();
-  return appointmentTime - Date.now() < CANCELLATION_WINDOW_MS;
 }
 
 const recurrenceOptions = [
