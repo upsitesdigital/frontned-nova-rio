@@ -38,7 +38,7 @@ function DsUpcomingServiceCard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
-        {actions && actions.length > 0 && (
+        {onReceipt && (
           <button
             type="button"
             onClick={onReceipt}

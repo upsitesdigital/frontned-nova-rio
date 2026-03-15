@@ -20,7 +20,7 @@ const DsClientDashboardShell = dynamic(
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { summary, error, loadSummary } = useDashboardStore();
+  const { summary, isAuthError, loadSummary } = useDashboardStore();
   const loadPaymentsData = useDashboardPaymentsStore((s) => s.loadPaymentsData);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
@@ -31,10 +31,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [loadSummary, loadPaymentsData]);
 
   useEffect(() => {
-    if (error && !summary) {
+    if (isAuthError && !summary) {
       router.push("/login");
     }
-  }, [error, summary, router]);
+  }, [isAuthError, summary, router]);
 
   const handleSignOut = () => {
     useAuthStore.getState().reset();

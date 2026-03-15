@@ -73,6 +73,8 @@ function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHist
 
       {months.length === 0 ? (
         <DsEmptyState message="Nenhum serviço registrado ainda." />
+      ) : totalItems === 0 ? (
+        <DsEmptyState message="Nenhum serviço encontrado para este filtro." />
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
           {groupedByMonth.map((group) => (
