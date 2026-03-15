@@ -15,6 +15,7 @@ interface ToastState {
 interface ToastActions {
   showToast: (title: string, variant?: DsAlertVariant) => void;
   removeToast: (id: number) => void;
+  reset: () => void;
 }
 
 type ToastStore = ToastState & ToastActions;
@@ -31,6 +32,11 @@ const useToastStore = create<ToastStore>()((set) => ({
 
   removeToast: (id) => {
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
+  },
+
+  reset: () => {
+    nextId = 0;
+    set({ toasts: [] });
   },
 }));
 

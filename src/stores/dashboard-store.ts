@@ -1,10 +1,13 @@
 import { create } from "zustand";
 
-import { fetchClientDashboardSummary, type ClientDashboardSummary } from "@/api/dashboard-api";
-import { HttpClientError } from "@/api/http-client";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
-import type { ServiceDetailModalEntry } from "@/app/dashboard/servicos/_components/service-detail-modal";
-import type { ServiceHistoryEntry } from "@/app/dashboard/_components/dashboard-service-history";
+import {
+  fetchClientDashboardSummary,
+  type ClientDashboardSummary,
+  type ServiceDetailModalEntry,
+  type ServiceHistoryEntry,
+} from "@/api/dashboard-api";
+import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 interface DashboardState {
   summary: ClientDashboardSummary | null;
@@ -41,11 +44,9 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
   ...initialState,
 
   loadSummary: async () => {
-    await waitForAuthHydration();
-
-    const token = useAuthStore.getState().accessToken;
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return;
     }
 
@@ -55,11 +56,10 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
       const summary = await fetchClientDashboardSummary(token);
       set({ summary, isLoading: false });
     } catch (error) {
-      const message =
-        error instanceof HttpClientError
-          ? error.message
-          : "Erro ao carregar o painel. Tente novamente.";
-      set({ isLoading: false, error: message });
+      set({
+        isLoading: false,
+        error: resolveErrorMessage(error, MESSAGES.dashboard.loadError),
+      });
     }
   },
 

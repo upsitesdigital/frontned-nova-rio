@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { format } from "date-fns";
 
 import { cancelAppointment, rescheduleAppointment } from "@/api/appointments-api";
-import { HttpClientError } from "@/api/http-client";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
+import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 type RecurrenceType = "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
 
@@ -66,17 +66,15 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   setRescheduleTime: (time) => set({ rescheduleTime: time }),
 
   confirmReschedule: async (appointmentId) => {
-    await waitForAuthHydration();
-
-    const token = useAuthStore.getState().accessToken;
+    const token = await getAuthToken();
     if (!token) {
-      set({ saveError: "Sessao expirada. Faca login novamente." });
+      set({ saveError: MESSAGES.auth.sessionExpired });
       return false;
     }
 
     const { rescheduleDate, rescheduleTime } = get();
     if (!rescheduleDate || !rescheduleTime) {
-      set({ saveError: "Selecione a data e o horario." });
+      set({ saveError: MESSAGES.appointments.selectDateTime });
       return false;
     }
 
@@ -92,17 +90,14 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
         rescheduleOpen: false,
         rescheduleDate: undefined,
         rescheduleTime: undefined,
-        saveSuccess: "Agendamento atualizado com sucesso!",
+        saveSuccess: MESSAGES.appointments.rescheduleSuccess,
       });
       return true;
     } catch (error) {
-      const message =
-        error instanceof HttpClientError && error.status === 401
-          ? "Sessão expirada. Faça login novamente."
-          : error instanceof HttpClientError
-            ? error.message
-            : "Erro ao reagendar. Tente novamente.";
-      set({ isSaving: false, saveError: message });
+      set({
+        isSaving: false,
+        saveError: resolveErrorMessage(error, MESSAGES.appointments.rescheduleError),
+      });
       return false;
     }
   },
@@ -112,11 +107,9 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   closeCancel: () => set({ cancelOpen: false }),
 
   confirmCancel: async (appointmentId) => {
-    await waitForAuthHydration();
-
-    const token = useAuthStore.getState().accessToken;
+    const token = await getAuthToken();
     if (!token) {
-      set({ saveError: "Sessão expirada. Faça login novamente." });
+      set({ saveError: MESSAGES.auth.sessionExpired });
       return false;
     }
 
@@ -127,17 +120,14 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
       set({
         isSaving: false,
         cancelOpen: false,
-        saveSuccess: "Agendamento cancelado com sucesso!",
+        saveSuccess: MESSAGES.appointments.cancelSuccess,
       });
       return true;
     } catch (error) {
-      const message =
-        error instanceof HttpClientError && error.status === 401
-          ? "Sessão expirada. Faça login novamente."
-          : error instanceof HttpClientError
-            ? error.message
-            : "Erro ao cancelar. Tente novamente.";
-      set({ isSaving: false, saveError: message });
+      set({
+        isSaving: false,
+        saveError: resolveErrorMessage(error, MESSAGES.appointments.cancelError),
+      });
       return false;
     }
   },

@@ -11,9 +11,14 @@ import {
   type ClientProfile,
   type UpdateProfileData,
 } from "@/api/profile-api";
-import { HttpClientError } from "@/api/http-client";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
+import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 import { useToastStore } from "@/stores/toast-store";
+import { isValidEmail } from "@/validation/email-schema";
+import {
+  validatePasswordStrength,
+  validatePasswordMatch,
+} from "@/validation/password-strength-schema";
 
 type EmailChangeStep = "email" | "code";
 type PasswordChangeStep = "request" | "verify";
@@ -110,23 +115,13 @@ const initialState: ProfileState = {
   deletePhrase: "",
 };
 
-function getToken(): string | null {
-  return useAuthStore.getState().accessToken;
-}
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof HttpClientError ? error.message : fallback;
-}
-
 const useProfileStore = create<ProfileStore>()((set, get) => ({
   ...initialState,
 
   loadProfile: async () => {
-    await waitForAuthHydration();
-
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return;
     }
 
@@ -138,7 +133,7 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
     } catch (error) {
       set({
         isLoading: false,
-        error: getErrorMessage(error, "Erro ao carregar o perfil. Tente novamente."),
+        error: resolveErrorMessage(error, MESSAGES.profile.loadError),
       });
     }
   },
@@ -166,11 +161,9 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
   setEditAddress: (value) => set({ editAddress: value }),
 
   saveProfile: async () => {
-    await waitForAuthHydration();
-
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
@@ -188,12 +181,12 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
     try {
       const profile = await updateClientProfile(token, data);
       set({ profile, isSaving: false, isEditing: false });
-      useToastStore.getState().showToast("Perfil atualizado com sucesso!");
+      useToastStore.getState().showToast(MESSAGES.profile.updated);
       return true;
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao salvar o perfil. Tente novamente."),
+        error: resolveErrorMessage(error, MESSAGES.profile.saveError),
       });
       return false;
     }
@@ -212,13 +205,19 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
   setEmailCode: (value) => set({ emailCode: value }),
 
   submitEmailChange: async () => {
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
     const { newEmail } = get();
+
+    if (!isValidEmail(newEmail)) {
+      set({ error: MESSAGES.auth.invalidEmail });
+      return false;
+    }
+
     set({ isSaving: true, error: null });
 
     try {
@@ -228,16 +227,16 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao solicitar alteração de e-mail."),
+        error: resolveErrorMessage(error, MESSAGES.email.requestError),
       });
       return false;
     }
   },
 
   submitEmailVerification: async () => {
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
@@ -255,12 +254,12 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
         newEmail: "",
         emailCode: "",
       });
-      useToastStore.getState().showToast("E-mail alterado com sucesso!");
+      useToastStore.getState().showToast(MESSAGES.email.changed);
       return true;
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao verificar código. Tente novamente."),
+        error: resolveErrorMessage(error, MESSAGES.email.verifyError),
       });
       return false;
     }
@@ -281,9 +280,9 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
   setConfirmPassword: (value) => set({ confirmPassword: value }),
 
   submitPasswordChange: async () => {
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
@@ -296,20 +295,33 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao solicitar alteração de senha."),
+        error: resolveErrorMessage(error, MESSAGES.password.requestError),
       });
       return false;
     }
   },
 
   submitPasswordVerification: async () => {
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
-    const { passwordCode, newPassword } = get();
+    const { passwordCode, newPassword, confirmPassword } = get();
+
+    const matchError = validatePasswordMatch(newPassword, confirmPassword);
+    if (matchError) {
+      set({ error: matchError });
+      return false;
+    }
+
+    const strengthError = validatePasswordStrength(newPassword);
+    if (strengthError) {
+      set({ error: strengthError });
+      return false;
+    }
+
     set({ isSaving: true, error: null });
 
     try {
@@ -322,12 +334,12 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
         newPassword: "",
         confirmPassword: "",
       });
-      useToastStore.getState().showToast("Senha alterada com sucesso!");
+      useToastStore.getState().showToast(MESSAGES.password.changed);
       return true;
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao alterar senha. Tente novamente."),
+        error: resolveErrorMessage(error, MESSAGES.password.verifyError),
       });
       return false;
     }
@@ -338,9 +350,9 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
   setDeletePhrase: (value) => set({ deletePhrase: value }),
 
   submitDeleteAccount: async () => {
-    const token = getToken();
+    const token = await getAuthToken();
     if (!token) {
-      set({ error: "Sessão expirada. Faça login novamente." });
+      set({ error: MESSAGES.auth.sessionExpired });
       return false;
     }
 
@@ -349,13 +361,14 @@ const useProfileStore = create<ProfileStore>()((set, get) => ({
 
     try {
       await deleteClientAccount(token, deletePhrase);
+      const { useAuthStore } = await import("@/stores/auth-store");
       useAuthStore.getState().reset();
       set(initialState);
       return true;
     } catch (error) {
       set({
         isSaving: false,
-        error: getErrorMessage(error, "Erro ao excluir conta. Tente novamente."),
+        error: resolveErrorMessage(error, MESSAGES.profile.deleteError),
       });
       return false;
     }

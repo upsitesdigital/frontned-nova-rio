@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
 import { requestPasswordReset, resetPassword } from "@/api/auth-api";
-import { HttpClientError } from "@/api/http-client";
+import { resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 import {
   getPasswordHints,
   validateResetPassword,
@@ -62,7 +63,7 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
     const passwordHints = newPassword.length > 0 ? getPasswordHints(newPassword) : [];
     const confirmError =
       confirmPassword.length > 0 && newPassword !== confirmPassword
-        ? "As senhas não coincidem"
+        ? MESSAGES.password.mismatch
         : undefined;
 
     set({
@@ -77,7 +78,7 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
     const { newPassword } = useForgotPasswordStore.getState();
     const confirmError =
       confirmPassword.length > 0 && newPassword !== confirmPassword
-        ? "As senhas não coincidem"
+        ? MESSAGES.password.mismatch
         : undefined;
 
     set({
@@ -91,7 +92,7 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
     const { email } = useForgotPasswordStore.getState();
 
     if (!email.trim()) {
-      set({ error: "Preencha o campo de e-mail." });
+      set({ error: MESSAGES.password.fillEmail });
       return false;
     }
 
@@ -102,12 +103,10 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
       set({ isSubmitting: false, step: "code" });
       return true;
     } catch (error) {
-      const message =
-        error instanceof HttpClientError
-          ? error.message
-          : "Erro ao enviar código. Tente novamente.";
-
-      set({ isSubmitting: false, error: message });
+      set({
+        isSubmitting: false,
+        error: resolveErrorMessage(error, MESSAGES.password.resetSendError),
+      });
       return false;
     }
   },
@@ -129,12 +128,10 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
       set({ isSubmitting: false, step: "success" });
       return true;
     } catch (error) {
-      const message =
-        error instanceof HttpClientError
-          ? error.message
-          : "Erro ao redefinir senha. Tente novamente.";
-
-      set({ isSubmitting: false, error: message });
+      set({
+        isSubmitting: false,
+        error: resolveErrorMessage(error, MESSAGES.password.resetError),
+      });
       return false;
     }
   },

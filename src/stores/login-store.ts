@@ -2,7 +2,9 @@ import { create } from "zustand";
 
 import { loginClient } from "@/api/auth-api";
 import { HttpClientError } from "@/api/http-client";
+import { MESSAGES } from "@/lib/messages";
 import { useAuthStore } from "@/stores/auth-store";
+import { validateLoginInput } from "@/validation/login-schema";
 
 interface LoginState {
   email: string;
@@ -40,8 +42,9 @@ const useLoginStore = create<LoginStore>()((set) => ({
   submit: async () => {
     const { email, password } = useLoginStore.getState();
 
-    if (!email.trim() || !password.trim()) {
-      set({ error: "Preencha todos os campos." });
+    const validationError = validateLoginInput({ email, password });
+    if (validationError) {
+      set({ error: validationError });
       return false;
     }
 
@@ -61,9 +64,9 @@ const useLoginStore = create<LoginStore>()((set) => ({
       const message =
         error instanceof HttpClientError
           ? error.status === 401
-            ? "E-mail ou senha incorretos."
+            ? MESSAGES.auth.wrongCredentials
             : error.message
-          : "Erro ao entrar. Tente novamente.";
+          : MESSAGES.auth.loginError;
 
       set({ isSubmitting: false, error: message });
       return false;

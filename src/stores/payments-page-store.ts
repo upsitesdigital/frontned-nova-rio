@@ -5,7 +5,8 @@ import {
   type PaymentEntry,
   type PaymentStatus,
 } from "@/api/payments-api";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
+import { getAuthToken } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 type FilterValue = "ALL" | PaymentStatus;
 
@@ -27,6 +28,8 @@ interface PaymentsPageActions {
 
 type PaymentsPageStore = PaymentsPageState & PaymentsPageActions;
 
+let currentController: AbortController | null = null;
+
 const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
   payments: [],
   total: 0,
@@ -37,8 +40,13 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
   error: null,
 
   loadPayments: async () => {
-    await waitForAuthHydration();
-    const token = useAuthStore.getState().accessToken;
+    if (currentController) {
+      currentController.abort();
+    }
+    const controller = new AbortController();
+    currentController = controller;
+
+    const token = await getAuthToken();
     if (!token) return;
 
     const { page, limit, filter } = get();
@@ -46,12 +54,19 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      const result = await fetchClientPayments(token, page, limit, status);
+      const result = await fetchClientPayments(token, page, limit, status, controller.signal);
+      if (controller.signal.aborted) return;
       set({ payments: result.data, total: result.total });
-    } catch {
-      set({ error: "Erro ao carregar pagamentos" });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
+      set({ error: MESSAGES.payments.loadError });
     } finally {
-      set({ isLoading: false });
+      if (!controller.signal.aborted) {
+        set({ isLoading: false });
+      }
+      if (currentController === controller) {
+        currentController = null;
+      }
     }
   },
 

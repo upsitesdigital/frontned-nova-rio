@@ -33,6 +33,7 @@ const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "nova-rio-auth",
+      partialize: (state) => ({ accessToken: state.accessToken }),
     },
   ),
 );
