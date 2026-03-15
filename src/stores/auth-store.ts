@@ -33,7 +33,7 @@ const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "nova-rio-auth",
-      partialize: (state) => ({ accessToken: state.accessToken }),
+      partialize: (state) => ({ accessToken: state.accessToken, refreshToken: state.refreshToken }),
     },
   ),
 );
@@ -54,7 +54,8 @@ function waitForAuthHydration(): Promise<void> {
 configureAuthProvider({
   getAccessToken: () => useAuthStore.getState().accessToken,
   getRefreshToken: () => useAuthStore.getState().refreshToken,
-  setTokens: (accessToken, refreshToken) => useAuthStore.getState().setTokens(accessToken, refreshToken),
+  setTokens: (accessToken, refreshToken) =>
+    useAuthStore.getState().setTokens(accessToken, refreshToken),
   reset: () => useAuthStore.getState().reset(),
 });
 

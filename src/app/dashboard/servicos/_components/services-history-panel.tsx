@@ -30,10 +30,12 @@ const filterOptions = [
 function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHistoryPanelProps) {
   const { filter, currentPage, setFilter, setCurrentPage } = useServicesHistoryStore();
 
-  const allEntries = useMemo(
-    () => months.flatMap((m) => m.entries.map((e) => ({ ...e, monthLabel: m.monthLabel }))),
-    [months],
-  );
+  const allEntries = useMemo(() => {
+    const flat = months.flatMap((m) => m.entries.map((e) => ({ ...e, monthLabel: m.monthLabel })));
+    if (filter === "all") return flat;
+    const recurrenceMatch = filter === "recurrence" ? "RECURRING" : "SINGLE";
+    return flat.filter((e) => e.recurrenceType === recurrenceMatch);
+  }, [months, filter]);
 
   const totalItems = allEntries.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));

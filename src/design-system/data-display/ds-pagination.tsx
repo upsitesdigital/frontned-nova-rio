@@ -21,7 +21,8 @@ function DsPagination({
   onPageChange,
   className,
 }: DsPaginationProps) {
-  const showingCount = Math.min(pageSize, totalItems - (currentPage - 1) * pageSize);
+  const clampedPage = Math.max(1, Math.min(currentPage, Math.max(1, totalPages)));
+  const showingCount = Math.max(0, Math.min(pageSize, totalItems - (clampedPage - 1) * pageSize));
   const showingLabel = `Mostrando ${showingCount} de ${totalItems}`;
 
   return (

@@ -7,7 +7,7 @@ async function downloadReceipt(paymentId: number): Promise<void> {
   link.href = url;
   link.download = `recibo-${paymentId}.pdf`;
   link.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export { downloadReceipt };

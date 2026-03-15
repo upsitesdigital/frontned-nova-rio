@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react/dist/ssr";
 
 import { cn } from "@/lib/utils";
@@ -14,18 +15,30 @@ type DsPasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
 };
 
 function DsPasswordInput({
-  visible = false,
+  visible: controlledVisible,
   onVisibilityChange,
   className,
   ...props
 }: DsPasswordInputProps) {
+  const [internalVisible, setInternalVisible] = useState(false);
+  const isControlled = onVisibilityChange !== undefined;
+  const visible = isControlled ? (controlledVisible ?? false) : internalVisible;
+
+  const handleToggle = () => {
+    if (isControlled) {
+      onVisibilityChange(!visible);
+    } else {
+      setInternalVisible((prev) => !prev);
+    }
+  };
+
   return (
     <div className="relative">
       <Input type={visible ? "text" : "password"} className={cn("pr-12", className)} {...props} />
       <button
         type="button"
         className="absolute right-4 top-1/2 -translate-y-1/2 text-nova-gray-400 transition-colors hover:text-foreground"
-        onClick={() => onVisibilityChange?.(!visible)}
+        onClick={handleToggle}
         tabIndex={-1}
         aria-label={visible ? "Hide password" : "Show password"}
       >

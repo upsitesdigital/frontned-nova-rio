@@ -10,12 +10,10 @@ const ANIMATION_DURATION = 400;
 
 function DsToastItem({ toast }: { toast: Toast }) {
   const removeToast = useToastStore((s) => s.removeToast);
-  const dismissingRef = useRef(false);
   const elRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      dismissingRef.current = true;
       elRef.current?.classList.remove("animate-[slideInRight_0.4s_ease-out_forwards]");
       elRef.current?.classList.add("animate-[slideOutRight_0.4s_ease-in_forwards]");
 
@@ -26,10 +24,7 @@ function DsToastItem({ toast }: { toast: Toast }) {
   }, [toast.id, removeToast]);
 
   return (
-    <div
-      ref={elRef}
-      className="animate-[slideInRight_0.4s_ease-out_forwards]"
-    >
+    <div ref={elRef} className="animate-[slideInRight_0.4s_ease-out_forwards]">
       <DsAlert variant={toast.variant} title={toast.title} />
     </div>
   );

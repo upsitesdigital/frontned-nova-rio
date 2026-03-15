@@ -43,7 +43,10 @@ function DsSavedCardItem({
       onKeyDown={
         onSelect
           ? (e) => {
-              if (e.key === "Enter") onSelect();
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelect();
+              }
             }
           : undefined
       }
