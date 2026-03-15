@@ -2,13 +2,21 @@
 
 import { useEffect } from "react";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
-import { DsSavedCardItem, DsSavedCardList } from "@/design-system";
+import { DsSavedCardItem, DsSavedCardList, DsConfirmDialog } from "@/design-system";
 import { useCardsStore } from "@/stores/cards-store";
 import { normalizeBrand } from "@/lib/card-format";
 import { AddCardDialog } from "./add-card-dialog";
 
 function CardsPanel() {
-  const { cards, isLoading, loadCards, removeCard, openAddDialog } = useCardsStore();
+  const {
+    cards,
+    isLoading,
+    loadCards,
+    removeCard,
+    openAddDialog,
+    confirmRemoveCardId,
+    setConfirmRemoveCardId,
+  } = useCardsStore();
 
   useEffect(() => {
     loadCards();
@@ -41,11 +49,28 @@ function CardsPanel() {
               expiration={`${String(card.expiryMonth).padStart(2, "0")}/${String(card.expiryYear).slice(-2)}`}
               brand={normalizeBrand(card.brand)}
               removeLabel="Remover"
-              onRemove={() => removeCard(card.id)}
+              onRemove={() => setConfirmRemoveCardId(card.id)}
             />
           ))}
         </DsSavedCardList>
       )}
+
+      <DsConfirmDialog
+        open={confirmRemoveCardId !== null}
+        onOpenChange={(open) => {
+          if (!open) setConfirmRemoveCardId(null);
+        }}
+        title="Remover cartão"
+        description="Deseja realmente remover este cartão?"
+        confirmLabel="Remover"
+        cancelLabel="Cancelar"
+        onConfirm={() => {
+          if (confirmRemoveCardId !== null) {
+            removeCard(confirmRemoveCardId);
+            setConfirmRemoveCardId(null);
+          }
+        }}
+      />
 
       <AddCardDialog />
     </div>
