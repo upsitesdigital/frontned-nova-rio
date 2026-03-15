@@ -2,10 +2,7 @@ import type { Card } from "@/api/cards-api";
 import type { PaymentEntry } from "@/api/payments-api";
 import { formatPaymentMethod, formatPaymentAmount } from "@/lib/payment-format";
 import { resolvePaymentStatus } from "@/lib/payment-status-map";
-import type {
-  RegisteredCard,
-  RecentPayment,
-} from "@/app/dashboard/_components/dashboard-payments-panel";
+import type { RegisteredCard, RecentPayment } from "@/types/payment";
 
 const BRAND_ICON_MAP: Record<string, string> = {
   VISA: "/icons/master-card-icon.svg",

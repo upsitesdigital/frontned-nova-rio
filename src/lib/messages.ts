@@ -5,8 +5,7 @@ const MESSAGES = {
     invalidEmail: "Formato de e-mail inválido.",
     wrongCredentials: "E-mail ou senha incorretos.",
     loginError: "Erro ao entrar. Tente novamente.",
-    pendingApproval:
-      "Seu cadastro está em análise. Aguarde a aprovação para fazer login.",
+    pendingApproval: "Seu cadastro está em análise. Aguarde a aprovação para fazer login.",
   },
 
   password: {
@@ -55,6 +54,9 @@ const MESSAGES = {
     missingHolder: "Informe o nome impresso no cartão",
     missingMonth: "Selecione o mês",
     missingYear: "Selecione o ano",
+    missingCvv: "Informe o CVV",
+    invalidCvv: "CVV inválido",
+    tokenizeError: "Erro ao processar dados do cartão",
   },
 
   payments: {
