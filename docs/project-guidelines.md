@@ -374,6 +374,54 @@ function DsFilterDropdown({ options }: DsFilterDropdownProps) {
 }
 ```
 
+### `"use client"` directive — MANDATORY rules
+
+Add `"use client"` to any component that:
+- Uses hooks (`useState`, `useEffect`, `useRef`, etc.)
+- Uses event handlers (`onClick`, `onKeyDown`, etc.)
+- Is imported by other client components (even if the component itself is pure)
+
+When in doubt, add it — missing directives break the Next.js build.
+
+### Controlled/Uncontrolled pattern — MANDATORY for optional state props
+
+Components with controlled props (`open`, `collapsed`, `visible`) MUST support uncontrolled usage via internal state fallback when the change handler is not provided:
+
+```tsx
+// CORRECT: supports both controlled and uncontrolled
+function DsCollapsibleSection({ open: controlledOpen, onOpenChange, ...props }) {
+  const [internalOpen, setInternalOpen] = useState(true);
+  const isControlled = onOpenChange !== undefined;
+  const open = isControlled ? (controlledOpen ?? true) : internalOpen;
+
+  const handleOpenChange = (value: boolean) => {
+    if (isControlled) { onOpenChange(value); }
+    else { setInternalOpen(value); }
+  };
+}
+
+// WRONG: only works when handler is provided
+function DsCollapsibleSection({ open = true, onOpenChange }) {
+  // If onOpenChange is not passed, toggle does nothing
+  return <Root open={open} onOpenChange={onOpenChange} />;
+}
+```
+
+Note: `useState` IS allowed in DS components for the controlled/uncontrolled fallback pattern.
+
+### Keyboard accessibility
+
+Interactive elements with `role="button"` must handle both Enter AND Space keys:
+
+```tsx
+onKeyDown={(e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault(); // prevent scroll on Space
+    onSelect();
+  }
+}}
+```
+
 ### Conventions checklist
 
 - [ ] `Ds` prefix in the name
@@ -382,8 +430,9 @@ function DsFilterDropdown({ options }: DsFilterDropdownProps) {
 - [ ] Separate type export: `type DsMyComponentProps`
 - [ ] `cn()` for class merging
 - [ ] `className?: string` as optional prop
-- [ ] `"use client"` ONLY if it uses hooks/state
-- [ ] **Zustand** for any state (NEVER `useState`)
+- [ ] `"use client"` on any component with hooks, events, or imported by client components
+- [ ] Controlled/Uncontrolled fallback for optional state props
+- [ ] Space + Enter keyboard handling on `role="button"` elements
 - [ ] File added to the category barrel `index.ts`
 
 ### DsIcon — Correct usage
@@ -439,7 +488,39 @@ className={disabled ? "opacity-50" : ""}
 
 ---
 
-## 7. Commits
+## 7. Validation — Zod 4
+
+All form validation uses **Zod 4** (`zod/v4`). Never use `validator.js`, inline regex, or other validation libraries.
+
+```tsx
+// CORRECT: Zod schema
+import { z } from "zod/v4";
+const emailSchema = z.string().email();
+const codeSchema = z.string().regex(/^\d{6}$/, "Code must be 6 digits");
+
+// WRONG: validator.js
+import isEmail from "validator/es/lib/isEmail";
+
+// WRONG: invalid Zod API
+const emailSchema = z.email(); // z.email() does not exist, use z.string().email()
+```
+
+## 8. Pagination — Clamping
+
+When implementing pagination, always clamp `currentPage` and use the clamped value consistently:
+
+```tsx
+const clampedPage = Math.max(1, Math.min(currentPage, Math.max(1, totalPages)));
+const showingCount = Math.max(0, Math.min(pageSize, totalItems - (clampedPage - 1) * pageSize));
+
+// Use clampedPage for: label, disabled state, onClick, active styling
+disabled={clampedPage <= 1}
+page === clampedPage ? "active" : "inactive"
+```
+
+Show `DsEmptyState` when filtered results are empty (distinct from "no data loaded").
+
+## 9. Commits
 
 ### Format
 
@@ -495,7 +576,7 @@ git add .
 
 ---
 
-## 8. Verification
+## 10. Verification
 
 ALWAYS run before considering work done:
 
@@ -547,7 +628,7 @@ If TypeScript complains about a type, it means the type system is telling you so
 
 ---
 
-## 9. Language
+## 11. Language
 
 | Context | Language |
 |---|---|
@@ -573,7 +654,7 @@ const contadorAgendamentos = 0;     // variables must be in English
 
 ---
 
-## 10. Screen Composition — Full Workflow
+## 12. Screen Composition — Full Workflow
 
 When receiving a design (Figma) to implement:
 
@@ -603,7 +684,7 @@ When receiving a design (Figma) to implement:
 
 ---
 
-## 11. Backend Connection (MANDATORY)
+## 13. Backend Connection (MANDATORY)
 
 **ALWAYS connect to the backend when creating app components.** No UI component should exist without its corresponding backend integration.
 
@@ -634,14 +715,13 @@ Every interactive component that creates, reads, updates, or deletes data MUST b
 
 // In store:
 saveServiceEdit: async (id) => {
-  const token = useAuthStore.getState().accessToken;
-  await rescheduleAppointment(token, id, { date, startTime });
+  await rescheduleAppointment(id, { date, startTime });
   await loadSummary(); // refresh data
 }
 
-// In API layer:
-async function rescheduleAppointment(token, id, data) {
-  return httpAuthPost(`/appointments/${id}/reschedule`, data, token);
+// In API layer (auth handled internally by configureAuthProvider):
+async function rescheduleAppointment(id, data) {
+  return httpAuthPost(`/appointments/${id}/reschedule`, data);
 }
 ```
 
@@ -655,7 +735,7 @@ async function rescheduleAppointment(token, id, data) {
 
 ---
 
-## 12. Clean Architecture — Frontend Layers
+## 14. Clean Architecture — Frontend Layers
 
 The frontend follows **Clean Architecture** principles (Robert C. Martin / Uncle Bob) adapted to the React/Next.js context. The core idea: organize code into concentric layers where **dependencies always point inward** — outer layers know about inner layers, never the reverse.
 
@@ -738,25 +818,26 @@ Defines what the system **can do**. Each API function represents ONE use case (o
 
 ```tsx
 // src/api/appointments-api.ts — One use case per function
-async function getAppointments(token: string): Promise<Appointment[]> {
-  return httpAuthGet<Appointment[]>("/appointments", token);
+// Auth tokens handled internally by configureAuthProvider — NEVER pass tokens as params
+async function getAppointments(): Promise<Appointment[]> {
+  return httpAuthGet<Appointment[]>("/appointments");
 }
 
-async function cancelAppointment(token: string, id: string): Promise<void> {
-  return httpAuthPost(`/appointments/${id}/cancel`, {}, token);
+async function cancelAppointment(id: number): Promise<void> {
+  return httpAuthPatch(`/appointments/${id}/cancel`);
 }
 
 async function rescheduleAppointment(
-  token: string,
-  id: string,
+  id: number,
   data: { date: string; startTime: string }
 ): Promise<Appointment> {
-  return httpAuthPost<Appointment>(`/appointments/${id}/reschedule`, data, token);
+  return httpAuthPost<Appointment>(`/appointments/${id}/reschedule`, data);
 }
 ```
 
 **Rules:**
 - ONE function per endpoint (Single Responsibility)
+- Auth handled by `configureAuthProvider` — NEVER pass tokens as parameters
 - Use cases MUST NOT call other use cases directly
 - ONLY imports from `lib/` (types, http helpers)
 - NEVER imports from pages, stores, or design-system
@@ -770,13 +851,15 @@ Zustand stores act as **controllers** in Clean Architecture. They orchestrate us
 // src/stores/appointments-store.ts — Controller + Presenter
 import { create } from "zustand";
 import { getAppointments, cancelAppointment } from "@/api/appointments-api";
+import { HttpClientError } from "@/api/http-client";
 import { canCancelAppointment } from "@/lib/appointment-rules";
-import { useAuthStore } from "@/stores/auth-store";
+import { resolveErrorMessage } from "@/lib/auth-helpers";
 
 interface AppointmentsState {
   appointments: Appointment[];
   isLoading: boolean;
   error: string | null;
+  isAuthError: boolean;
   fetchAppointments: () => Promise<void>;
   cancel: (id: string) => Promise<void>;
 }
@@ -785,25 +868,28 @@ const useAppointmentsStore = create<AppointmentsState>((set, get) => ({
   appointments: [],
   isLoading: false,
   error: null,
+  isAuthError: false,
 
   fetchAppointments: async () => {
-    const token = useAuthStore.getState().accessToken;
+    // Auth tokens handled internally by httpAuth* — no token passing needed
     set({ isLoading: true, error: null });
     try {
-      const appointments = await getAppointments(token);
-      set({ appointments });
-    } catch {
-      set({ error: "Erro ao carregar agendamentos" });
-    } finally {
-      set({ isLoading: false });
+      const appointments = await getAppointments();
+      set({ appointments, isLoading: false });
+    } catch (error) {
+      const isAuth = error instanceof HttpClientError && (error.status === 401 || error.status === 403);
+      set({
+        isLoading: false,
+        error: resolveErrorMessage(error, "Erro ao carregar agendamentos"),
+        isAuthError: isAuth,
+      });
     }
   },
 
   cancel: async (id: string) => {
-    const token = useAuthStore.getState().accessToken;
     const appointment = get().appointments.find((a) => a.id === id);
     if (!appointment || !canCancelAppointment(appointment)) return;
-    await cancelAppointment(token, id);
+    await cancelAppointment(id);
     await get().fetchAppointments(); // refresh data
   },
 }));
@@ -812,9 +898,43 @@ const useAppointmentsStore = create<AppointmentsState>((set, get) => ({
 **Rules:**
 - ONE store per domain (appointments, auth, dashboard, etc.)
 - Stores call API functions (use cases), NEVER raw `fetch`
+- Auth tokens handled internally by `httpAuth*` — NEVER pass tokens manually
+- Distinguish auth errors (401/403) from transient errors — use `isAuthError` flag
 - Stores use domain rules from `lib/`, NEVER implement business logic inline
 - Stores handle loading, error, and success states
 - NEVER imports from pages or design-system
+
+**Auth hydration — MANDATORY on mount:**
+
+```tsx
+// In layout/page useEffect:
+useEffect(() => {
+  waitForAuthHydration().then(() => {
+    loadSummary();    // only after tokens are hydrated
+    loadPayments();
+  });
+}, [loadSummary, loadPayments]);
+
+// WRONG: fires before tokens are available
+useEffect(() => {
+  loadSummary();  // may send empty bearer token → 401
+}, [loadSummary]);
+```
+
+**Auth store — persist BOTH tokens:**
+
+```tsx
+persist(
+  (set) => ({ /* ... */ }),
+  {
+    name: "nova-rio-auth",
+    partialize: (state) => ({
+      accessToken: state.accessToken,
+      refreshToken: state.refreshToken,  // MUST persist for page reload survival
+    }),
+  },
+);
+```
 
 #### Frameworks & Drivers (`src/app/**/`, `src/design-system/`)
 
@@ -967,7 +1087,7 @@ import { canCancelAppointment } from "@/lib/appointment-rules";
 
 ---
 
-## 13. SOLID — Principles in the Frontend
+## 15. SOLID — Principles in the Frontend
 
 ### S — Single Responsibility Principle (SRP)
 
