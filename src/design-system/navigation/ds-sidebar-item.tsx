@@ -1,3 +1,6 @@
+"use client";
+
+import type { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
@@ -22,10 +25,17 @@ function DsSidebarItem({
 }: DsSidebarItemProps) {
   const Component = href ? "a" : "button";
 
+  const handleClick = (e: MouseEvent) => {
+    if (href && onClick) {
+      e.preventDefault();
+    }
+    onClick?.();
+  };
+
   return (
     <Component
       href={href}
-      onClick={onClick}
+      onClick={handleClick}
       type={href ? undefined : "button"}
       title={collapsed ? label : undefined}
       className={cn(
