@@ -65,14 +65,18 @@ function parseServiceId(filter: string): number | undefined {
   return Number.isNaN(id) ? undefined : id;
 }
 
+let agendaAbortController: AbortController | null = null;
+
 const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
   ...initialState,
 
   loadDashboard: async () => {
+    if (get().profile && !get().error) return;
+
     set({ isLoading: true, error: null });
 
     try {
-      const [profile, today, clients, pending, agenda, services] = await Promise.all([
+      const results = await Promise.allSettled([
         fetchAdminProfile(),
         fetchTodayAppointmentsCount(),
         fetchActiveClientsCount(),
@@ -81,32 +85,47 @@ const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
         fetchServices(),
       ]);
 
+      const [profileR, todayR, clientsR, pendingR, agendaR, servicesR] = results;
+
+      if (profileR.status === "rejected") {
+        const error = profileR.reason;
+        const isAuth =
+          error instanceof HttpClientError && (error.status === 401 || error.status === 403);
+        set({
+          isLoading: false,
+          error: resolveErrorMessage(error, MESSAGES.adminDashboard.loadError),
+          isAuthError: isAuth,
+        });
+        return;
+      }
+
       set({
-        profile,
-        todayAppointmentsCount: today.count,
-        activeClientsCount: clients.count,
-        pendingServicesCount: pending.count,
-        agendaItems: agenda.items,
-        agendaTotal: agenda.total,
+        profile: profileR.value,
+        todayAppointmentsCount: todayR.status === "fulfilled" ? todayR.value.count : 0,
+        activeClientsCount: clientsR.status === "fulfilled" ? clientsR.value.count : 0,
+        pendingServicesCount: pendingR.status === "fulfilled" ? pendingR.value.count : 0,
+        agendaItems: agendaR.status === "fulfilled" ? agendaR.value.items : [],
+        agendaTotal: agendaR.status === "fulfilled" ? agendaR.value.total : 0,
         agendaPage: 1,
-        serviceOptions: services,
+        serviceOptions: servicesR.status === "fulfilled" ? servicesR.value : [],
         isLoading: false,
       });
     } catch (error) {
-      const isAuth =
-        error instanceof HttpClientError && (error.status === 401 || error.status === 403);
       set({
         isLoading: false,
         error: resolveErrorMessage(error, MESSAGES.adminDashboard.loadError),
-        isAuthError: isAuth,
       });
     }
   },
 
   loadAgenda: async (page: number, serviceId?: number) => {
+    agendaAbortController?.abort();
+    agendaAbortController = new AbortController();
+    const { signal } = agendaAbortController;
+
     set({ isAgendaLoading: true });
     try {
-      const agenda = await fetchTodayAgenda(page, AGENDA_PAGE_SIZE, serviceId);
+      const agenda = await fetchTodayAgenda(page, AGENDA_PAGE_SIZE, serviceId, signal);
       set({
         agendaItems: agenda.items,
         agendaTotal: agenda.total,
@@ -114,6 +133,7 @@ const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
         isAgendaLoading: false,
       });
     } catch (error) {
+      if (signal.aborted) return;
       const isAuth =
         error instanceof HttpClientError && (error.status === 401 || error.status === 403);
       set({
@@ -129,7 +149,7 @@ const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
   },
 
   setAgendaServiceFilter: (value: string) => {
-    set({ agendaServiceFilter: value, agendaPage: 1 });
+    set({ agendaServiceFilter: value, agendaPage: 1, isAgendaLoading: true, agendaItems: [] });
     const serviceId = parseServiceId(value);
     get().loadAgenda(1, serviceId);
   },

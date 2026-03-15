@@ -50,10 +50,14 @@ async function fetchTodayAgenda(
   page: number,
   limit: number,
   serviceId?: number,
+  signal?: AbortSignal,
 ): Promise<TodayAgendaResponse> {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
   if (serviceId !== undefined) params.set("serviceId", String(serviceId));
-  return httpAuthGet<TodayAgendaResponse>(`/admin/dashboard/today-agenda?${params.toString()}`);
+  return httpAuthGet<TodayAgendaResponse>(
+    `/admin/dashboard/today-agenda?${params.toString()}`,
+    signal,
+  );
 }
 
 interface ServiceOption {
