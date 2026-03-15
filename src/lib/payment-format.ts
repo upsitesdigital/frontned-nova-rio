@@ -18,6 +18,7 @@ function formatPaymentMethod(entry: PaymentEntry): string {
 
 function formatPaymentAmount(amount: string): string {
   const value = Number(amount);
+  if (isNaN(value)) return "R$ 0,00";
   return `R$ ${value.toFixed(2).replace(".", ",")}`;
 }
 
