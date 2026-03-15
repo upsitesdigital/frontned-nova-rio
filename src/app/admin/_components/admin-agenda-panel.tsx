@@ -1,6 +1,6 @@
 "use client";
 
-import { format } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import {
   DsFilterDropdown,
   DsServiceHistoryItem,
@@ -15,6 +15,7 @@ function AdminAgendaPanel() {
     agendaTotal,
     agendaPage,
     agendaServiceFilter,
+    isAgendaLoading,
     serviceOptions,
     setAgendaPage,
     setAgendaServiceFilter,
@@ -40,19 +41,26 @@ function AdminAgendaPanel() {
         />
       </div>
 
-      {agendaItems.length === 0 ? (
+      {isAgendaLoading ? (
+        <div className="flex items-center justify-center py-10">
+          <p className="text-base text-nova-gray-400">Carregando agenda...</p>
+        </div>
+      ) : agendaItems.length === 0 ? (
         <DsEmptyState message="Nenhum agendamento para hoje." />
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
           <div className="flex flex-col">
-            {agendaItems.map((entry) => (
-              <DsServiceHistoryItem
-                key={entry.appointmentId}
-                date={format(new Date(entry.date), "dd/MM")}
-                clientName={entry.clientName}
-                label={entry.serviceName}
-              />
-            ))}
+            {agendaItems.map((entry) => {
+              const parsed = parseISO(entry.date);
+              return (
+                <DsServiceHistoryItem
+                  key={entry.appointmentId}
+                  date={isValid(parsed) ? format(parsed, "dd/MM") : "--/--"}
+                  clientName={entry.clientName}
+                  label={entry.serviceName}
+                />
+              );
+            })}
           </div>
           <DsPagination
             currentPage={agendaPage}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { BroomIcon, UsersThreeIcon, HourglassIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsHighlightCard } from "@/design-system";
 import { useAdminDashboardStore } from "@/stores/admin-dashboard-store";
@@ -7,6 +8,7 @@ import { AdminAgendaPanel } from "./_components/admin-agenda-panel";
 import { AdminQuickActionsPanel } from "./_components/admin-quick-actions-panel";
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const {
     profile,
     todayAppointmentsCount,
@@ -43,7 +45,7 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4 md:flex-row">
         <DsHighlightCard
           title="Agendamentos Hoje"
           value={String(todayAppointmentsCount)}
@@ -73,12 +75,12 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col items-start gap-4 lg:flex-row">
         <div className="min-w-0 flex-1">
           <AdminAgendaPanel />
         </div>
-        <div className="w-125 shrink-0">
-          <AdminQuickActionsPanel />
+        <div className="w-full shrink-0 lg:w-125">
+          <AdminQuickActionsPanel onNavigate={(path) => router.push(path)} />
         </div>
       </div>
     </div>

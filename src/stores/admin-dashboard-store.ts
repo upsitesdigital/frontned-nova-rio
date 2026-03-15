@@ -26,6 +26,7 @@ interface AdminDashboardState {
   agendaServiceFilter: string;
   serviceOptions: ServiceOption[];
   isLoading: boolean;
+  isAgendaLoading: boolean;
   error: string | null;
   isAuthError: boolean;
 }
@@ -53,12 +54,15 @@ const initialState: AdminDashboardState = {
   agendaServiceFilter: "all",
   serviceOptions: [],
   isLoading: false,
+  isAgendaLoading: false,
   error: null,
   isAuthError: false,
 };
 
 function parseServiceId(filter: string): number | undefined {
-  return filter === "all" ? undefined : Number(filter);
+  if (filter === "all") return undefined;
+  const id = Number(filter);
+  return Number.isNaN(id) ? undefined : id;
 }
 
 const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
@@ -100,15 +104,22 @@ const useAdminDashboardStore = create<AdminDashboardStore>()((set, get) => ({
   },
 
   loadAgenda: async (page: number, serviceId?: number) => {
+    set({ isAgendaLoading: true });
     try {
       const agenda = await fetchTodayAgenda(page, AGENDA_PAGE_SIZE, serviceId);
       set({
         agendaItems: agenda.items,
         agendaTotal: agenda.total,
         agendaPage: page,
+        isAgendaLoading: false,
       });
-    } catch {
-      // keep current state on pagination error
+    } catch (error) {
+      const isAuth =
+        error instanceof HttpClientError && (error.status === 401 || error.status === 403);
+      set({
+        isAgendaLoading: false,
+        ...(isAuth ? { isAuthError: true } : {}),
+      });
     }
   },
 

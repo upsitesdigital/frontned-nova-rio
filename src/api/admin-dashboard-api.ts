@@ -52,7 +52,7 @@ async function fetchTodayAgenda(
   serviceId?: number,
 ): Promise<TodayAgendaResponse> {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-  if (serviceId) params.set("serviceId", String(serviceId));
+  if (serviceId !== undefined) params.set("serviceId", String(serviceId));
   return httpAuthGet<TodayAgendaResponse>(`/admin/dashboard/today-agenda?${params.toString()}`);
 }
 

@@ -21,6 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const { profile, isAuthError, loadDashboard } = useAdminDashboardStore();
+  const userType = useAuthStore((s) => s.userType);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
 
@@ -33,8 +34,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (isAuthError && !profile) {
       router.push("/login");
+    } else if (userType && userType !== "admin") {
+      router.push("/dashboard");
     }
-  }, [isAuthError, profile, router]);
+  }, [isAuthError, profile, userType, router]);
 
   const handleSignOut = () => {
     useAuthStore.getState().reset();
