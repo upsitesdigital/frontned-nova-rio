@@ -9,6 +9,7 @@ import { useAdminDashboardStore } from "@/stores/admin-dashboard-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
 import { useToastStore } from "@/stores/toast-store";
 
+// Direct file import required for next/dynamic code-splitting
 const DsAdminDashboardShell = dynamic(
   () =>
     import("@/design-system/composite/ds-admin-dashboard-shell").then(
@@ -20,7 +21,7 @@ const DsAdminDashboardShell = dynamic(
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { profile, isAuthError, loadDashboard } = useAdminDashboardStore();
+  const { profile, isLoading, isAuthError, loadDashboard } = useAdminDashboardStore();
   const userType = useAuthStore((s) => s.userType);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
@@ -46,6 +47,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     useToastStore.getState().reset();
     router.push("/login");
   };
+
+  if (isLoading || (!profile && !isAuthError)) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-base text-nova-gray-400" role="status">
+          Carregando...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>

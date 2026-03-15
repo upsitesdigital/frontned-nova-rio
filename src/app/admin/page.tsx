@@ -21,14 +21,16 @@ export default function AdminDashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-base text-nova-gray-400">Carregando...</p>
+        <p className="text-base text-nova-gray-400" role="status">
+          Carregando...
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex items-center justify-center py-20" role="alert">
         <p className="text-base text-nova-error">{error}</p>
       </div>
     );
