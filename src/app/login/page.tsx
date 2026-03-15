@@ -8,6 +8,7 @@ import Link from "next/link";
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { useLoginStore } from "@/stores/login-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 import { PendingApprovalDialog } from "./_components/pending-approval-dialog";
 
@@ -26,6 +27,9 @@ export default function LoginPage() {
   const submit = useLoginStore((s) => s.submit);
   const dismissPendingApproval = useLoginStore((s) => s.dismissPendingApproval);
   const reset = useLoginStore((s) => s.reset);
+
+  const pwdVisible = usePasswordVisibilityStore((s) => s.isVisible("login-password"));
+  const setPwdVisible = usePasswordVisibilityStore((s) => s.setVisibility);
 
   useEffect(() => {
     reset();
@@ -66,6 +70,8 @@ export default function LoginPage() {
                 placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                visible={pwdVisible}
+                onVisibilityChange={(v) => setPwdVisible("login-password", v)}
                 className={FLOW_INPUT_CLASS}
               />
             </DsFormField>

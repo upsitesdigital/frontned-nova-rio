@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { DsButton, DsFormField, DsInput, DsPasswordInput } from "@/design-system";
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { useForgotPasswordStore } from "@/stores/forgot-password-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 import { PasswordRequirements } from "./password-requirements";
 
@@ -20,6 +21,10 @@ function CodeStep() {
   const setNewPassword = useForgotPasswordStore((s) => s.setNewPassword);
   const setConfirmPassword = useForgotPasswordStore((s) => s.setConfirmPassword);
   const submitCodeStep = useForgotPasswordStore((s) => s.submitCodeStep);
+
+  const newPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("forgot-new"));
+  const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("forgot-confirm"));
+  const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
 
   const canSubmit =
     code.length === 6 &&
@@ -52,6 +57,8 @@ function CodeStep() {
               placeholder="Digite sua nova senha"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              visible={newPwdVisible}
+              onVisibilityChange={(v) => setPwdVisibility("forgot-new", v)}
               className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
@@ -63,6 +70,8 @@ function CodeStep() {
             placeholder="Confirme sua nova senha"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            visible={confirmPwdVisible}
+            onVisibilityChange={(v) => setPwdVisibility("forgot-confirm", v)}
             className={FLOW_INPUT_CLASS}
           />
         </DsFormField>

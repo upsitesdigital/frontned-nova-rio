@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { DsToastContainer } from "@/design-system";
 import { useAuthStore } from "@/stores/auth-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { useSidebarStore } from "@/stores/sidebar-store";
 
 const DsClientDashboardShell = dynamic(
   () =>
@@ -19,6 +20,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const { summary, error, loadSummary } = useDashboardStore();
+  const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
+  const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
 
   useEffect(() => {
     loadSummary();
@@ -40,6 +43,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <>
       <DsClientDashboardShell
         activePath={pathname}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarCollapsedChange={setSidebarCollapsed}
         userInitials={summary?.clientName?.charAt(0) ?? ""}
         notificationCount={0}
         onNavigate={(path) => router.push(path)}

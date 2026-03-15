@@ -2,6 +2,7 @@
 
 import { DsDialog, DsFormField, DsInput, DsPasswordInput, DsButton } from "@/design-system";
 import { useProfileStore } from "@/stores/profile-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 function PasswordChangeDialog() {
   const {
@@ -19,6 +20,10 @@ function PasswordChangeDialog() {
     submitPasswordChange,
     submitPasswordVerification,
   } = useProfileStore();
+
+  const newPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-new-pwd"));
+  const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-confirm-pwd"));
+  const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
 
   const passwordMismatch =
     confirmPassword.length > 0 && newPassword !== confirmPassword
@@ -79,6 +84,8 @@ function PasswordChangeDialog() {
             <DsPasswordInput
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              visible={newPwdVisible}
+              onVisibilityChange={(v) => setPwdVisibility("profile-new-pwd", v)}
               placeholder="Digite a nova senha"
             />
           </DsFormField>
@@ -87,6 +94,8 @@ function PasswordChangeDialog() {
             <DsPasswordInput
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              visible={confirmPwdVisible}
+              onVisibilityChange={(v) => setPwdVisibility("profile-confirm-pwd", v)}
               placeholder="Confirme a nova senha"
             />
           </DsFormField>

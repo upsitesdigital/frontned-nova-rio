@@ -9,6 +9,7 @@ import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/desig
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { formatPhone } from "@/lib/formatters";
 import { useCreateAccountStore } from "@/stores/create-account-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 export default function CriarContaPage() {
   const router = useRouter();
@@ -28,6 +29,10 @@ export default function CriarContaPage() {
   const setConfirmPassword = useCreateAccountStore((s) => s.setConfirmPassword);
   const submit = useCreateAccountStore((s) => s.submit);
   const reset = useCreateAccountStore((s) => s.reset);
+
+  const pwdVisible = usePasswordVisibilityStore((s) => s.isVisible("register-password"));
+  const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("register-confirm"));
+  const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
 
   useEffect(() => {
     reset();
@@ -102,6 +107,8 @@ export default function CriarContaPage() {
                 placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                visible={pwdVisible}
+                onVisibilityChange={(v) => setPwdVisibility("register-password", v)}
                 aria-invalid={!!errors.password}
                 className={FLOW_INPUT_CLASS}
               />
@@ -112,6 +119,8 @@ export default function CriarContaPage() {
                 placeholder="Confirme sua senha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                visible={confirmPwdVisible}
+                onVisibilityChange={(v) => setPwdVisibility("register-confirm", v)}
                 aria-invalid={!!errors.confirmPassword}
                 className={FLOW_INPUT_CLASS}
               />
@@ -119,12 +128,7 @@ export default function CriarContaPage() {
           </div>
 
           <div className="flex flex-col items-start gap-6">
-            <DsButton
-              size="flow"
-              disabled={!canSubmit}
-              onClick={handleSubmit}
-              className="w-64.25"
-            >
+            <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
               {isSubmitting ? "Criando conta..." : "Criar conta"}
             </DsButton>
 
