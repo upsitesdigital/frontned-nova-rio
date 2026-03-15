@@ -15,6 +15,10 @@ const addCardSchema = z.object({
   holderName: z.string().min(1, MESSAGES.cards.missingHolder),
   expiryMonth: z.string().min(1, MESSAGES.cards.missingMonth),
   expiryYear: z.string().min(1, MESSAGES.cards.missingYear),
+  cvv: z
+    .string()
+    .min(1, MESSAGES.cards.missingCvv)
+    .regex(/^\d{3,4}$/, MESSAGES.cards.invalidCvv),
 });
 
 function luhnCheck(value: string): boolean {
@@ -38,6 +42,7 @@ interface AddCardFormErrors {
   holderName?: string;
   expiryMonth?: string;
   expiryYear?: string;
+  cvv?: string;
 }
 
 interface AddCardFormInput {
@@ -45,6 +50,7 @@ interface AddCardFormInput {
   holderName: string;
   expiryMonth: string;
   expiryYear: string;
+  cvv: string;
 }
 
 function validateAddCardForm(input: AddCardFormInput): AddCardFormErrors {

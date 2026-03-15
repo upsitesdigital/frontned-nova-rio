@@ -1,5 +1,14 @@
-import isStrongPassword from "validator/es/lib/isStrongPassword";
 import { z } from "zod/v4";
+
+function isStrongPassword(v: string): boolean {
+  return (
+    v.length >= 8 &&
+    /[A-Z]/.test(v) &&
+    /[a-z]/.test(v) &&
+    /[0-9]/.test(v) &&
+    /[^A-Za-z0-9]/.test(v)
+  );
+}
 
 const resetPasswordSchema = z
   .object({
@@ -7,17 +16,7 @@ const resetPasswordSchema = z
     newPassword: z
       .string()
       .min(8, "A senha deve ter pelo menos 8 caracteres")
-      .refine(
-        (v) =>
-          isStrongPassword(v, {
-            minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-          }),
-        "A senha deve conter maiúscula, minúscula, número e símbolo",
-      ),
+      .refine(isStrongPassword, "A senha deve conter maiúscula, minúscula, número e símbolo"),
     confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -56,53 +55,23 @@ function getPasswordHints(password: string): PasswordHint[] {
   return [
     {
       label: "Mínimo de 8 caracteres",
-      met: isStrongPassword(password, {
-        minLength: 8,
-        minLowercase: 0,
-        minUppercase: 0,
-        minNumbers: 0,
-        minSymbols: 0,
-      }),
+      met: password.length >= 8,
     },
     {
       label: "Uma letra maiúscula",
-      met: isStrongPassword(password, {
-        minLength: 0,
-        minLowercase: 0,
-        minUppercase: 1,
-        minNumbers: 0,
-        minSymbols: 0,
-      }),
+      met: /[A-Z]/.test(password),
     },
     {
       label: "Uma letra minúscula",
-      met: isStrongPassword(password, {
-        minLength: 0,
-        minLowercase: 1,
-        minUppercase: 0,
-        minNumbers: 0,
-        minSymbols: 0,
-      }),
+      met: /[a-z]/.test(password),
     },
     {
       label: "Um número",
-      met: isStrongPassword(password, {
-        minLength: 0,
-        minLowercase: 0,
-        minUppercase: 0,
-        minNumbers: 1,
-        minSymbols: 0,
-      }),
+      met: /[0-9]/.test(password),
     },
     {
       label: "Um símbolo",
-      met: isStrongPassword(password, {
-        minLength: 0,
-        minLowercase: 0,
-        minUppercase: 0,
-        minNumbers: 0,
-        minSymbols: 1,
-      }),
+      met: /[^A-Za-z0-9]/.test(password),
     },
   ];
 }
