@@ -5,6 +5,7 @@ import { DsIcon } from "@/design-system/media";
 interface DsServiceHistoryItemProps {
   date: string;
   label: string;
+  clientName?: string;
   onView?: () => void;
   onEdit?: () => void;
   className?: string;
@@ -13,6 +14,7 @@ interface DsServiceHistoryItemProps {
 function DsServiceHistoryItem({
   date,
   label,
+  clientName,
   onView,
   onEdit,
   className,
@@ -27,6 +29,14 @@ function DsServiceHistoryItem({
       <span className="shrink-0 rounded-1.5 bg-nova-gray-50 p-1.5 text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-600">
         {date}
       </span>
+      {clientName && (
+        <>
+          <span className="shrink-0 text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
+            {clientName}
+          </span>
+          <span className="h-4 w-px shrink-0 rotate-0 bg-nova-gray-300" />
+        </>
+      )}
       <span className="min-w-0 flex-1 text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
         {label}
       </span>

@@ -74,7 +74,7 @@ function DsAdminSidebar({
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px]",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
               onClick={handleToggle}
