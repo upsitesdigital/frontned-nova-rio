@@ -7,3 +7,5 @@ export {
 export { DsSheet, type DsSheetProps, type DsSheetSide } from "./ds-sheet";
 export { DsNotificationBell, type DsNotificationBellProps } from "./ds-notification-bell";
 export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./ds-alert";
+export { DsToastItem } from "./ds-toast-item";
+export { DsToastContainer } from "./ds-toast-container";

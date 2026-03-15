@@ -40,8 +40,7 @@ const useAddressStore = create<AddressStore>()((set) => ({
         isLoadingAddress: false,
         cepError: result.error,
       });
-    } catch (error) {
-      console.error("Failed to validate address:", error);
+    } catch {
       set({ address: null, isLoadingAddress: false, cepError: "CEP não encontrado" });
     }
   },

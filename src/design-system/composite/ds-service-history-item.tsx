@@ -24,10 +24,10 @@ function DsServiceHistoryItem({
         className,
       )}
     >
-      <span className="shrink-0 rounded-[6px] bg-nova-gray-50 p-1.5 text-xs leading-[1.3] tracking-[-0.48px] text-[#4d4d4f]">
+      <span className="shrink-0 rounded-1.5 bg-nova-gray-50 p-1.5 text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-600">
         {date}
       </span>
-      <span className="min-w-0 flex-1 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f]">
+      <span className="min-w-0 flex-1 text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
         {label}
       </span>
       {onView && (

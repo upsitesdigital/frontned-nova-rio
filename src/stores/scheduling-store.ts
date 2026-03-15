@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { getTimeSlots } from "@/api/scheduling-data";
+import { fetchTimeSlots } from "@/api/scheduling-api";
 import type { RecurrenceFrequency, RecurrenceType, TimeSlot } from "@/types/scheduling";
 
 interface SchedulingState {
@@ -10,6 +10,7 @@ interface SchedulingState {
   selectedTime: string | null;
   timeSlots: TimeSlot[];
   isLoadingTimeSlots: boolean;
+  error: string | null;
 }
 
 interface SchedulingActions {
@@ -30,6 +31,7 @@ const initialState: SchedulingState = {
   selectedTime: null,
   timeSlots: [],
   isLoadingTimeSlots: false,
+  error: null,
 };
 
 const useSchedulingStore = create<SchedulingStore>()((set) => ({
@@ -45,13 +47,12 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
   setSelectedTime: (time) => set({ selectedTime: time }),
 
   loadTimeSlots: async (date) => {
-    set({ isLoadingTimeSlots: true });
+    set({ isLoadingTimeSlots: true, error: null });
     try {
-      const timeSlots = await getTimeSlots(date);
+      const timeSlots = await fetchTimeSlots(date);
       set({ timeSlots, isLoadingTimeSlots: false });
-    } catch (error) {
-      console.error("Failed to load time slots:", error);
-      set({ timeSlots: [], isLoadingTimeSlots: false });
+    } catch {
+      set({ timeSlots: [], isLoadingTimeSlots: false, error: "Erro ao carregar horários." });
     }
   },
 

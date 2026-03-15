@@ -21,7 +21,7 @@ function DsReceiptButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "inline-flex w-[107px] items-center justify-center gap-2 rounded-full border border-nova-gray-300 p-1.5 text-base leading-normal tracking-[-0.64px] text-nova-gray-700 transition-colors",
+        "inline-flex w-27 items-center justify-center gap-2 rounded-full border border-nova-gray-300 p-1.5 text-base leading-normal tracking-[-0.64px] text-nova-gray-700 transition-colors",
         disabled
           ? "cursor-not-allowed opacity-30"
           : "cursor-pointer hover:border-primary hover:text-primary",
@@ -29,7 +29,7 @@ function DsReceiptButton({
       )}
     >
       {label}
-      <DsIcon icon={DownloadSimpleIcon} size="md" />
+      <DsIcon icon={DownloadSimpleIcon} size="md" className="text-nova-primary" />
     </button>
   );
 }

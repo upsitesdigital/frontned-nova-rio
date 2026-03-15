@@ -17,7 +17,7 @@ function DsSecurePaymentBanner({
   return (
     <div
       className={cn(
-        "relative flex items-start gap-6 overflow-clip rounded-2xl bg-black px-10 py-[46px]",
+        "relative flex items-start gap-6 overflow-clip rounded-2xl bg-black px-10 py-11.5",
         className,
       )}
     >
@@ -33,12 +33,8 @@ function DsSecurePaymentBanner({
         <DsIcon icon={LockIcon} size="md" className="text-white" />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2 leading-[1.3]">
-        <p className="text-[20px] font-medium tracking-[-0.8px] text-white">
-          {title}
-        </p>
-        <p className="text-base tracking-[-0.64px] text-[#efefef]">
-          {description}
-        </p>
+        <p className="text-[20px] font-medium tracking-[-0.8px] text-white">{title}</p>
+        <p className="text-base tracking-[-0.64px] text-nova-gray-100">{description}</p>
       </div>
     </div>
   );

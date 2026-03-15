@@ -1,12 +1,14 @@
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-type DsStatusPillVariant = "pending" | "cancelled" | "approved";
+type DsStatusPillVariant = "pending" | "cancelled" | "approved" | "active" | "inactive";
 
 const variantStyles: Record<DsStatusPillVariant, string> = {
-  pending: "bg-[rgba(227,151,37,0.1)] text-[#e39725]",
-  cancelled: "bg-[rgba(219,65,70,0.1)] text-[#db4146]",
-  approved: "bg-[rgba(0,167,126,0.1)] text-primary",
+  pending: "bg-nova-warning/10 text-nova-warning",
+  cancelled: "bg-nova-error/10 text-nova-error",
+  approved: "bg-nova-success/10 text-nova-success",
+  active: "bg-nova-success/10 text-nova-success",
+  inactive: "bg-nova-error/10 text-nova-error",
 };
 
 interface DsStatusPillProps {

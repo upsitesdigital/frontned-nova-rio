@@ -15,6 +15,7 @@ import {
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { formatPhone } from "@/lib/formatters";
 import { useRegistrationStore } from "@/stores/registration-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -33,6 +34,9 @@ export default function CadastroPage() {
   const setPassword = useRegistrationStore((s) => s.setPassword);
   const submit = useRegistrationStore((s) => s.submit);
   const reset = useRegistrationStore((s) => s.reset);
+
+  const pwdVisible = usePasswordVisibilityStore((s) => s.isVisible("cadastro-password"));
+  const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
 
   useEffect(() => {
     reset();
@@ -57,7 +61,7 @@ export default function CadastroPage() {
 
   return (
     <>
-      <DsFlowCard className="mx-auto max-w-[1008px]">
+      <DsFlowCard className="mx-auto max-w-252">
         <DsFlowHeader
           title="Cadastrar e-mail"
           subtitle="Cadastre seu e-mail para prosseguir com o pagamento."
@@ -101,13 +105,15 @@ export default function CadastroPage() {
               placeholder="Digite sua senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              visible={pwdVisible}
+              onVisibilityChange={(v) => setPwdVisibility("cadastro-password", v)}
               aria-invalid={!!errors.password}
               className={FLOW_INPUT_CLASS}
             />
           </DsFormField>
         </div>
 
-        <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-[257px]">
+        <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.5">
           {isRegistering ? "Cadastrando..." : "Cadastrar e-mail"}
         </DsButton>
 
@@ -115,7 +121,7 @@ export default function CadastroPage() {
           variant="outline"
           size="flow"
           onClick={() => router.push("/agendamento/dia-horario")}
-          className="w-[257px] border-nova-gray-500 text-nova-gray-700"
+          className="w-64.5 border-nova-gray-500 text-nova-gray-700"
         >
           Voltar
         </DsButton>
@@ -133,7 +139,7 @@ export default function CadastroPage() {
         <DsButton
           size="flow"
           onClick={() => router.push("/agendamento/pagamento")}
-          className="w-[305px]"
+          className="w-76.5"
         >
           Continuar
         </DsButton>

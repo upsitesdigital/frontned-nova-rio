@@ -5,6 +5,7 @@ import { DsIcon } from "@/design-system/media";
 interface DsUpcomingServiceCardAction {
   label: string;
   variant: "filled" | "outlined";
+  disabled?: boolean;
   onClick?: () => void;
 }
 
@@ -14,6 +15,7 @@ interface DsUpcomingServiceCardProps {
   subtitle: string;
   actions?: DsUpcomingServiceCardAction[];
   onReceipt?: () => void;
+  receiptDisabled?: boolean;
   className?: string;
 }
 
@@ -23,6 +25,7 @@ function DsUpcomingServiceCard({
   subtitle,
   actions,
   onReceipt,
+  receiptDisabled,
   className,
 }: DsUpcomingServiceCardProps) {
   return (
@@ -34,17 +37,30 @@ function DsUpcomingServiceCard({
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-[20px] font-medium leading-[1.3] text-black">
-          {title}
-        </p>
+        <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
         {onReceipt && (
           <button
             type="button"
             onClick={onReceipt}
-            className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-nova-gray-300 px-3 py-1.5 transition-colors hover:bg-nova-gray-50"
+            disabled={receiptDisabled}
+            className={cn(
+              "flex items-center gap-1 rounded-[6px] border px-3 py-1.5 transition-colors",
+              receiptDisabled
+                ? "cursor-not-allowed border-nova-gray-300"
+                : "cursor-pointer border-nova-gray-300 hover:bg-nova-gray-50",
+            )}
           >
-            <DsIcon icon={ScrollIcon} size="md" className="text-nova-gray-700" />
-            <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+            <DsIcon
+              icon={ScrollIcon}
+              size="md"
+              className={receiptDisabled ? "text-nova-gray-400" : "text-nova-gray-700"}
+            />
+            <span
+              className={cn(
+                "text-base leading-[1.3] tracking-[-0.64px]",
+                receiptDisabled ? "text-nova-gray-400" : "text-nova-gray-700",
+              )}
+            >
               Recibo
             </span>
           </button>
@@ -56,9 +72,7 @@ function DsUpcomingServiceCard({
         <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-primary">
           {date}
         </p>
-        <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">
-          {subtitle}
-        </p>
+        <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">{subtitle}</p>
       </div>
 
       {/* Actions */}
@@ -68,12 +82,19 @@ function DsUpcomingServiceCard({
             <button
               key={action.label}
               type="button"
+              disabled={action.disabled}
               onClick={action.onClick}
               className={cn(
-                "flex h-14 cursor-pointer items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors",
-                action.variant === "filled"
-                  ? "bg-nova-gray-100 hover:bg-nova-gray-200"
-                  : "border border-nova-gray-300 hover:bg-nova-gray-50",
+                "flex h-14 items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] transition-colors",
+                action.disabled
+                  ? "cursor-not-allowed text-nova-gray-400"
+                  : "cursor-pointer text-nova-gray-700",
+                action.variant === "filled" &&
+                  (action.disabled ? "bg-nova-gray-50" : "bg-nova-gray-100 hover:bg-nova-gray-200"),
+                action.variant === "outlined" &&
+                  (action.disabled
+                    ? "border border-nova-gray-200"
+                    : "border border-nova-gray-300 hover:bg-nova-gray-50"),
               )}
             >
               {action.label}

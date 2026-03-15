@@ -1,72 +1,90 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
-import {
-  CalendarDotsIcon,
-  ClockIcon,
-  CurrencyDollarSimpleIcon,
-  CheckCircleIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-import {
-  DsClientSidebar,
-  DsSidebarLayout,
-  DsTopbar,
-  DsPageContainer,
-  DsStatCard,
-  DsNotificationBell,
-  DsAvatar,
-} from "@/design-system";
-import { useAuthStore } from "@/stores/auth-store";
+import { DsDiscountCard, DsHighlightCard } from "@/design-system";
+import { mapCardsToPanel, mapPaymentsToPanel } from "@/lib/dashboard-payments-mapper";
+import { useDashboardStore } from "@/stores/dashboard-store";
+import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
+import { DashboardServiceHistory } from "./_components/dashboard-service-history";
+import { DashboardPaymentsPanel } from "./_components/dashboard-payments-panel";
+import { ServiceDetailModal } from "./servicos/_components/service-detail-modal";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const { summary, isLoading, error, selectedDetailEntry, setSelectedDetailEntry } =
+    useDashboardStore();
+  const { cards, recentPayments } = useDashboardPaymentsStore();
 
-  const handleSignOut = () => {
-    useAuthStore.getState().reset();
-    router.push("/login");
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-base text-nova-gray-400">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-base text-nova-error">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <DsSidebarLayout
-      sidebar={
-        <DsClientSidebar
-          activePath={pathname}
-          onNavigate={(path) => router.push(path)}
-          onSignOut={handleSignOut}
+    <div className="flex items-start gap-8">
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <div>
+          <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+            Olá, {summary?.clientName ?? ""}
+          </h1>
+          <p className="mt-2 text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+            Sua limpeza pay per use para escritórios e consultórios de alto padrão.
+          </p>
+        </div>
+
+        <div className="mt-4 flex gap-4">
+          <DsHighlightCard
+            title="Próximo serviço"
+            value={summary?.nextAppointment?.date ?? "—"}
+            subtitle={summary?.nextAppointment?.cancellationNote ?? "Nenhum agendamento"}
+            valueColor="text-nova-primary-dark"
+            className="flex-1"
+          />
+          <DsHighlightCard
+            title="Agendamentos"
+            value={String(summary?.appointmentsCount ?? 0)}
+            subtitle={summary?.appointmentsCountLabel ?? "Nos últimos 2 meses"}
+            valueColor="text-nova-primary-dark"
+            className="flex-1"
+          />
+        </div>
+
+        <DashboardServiceHistory
+          months={summary?.serviceHistory ?? []}
+          onViewEntry={(entry) => setSelectedDetailEntry(entry)}
         />
-      }
-    >
-      <div className="flex flex-col">
-        <DsTopbar>
-          <h2 className="text-lg font-medium text-black">Minha Área</h2>
-          <div className="flex items-center gap-4">
-            <DsNotificationBell count={0} />
-            <DsAvatar fallback="U" size="sm" />
-          </div>
-        </DsTopbar>
-
-        <DsPageContainer className="py-8">
-          <div className="flex flex-col gap-8">
-            <div>
-              <h1 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
-                Bem-vindo de volta!
-              </h1>
-              <p className="mt-1 text-base leading-normal text-nova-gray-700">
-                Confira o resumo da sua conta.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-4 gap-4">
-              <DsStatCard title="Agendamentos" value="0" icon={CalendarDotsIcon} />
-              <DsStatCard title="Próximo serviço" value="---" icon={ClockIcon} />
-              <DsStatCard title="Total gasto" value="R$ 0,00" icon={CurrencyDollarSimpleIcon} />
-              <DsStatCard title="Concluídos" value="0" icon={CheckCircleIcon} />
-            </div>
-          </div>
-        </DsPageContainer>
       </div>
-    </DsSidebarLayout>
+
+      <div className="flex w-125.25 shrink-0 flex-col gap-6">
+        <DsDiscountCard className="h-33">
+          <span>
+            Agende agora serviços recorrentes semanais e ganhe{" "}
+            <span className="font-semibold">10% de desconto</span>
+          </span>
+        </DsDiscountCard>
+
+        <DashboardPaymentsPanel
+          cards={mapCardsToPanel(cards)}
+          payments={mapPaymentsToPanel(recentPayments)}
+          paymentsMonthLabel={format(new Date(), "MMMM", { locale: ptBR })}
+        />
+      </div>
+      <ServiceDetailModal
+        entry={selectedDetailEntry}
+        onClose={() => setSelectedDetailEntry(null)}
+      />
+    </div>
   );
 }

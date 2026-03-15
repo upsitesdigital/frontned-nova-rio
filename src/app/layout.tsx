@@ -25,7 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${workSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body
+        className={`${workSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
     </html>
   );
 }
