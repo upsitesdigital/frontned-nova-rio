@@ -7,6 +7,7 @@ interface ServicesState {
   services: Service[];
   isLoadingServices: boolean;
   selectedServiceId: number | null;
+  error: string | null;
 }
 
 interface ServicesActions {
@@ -21,19 +22,19 @@ const initialState: ServicesState = {
   services: [],
   isLoadingServices: false,
   selectedServiceId: null,
+  error: null,
 };
 
 const useServicesStore = create<ServicesStore>()((set) => ({
   ...initialState,
 
   loadServices: async () => {
-    set({ isLoadingServices: true });
+    set({ isLoadingServices: true, error: null });
     try {
       const services = await fetchServices();
       set({ services, isLoadingServices: false });
-    } catch (error) {
-      console.error("Failed to load services:", error);
-      set({ isLoadingServices: false });
+    } catch {
+      set({ isLoadingServices: false, error: "Erro ao carregar serviços." });
     }
   },
 

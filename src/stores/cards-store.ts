@@ -40,6 +40,7 @@ interface CardsState {
   isAdding: boolean;
   addForm: AddCardForm;
   addFormErrors: AddCardFormErrors;
+  confirmRemoveCardId: number | null;
 }
 
 interface CardsActions {
@@ -50,6 +51,7 @@ interface CardsActions {
   closeAddDialog: () => void;
   setAddFormField: <K extends keyof AddCardForm>(field: K, value: AddCardForm[K]) => void;
   validateAddForm: () => boolean;
+  setConfirmRemoveCardId: (cardId: number | null) => void;
   reset: () => void;
 }
 
@@ -61,6 +63,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   isAdding: false,
   addForm: { ...EMPTY_FORM },
   addFormErrors: {},
+  confirmRemoveCardId: null,
 
   loadCards: async () => {
     set({ isLoading: true, error: null });
@@ -144,6 +147,8 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
       addFormErrors: { ...state.addFormErrors, [field]: undefined },
     })),
 
+  setConfirmRemoveCardId: (cardId) => set({ confirmRemoveCardId: cardId }),
+
   validateAddForm: () => {
     const errors = validateAddCardForm(get().addForm);
     set({ addFormErrors: errors });
@@ -159,6 +164,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
       isAdding: false,
       addForm: { ...EMPTY_FORM },
       addFormErrors: {},
+      confirmRemoveCardId: null,
     }),
 }));
 
