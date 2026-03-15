@@ -1,8 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { DsDialog, DsFormField, DsInput, DsPasswordInput, DsButton } from "@/design-system";
 import { useProfileStore } from "@/stores/profile-store";
 import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { PasswordRequirements } from "@/app/esqueci-senha/_components/password-requirements";
+import { getPasswordHints } from "@/validation/reset-password-schema";
 
 function PasswordChangeDialog() {
   const {
@@ -24,6 +27,8 @@ function PasswordChangeDialog() {
   const newPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-new-pwd"));
   const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-confirm-pwd"));
   const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
+
+  const passwordHints = useMemo(() => getPasswordHints(newPassword), [newPassword]);
 
   const passwordMismatch =
     confirmPassword.length > 0 && newPassword !== confirmPassword
@@ -88,6 +93,7 @@ function PasswordChangeDialog() {
               onVisibilityChange={(v) => setPwdVisibility("profile-new-pwd", v)}
               placeholder="Digite a nova senha"
             />
+            {newPassword.length > 0 && <PasswordRequirements hints={passwordHints} />}
           </DsFormField>
 
           <DsFormField label="Confirmar senha" error={passwordMismatch}>

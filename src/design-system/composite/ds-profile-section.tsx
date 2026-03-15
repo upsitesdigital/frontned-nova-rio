@@ -13,8 +13,10 @@ interface DsProfileSectionProps {
   initials: string;
   fields: DsProfileField[];
   onEdit?: () => void;
+  onCancel?: () => void;
   onChangeImage?: () => void;
   editLabel?: string;
+  cancelLabel?: string;
   editDisabled?: boolean;
   changeImageLabel?: string;
   className?: string;
@@ -25,8 +27,10 @@ function DsProfileSection({
   initials,
   fields,
   onEdit,
+  onCancel,
   onChangeImage,
   editLabel = "Editar",
+  cancelLabel = "Cancelar",
   editDisabled = false,
   changeImageLabel = "Alterar imagem",
   className,
@@ -41,21 +45,32 @@ function DsProfileSection({
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
-        {onEdit && (
-          <button
-            type="button"
-            onClick={onEdit}
-            disabled={editDisabled}
-            className={cn(
-              "text-base font-medium leading-[1.3] transition-colors",
-              editDisabled
-                ? "cursor-not-allowed text-nova-gray-300"
-                : "cursor-pointer text-nova-primary hover:text-nova-primary-dark",
-            )}
-          >
-            {editLabel}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="cursor-pointer text-base font-medium leading-[1.3] text-nova-gray-500 transition-colors hover:text-nova-gray-700"
+            >
+              {cancelLabel}
+            </button>
+          )}
+          {onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              disabled={editDisabled}
+              className={cn(
+                "text-base font-medium leading-[1.3] transition-colors",
+                editDisabled
+                  ? "cursor-not-allowed text-nova-gray-300"
+                  : "cursor-pointer text-nova-primary hover:text-nova-primary-dark",
+              )}
+            >
+              {editLabel}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Avatar + Change Image */}

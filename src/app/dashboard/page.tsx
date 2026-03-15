@@ -1,18 +1,79 @@
 "use client";
 
-import { DsDiscountCard, DsHighlightCard } from "@/design-system";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+import { DsDiscountCard, DsHighlightCard, type DsRecentPaymentStatus } from "@/design-system";
+import { formatPaymentMethod, formatPaymentAmount } from "@/lib/payment-format";
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
 import { DashboardServiceHistory } from "./_components/dashboard-service-history";
-import { DashboardPaymentsPanel } from "./_components/dashboard-payments-panel";
+import {
+  DashboardPaymentsPanel,
+  type RegisteredCard,
+  type RecentPayment,
+} from "./_components/dashboard-payments-panel";
 import { ServiceDetailModal } from "./servicos/_components/service-detail-modal";
 
+const BRAND_ICON_MAP: Record<string, string> = {
+  VISA: "/icons/master-card-icon.svg",
+  MASTERCARD: "/icons/master-card-icon.svg",
+  AMEX: "/icons/master-card-icon.svg",
+  ELO: "/icons/master-card-icon.svg",
+  HIPERCARD: "/icons/master-card-icon.svg",
+};
+
+const PAYMENT_STATUS_MAP: Record<string, { status: DsRecentPaymentStatus; label: string }> = {
+  APPROVED: { status: "approved", label: "Aprovado" },
+  PENDING: { status: "pending", label: "Pendente" },
+  CANCELLED: { status: "pending", label: "Cancelado" },
+};
+
+function mapCardsToPanel(
+  cards: ReturnType<typeof useDashboardPaymentsStore.getState>["cards"],
+): RegisteredCard[] {
+  return cards.map((card) => ({
+    id: card.id,
+    brandSrc: BRAND_ICON_MAP[card.brand] ?? "/icons/master-card-icon.svg",
+    lastDigits: card.lastFourDigits,
+    expiry: `${String(card.expiryMonth).padStart(2, "0")}/${card.expiryYear}`,
+  }));
+}
+
+function mapPaymentsToPanel(
+  payments: ReturnType<typeof useDashboardPaymentsStore.getState>["recentPayments"],
+): RecentPayment[] {
+  return payments.map((p) => {
+    const mapped = PAYMENT_STATUS_MAP[p.status] ?? { status: "pending" as const, label: p.status };
+    return {
+      id: p.id,
+      method: p.method === "PIX" ? "pix" : "card",
+      methodLabel: formatPaymentMethod(p),
+      service: p.appointment.service.name,
+      amount: formatPaymentAmount(p.amount),
+      status: mapped.status,
+      statusLabel: mapped.label,
+    };
+  });
+}
+
 export default function DashboardPage() {
-  const { summary, isLoading, selectedDetailEntry, setSelectedDetailEntry } = useDashboardStore();
+  const { summary, isLoading, error, selectedDetailEntry, setSelectedDetailEntry } =
+    useDashboardStore();
+  const { cards, recentPayments } = useDashboardPaymentsStore();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <p className="text-base text-nova-gray-400">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-base text-nova-error">{error}</p>
       </div>
     );
   }
@@ -60,7 +121,11 @@ export default function DashboardPage() {
           </span>
         </DsDiscountCard>
 
-        <DashboardPaymentsPanel cards={[]} payments={[]} paymentsMonthLabel="Este mês" />
+        <DashboardPaymentsPanel
+          cards={mapCardsToPanel(cards)}
+          payments={mapPaymentsToPanel(recentPayments)}
+          paymentsMonthLabel={format(new Date(), "MMMM", { locale: ptBR })}
+        />
       </div>
       <ServiceDetailModal
         entry={selectedDetailEntry}

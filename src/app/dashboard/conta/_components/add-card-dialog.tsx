@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   DsDialog,
   DsFormField,
@@ -18,12 +19,6 @@ const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => {
   return { value: String(i + 1), label: month };
 });
 
-const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
-  const year = currentYear + i;
-  return { value: String(year), label: String(year) };
-});
-
 function AddCardDialog() {
   const {
     addDialogOpen,
@@ -34,6 +29,14 @@ function AddCardDialog() {
     setAddFormField,
     addCard,
   } = useCardsStore();
+
+  const yearOptions = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 15 }, (_, i) => {
+      const year = currentYear + i;
+      return { value: String(year), label: String(year) };
+    });
+  }, []);
 
   const digits = addForm.cardNumber.replace(/\s/g, "");
   const detectedBrand = getDetectedBrandLabel(addForm.cardNumber);
@@ -97,7 +100,7 @@ function AddCardDialog() {
 
           <DsFormField label="Ano de validade" error={addFormErrors.expiryYear} className="flex-1">
             <DsSelect
-              options={YEAR_OPTIONS}
+              options={yearOptions}
               placeholder="AAAA"
               value={addForm.expiryYear}
               onValueChange={(v) => setAddFormField("expiryYear", v)}

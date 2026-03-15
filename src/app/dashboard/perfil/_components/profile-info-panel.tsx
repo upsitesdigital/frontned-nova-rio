@@ -14,6 +14,7 @@ function ProfileInfoPanel() {
     editCpfCnpj,
     editAddress,
     startEditing,
+    cancelEditing,
     setEditName,
     setEditPhone,
     setEditCompany,
@@ -47,6 +48,7 @@ function ProfileInfoPanel() {
       initials={profile.name.charAt(0)}
       fields={fields}
       onEdit={isEditing ? saveProfile : startEditing}
+      onCancel={isEditing ? cancelEditing : undefined}
       editLabel={isEditing ? (isSaving ? "Salvando..." : "Salvar") : "Editar"}
       editDisabled={isSaving}
       onChangeImage={() => {}}
