@@ -54,6 +54,8 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
     openCancel,
     closeCancel,
     confirmCancel,
+    addressSectionOpen,
+    setAddressSectionOpen,
     reset,
   } = useServiceEditStore();
   const showToast = useToastStore((s) => s.showToast);
@@ -151,7 +153,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                   ]}
                   value={recurrence}
                   onValueChange={(v) => setRecurrence(v as RecurrenceType)}
-                  className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f] shadow-none data-[size=default]:h-auto"
+                  className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto"
                 />
               </div>
             )}
@@ -170,7 +172,12 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
               status={paymentStatus?.status ?? "pending"}
               statusLabel={paymentStatus?.label ?? "Pendente"}
             />
-            <DsCollapsibleSection icon={MapPinIcon} title={entry.locationName ?? "Endereço"}>
+            <DsCollapsibleSection
+              icon={MapPinIcon}
+              title={entry.locationName ?? "Endereço"}
+              open={addressSectionOpen}
+              onOpenChange={setAddressSectionOpen}
+            >
               <DsFormField label="CEP" htmlFor="edit-cep">
                 <DsInput
                   id="edit-cep"

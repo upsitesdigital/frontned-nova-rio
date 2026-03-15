@@ -13,12 +13,14 @@ interface ServiceEditState {
   rescheduleDate: Date | undefined;
   rescheduleTime: string | undefined;
   cancelOpen: boolean;
+  addressSectionOpen: boolean;
   isSaving: boolean;
   saveError: string | null;
   saveSuccess: string | null;
 }
 
 interface ServiceEditActions {
+  setAddressSectionOpen: (open: boolean) => void;
   setRecurrence: (recurrence: RecurrenceType) => void;
   initRecurrence: (recurrence: RecurrenceType) => void;
   openReschedule: (date?: Date, time?: string) => void;
@@ -36,6 +38,7 @@ type ServiceEditStore = ServiceEditState & ServiceEditActions;
 
 const initialState: ServiceEditState = {
   recurrence: "SINGLE",
+  addressSectionOpen: true,
   rescheduleOpen: false,
   rescheduleDate: undefined,
   rescheduleTime: undefined,
@@ -48,6 +51,7 @@ const initialState: ServiceEditState = {
 const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   ...initialState,
 
+  setAddressSectionOpen: (open) => set({ addressSectionOpen: open }),
   setRecurrence: (recurrence) => set({ recurrence }),
 
   initRecurrence: (recurrence) => set({ recurrence }),
