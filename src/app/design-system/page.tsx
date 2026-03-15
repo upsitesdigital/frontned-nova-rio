@@ -520,6 +520,8 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsAgendaCard — Schedule Calendar with Busy/Free Legend">
           <DsAgendaCard
             className="max-w-xs"
+            currentMonth={new Date(2026, 2, 1)}
+            onCurrentMonthChange={() => {}}
             busyDates={[
               new Date(2026, 2, 2),
               new Date(2026, 2, 3),
@@ -1639,7 +1641,7 @@ export default function DesignSystemPage() {
               <p className="text-sm text-nova-gray-700">Rua Exemplo, 123 - Bloco A, Apt 101</p>
               <p className="text-sm text-nova-gray-700">Barra da Tijuca, Rio de Janeiro</p>
             </DsCollapsibleSection>
-            <DsCollapsibleSection icon={GearIcon} title="Configurações" defaultOpen={false}>
+            <DsCollapsibleSection icon={GearIcon} title="Configurações" open={false}>
               <p className="text-sm text-nova-gray-700">Conteúdo recolhido por padrão</p>
             </DsCollapsibleSection>
           </div>
@@ -1902,6 +1904,8 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsEmployeeScheduleCard — Employee Agenda">
           <DsEmployeeScheduleCard
             name="Carlos Magno"
+            currentMonth={new Date(2025, 8, 1)}
+            onCurrentMonthChange={() => {}}
             busyDates={[
               new Date(2025, 8, 1),
               new Date(2025, 8, 2),
