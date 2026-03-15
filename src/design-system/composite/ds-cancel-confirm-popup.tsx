@@ -43,6 +43,9 @@ function DsCancelConfirmPopup({
       />
 
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className={cn(
           "relative flex w-full max-w-150 flex-col items-center gap-12 rounded-2xl bg-white px-8 py-12 shadow-lg shadow-nova-gray-300/10",
           className,

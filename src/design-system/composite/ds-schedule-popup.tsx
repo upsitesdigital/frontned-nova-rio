@@ -60,6 +60,9 @@ function DsSchedulePopup({
       />
 
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className={cn(
           "relative flex flex-col gap-6 rounded-4xl border border-nova-gray-100 bg-white px-6 py-8 shadow-lg shadow-nova-gray-300/10",
           className,

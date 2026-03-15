@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-type DsPaymentInfoCardStatus = "approved" | "pending";
+type DsPaymentInfoCardStatus = "approved" | "pending" | "cancelled";
 
 interface DsPaymentInfoCardProps {
   icon: DsIconComponent;
@@ -15,6 +15,7 @@ interface DsPaymentInfoCardProps {
 const statusColors: Record<DsPaymentInfoCardStatus, string> = {
   approved: "text-primary",
   pending: "text-nova-warning",
+  cancelled: "text-nova-error",
 };
 
 function DsPaymentInfoCard({
