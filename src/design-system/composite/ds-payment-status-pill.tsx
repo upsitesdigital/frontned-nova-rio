@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckIcon, HourglassIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsStatusPill, type DsStatusPillVariant } from "./ds-status-pill";
 import type { DsIconComponent } from "@/design-system/media";

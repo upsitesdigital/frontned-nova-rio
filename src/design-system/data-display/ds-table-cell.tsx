@@ -1,9 +1,12 @@
+"use client";
+
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type DsTableCellVariant = "body" | "header" | "custom";
 
 interface DsTableCellProps {
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: DsTableCellVariant;
   align?: "start" | "center";
   bold?: boolean;
@@ -24,11 +27,7 @@ function DsTableCell({
 }: DsTableCellProps) {
   return (
     <div
-      className={cn(
-        "flex flex-1 items-center",
-        align === "center" && "justify-center",
-        className,
-      )}
+      className={cn("flex flex-1 items-center", align === "center" && "justify-center", className)}
     >
       {variant === "custom" ? (
         children

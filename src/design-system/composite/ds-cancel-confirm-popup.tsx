@@ -1,3 +1,5 @@
+"use client";
+
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon } from "@/design-system/media";
