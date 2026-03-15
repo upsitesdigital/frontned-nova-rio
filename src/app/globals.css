@@ -57,8 +57,14 @@
   --color-nova-success: var(--nova-success);
   --color-nova-warning: var(--nova-warning);
   --color-nova-warning-light: var(--nova-warning-light);
+  --color-nova-warning-lighter: var(--nova-warning-lighter);
   --color-nova-error: var(--nova-error);
   --color-nova-info: var(--nova-info);
+  --color-nova-info-light: var(--nova-info-light);
+  --color-nova-purple: var(--nova-purple);
+  --color-nova-purple-light: var(--nova-purple-light);
+  --color-nova-lime: var(--nova-lime);
+  --color-nova-lime-light: var(--nova-lime-light);
 
   /* Nova Rio gray scale */
   --color-nova-gray-900: var(--nova-gray-900);
@@ -136,8 +142,14 @@
   --nova-success: #008053;
   --nova-warning: #e39725;
   --nova-warning-light: #f5d025;
+  --nova-warning-lighter: rgba(227, 151, 37, 0.1);
   --nova-error: #db4146;
   --nova-info: #00a0d2;
+  --nova-info-light: rgba(0, 160, 210, 0.1);
+  --nova-purple: #54336f;
+  --nova-purple-light: rgba(84, 51, 111, 0.1);
+  --nova-lime: #becd46;
+  --nova-lime-light: rgba(190, 205, 70, 0.1);
 
   /* ── Nova Rio gray scale ── */
   --nova-gray-900: #14181f;

@@ -463,8 +463,17 @@ className="bg-nova-primary-lighter"   // Lighter green (selection)
 // Semantic
 className="text-nova-success"
 className="text-nova-warning"
+className="bg-nova-warning-light"     // Solid yellow (badges)
+className="bg-nova-warning-lighter"   // 10% orange (icon backgrounds)
 className="text-nova-error"
 className="text-nova-info"
+className="bg-nova-info-light"        // 10% blue (icon backgrounds)
+
+// Category colors
+className="text-nova-purple"          // Purple (clients, categories)
+className="bg-nova-purple-light"      // 10% purple (icon backgrounds)
+className="text-nova-lime"            // Lime/yellow-green (reports)
+className="bg-nova-lime-light"        // 10% lime (icon backgrounds)
 
 // Gray scale
 className="text-nova-gray-400"   // Secondary text, disabled
@@ -474,6 +483,24 @@ className="bg-nova-gray-50"      // Subtle background
 className="bg-nova-gray-100"     // Secondary button background
 className="border-nova-gray-100" // Card borders
 className="border-nova-gray-300" // Outlined button borders
+```
+
+### Hardcoded colors — FORBIDDEN
+
+**NEVER** use hardcoded hex/rgba values in Tailwind classes. Always use design tokens defined in `globals.css`.
+
+If a color from Figma does not exist as a token, **add it to `globals.css`** as a CSS variable (both `--nova-*` definition and `--color-nova-*` Tailwind mapping) and to `src/design-system/tokens/colors.ts` before using it.
+
+```tsx
+// FORBIDDEN: hardcoded colors
+className="text-[#54336f]"
+className="bg-[rgba(84,51,111,0.1)]"
+className="text-[#00a0d2]"
+
+// CORRECT: use design tokens
+className="text-nova-purple"
+className="bg-nova-purple-light"
+className="text-nova-info"
 ```
 
 ### Example: disabled state
