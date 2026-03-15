@@ -112,6 +112,11 @@ export { DsSavedCardItem, type DsSavedCardItemProps } from "./composite";
 export { DsSavedCardList, type DsSavedCardListProps } from "./composite";
 export { DsStatusPill, type DsStatusPillProps, type DsStatusPillVariant } from "./composite";
 export {
+  DsPaymentStatusPill,
+  type DsPaymentStatusPillProps,
+  type DsPaymentStatus,
+} from "./composite";
+export {
   DsTransactionTable,
   type DsTransactionTableProps,
   type DsTransactionTableColumn,

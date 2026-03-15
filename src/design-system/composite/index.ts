@@ -1,3 +1,8 @@
+export {
+  DsPaymentStatusPill,
+  type DsPaymentStatusPillProps,
+  type DsPaymentStatus,
+} from "./ds-payment-status-pill";
 export { DsStepper, type DsStepperProps, type DsStepperStep } from "./ds-stepper";
 export { DsServiceOptionCard, type DsServiceOptionCardProps } from "./ds-service-option-card";
 export { DsRadioOptionCard, type DsRadioOptionCardProps } from "./ds-radio-option-card";
