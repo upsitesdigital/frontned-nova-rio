@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -19,6 +18,8 @@ import { DsIcon } from "@/design-system/media";
 
 interface DsClientSidebarProps {
   activePath?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onScheduleService?: () => void;
   onSignOut?: () => void;
@@ -33,13 +34,13 @@ const clientNavItems = [
 
 function DsClientSidebar({
   activePath,
+  collapsed = false,
+  onCollapsedChange,
   onNavigate,
   onScheduleService,
   onSignOut,
   className,
 }: DsClientSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
-
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
@@ -57,7 +58,7 @@ function DsClientSidebar({
                 "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => setCollapsed((c) => !c)}
+              onClick={() => onCollapsedChange?.(!collapsed)}
             />
           </div>
           <button

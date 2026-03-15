@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -20,6 +19,8 @@ import { DsIconButton } from "@/design-system/primitives";
 
 interface DsAdminSidebarProps {
   activePath?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onSignOut?: () => void;
   className?: string;
@@ -42,17 +43,17 @@ const adminNavItems = [
 
 function DsAdminSidebar({
   activePath,
+  collapsed = false,
+  onCollapsedChange,
   onNavigate,
   onSignOut,
   className,
 }: DsAdminSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
-
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
         <div className="flex flex-col border-b border-nova-gray-300 pb-6">
-          <div className="relative flex h-[80px] items-center">
+          <div className="relative flex h-20 items-center">
             {!collapsed && <DsLogo />}
             <DsIconButton
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
@@ -61,9 +62,9 @@ function DsAdminSidebar({
               size="icon-sm"
               className={cn(
                 "size-9 rounded-[10px]",
-                collapsed ? "mx-auto" : "absolute right-0 top-[22px]",
+                collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => setCollapsed((c) => !c)}
+              onClick={() => onCollapsedChange?.(!collapsed)}
             />
           </div>
         </div>

@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { useState } from "react";
 
 interface DsCollapsibleSectionProps {
   icon: DsIconComponent;
   title: string;
-  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
 }
@@ -17,14 +17,13 @@ interface DsCollapsibleSectionProps {
 function DsCollapsibleSection({
   icon,
   title,
-  defaultOpen = true,
+  open = true,
+  onOpenChange,
   children,
   className,
 }: DsCollapsibleSectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
-
   return (
-    <Collapsible.Root open={open} onOpenChange={setOpen} asChild>
+    <Collapsible.Root open={open} onOpenChange={onOpenChange} asChild>
       <div
         className={cn(
           "overflow-clip rounded-[10px] border border-nova-gray-100 p-4",
