@@ -1,7 +1,7 @@
 "use client";
 
 import { DsProfileSection, type DsProfileField } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { useProfileInfoStore } from "@/stores/profile-info-store";
 
 function ProfileInfoPanel() {
   const {
@@ -21,7 +21,7 @@ function ProfileInfoPanel() {
     setEditCpfCnpj,
     setEditAddress,
     saveProfile,
-  } = useProfileStore();
+  } = useProfileInfoStore();
 
   if (!profile) return null;
 

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { DsDialog, DsFormField, DsInput, DsPasswordInput, DsButton } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { usePasswordChangeStore } from "@/stores/password-change-store";
 import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 import { PasswordRequirements } from "@/app/esqueci-senha/_components/password-requirements";
 import { getPasswordHints } from "@/validation/reset-password-schema";
@@ -22,7 +22,7 @@ function PasswordChangeDialog() {
     setConfirmPassword,
     submitPasswordChange,
     submitPasswordVerification,
-  } = useProfileStore();
+  } = usePasswordChangeStore();
 
   const newPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-new-pwd"));
   const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("profile-confirm-pwd"));

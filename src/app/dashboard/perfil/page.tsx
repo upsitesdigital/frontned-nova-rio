@@ -2,14 +2,14 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { useProfileInfoStore } from "@/stores/profile-info-store";
 import { ProfileInfoPanel } from "./_components/profile-info-panel";
 import { EmailChangeDialog } from "./_components/email-change-dialog";
 import { PasswordChangeDialog } from "./_components/password-change-dialog";
 import { DeleteAccountDialog } from "./_components/delete-account-dialog";
 
 export default function ProfilePage() {
-  const { isLoading, error, loadProfile } = useProfileStore();
+  const { isLoading, error, loadProfile } = useProfileInfoStore();
 
   useEffect(() => {
     loadProfile();

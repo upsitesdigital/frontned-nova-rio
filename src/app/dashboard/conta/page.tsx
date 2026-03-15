@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { useProfileInfoStore } from "@/stores/profile-info-store";
 import { AccountPanel } from "./_components/account-panel";
 import { CardsPanel } from "./_components/cards-panel";
 
 export default function ContaPage() {
-  const { isLoading, error, loadProfile } = useProfileStore();
+  const { isLoading, error, loadProfile } = useProfileInfoStore();
 
   useEffect(() => {
     loadProfile();

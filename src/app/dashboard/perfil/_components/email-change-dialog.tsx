@@ -1,7 +1,7 @@
 "use client";
 
 import { DsDialog, DsFormField, DsInput, DsButton } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { useEmailChangeStore } from "@/stores/email-change-store";
 
 function EmailChangeDialog() {
   const {
@@ -16,7 +16,7 @@ function EmailChangeDialog() {
     setEmailCode,
     submitEmailChange,
     submitEmailVerification,
-  } = useProfileStore();
+  } = useEmailChangeStore();
 
   return (
     <DsDialog

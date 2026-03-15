@@ -20,7 +20,6 @@ import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
 import { getServiceIcon } from "@/lib/icon-map";
 import { resolvePaymentStatus } from "@/lib/payment-status-map";
-import { downloadReceipt } from "@/api/receipts-api";
 import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
 import { useToastStore } from "@/stores/toast-store";
 import type { ServiceHistoryEntry } from "@/api/dashboard-api";
@@ -52,6 +51,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
     confirmCancel,
     addressSectionOpen,
     setAddressSectionOpen,
+    downloadServiceReceipt,
     reset,
   } = useServiceEditStore();
   const showToast = useToastStore((s) => s.showToast);
@@ -100,7 +100,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
             onReceipt={
               entry.payment?.paymentId
                 ? () => {
-                    downloadReceipt(entry.payment!.paymentId).catch(() =>
+                    downloadServiceReceipt(entry.payment!.paymentId).catch(() =>
                       showToast("Erro ao baixar recibo. Tente novamente.", "error"),
                     );
                   }

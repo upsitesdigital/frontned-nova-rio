@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { DsDialog, DsFormField, DsInput, DsButton } from "@/design-system";
-import { useProfileStore } from "@/stores/profile-store";
+import { useDeleteAccountStore } from "@/stores/delete-account-store";
 
 const CONFIRM_PHRASE = "Apagar minha conta";
 
@@ -16,7 +16,7 @@ function DeleteAccountDialog() {
     closeDeleteDialog,
     setDeletePhrase,
     submitDeleteAccount,
-  } = useProfileStore();
+  } = useDeleteAccountStore();
 
   const canConfirm = deletePhrase === CONFIRM_PHRASE;
 

@@ -45,7 +45,8 @@ function AddCardDialog() {
     digits.length >= 13 &&
     addForm.holderName.trim().length > 0 &&
     addForm.expiryMonth !== "" &&
-    addForm.expiryYear !== "";
+    addForm.expiryYear !== "" &&
+    /^\d{3,4}$/.test(addForm.cvv);
 
   return (
     <DsDialog
@@ -104,6 +105,19 @@ function AddCardDialog() {
               placeholder="AAAA"
               value={addForm.expiryYear}
               onValueChange={(v) => setAddFormField("expiryYear", v)}
+            />
+          </DsFormField>
+
+          <DsFormField label="CVV" error={addFormErrors.cvv} className="w-24">
+            <DsInput
+              value={addForm.cvv}
+              onChange={(e) =>
+                setAddFormField("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))
+              }
+              placeholder="000"
+              maxLength={4}
+              inputMode="numeric"
+              type="password"
             />
           </DsFormField>
         </div>
