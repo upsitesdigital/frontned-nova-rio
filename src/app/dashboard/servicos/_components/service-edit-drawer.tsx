@@ -19,9 +19,10 @@ import {
 import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
 import { getServiceIcon } from "@/lib/icon-map";
+import { downloadReceipt } from "@/api/receipts-api";
 import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
 import { useToastStore } from "@/stores/toast-store";
-import type { ServiceHistoryEntry } from "./services-history-panel";
+import type { ServiceHistoryEntry } from "@/api/dashboard-api";
 
 interface ServiceEditDrawerProps {
   entry: ServiceHistoryEntry | null;
@@ -106,7 +107,15 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
             icon={serviceIcon}
             serviceName={entry.label}
             date={entry.date}
-            onReceipt={() => {}}
+            onReceipt={
+              entry.payment?.paymentId
+                ? () => {
+                    downloadReceipt(entry.payment!.paymentId).catch(() =>
+                      showToast("Erro ao baixar recibo. Tente novamente.", "error"),
+                    );
+                  }
+                : undefined
+            }
             className="rounded-none border-none p-0 shadow-none"
           >
             <></>

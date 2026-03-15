@@ -11,31 +11,7 @@ import {
   useServicesHistoryStore,
   type ServiceHistoryFilter,
 } from "@/stores/services-history-store";
-
-interface ServiceHistoryEntryPayment {
-  cardLastFour: string | null;
-  amount: string;
-  status: string;
-}
-
-interface ServiceHistoryEntry {
-  id: number;
-  date: string;
-  startTime: string;
-  label: string;
-  icon: string | null;
-  canEdit: boolean;
-  recurrenceType: string;
-  locationName: string | null;
-  locationZip: string | null;
-  locationAddress: string | null;
-  payment: ServiceHistoryEntryPayment | null;
-}
-
-interface ServiceHistoryMonth {
-  monthLabel: string;
-  entries: ServiceHistoryEntry[];
-}
+import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/dashboard-api";
 
 interface ServicesHistoryPanelProps {
   months: ServiceHistoryMonth[];
