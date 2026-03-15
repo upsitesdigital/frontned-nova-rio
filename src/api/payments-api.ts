@@ -31,6 +31,7 @@ async function fetchClientPayments(
   page: number,
   limit: number,
   status?: PaymentStatus,
+  signal?: AbortSignal,
 ): Promise<PaginatedPayments> {
   const params = new URLSearchParams({
     page: String(page),
@@ -41,7 +42,7 @@ async function fetchClientPayments(
     params.set("status", status);
   }
 
-  return httpAuthGet<PaginatedPayments>(`/payments?${params.toString()}`, token);
+  return httpAuthGet<PaginatedPayments>(`/payments?${params.toString()}`, token, signal);
 }
 
 export {

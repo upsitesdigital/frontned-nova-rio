@@ -12,11 +12,10 @@ interface Card {
 }
 
 interface AddCardRequest {
-  cardNumber: string;
+  lastFourDigits: string;
+  brand: string;
   holderName: string;
-  expiryMonth: number;
-  expiryYear: number;
-  gatewayToken: string;
+  expiryDate: string;
   isDefault?: boolean;
 }
 

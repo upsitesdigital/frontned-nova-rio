@@ -1,5 +1,4 @@
-import { httpAuthPatch, httpAuthPost } from "./http-client";
-import { appConfig } from "@/config/app";
+import { httpPost, httpAuthPatch, httpAuthPost } from "./http-client";
 
 interface CreatePublicAppointmentRequest {
   email: string;
@@ -26,22 +25,7 @@ interface AppointmentResponse {
 async function createPublicAppointment(
   data: CreatePublicAppointmentRequest,
 ): Promise<AppointmentResponse> {
-  const response = await fetch(`${appConfig.apiBaseUrl}/appointments/public`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
-    const message =
-      errorBody && typeof errorBody === "object" && "message" in errorBody
-        ? String(errorBody.message)
-        : `POST /appointments/public failed: ${response.statusText}`;
-    throw new Error(message);
-  }
-
-  return response.json() as Promise<AppointmentResponse>;
+  return httpPost<AppointmentResponse>("/appointments/public", data);
 }
 
 interface RescheduleAppointmentRequest {
