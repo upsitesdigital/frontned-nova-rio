@@ -12,8 +12,7 @@ interface Card {
 }
 
 interface AddCardRequest {
-  lastFourDigits: string;
-  brand: string;
+  cardNumber: string;
   holderName: string;
   expiryMonth: number;
   expiryYear: number;

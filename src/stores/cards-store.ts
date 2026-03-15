@@ -1,30 +1,28 @@
 import { create } from "zustand";
+import isCreditCard from "validator/es/lib/isCreditCard";
 import { listCards, addCard, removeCard, type Card, type AddCardRequest } from "@/api/cards-api";
 import { HttpClientError } from "@/api/http-client";
 import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
 import { useToastStore } from "@/stores/toast-store";
 
 interface AddCardForm {
-  lastFourDigits: string;
+  cardNumber: string;
   holderName: string;
-  brand: string;
   expiryMonth: string;
   expiryYear: string;
   isDefault: boolean;
 }
 
 interface AddCardFormErrors {
-  lastFourDigits?: string;
+  cardNumber?: string;
   holderName?: string;
-  brand?: string;
   expiryMonth?: string;
   expiryYear?: string;
 }
 
 const EMPTY_FORM: AddCardForm = {
-  lastFourDigits: "",
+  cardNumber: "",
   holderName: "",
-  brand: "",
   expiryMonth: "",
   expiryYear: "",
   isDefault: false,
@@ -76,10 +74,10 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   addCard: async () => {
     if (!get().validateAddForm()) return;
     const form = get().addForm;
+    const digits = form.cardNumber.replace(/\s/g, "");
     const data: AddCardRequest = {
-      lastFourDigits: form.lastFourDigits,
+      cardNumber: digits,
       holderName: form.holderName.toUpperCase(),
-      brand: form.brand,
       expiryMonth: Number(form.expiryMonth),
       expiryYear: Number(form.expiryYear),
       gatewayToken: "tok_dev_local",
@@ -124,14 +122,14 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   closeAddDialog: () => set({ addDialogOpen: false, addForm: { ...EMPTY_FORM }, addFormErrors: {} }),
 
   setAddFormField: (field, value) =>
-    set((state) => ({ addForm: { ...state.addForm, [field]: value } })),
+    set((state) => ({ addForm: { ...state.addForm, [field]: value }, addFormErrors: { ...state.addFormErrors, [field]: undefined } })),
 
   validateAddForm: () => {
-    const { lastFourDigits, holderName, brand, expiryMonth, expiryYear } = get().addForm;
+    const { cardNumber, holderName, expiryMonth, expiryYear } = get().addForm;
     const errors: AddCardFormErrors = {};
-    if (!/^\d{4}$/.test(lastFourDigits)) errors.lastFourDigits = "Informe os 4 últimos dígitos";
+    const digits = cardNumber.replace(/\s/g, "");
+    if (!isCreditCard(digits)) errors.cardNumber = "Número do cartão inválido";
     if (!holderName.trim()) errors.holderName = "Informe o nome impresso no cartão";
-    if (!brand) errors.brand = "Selecione a bandeira";
     if (!expiryMonth) errors.expiryMonth = "Selecione o mês";
     if (!expiryYear) errors.expiryYear = "Selecione o ano";
     set({ addFormErrors: errors });

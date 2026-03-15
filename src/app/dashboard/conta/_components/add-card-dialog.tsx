@@ -1,15 +1,17 @@
 "use client";
 
-import { DsDialog, DsFormField, DsInput, DsSelect, DsButton, DsCheckbox, DsLabel } from "@/design-system";
+import {
+  DsDialog,
+  DsFormField,
+  DsInput,
+  DsSelect,
+  DsButton,
+  DsCheckbox,
+  DsLabel,
+} from "@/design-system";
+import { formatCardNumber } from "@/lib/formatters";
+import { getDetectedBrandLabel } from "@/lib/card-format";
 import { useCardsStore } from "@/stores/cards-store";
-
-const BRAND_OPTIONS = [
-  { value: "visa", label: "Visa" },
-  { value: "mastercard", label: "Mastercard" },
-  { value: "elo", label: "Elo" },
-  { value: "amex", label: "American Express" },
-  { value: "hipercard", label: "Hipercard" },
-];
 
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => {
   const month = String(i + 1).padStart(2, "0");
@@ -33,17 +35,21 @@ function AddCardDialog() {
     addCard,
   } = useCardsStore();
 
+  const digits = addForm.cardNumber.replace(/\s/g, "");
+  const detectedBrand = getDetectedBrandLabel(addForm.cardNumber);
+
   const isValid =
-    /^\d{4}$/.test(addForm.lastFourDigits) &&
+    digits.length >= 13 &&
     addForm.holderName.trim().length > 0 &&
-    addForm.brand !== "" &&
     addForm.expiryMonth !== "" &&
     addForm.expiryYear !== "";
 
   return (
     <DsDialog
       open={addDialogOpen}
-      onOpenChange={(open) => { if (!open) closeAddDialog(); }}
+      onOpenChange={(open) => {
+        if (!open) closeAddDialog();
+      }}
       title="Adicionar cartão"
       description="Preencha os dados do cartão que deseja cadastrar."
       footer={
@@ -58,15 +64,17 @@ function AddCardDialog() {
       }
     >
       <div className="flex flex-col gap-4">
-        <DsFormField label="Últimos 4 dígitos" error={addFormErrors.lastFourDigits}>
+        <DsFormField label="Número do cartão" error={addFormErrors.cardNumber}>
           <DsInput
-            value={addForm.lastFourDigits}
-            onChange={(e) =>
-              setAddFormField("lastFourDigits", e.target.value.replace(/\D/g, "").slice(0, 4))
-            }
-            placeholder="0000"
-            maxLength={4}
+            value={addForm.cardNumber}
+            onChange={(e) => setAddFormField("cardNumber", formatCardNumber(e.target.value))}
+            placeholder="0000 0000 0000 0000"
+            maxLength={19}
+            inputMode="numeric"
           />
+          {detectedBrand && (
+            <p className="mt-1 text-xs text-nova-gray-500">Bandeira detectada: {detectedBrand}</p>
+          )}
         </DsFormField>
 
         <DsFormField label="Nome impresso no cartão" error={addFormErrors.holderName}>
@@ -74,15 +82,6 @@ function AddCardDialog() {
             value={addForm.holderName}
             onChange={(e) => setAddFormField("holderName", e.target.value)}
             placeholder="NOME SOBRENOME"
-          />
-        </DsFormField>
-
-        <DsFormField label="Bandeira" error={addFormErrors.brand}>
-          <DsSelect
-            options={BRAND_OPTIONS}
-            placeholder="Selecione a bandeira"
-            value={addForm.brand}
-            onValueChange={(v) => setAddFormField("brand", v)}
           />
         </DsFormField>
 
