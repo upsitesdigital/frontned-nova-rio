@@ -1,14 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { configureAuthProvider } from "@/api/http-client";
+import type { UserType } from "@/api/auth-api";
 
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  userType: UserType | null;
 }
 
 interface AuthActions {
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setTokens: (accessToken: string, refreshToken: string, userType: UserType) => void;
   setAccessToken: (token: string) => void;
   reset: () => void;
 }
@@ -18,6 +20,7 @@ type AuthStore = AuthState & AuthActions;
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
+  userType: null,
 };
 
 const useAuthStore = create<AuthStore>()(
@@ -25,7 +28,8 @@ const useAuthStore = create<AuthStore>()(
     (set) => ({
       ...initialState,
 
-      setTokens: (accessToken, refreshToken) => set({ accessToken, refreshToken }),
+      setTokens: (accessToken, refreshToken, userType) =>
+        set({ accessToken, refreshToken, userType }),
 
       setAccessToken: (token) => set({ accessToken: token }),
 
@@ -33,7 +37,11 @@ const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "nova-rio-auth",
-      partialize: (state) => ({ accessToken: state.accessToken, refreshToken: state.refreshToken }),
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        userType: state.userType,
+      }),
     },
   ),
 );
@@ -54,8 +62,10 @@ function waitForAuthHydration(): Promise<void> {
 configureAuthProvider({
   getAccessToken: () => useAuthStore.getState().accessToken,
   getRefreshToken: () => useAuthStore.getState().refreshToken,
-  setTokens: (accessToken, refreshToken) =>
-    useAuthStore.getState().setTokens(accessToken, refreshToken),
+  setTokens: (accessToken, refreshToken) => {
+    const currentType = useAuthStore.getState().userType ?? "client";
+    useAuthStore.getState().setTokens(accessToken, refreshToken, currentType);
+  },
   reset: () => useAuthStore.getState().reset(),
 });
 
