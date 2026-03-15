@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
 import { DsToastContainer } from "@/design-system";
-import { useAuthStore } from "@/stores/auth-store";
+import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
@@ -26,8 +26,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
 
   useEffect(() => {
-    loadSummary();
-    loadPaymentsData();
+    waitForAuthHydration().then(() => {
+      loadSummary();
+      loadPaymentsData();
+    });
   }, [loadSummary, loadPaymentsData]);
 
   useEffect(() => {

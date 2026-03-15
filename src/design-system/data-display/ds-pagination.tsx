@@ -33,8 +33,8 @@ function DsPagination({
       <div className="flex items-center gap-2">
         <button
           type="button"
-          disabled={currentPage <= 1}
-          onClick={() => onPageChange(currentPage - 1)}
+          disabled={clampedPage <= 1}
+          onClick={() => onPageChange(clampedPage - 1)}
           className="flex size-5 cursor-pointer items-center justify-center disabled:cursor-not-allowed disabled:opacity-30"
         >
           <DsIcon icon={CaretLeftIcon} size="md" className="text-nova-gray-700" />
@@ -46,7 +46,7 @@ function DsPagination({
             onClick={() => onPageChange(page)}
             className={cn(
               "flex size-9 cursor-pointer items-center justify-center rounded-1.5 text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-600",
-              page === currentPage
+              page === clampedPage
                 ? "border border-nova-primary bg-white"
                 : "bg-white hover:bg-nova-gray-50",
             )}
@@ -56,8 +56,8 @@ function DsPagination({
         ))}
         <button
           type="button"
-          disabled={currentPage >= totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
+          disabled={clampedPage >= totalPages}
+          onClick={() => onPageChange(clampedPage + 1)}
           className="flex size-5 cursor-pointer items-center justify-center disabled:cursor-not-allowed disabled:opacity-30"
         >
           <DsIcon icon={CaretRightIcon} size="md" className="text-nova-gray-700" />

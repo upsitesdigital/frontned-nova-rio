@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -34,13 +35,25 @@ const clientNavItems = [
 
 function DsClientSidebar({
   activePath,
-  collapsed = false,
+  collapsed: controlledCollapsed,
   onCollapsedChange,
   onNavigate,
   onScheduleService,
   onSignOut,
   className,
 }: DsClientSidebarProps) {
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isControlled = onCollapsedChange !== undefined;
+  const collapsed = isControlled ? (controlledCollapsed ?? false) : internalCollapsed;
+
+  const handleToggle = () => {
+    if (isControlled) {
+      onCollapsedChange(!collapsed);
+    } else {
+      setInternalCollapsed((prev) => !prev);
+    }
+  };
+
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
@@ -58,7 +71,7 @@ function DsClientSidebar({
                 "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => onCollapsedChange?.(!collapsed)}
+              onClick={handleToggle}
             />
           </div>
           <button

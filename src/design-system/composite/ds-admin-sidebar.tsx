@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -43,12 +44,24 @@ const adminNavItems = [
 
 function DsAdminSidebar({
   activePath,
-  collapsed = false,
+  collapsed: controlledCollapsed,
   onCollapsedChange,
   onNavigate,
   onSignOut,
   className,
 }: DsAdminSidebarProps) {
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isControlled = onCollapsedChange !== undefined;
+  const collapsed = isControlled ? (controlledCollapsed ?? false) : internalCollapsed;
+
+  const handleToggle = () => {
+    if (isControlled) {
+      onCollapsedChange(!collapsed);
+    } else {
+      setInternalCollapsed((prev) => !prev);
+    }
+  };
+
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
@@ -64,7 +77,7 @@ function DsAdminSidebar({
                 "size-9 rounded-[10px]",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => onCollapsedChange?.(!collapsed)}
+              onClick={handleToggle}
             />
           </div>
         </div>
@@ -77,21 +90,12 @@ function DsAdminSidebar({
               active={activePath === item.path}
               collapsed={collapsed}
               href={item.path}
-              onClick={
-                onNavigate
-                  ? () => onNavigate(item.path)
-                  : undefined
-              }
+              onClick={onNavigate ? () => onNavigate(item.path) : undefined}
             />
           ))}
         </nav>
       </div>
-      <DsSidebarItem
-        icon={SignOutIcon}
-        label="Sair"
-        collapsed={collapsed}
-        onClick={onSignOut}
-      />
+      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
     </DsSidebar>
   );
 }

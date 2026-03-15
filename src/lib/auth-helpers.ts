@@ -1,11 +1,5 @@
 import { HttpClientError } from "@/api/http-client";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
 import { MESSAGES } from "@/lib/messages";
-
-async function getAuthToken(): Promise<string | null> {
-  await waitForAuthHydration();
-  return useAuthStore.getState().accessToken;
-}
 
 function resolveErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof HttpClientError) {
@@ -15,4 +9,4 @@ function resolveErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export { getAuthToken, resolveErrorMessage };
+export { resolveErrorMessage };
