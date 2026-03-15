@@ -11,28 +11,57 @@ interface Card {
   isDefault: boolean;
 }
 
+interface TokenizeCardRequest {
+  cardNumber: string;
+  cardCvv: string;
+  holderName: string;
+  expiryMonth: number;
+  expiryYear: number;
+  brand: string;
+}
+
+interface TokenizeCardResponse {
+  gatewayToken: string;
+}
+
 interface AddCardRequest {
   lastFourDigits: string;
   brand: string;
   holderName: string;
-  expiryDate: string;
+  expiryMonth: number;
+  expiryYear: number;
+  gatewayToken: string;
   isDefault?: boolean;
 }
 
-async function listCards(token: string): Promise<Card[]> {
-  return httpAuthGet<Card[]>("/cards", token);
+async function listCards(): Promise<Card[]> {
+  return httpAuthGet<Card[]>("/cards");
 }
 
-async function removeCard(token: string, cardId: number): Promise<void> {
-  await httpAuthDelete<void>(`/cards/${cardId}`, token);
+async function removeCard(cardId: number): Promise<void> {
+  await httpAuthDelete<void>(`/cards/${cardId}`);
 }
 
-async function addCard(token: string, data: AddCardRequest): Promise<Card> {
-  return httpAuthPost<Card>("/cards", data, token);
+async function tokenizeCard(data: TokenizeCardRequest): Promise<TokenizeCardResponse> {
+  return httpAuthPost<TokenizeCardResponse>("/cards/tokenize", data);
 }
 
-async function setDefaultCard(token: string, cardId: number): Promise<void> {
-  await httpAuthPost<void>(`/cards/${cardId}/default`, {}, token);
+async function addCard(data: AddCardRequest): Promise<Card> {
+  return httpAuthPost<Card>("/cards", data);
 }
 
-export { listCards, addCard, removeCard, setDefaultCard, type Card, type AddCardRequest };
+async function setDefaultCard(cardId: number): Promise<void> {
+  await httpAuthPost<void>(`/cards/${cardId}/default`, {});
+}
+
+export {
+  listCards,
+  tokenizeCard,
+  addCard,
+  removeCard,
+  setDefaultCard,
+  type Card,
+  type TokenizeCardRequest,
+  type TokenizeCardResponse,
+  type AddCardRequest,
+};

@@ -30,10 +30,7 @@ function getAuthProvider(): AuthProvider {
   return authProvider;
 }
 
-function parseErrorBody(
-  errorBody: unknown,
-  fallbackMessage: string,
-): string {
+function parseErrorBody(errorBody: unknown, fallbackMessage: string): string {
   if (errorBody && typeof errorBody === "object" && "message" in errorBody) {
     return String(errorBody.message);
   }
@@ -48,10 +45,7 @@ async function httpGet<T>(path: string): Promise<T> {
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
-    const message = parseErrorBody(
-      errorBody,
-      `GET ${path} failed: ${response.statusText}`,
-    );
+    const message = parseErrorBody(errorBody, `GET ${path} failed: ${response.statusText}`);
     throw new HttpClientError(response.status, message);
   }
 
@@ -67,10 +61,7 @@ async function httpPost<T>(path: string, body: unknown): Promise<T> {
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
-    const message = parseErrorBody(
-      errorBody,
-      `POST ${path} failed: ${response.statusText}`,
-    );
+    const message = parseErrorBody(errorBody, `POST ${path} failed: ${response.statusText}`);
     throw new HttpClientError(response.status, message);
   }
 
@@ -152,10 +143,7 @@ async function httpAuthRequest<T>(
     return init;
   };
 
-  const response = await fetch(
-    `${appConfig.apiBaseUrl}${path}`,
-    buildInit(latestToken),
-  );
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, buildInit(latestToken));
 
   if (response.status === 401) {
     const newToken = await refreshAccessToken();
@@ -164,10 +152,7 @@ async function httpAuthRequest<T>(
       throw new HttpClientError(401, `${method} ${path} failed: Unauthorized`);
     }
 
-    const retryResponse = await fetch(
-      `${appConfig.apiBaseUrl}${path}`,
-      buildInit(newToken),
-    );
+    const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, buildInit(newToken));
 
     if (!retryResponse.ok) {
       const errorBody = await retryResponse.json().catch(() => null);
@@ -186,10 +171,7 @@ async function httpAuthRequest<T>(
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
-    const message = parseErrorBody(
-      errorBody,
-      `${method} ${path} failed: ${response.statusText}`,
-    );
+    const message = parseErrorBody(errorBody, `${method} ${path} failed: ${response.statusText}`);
     throw new HttpClientError(response.status, message);
   }
 
@@ -199,29 +181,66 @@ async function httpAuthRequest<T>(
   return response.json() as Promise<T>;
 }
 
-async function httpAuthGet<T>(path: string, token: string, signal?: AbortSignal): Promise<T> {
-  void token;
+async function httpAuthGet<T>(path: string, signal?: AbortSignal): Promise<T> {
   return httpAuthRequest<T>("GET", path, undefined, signal);
 }
 
-async function httpAuthPost<T>(path: string, body: unknown, token: string): Promise<T> {
-  void token;
+async function httpAuthPost<T>(path: string, body: unknown): Promise<T> {
   return httpAuthRequest<T>("POST", path, body);
 }
 
-async function httpAuthPatchWithBody<T>(path: string, body: unknown, token: string): Promise<T> {
-  void token;
+async function httpAuthPatchWithBody<T>(path: string, body: unknown): Promise<T> {
   return httpAuthRequest<T>("PATCH", path, body);
 }
 
-async function httpAuthPatch(path: string, token: string): Promise<void> {
-  void token;
+async function httpAuthPatch(path: string): Promise<void> {
   return httpAuthRequest<void>("PATCH", path);
 }
 
-async function httpAuthDelete<T>(path: string, token: string): Promise<T> {
-  void token;
+async function httpAuthDelete<T>(path: string): Promise<T> {
   return httpAuthRequest<T>("DELETE", path);
+}
+
+async function httpAuthGetBlob(path: string): Promise<Blob> {
+  const auth = getAuthProvider();
+  const latestToken = auth.getAccessToken() ?? "";
+
+  const buildHeaders = (token: string): HeadersInit => ({
+    Authorization: `Bearer ${token}`,
+  });
+
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+    method: "GET",
+    headers: buildHeaders(latestToken),
+  });
+
+  if (response.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    if (!newToken) {
+      throw new HttpClientError(401, `GET ${path} failed: Unauthorized`);
+    }
+
+    const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+      method: "GET",
+      headers: buildHeaders(newToken),
+    });
+
+    if (!retryResponse.ok) {
+      throw new HttpClientError(
+        retryResponse.status,
+        `GET ${path} failed: ${retryResponse.statusText}`,
+      );
+    }
+
+    return retryResponse.blob();
+  }
+
+  if (!response.ok) {
+    throw new HttpClientError(response.status, `GET ${path} failed: ${response.statusText}`);
+  }
+
+  return response.blob();
 }
 
 export {
@@ -232,6 +251,7 @@ export {
   httpAuthPatch,
   httpAuthPatchWithBody,
   httpAuthDelete,
+  httpAuthGetBlob,
   configureAuthProvider,
   HttpClientError,
   type AuthProvider,

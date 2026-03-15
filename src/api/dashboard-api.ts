@@ -53,8 +53,8 @@ interface ClientDashboardSummary {
   serviceHistory: ServiceHistoryMonth[];
 }
 
-async function fetchClientDashboardSummary(token: string): Promise<ClientDashboardSummary> {
-  return httpAuthGet<ClientDashboardSummary>("/client/dashboard/summary", token);
+async function fetchClientDashboardSummary(): Promise<ClientDashboardSummary> {
+  return httpAuthGet<ClientDashboardSummary>("/client/dashboard/summary");
 }
 
 export {

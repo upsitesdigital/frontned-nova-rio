@@ -34,19 +34,14 @@ interface RescheduleAppointmentRequest {
 }
 
 async function rescheduleAppointment(
-  token: string,
   appointmentId: number,
   data: RescheduleAppointmentRequest,
 ): Promise<AppointmentResponse> {
-  return httpAuthPost<AppointmentResponse>(
-    `/appointments/${appointmentId}/reschedule`,
-    data,
-    token,
-  );
+  return httpAuthPost<AppointmentResponse>(`/appointments/${appointmentId}/reschedule`, data);
 }
 
-async function cancelAppointment(token: string, appointmentId: number): Promise<void> {
-  return httpAuthPatch(`/appointments/${appointmentId}/cancel`, token);
+async function cancelAppointment(appointmentId: number): Promise<void> {
+  return httpAuthPatch(`/appointments/${appointmentId}/cancel`);
 }
 
 export {

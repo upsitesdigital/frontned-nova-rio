@@ -21,47 +21,32 @@ interface UpdateProfileData {
   address?: string;
 }
 
-async function fetchClientProfile(token: string): Promise<ClientProfile> {
-  return httpAuthGet<ClientProfile>("/clients/profile", token);
+async function fetchClientProfile(): Promise<ClientProfile> {
+  return httpAuthGet<ClientProfile>("/clients/profile");
 }
 
-async function updateClientProfile(
-  token: string,
-  data: UpdateProfileData,
-): Promise<ClientProfile> {
-  return httpAuthPatchWithBody<ClientProfile>("/clients/profile", data, token);
+async function updateClientProfile(data: UpdateProfileData): Promise<ClientProfile> {
+  return httpAuthPatchWithBody<ClientProfile>("/clients/profile", data);
 }
 
-async function requestEmailChange(token: string, newEmail: string): Promise<void> {
-  await httpAuthPost<void>("/clients/profile/email/request-change", { newEmail }, token);
+async function requestEmailChange(newEmail: string): Promise<void> {
+  await httpAuthPost<void>("/clients/profile/email/request-change", { newEmail });
 }
 
-async function verifyEmailChange(
-  token: string,
-  code: string,
-  newEmail: string,
-): Promise<void> {
-  await httpAuthPost<void>("/clients/profile/email/verify-change", { code, newEmail }, token);
+async function verifyEmailChange(code: string, newEmail: string): Promise<void> {
+  await httpAuthPost<void>("/clients/profile/email/verify-change", { code, newEmail });
 }
 
-async function requestPasswordChange(token: string): Promise<void> {
-  await httpAuthPost<void>("/clients/profile/password/request-change", {}, token);
+async function requestPasswordChange(): Promise<void> {
+  await httpAuthPost<void>("/clients/profile/password/request-change", {});
 }
 
-async function verifyPasswordChange(
-  token: string,
-  code: string,
-  newPassword: string,
-): Promise<void> {
-  await httpAuthPost<void>(
-    "/clients/profile/password/verify-change",
-    { code, newPassword },
-    token,
-  );
+async function verifyPasswordChange(code: string, newPassword: string): Promise<void> {
+  await httpAuthPost<void>("/clients/profile/password/verify-change", { code, newPassword });
 }
 
-async function deleteClientAccount(token: string, confirmPhrase: string): Promise<void> {
-  await httpAuthPost<void>("/clients/profile/delete-account", { confirmPhrase }, token);
+async function deleteClientAccount(confirmPhrase: string): Promise<void> {
+  await httpAuthPost<void>("/clients/profile/delete-account", { confirmPhrase });
 }
 
 export {

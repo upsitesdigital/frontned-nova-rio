@@ -27,7 +27,6 @@ interface PaginatedPayments {
 }
 
 async function fetchClientPayments(
-  token: string,
   page: number,
   limit: number,
   status?: PaymentStatus,
@@ -42,7 +41,7 @@ async function fetchClientPayments(
     params.set("status", status);
   }
 
-  return httpAuthGet<PaginatedPayments>(`/payments?${params.toString()}`, token, signal);
+  return httpAuthGet<PaginatedPayments>(`/payments?${params.toString()}`, signal);
 }
 
 export {
