@@ -1,4 +1,4 @@
-import { getCoverageByCep } from "@/api/scheduling-data";
+import { fetchCoverageByCep } from "@/api/scheduling-api";
 import type { Address } from "@/types/scheduling";
 
 interface ValidateAddressResult {
@@ -7,7 +7,7 @@ interface ValidateAddressResult {
 }
 
 async function validateAddress(cep: string): Promise<ValidateAddressResult> {
-  const result = await getCoverageByCep(cep);
+  const result = await fetchCoverageByCep(cep);
 
   if (!result.covered) {
     return { address: null, error: "Endereço fora da área de atendimento" };

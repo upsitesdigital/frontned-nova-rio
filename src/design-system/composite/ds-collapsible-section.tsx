@@ -1,15 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { useState } from "react";
 
 interface DsCollapsibleSectionProps {
   icon: DsIconComponent;
   title: string;
-  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
 }
@@ -17,25 +18,30 @@ interface DsCollapsibleSectionProps {
 function DsCollapsibleSection({
   icon,
   title,
-  defaultOpen = true,
+  open: controlledOpen,
+  onOpenChange,
   children,
   className,
 }: DsCollapsibleSectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [internalOpen, setInternalOpen] = useState(true);
+  const isControlled = onOpenChange !== undefined;
+  const open = isControlled ? (controlledOpen ?? true) : internalOpen;
+
+  const handleOpenChange = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
 
   return (
-    <Collapsible.Root open={open} onOpenChange={setOpen} asChild>
+    <Collapsible.Root open={open} onOpenChange={handleOpenChange} asChild>
       <div
-        className={cn(
-          "overflow-clip rounded-[10px] border border-nova-gray-100 p-4",
-          className,
-        )}
+        className={cn("overflow-clip rounded-[10px] border border-nova-gray-100 p-4", className)}
       >
         <Collapsible.Trigger asChild>
-          <button
-            type="button"
-            className="flex w-full items-center justify-between"
-          >
+          <button type="button" className="flex w-full items-center justify-between">
             <div className="flex items-center gap-2">
               <DsIcon icon={icon} size="lg" className="shrink-0 text-nova-gray-700" />
               <p className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">

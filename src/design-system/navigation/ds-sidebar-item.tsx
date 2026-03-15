@@ -29,13 +29,13 @@ function DsSidebarItem({
       type={href ? undefined : "button"}
       title={collapsed ? label : undefined}
       className={cn(
-        "flex h-14 w-full items-center rounded-[10px] text-base font-medium leading-[1.3] text-nova-gray-700 transition-all",
-        active ? "bg-nova-primary-lighter" : "hover:bg-nova-gray-100",
+        "flex h-14 w-full items-center rounded-[10px] text-base font-medium leading-[1.3] transition-all",
+        active ? "bg-nova-primary-lighter text-black" : "text-nova-gray-700 hover:bg-nova-gray-100",
         collapsed ? "justify-center px-0" : "gap-2 px-6 py-4",
         className,
       )}
     >
-      <DsIcon icon={icon} size="md" className="shrink-0" />
+      <DsIcon icon={icon} size="lg" className={cn("shrink-0", active && "text-nova-primary")} />
       {!collapsed && <span className="whitespace-nowrap">{label}</span>}
     </Component>
   );

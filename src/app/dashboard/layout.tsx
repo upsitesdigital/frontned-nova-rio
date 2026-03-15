@@ -1,0 +1,88 @@
+"use client";
+
+import { useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useRouter, usePathname } from "next/navigation";
+import { DsToastContainer } from "@/design-system";
+import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
+import { useCardsStore } from "@/stores/cards-store";
+import { useDashboardStore } from "@/stores/dashboard-store";
+import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
+import { useDeleteAccountStore } from "@/stores/delete-account-store";
+import { useEmailChangeStore } from "@/stores/email-change-store";
+import { usePasswordChangeStore } from "@/stores/password-change-store";
+import { usePaymentsPageStore } from "@/stores/payments-page-store";
+import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useServiceEditStore } from "@/stores/service-edit-store";
+import { useServicesHistoryStore } from "@/stores/services-history-store";
+import { useSidePanelRescheduleStore } from "@/stores/side-panel-reschedule-store";
+import { useSidebarStore } from "@/stores/sidebar-store";
+import { useToastStore } from "@/stores/toast-store";
+
+const DsClientDashboardShell = dynamic(
+  () =>
+    import("@/design-system/composite/ds-client-dashboard-shell").then(
+      (mod) => mod.DsClientDashboardShell,
+    ),
+  { ssr: false },
+);
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { summary, isAuthError, loadSummary } = useDashboardStore();
+  const loadPaymentsData = useDashboardPaymentsStore((s) => s.loadPaymentsData);
+  const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
+  const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
+
+  useEffect(() => {
+    waitForAuthHydration().then(() => {
+      loadSummary();
+      loadPaymentsData();
+    });
+  }, [loadSummary, loadPaymentsData]);
+
+  useEffect(() => {
+    if (isAuthError && !summary) {
+      router.push("/login");
+    }
+  }, [isAuthError, summary, router]);
+
+  const handleSignOut = () => {
+    useAuthStore.getState().reset();
+    useDashboardStore.getState().reset();
+    useDashboardPaymentsStore.getState().reset();
+    useProfileInfoStore.getState().reset();
+    useCardsStore.getState().reset();
+    useEmailChangeStore.getState().reset();
+    usePasswordChangeStore.getState().reset();
+    useDeleteAccountStore.getState().reset();
+    useServiceEditStore.getState().reset();
+    useServicesHistoryStore.getState().reset();
+    useSidePanelRescheduleStore.getState().reset();
+    useSidebarStore.getState().setCollapsed(false);
+    useToastStore.getState().reset();
+    usePaymentsPageStore.getState().setFilter("ALL");
+    router.push("/login");
+  };
+
+  return (
+    <>
+      <DsClientDashboardShell
+        activePath={pathname}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarCollapsedChange={setSidebarCollapsed}
+        userInitials={summary?.clientName?.charAt(0) ?? ""}
+        notificationCount={0}
+        onNavigate={(path) => router.push(path)}
+        onScheduleService={() => router.push("/agendamento")}
+        onSignOut={handleSignOut}
+        onProfileClick={() => router.push("/dashboard/perfil")}
+        onAccountClick={() => router.push("/dashboard/conta")}
+      >
+        {children}
+      </DsClientDashboardShell>
+      <DsToastContainer />
+    </>
+  );
+}

@@ -1,51 +1,42 @@
+import { format } from "date-fns";
+
 import { createPublicAppointment } from "@/api/appointments-api";
 import { useConfirmationStore } from "@/stores/confirmation-store";
-import { useAddressStore } from "@/stores/address-store";
-import { useRegistrationStore } from "@/stores/registration-store";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
-import { format } from "date-fns";
+import type { Address } from "@/types/scheduling";
+
+interface SubmitPaymentParams {
+  email: string;
+  selectedServiceId: number;
+  selectedDate: Date;
+  selectedTime: string;
+  recurrenceType: string | null;
+  cep: string;
+  address: Address | null;
+}
 
 interface SubmitPaymentResult {
   success: boolean;
   error: string | null;
 }
 
-async function submitPayment(): Promise<SubmitPaymentResult> {
-  const email = useRegistrationStore.getState().email;
-  if (!email) {
-    return { success: false, error: "E-mail não cadastrado. Volte ao passo de cadastro." };
-  }
+const RECURRENCE_MAP: Record<string, string> = {
+  avulso: "SINGLE",
+  pacote: "PACKAGE",
+  recorrencia: "RECURRING",
+};
 
-  const selectedServiceId = useServicesStore.getState().selectedServiceId;
-  if (!selectedServiceId) {
-    return { success: false, error: "Nenhum serviço selecionado." };
-  }
-
-  const { selectedDate, selectedTime, recurrenceType } = useSchedulingStore.getState();
-  if (!selectedDate || !selectedTime) {
-    return { success: false, error: "Data e horário não selecionados." };
-  }
-
-  const { cep, address } = useAddressStore.getState();
-
-  const recurrenceMap: Record<string, string> = {
-    avulso: "SINGLE",
-    pacote: "PACKAGE",
-    recorrencia: "RECURRING",
-  };
-
+async function submitPayment(params: SubmitPaymentParams): Promise<SubmitPaymentResult> {
   try {
     const response = await createPublicAppointment({
-      email,
-      date: format(selectedDate, "yyyy-MM-dd"),
-      startTime: selectedTime,
+      email: params.email,
+      date: format(params.selectedDate, "yyyy-MM-dd"),
+      startTime: params.selectedTime,
       duration: 120,
-      serviceId: selectedServiceId,
-      recurrenceType: recurrenceType ? recurrenceMap[recurrenceType] : undefined,
-      locationZip: cep || undefined,
-      locationAddress: address
-        ? `${address.street}, ${address.neighborhood}, ${address.city} - ${address.state}`
+      serviceId: params.selectedServiceId,
+      recurrenceType: params.recurrenceType ? RECURRENCE_MAP[params.recurrenceType] : undefined,
+      locationZip: params.cep || undefined,
+      locationAddress: params.address
+        ? `${params.address.street}, ${params.address.neighborhood}, ${params.address.city} - ${params.address.state}`
         : undefined,
     });
 
@@ -57,10 +48,9 @@ async function submitPayment(): Promise<SubmitPaymentResult> {
 
     return { success: true, error: null };
   } catch (error) {
-    console.error("Failed to create appointment:", error);
     const message = error instanceof Error ? error.message : "Erro ao criar agendamento.";
     return { success: false, error: message };
   }
 }
 
-export { submitPayment, type SubmitPaymentResult };
+export { submitPayment, type SubmitPaymentParams, type SubmitPaymentResult };

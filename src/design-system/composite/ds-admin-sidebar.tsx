@@ -20,6 +20,8 @@ import { DsIconButton } from "@/design-system/primitives";
 
 interface DsAdminSidebarProps {
   activePath?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onSignOut?: () => void;
   className?: string;
@@ -42,17 +44,29 @@ const adminNavItems = [
 
 function DsAdminSidebar({
   activePath,
+  collapsed: controlledCollapsed,
+  onCollapsedChange,
   onNavigate,
   onSignOut,
   className,
 }: DsAdminSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isControlled = onCollapsedChange !== undefined;
+  const collapsed = isControlled ? (controlledCollapsed ?? false) : internalCollapsed;
+
+  const handleToggle = () => {
+    if (isControlled) {
+      onCollapsedChange(!collapsed);
+    } else {
+      setInternalCollapsed((prev) => !prev);
+    }
+  };
 
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
         <div className="flex flex-col border-b border-nova-gray-300 pb-6">
-          <div className="relative flex h-[80px] items-center">
+          <div className="relative flex h-20 items-center">
             {!collapsed && <DsLogo />}
             <DsIconButton
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
@@ -61,9 +75,9 @@ function DsAdminSidebar({
               size="icon-sm"
               className={cn(
                 "size-9 rounded-[10px]",
-                collapsed ? "mx-auto" : "absolute right-0 top-[22px]",
+                collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => setCollapsed((c) => !c)}
+              onClick={handleToggle}
             />
           </div>
         </div>
@@ -76,21 +90,12 @@ function DsAdminSidebar({
               active={activePath === item.path}
               collapsed={collapsed}
               href={item.path}
-              onClick={
-                onNavigate
-                  ? () => onNavigate(item.path)
-                  : undefined
-              }
+              onClick={onNavigate ? () => onNavigate(item.path) : undefined}
             />
           ))}
         </nav>
       </div>
-      <DsSidebarItem
-        icon={SignOutIcon}
-        label="Sair"
-        collapsed={collapsed}
-        onClick={onSignOut}
-      />
+      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
     </DsSidebar>
   );
 }

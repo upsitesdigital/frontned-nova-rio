@@ -1,26 +1,16 @@
-import isEmail from "validator/es/lib/isEmail";
-import isStrongPassword from "validator/es/lib/isStrongPassword";
 import { z } from "zod/v4";
+
+import { isStrongPassword } from "@/validation/password-strength-schema";
 
 const createAccountSchema = z
   .object({
     name: z.string().min(1, "Nome é obrigatório"),
-    email: z.string().min(1, "E-mail é obrigatório").refine(isEmail, "E-mail inválido"),
+    email: z.string().min(1, "E-mail é obrigatório").email("E-mail inválido"),
     phone: z.string().optional(),
     password: z
       .string()
       .min(8, "A senha deve ter pelo menos 8 caracteres")
-      .refine(
-        (v) =>
-          isStrongPassword(v, {
-            minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-          }),
-        "A senha deve conter maiúscula, minúscula, número e símbolo",
-      ),
+      .refine(isStrongPassword, "A senha deve conter maiúscula, minúscula, número e símbolo"),
     confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -64,8 +54,4 @@ function mapApiErrorToField(status: number, message: string): CreateAccountField
   return { email: "Erro ao cadastrar. Tente novamente." };
 }
 
-export {
-  validateCreateAccount,
-  mapApiErrorToField,
-  type CreateAccountFieldErrors,
-};
+export { validateCreateAccount, mapApiErrorToField, type CreateAccountFieldErrors };

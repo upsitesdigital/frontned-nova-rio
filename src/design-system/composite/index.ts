@@ -1,3 +1,8 @@
+export {
+  DsPaymentStatusPill,
+  type DsPaymentStatusPillProps,
+  type DsPaymentStatus,
+} from "./ds-payment-status-pill";
 export { DsStepper, type DsStepperProps, type DsStepperStep } from "./ds-stepper";
 export { DsServiceOptionCard, type DsServiceOptionCardProps } from "./ds-service-option-card";
 export { DsRadioOptionCard, type DsRadioOptionCardProps } from "./ds-radio-option-card";
@@ -55,6 +60,10 @@ export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./ds-colla
 export { DsAdminSidebar, type DsAdminSidebarProps } from "./ds-admin-sidebar";
 export { DsClientSidebar, type DsClientSidebarProps } from "./ds-client-sidebar";
 export {
+  DsClientDashboardShell,
+  type DsClientDashboardShellProps,
+} from "./ds-client-dashboard-shell";
+export {
   DsProfileCard,
   type DsProfileCardProps,
   type DsProfileCardAction,
@@ -104,6 +113,7 @@ export {
   type DsPaymentOptionsCardFrequency,
 } from "./ds-payment-options-card";
 export { DsDeleteConfirmPopup, type DsDeleteConfirmPopupProps } from "./ds-delete-confirm-popup";
+export { DsCancelConfirmPopup, type DsCancelConfirmPopupProps } from "./ds-cancel-confirm-popup";
 export {
   DsUserTable,
   type DsUserTableProps,

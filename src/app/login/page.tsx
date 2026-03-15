@@ -8,6 +8,9 @@ import Link from "next/link";
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { useLoginStore } from "@/stores/login-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+
+import { PendingApprovalDialog } from "./_components/pending-approval-dialog";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,10 +20,16 @@ export default function LoginPage() {
   const isSubmitting = useLoginStore((s) => s.isSubmitting);
   const error = useLoginStore((s) => s.error);
 
+  const pendingApproval = useLoginStore((s) => s.pendingApproval);
+
   const setEmail = useLoginStore((s) => s.setEmail);
   const setPassword = useLoginStore((s) => s.setPassword);
   const submit = useLoginStore((s) => s.submit);
+  const dismissPendingApproval = useLoginStore((s) => s.dismissPendingApproval);
   const reset = useLoginStore((s) => s.reset);
+
+  const pwdVisible = usePasswordVisibilityStore((s) => s.isVisible("login-password"));
+  const setPwdVisible = usePasswordVisibilityStore((s) => s.setVisibility);
 
   useEffect(() => {
     reset();
@@ -38,9 +47,9 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-[155px] " />
+        <DsLogo className="mt-38.75" />
 
-        <div className="mt-12 flex w-full max-w-[589px] flex-col items-center gap-12">
+        <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
           <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
             Entrar
           </h1>
@@ -61,12 +70,14 @@ export default function LoginPage() {
                 placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                visible={pwdVisible}
+                onVisibilityChange={(v) => setPwdVisible("login-password", v)}
                 className={FLOW_INPUT_CLASS}
               />
             </DsFormField>
           </div>
 
-          <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-[257px]">
+          <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
             {isSubmitting ? "Entrando..." : "Entrar"}
           </DsButton>
         </div>
@@ -80,8 +91,8 @@ export default function LoginPage() {
           Esqueceu sua senha?
         </Link>
 
-        <p className="mt-auto pb-[104px] text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
-          ©2025 Nova Rio Pay Per Use
+        <p className="mt-auto pb-26 text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+          ©{new Date().getFullYear()} Nova Rio Pay Per Use
         </p>
       </div>
 
@@ -94,6 +105,8 @@ export default function LoginPage() {
           priority
         />
       </div>
+
+      <PendingApprovalDialog open={pendingApproval} onClose={dismissPendingApproval} />
     </div>
   );
 }
