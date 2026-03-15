@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { getTimeSlots } from "@/api/scheduling-data";
+import { fetchTimeSlots } from "@/api/scheduling-api";
 import type { RecurrenceFrequency, RecurrenceType, TimeSlot } from "@/types/scheduling";
 
 interface SchedulingState {
@@ -47,7 +47,7 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
   loadTimeSlots: async (date) => {
     set({ isLoadingTimeSlots: true });
     try {
-      const timeSlots = await getTimeSlots(date);
+      const timeSlots = await fetchTimeSlots(date);
       set({ timeSlots, isLoadingTimeSlots: false });
     } catch (error) {
       console.error("Failed to load time slots:", error);

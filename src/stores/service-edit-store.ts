@@ -1,9 +1,11 @@
 import { create } from "zustand";
-import { format } from "date-fns";
 
-import { cancelAppointment, rescheduleAppointment } from "@/api/appointments-api";
-import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import { downloadReceipt } from "@/api/receipts-api";
 import { MESSAGES } from "@/lib/messages";
+import {
+  rescheduleClientAppointment,
+  cancelClientAppointment,
+} from "@/use-cases/appointment-actions";
 
 type RecurrenceType = "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
 
@@ -31,6 +33,7 @@ interface ServiceEditActions {
   openCancel: () => void;
   closeCancel: () => void;
   confirmCancel: (appointmentId: number) => Promise<boolean>;
+  downloadServiceReceipt: (paymentId: number) => Promise<void>;
   reset: () => void;
 }
 
@@ -66,12 +69,6 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   setRescheduleTime: (time) => set({ rescheduleTime: time }),
 
   confirmReschedule: async (appointmentId) => {
-    const token = await getAuthToken();
-    if (!token) {
-      set({ saveError: MESSAGES.auth.sessionExpired });
-      return false;
-    }
-
     const { rescheduleDate, rescheduleTime } = get();
     if (!rescheduleDate || !rescheduleTime) {
       set({ saveError: MESSAGES.appointments.selectDateTime });
@@ -80,11 +77,13 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
 
     set({ isSaving: true, saveError: null, saveSuccess: null });
 
-    try {
-      await rescheduleAppointment(token, appointmentId, {
-        date: format(rescheduleDate, "yyyy-MM-dd"),
-        startTime: rescheduleTime,
-      });
+    const result = await rescheduleClientAppointment({
+      appointmentId,
+      date: rescheduleDate,
+      time: rescheduleTime,
+    });
+
+    if (result.success) {
       set({
         isSaving: false,
         rescheduleOpen: false,
@@ -93,13 +92,10 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
         saveSuccess: MESSAGES.appointments.rescheduleSuccess,
       });
       return true;
-    } catch (error) {
-      set({
-        isSaving: false,
-        saveError: resolveErrorMessage(error, MESSAGES.appointments.rescheduleError),
-      });
-      return false;
     }
+
+    set({ isSaving: false, saveError: result.error });
+    return false;
   },
 
   openCancel: () => set({ cancelOpen: true, saveError: null }),
@@ -107,29 +103,25 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   closeCancel: () => set({ cancelOpen: false }),
 
   confirmCancel: async (appointmentId) => {
-    const token = await getAuthToken();
-    if (!token) {
-      set({ saveError: MESSAGES.auth.sessionExpired });
-      return false;
-    }
-
     set({ isSaving: true, saveError: null, saveSuccess: null });
 
-    try {
-      await cancelAppointment(token, appointmentId);
+    const result = await cancelClientAppointment(appointmentId);
+
+    if (result.success) {
       set({
         isSaving: false,
         cancelOpen: false,
         saveSuccess: MESSAGES.appointments.cancelSuccess,
       });
       return true;
-    } catch (error) {
-      set({
-        isSaving: false,
-        saveError: resolveErrorMessage(error, MESSAGES.appointments.cancelError),
-      });
-      return false;
     }
+
+    set({ isSaving: false, saveError: result.error });
+    return false;
+  },
+
+  downloadServiceReceipt: async (paymentId) => {
+    await downloadReceipt(paymentId);
   },
 
   reset: () => set(initialState),

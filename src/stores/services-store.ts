@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { getServices } from "@/api/services-data";
+import { fetchServices } from "@/api/services-api";
 import type { Service } from "@/types/service";
 
 interface ServicesState {
@@ -29,7 +29,7 @@ const useServicesStore = create<ServicesStore>()((set) => ({
   loadServices: async () => {
     set({ isLoadingServices: true });
     try {
-      const services = await getServices();
+      const services = await fetchServices();
       set({ services, isLoadingServices: false });
     } catch (error) {
       console.error("Failed to load services:", error);

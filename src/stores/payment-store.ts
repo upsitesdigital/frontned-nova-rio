@@ -3,6 +3,10 @@ import { create } from "zustand";
 import type { PaymentMethod } from "@/types/scheduling";
 import { submitPayment } from "@/use-cases/submit-payment";
 import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
+import { useRegistrationStore } from "@/stores/registration-store";
+import { useServicesStore } from "@/stores/services-store";
+import { useSchedulingStore } from "@/stores/scheduling-store";
+import { useAddressStore } from "@/stores/address-store";
 
 interface PaymentState {
   paymentMethod: PaymentMethod | null;
@@ -95,8 +99,37 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
     const isValid = usePaymentStore.getState().validate();
     if (!isValid) return false;
 
+    const email = useRegistrationStore.getState().email;
+    if (!email) {
+      set({ submitError: "E-mail não cadastrado. Volte ao passo de cadastro." });
+      return false;
+    }
+
+    const selectedServiceId = useServicesStore.getState().selectedServiceId;
+    if (!selectedServiceId) {
+      set({ submitError: "Nenhum serviço selecionado." });
+      return false;
+    }
+
+    const { selectedDate, selectedTime, recurrenceType } = useSchedulingStore.getState();
+    if (!selectedDate || !selectedTime) {
+      set({ submitError: "Data e horário não selecionados." });
+      return false;
+    }
+
+    const { cep, address } = useAddressStore.getState();
+
     set({ isSubmitting: true, submitError: null });
-    const result = await submitPayment();
+
+    const result = await submitPayment({
+      email,
+      selectedServiceId,
+      selectedDate,
+      selectedTime,
+      recurrenceType,
+      cep,
+      address,
+    });
 
     if (result.success) {
       set({ isSubmitting: false });

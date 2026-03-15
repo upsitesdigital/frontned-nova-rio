@@ -6,7 +6,7 @@ import {
   type ServiceDetailModalEntry,
   type ServiceHistoryEntry,
 } from "@/api/dashboard-api";
-import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
 
 interface DashboardState {
@@ -44,16 +44,10 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
   ...initialState,
 
   loadSummary: async () => {
-    const token = await getAuthToken();
-    if (!token) {
-      set({ error: MESSAGES.auth.sessionExpired });
-      return;
-    }
-
     set({ isLoading: true, error: null });
 
     try {
-      const summary = await fetchClientDashboardSummary(token);
+      const summary = await fetchClientDashboardSummary();
       set({ summary, isLoading: false });
     } catch (error) {
       set({

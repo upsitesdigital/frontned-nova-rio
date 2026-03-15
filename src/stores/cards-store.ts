@@ -1,7 +1,14 @@
 import { create } from "zustand";
 
-import { listCards, addCard, removeCard, type Card, type AddCardRequest } from "@/api/cards-api";
-import { getAuthToken, resolveErrorMessage } from "@/lib/auth-helpers";
+import {
+  listCards,
+  tokenizeCard,
+  addCard,
+  removeCard,
+  type Card,
+  type AddCardRequest,
+} from "@/api/cards-api";
+import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { detectCardBrand } from "@/lib/card-brand";
 import { MESSAGES } from "@/lib/messages";
 import { useToastStore } from "@/stores/toast-store";
@@ -12,6 +19,7 @@ interface AddCardForm {
   holderName: string;
   expiryMonth: string;
   expiryYear: string;
+  cvv: string;
   isDefault: boolean;
 }
 
@@ -20,6 +28,7 @@ const EMPTY_FORM: AddCardForm = {
   holderName: "",
   expiryMonth: "",
   expiryYear: "",
+  cvv: "",
   isDefault: false,
 };
 
@@ -56,8 +65,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   loadCards: async () => {
     set({ isLoading: true, error: null });
     try {
-      const token = await getAuthToken();
-      const cards = await listCards(token ?? "");
+      const cards = await listCards();
       set({ cards, isLoading: false });
     } catch (e) {
       set({
@@ -73,22 +81,31 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
     const digits = form.cardNumber.replace(/\s/g, "");
     const lastFourDigits = digits.slice(-4);
     const brand = detectCardBrand(digits);
+    const expiryMonth = parseInt(form.expiryMonth, 10);
+    const expiryYear = parseInt(form.expiryYear, 10);
 
-    // TODO: Gateway tokenization (e.g., Stripe/PagSeguro) must be integrated here.
-    // The token should come from the payment provider's SDK after tokenizing the full card number.
-    // Until then, only lastFourDigits and brand are sent to the backend (PCI-compliant).
-
-    const data: AddCardRequest = {
-      lastFourDigits,
-      brand,
-      holderName: form.holderName.toUpperCase(),
-      expiryDate: `${form.expiryMonth.padStart(2, "0")}/${form.expiryYear}`,
-      isDefault: form.isDefault,
-    };
     set({ isAdding: true });
     try {
-      const token = await getAuthToken();
-      const newCard = await addCard(token ?? "", data);
+      const { gatewayToken } = await tokenizeCard({
+        cardNumber: digits,
+        cardCvv: form.cvv,
+        holderName: form.holderName.toUpperCase(),
+        expiryMonth,
+        expiryYear,
+        brand,
+      });
+
+      const data: AddCardRequest = {
+        lastFourDigits,
+        brand,
+        holderName: form.holderName.toUpperCase(),
+        expiryMonth,
+        expiryYear,
+        gatewayToken,
+        isDefault: form.isDefault,
+      };
+
+      const newCard = await addCard(data);
       set((state) => ({
         cards: data.isDefault
           ? [newCard, ...state.cards.map((c) => ({ ...c, isDefault: false }))]
@@ -107,8 +124,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
 
   removeCard: async (cardId: number) => {
     try {
-      const token = await getAuthToken();
-      await removeCard(token ?? "", cardId);
+      await removeCard(cardId);
       set((state) => ({ cards: state.cards.filter((c) => c.id !== cardId) }));
       useToastStore.getState().showToast(MESSAGES.cards.removeSuccess, "success");
     } catch (e) {

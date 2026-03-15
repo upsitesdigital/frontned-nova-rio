@@ -5,7 +5,6 @@ import {
   type PaymentEntry,
   type PaymentStatus,
 } from "@/api/payments-api";
-import { getAuthToken } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
 
 type FilterValue = "ALL" | PaymentStatus;
@@ -46,15 +45,12 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
     const controller = new AbortController();
     currentController = controller;
 
-    const token = await getAuthToken();
-    if (!token) return;
-
     const { page, limit, filter } = get();
     const status = filter === "ALL" ? undefined : (filter as PaymentStatus);
 
     set({ isLoading: true, error: null });
     try {
-      const result = await fetchClientPayments(token, page, limit, status, controller.signal);
+      const result = await fetchClientPayments(page, limit, status, controller.signal);
       if (controller.signal.aborted) return;
       set({ payments: result.data, total: result.total });
     } catch (e) {
