@@ -196,3 +196,5 @@ export {
 } from "./composite";
 export { DsDeleteConfirmPopup, type DsDeleteConfirmPopupProps } from "./composite";
 export { DsCancelConfirmPopup, type DsCancelConfirmPopupProps } from "./composite";
+export { DsQuickActionCard, type DsQuickActionCardProps } from "./composite";
+export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./composite";
