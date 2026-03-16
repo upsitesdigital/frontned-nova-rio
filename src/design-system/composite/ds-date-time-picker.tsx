@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import type { Matcher } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/design-system/ui/calendar";
@@ -18,6 +15,7 @@ interface DsDateTimePickerProps {
   timeSlots?: string[];
   disabledSlots?: string[];
   disabledDays?: Matcher | Matcher[];
+  disabledDayTooltip?: string;
   cancelLabel?: string;
   confirmLabel?: string;
   showActions?: boolean;
@@ -60,27 +58,12 @@ function DsDateTimePicker({
   timeSlots = DEFAULT_TIME_SLOTS,
   disabledSlots,
   disabledDays,
+  disabledDayTooltip,
   cancelLabel = "Cancelar",
   confirmLabel = "Ok",
   showActions = true,
   className,
 }: DsDateTimePickerProps) {
-  const [internalDate, setInternalDate] = useState<Date | undefined>(date);
-  const [internalTime, setInternalTime] = useState<string | undefined>(time);
-
-  const selectedDate = date ?? internalDate;
-  const selectedTime = time ?? internalTime;
-
-  function handleDateChange(d: Date | undefined) {
-    setInternalDate(d);
-    onDateChange?.(d);
-  }
-
-  function handleTimeChange(t: string) {
-    setInternalTime(t);
-    onTimeChange?.(t);
-  }
-
   return (
     <div
       className={cn(
@@ -91,17 +74,18 @@ function DsDateTimePicker({
       <div className="flex">
         <Calendar
           mode="single"
-          selected={selectedDate}
-          onSelect={handleDateChange}
+          selected={date}
+          onSelect={onDateChange}
           disabled={disabledDays}
+          disabledDayTooltip={disabledDayTooltip}
           className="p-4"
         />
         <DsSeparator orientation="vertical" className="h-auto" />
         <div className="flex items-start px-3 py-4">
           <DsTimeSlotPicker
             slots={timeSlots}
-            value={selectedTime}
-            onChange={handleTimeChange}
+            value={time}
+            onChange={onTimeChange}
             disabledSlots={disabledSlots}
           />
         </div>

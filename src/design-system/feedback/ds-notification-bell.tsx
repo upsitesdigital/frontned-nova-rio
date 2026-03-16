@@ -1,4 +1,6 @@
-import { BellIcon } from "@phosphor-icons/react";
+"use client";
+
+import { BellIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon } from "@/design-system/media";
 

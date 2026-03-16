@@ -1,20 +1,25 @@
 import { create } from "zustand";
 
-import { loginClient } from "@/api/auth-api";
-import { HttpClientError } from "@/api/http-client";
+import { MESSAGES } from "@/lib/messages";
 import { useAuthStore } from "@/stores/auth-store";
+import { authenticateUser } from "@/use-cases/authenticate-user";
+import { validateLoginInput } from "@/validation/login-schema";
+
+import type { UserType } from "@/api/auth-api";
 
 interface LoginState {
   email: string;
   password: string;
   isSubmitting: boolean;
   error: string | null;
+  pendingApproval: boolean;
 }
 
 interface LoginActions {
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
-  submit: () => Promise<boolean>;
+  submit: () => Promise<UserType | null>;
+  dismissPendingApproval: () => void;
   reset: () => void;
 }
 
@@ -25,39 +30,47 @@ const initialState: LoginState = {
   password: "",
   isSubmitting: false,
   error: null,
+  pendingApproval: false,
 };
 
 const useLoginStore = create<LoginStore>()((set) => ({
   ...initialState,
 
-  setEmail: (email) => set({ email, error: null }),
-  setPassword: (password) => set({ password, error: null }),
+  setEmail: (email) => set({ email, error: null, pendingApproval: false }),
+  setPassword: (password) => set({ password, error: null, pendingApproval: false }),
+  dismissPendingApproval: () => set({ pendingApproval: false }),
 
   submit: async () => {
     const { email, password } = useLoginStore.getState();
 
-    if (!email.trim() || !password.trim()) {
-      set({ error: "Preencha todos os campos." });
-      return false;
+    const validationError = validateLoginInput({ email, password });
+    if (validationError) {
+      set({ error: validationError });
+      return null;
     }
 
     set({ isSubmitting: true, error: null });
 
-    try {
-      const tokens = await loginClient({ email, password });
-      useAuthStore.getState().setAccessToken(tokens.accessToken);
-      set({ isSubmitting: false });
-      return true;
-    } catch (error) {
-      const message =
-        error instanceof HttpClientError
-          ? error.status === 401
-            ? "E-mail ou senha incorretos."
-            : error.message
-          : "Erro ao entrar. Tente novamente.";
+    const result = await authenticateUser(email, password);
 
-      set({ isSubmitting: false, error: message });
-      return false;
+    switch (result.type) {
+      case "success": {
+        useAuthStore.getState().setTokens(result.accessToken, result.refreshToken, result.userType);
+        set({ isSubmitting: false });
+        return result.userType;
+      }
+      case "pending": {
+        set({ isSubmitting: false, pendingApproval: true });
+        return null;
+      }
+      case "invalidCredentials": {
+        set({ isSubmitting: false, error: MESSAGES.auth.wrongCredentials });
+        return null;
+      }
+      case "error": {
+        set({ isSubmitting: false, error: result.message });
+        return null;
+      }
     }
   },
 

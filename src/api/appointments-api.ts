@@ -1,4 +1,4 @@
-import { appConfig } from "@/config/app";
+import { httpPost, httpAuthPatch, httpAuthPost } from "./http-client";
 
 interface CreatePublicAppointmentRequest {
   email: string;
@@ -25,22 +25,30 @@ interface AppointmentResponse {
 async function createPublicAppointment(
   data: CreatePublicAppointmentRequest,
 ): Promise<AppointmentResponse> {
-  const response = await fetch(`${appConfig.apiBaseUrl}/appointments/public`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
-    const message =
-      errorBody && typeof errorBody === "object" && "message" in errorBody
-        ? String(errorBody.message)
-        : `POST /appointments/public failed: ${response.statusText}`;
-    throw new Error(message);
-  }
-
-  return response.json() as Promise<AppointmentResponse>;
+  return httpPost<AppointmentResponse>("/appointments/public", data);
 }
 
-export { createPublicAppointment, type CreatePublicAppointmentRequest, type AppointmentResponse };
+interface RescheduleAppointmentRequest {
+  date: string;
+  startTime: string;
+}
+
+async function rescheduleAppointment(
+  appointmentId: number,
+  data: RescheduleAppointmentRequest,
+): Promise<AppointmentResponse> {
+  return httpAuthPost<AppointmentResponse>(`/appointments/${appointmentId}/reschedule`, data);
+}
+
+async function cancelAppointment(appointmentId: number): Promise<void> {
+  return httpAuthPatch(`/appointments/${appointmentId}/cancel`);
+}
+
+export {
+  createPublicAppointment,
+  rescheduleAppointment,
+  cancelAppointment,
+  type CreatePublicAppointmentRequest,
+  type RescheduleAppointmentRequest,
+  type AppointmentResponse,
+};

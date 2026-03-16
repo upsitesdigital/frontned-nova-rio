@@ -1,24 +1,14 @@
-import isEmail from "validator/es/lib/isEmail";
-import isStrongPassword from "validator/es/lib/isStrongPassword";
 import { z } from "zod/v4";
+
+import { isStrongPassword } from "@/validation/password-strength-schema";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
-  email: z.string().min(1, "E-mail é obrigatório").refine(isEmail, "E-mail inválido"),
+  email: z.string().min(1, "E-mail é obrigatório").email("E-mail inválido"),
   password: z
     .string()
     .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .refine(
-      (v) =>
-        isStrongPassword(v, {
-          minLength: 8,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1,
-        }),
-      "A senha deve conter maiúscula, minúscula, número e símbolo",
-    ),
+    .refine(isStrongPassword, "A senha deve conter maiúscula, minúscula, número e símbolo"),
 });
 
 type RegisterSchema = z.infer<typeof registerSchema>;

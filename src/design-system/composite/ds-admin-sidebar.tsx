@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -13,13 +12,13 @@ import {
   CaretRightIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { DsSidebar } from "@/design-system/navigation";
-import { DsSidebarItem } from "@/design-system/navigation";
-import { DsLogo } from "@/design-system/navigation";
+import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
 
 interface DsAdminSidebarProps {
   activePath?: string;
+  collapsed: boolean;
+  onCollapsedChange: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onSignOut?: () => void;
   className?: string;
@@ -42,17 +41,21 @@ const adminNavItems = [
 
 function DsAdminSidebar({
   activePath,
+  collapsed,
+  onCollapsedChange,
   onNavigate,
   onSignOut,
   className,
 }: DsAdminSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const handleToggle = () => {
+    onCollapsedChange(!collapsed);
+  };
 
   return (
     <DsSidebar collapsed={collapsed} className={cn("h-full", className)}>
       <div className="flex flex-col gap-14">
         <div className="flex flex-col border-b border-nova-gray-300 pb-6">
-          <div className="relative flex h-[80px] items-center">
+          <div className="relative flex h-20 items-center">
             {!collapsed && <DsLogo />}
             <DsIconButton
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
@@ -60,10 +63,10 @@ function DsAdminSidebar({
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px]",
-                collapsed ? "mx-auto" : "absolute right-0 top-[22px]",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
+                collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
-              onClick={() => setCollapsed((c) => !c)}
+              onClick={handleToggle}
             />
           </div>
         </div>
@@ -73,24 +76,19 @@ function DsAdminSidebar({
               key={item.path}
               icon={item.icon}
               label={item.label}
-              active={activePath === item.path}
+              active={
+                item.path === "/admin"
+                  ? activePath === item.path
+                  : (activePath?.startsWith(item.path) ?? false)
+              }
               collapsed={collapsed}
               href={item.path}
-              onClick={
-                onNavigate
-                  ? () => onNavigate(item.path)
-                  : undefined
-              }
+              onClick={onNavigate ? () => onNavigate(item.path) : undefined}
             />
           ))}
         </nav>
       </div>
-      <DsSidebarItem
-        icon={SignOutIcon}
-        label="Sair"
-        collapsed={collapsed}
-        onClick={onSignOut}
-      />
+      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
     </DsSidebar>
   );
 }

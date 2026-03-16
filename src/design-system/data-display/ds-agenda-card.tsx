@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import {
   CaretLeftIcon,
   CaretRightIcon,
@@ -25,24 +25,22 @@ import { DsIconButton } from "@/design-system/primitives";
 const WEEKDAY_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 interface DsAgendaCardProps {
+  currentMonth: Date;
+  onCurrentMonthChange: (date: Date) => void;
   busyDates?: Date[];
   selectedDate?: Date;
   onDateSelect?: (date: Date) => void;
-  onMonthChange?: (date: Date) => void;
   className?: string;
 }
 
 function DsAgendaCard({
+  currentMonth,
+  onCurrentMonthChange,
   busyDates = [],
   selectedDate,
   onDateSelect,
-  onMonthChange,
   className,
 }: DsAgendaCardProps) {
-  const [currentMonth, setCurrentMonth] = useState(
-    selectedDate ?? new Date(),
-  );
-
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
@@ -58,16 +56,12 @@ function DsAgendaCard({
   }, [busyDates]);
 
   const handlePrevMonth = useCallback(() => {
-    const prev = subMonths(currentMonth, 1);
-    setCurrentMonth(prev);
-    onMonthChange?.(prev);
-  }, [currentMonth, onMonthChange]);
+    onCurrentMonthChange(subMonths(currentMonth, 1));
+  }, [currentMonth, onCurrentMonthChange]);
 
   const handleNextMonth = useCallback(() => {
-    const next = addMonths(currentMonth, 1);
-    setCurrentMonth(next);
-    onMonthChange?.(next);
-  }, [currentMonth, onMonthChange]);
+    onCurrentMonthChange(addMonths(currentMonth, 1));
+  }, [currentMonth, onCurrentMonthChange]);
 
   const weeks = useMemo(() => {
     const result: Date[][] = [];
@@ -80,7 +74,7 @@ function DsAgendaCard({
   return (
     <div
       className={cn(
-        "flex w-full flex-col items-center gap-8 rounded-[20px] border border-nova-gray-100 bg-white p-6",
+        "flex w-full flex-col items-center gap-8 rounded-4xl border border-nova-gray-100 bg-white p-6",
         className,
       )}
     >

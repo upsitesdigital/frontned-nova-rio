@@ -222,6 +222,13 @@ export default function DesignSystemPage() {
       ],
     },
   ]);
+  const [pwdVisible, setPwdVisible] = useState(false);
+  const [flowPwdVisible, setFlowPwdVisible] = useState(false);
+  const [authPwdVisible, setAuthPwdVisible] = useState(false);
+  const [authPwdConfirmVisible, setAuthPwdConfirmVisible] = useState(false);
+  const [adminSidebarCollapsed, setAdminSidebarCollapsed] = useState(false);
+  const [collapsible1Open, setCollapsible1Open] = useState(true);
+  const [collapsible2Open, setCollapsible2Open] = useState(false);
   const [payOptCards, setPayOptCards] = useState<DsPaymentOptionsCardOption[]>([
     { id: "avulso", label: "Avulso", enabled: true },
     { id: "pacote", label: "Pacote", enabled: false },
@@ -282,7 +289,12 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsPasswordInput">
-          <DsPasswordInput placeholder="Enter password..." className="max-w-xs" />
+          <DsPasswordInput
+            placeholder="Enter password..."
+            className="max-w-xs"
+            visible={pwdVisible}
+            onVisibilityChange={setPwdVisible}
+          />
         </ComponentRow>
 
         <ComponentRow label="DsTextarea">
@@ -300,13 +312,13 @@ export default function DesignSystemPage() {
             placeholder="Choose a service"
             value={selectValue}
             onValueChange={setSelectValue}
-            className="w-[200px]"
+            className="w-50"
           />
           <DsSelect
             options={selectOptions}
             placeholder="Disabled select"
             disabled
-            className="w-[200px]"
+            className="w-50"
           />
         </ComponentRow>
 
@@ -502,12 +514,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsEmptyState">
-          <DsEmptyState
-            icon={BroomIcon}
-            title="No cleaning scheduled"
-            description="Book your first cleaning service to get started."
-            action={<DsButton size="sm">Book Now</DsButton>}
-          />
+          <DsEmptyState message="Nenhum serviço registrado ainda." />
         </ComponentRow>
 
         <ComponentRow label="DsInfoChip — Icon + Label + Value">
@@ -517,14 +524,16 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsMetricCard — Label + Large Value">
           <div className="flex gap-4">
-            <DsMetricCard label="Horas trabalhadas/ Semana" value="40h" className="w-[300px]" />
-            <DsMetricCard label="Serviços realizados/ Mês" value="128" className="w-[300px]" />
+            <DsMetricCard label="Horas trabalhadas/ Semana" value="40h" className="w-75" />
+            <DsMetricCard label="Serviços realizados/ Mês" value="128" className="w-75" />
           </div>
         </ComponentRow>
 
         <ComponentRow label="DsAgendaCard — Schedule Calendar with Busy/Free Legend">
           <DsAgendaCard
             className="max-w-xs"
+            currentMonth={new Date(2026, 2, 1)}
+            onCurrentMonthChange={() => {}}
             busyDates={[
               new Date(2026, 2, 2),
               new Date(2026, 2, 3),
@@ -619,7 +628,12 @@ export default function DesignSystemPage() {
               <DsInput id="email" placeholder="john@example.com" type="email" />
             </DsFormField>
             <DsFormField label="Password" required htmlFor="pwd">
-              <DsPasswordInput id="pwd" placeholder="Enter password" />
+              <DsPasswordInput
+                id="pwd"
+                placeholder="Enter password"
+                visible={pwdVisible}
+                onVisibilityChange={setPwdVisible}
+              />
             </DsFormField>
           </DsFormGroup>
         </ComponentRow>
@@ -644,7 +658,7 @@ export default function DesignSystemPage() {
             value={filterValue}
             onValueChange={setFilterValue}
             placeholder="All services"
-            className="w-[200px]"
+            className="w-50"
           />
         </ComponentRow>
       </DsSection>
@@ -763,13 +777,13 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsSidebar + DsSidebarItem — Collapsible">
           <div
-            className="h-[700px] overflow-hidden rounded-lg border transition-all duration-300"
+            className="h-175 overflow-hidden rounded-lg border transition-all duration-300"
             style={{ width: sidebarCollapsed ? 88 : 260 }}
           >
             <DsSidebar collapsed={sidebarCollapsed} className="h-full">
               <div className="flex flex-col gap-14">
                 <div className="flex flex-col gap-12 border-b border-nova-gray-300 pb-6">
-                  <div className="relative flex h-[80px] items-center">
+                  <div className="relative flex h-20 items-center">
                     {!sidebarCollapsed && <DsLogo />}
                     <DsIconButton
                       icon={sidebarCollapsed ? CaretRightIcon : CaretLeftIcon}
@@ -778,7 +792,7 @@ export default function DesignSystemPage() {
                       size="icon-sm"
                       className={cn(
                         "size-9 rounded-[10px]",
-                        sidebarCollapsed ? "mx-auto" : "absolute right-0 top-[22px]",
+                        sidebarCollapsed ? "mx-auto" : "absolute right-0 top-5.5",
                       )}
                       onClick={() => setSidebarCollapsed((c) => !c)}
                     />
@@ -824,8 +838,12 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsAdminSidebar — Admin Navigation">
-          <div className="h-[900px] overflow-hidden rounded-lg border">
-            <DsAdminSidebar activePath="/admin" />
+          <div className="h-225 overflow-hidden rounded-lg border">
+            <DsAdminSidebar
+              activePath="/admin"
+              collapsed={adminSidebarCollapsed}
+              onCollapsedChange={setAdminSidebarCollapsed}
+            />
           </div>
         </ComponentRow>
       </DsSection>
@@ -904,7 +922,7 @@ export default function DesignSystemPage() {
               price="A partir de R$ 50,00"
               onEdit={() => {}}
               onDelete={() => {}}
-              className="w-[340px]"
+              className="w-85"
             />
             <DsServiceManageCard
               icon={SketchLogoIcon}
@@ -915,7 +933,7 @@ export default function DesignSystemPage() {
               price="A partir de R$ 120,00"
               onEdit={() => {}}
               onDelete={() => {}}
-              className="w-[340px]"
+              className="w-85"
             />
             <DsServiceManageCard
               icon={StarFourIcon}
@@ -926,7 +944,7 @@ export default function DesignSystemPage() {
               price="A partir de R$ 200,00"
               onEdit={() => {}}
               onDelete={() => {}}
-              className="w-[340px]"
+              className="w-85"
             />
           </div>
         </ComponentRow>
@@ -961,7 +979,7 @@ export default function DesignSystemPage() {
               )
             }
             onSave={() => {}}
-            className="w-[600px] rounded-[20px] border border-nova-gray-100 shadow-[0px_16px_24px_0px_rgba(75,75,75,0.1)]"
+            className="w-150 rounded-4xl border border-nova-gray-100 shadow-[0px_16px_24px_0px_rgba(75,75,75,0.1)]"
           />
         </ComponentRow>
 
@@ -975,7 +993,7 @@ export default function DesignSystemPage() {
             onDescriptionChange={setSvcEditDesc}
             price={svcEditPrice}
             onPriceChange={setSvcEditPrice}
-            className="w-[600px] border border-nova-gray-100"
+            className="w-150 border border-nova-gray-100"
           />
         </ComponentRow>
 
@@ -999,7 +1017,7 @@ export default function DesignSystemPage() {
                 ),
               )
             }
-            className="w-[600px] border border-nova-gray-100"
+            className="w-150 border border-nova-gray-100"
           />
         </ComponentRow>
 
@@ -1050,7 +1068,7 @@ export default function DesignSystemPage() {
             </div>
             {selectedRecurrence === "recorrencia" && (
               <DsInfoPanel>
-                <div className="flex w-full max-w-[391px] flex-col gap-1.5">
+                <div className="flex w-full max-w-97.75 flex-col gap-1.5">
                   <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
                     Selecione o tipo de recorrência
                   </span>
@@ -1089,7 +1107,7 @@ export default function DesignSystemPage() {
                 title="Cadastrar e-mail"
                 subtitle="Cadastre seu e-mail para prosseguir com o pagamento."
               />
-              <div className="flex w-full max-w-[589px] flex-col gap-4">
+              <div className="flex w-full max-w-147.25 flex-col gap-4">
                 <DsFormField label="Nome" htmlFor="flow-name">
                   <DsInput id="flow-name" placeholder="Digite seu Nome" />
                 </DsFormField>
@@ -1100,7 +1118,12 @@ export default function DesignSystemPage() {
                   <DsInput id="flow-phone" placeholder="Digite seu telefone" />
                 </DsFormField>
                 <DsFormField label="Senha" htmlFor="flow-pwd">
-                  <DsPasswordInput id="flow-pwd" placeholder="Digite sua senha" />
+                  <DsPasswordInput
+                    id="flow-pwd"
+                    placeholder="Digite sua senha"
+                    visible={flowPwdVisible}
+                    onVisibilityChange={setFlowPwdVisible}
+                  />
                 </DsFormField>
               </div>
               <DsButton size="flow">Cadastrar e-mail</DsButton>
@@ -1204,14 +1227,24 @@ export default function DesignSystemPage() {
                   <DsInput id="auth-phone" placeholder="Digite seu telefone" />
                 </DsFormField>
                 <DsFormField label="Senha" htmlFor="auth-pwd">
-                  <DsPasswordInput id="auth-pwd" placeholder="Digite sua senha" />
+                  <DsPasswordInput
+                    id="auth-pwd"
+                    placeholder="Digite sua senha"
+                    visible={authPwdVisible}
+                    onVisibilityChange={setAuthPwdVisible}
+                  />
                 </DsFormField>
                 <DsFormField label="Confirmar senha" htmlFor="auth-pwd-confirm">
-                  <DsPasswordInput id="auth-pwd-confirm" placeholder="Confirme sua senha" />
+                  <DsPasswordInput
+                    id="auth-pwd-confirm"
+                    placeholder="Confirme sua senha"
+                    visible={authPwdConfirmVisible}
+                    onVisibilityChange={setAuthPwdConfirmVisible}
+                  />
                 </DsFormField>
               </div>
               <div className="flex flex-col items-center gap-6">
-                <DsButton size="flow" className="w-[257px]">
+                <DsButton size="flow" className="w-64.25">
                   Criar conta
                 </DsButton>
                 <p className="text-base leading-normal text-[#4d4d4f]">
@@ -1375,15 +1408,14 @@ export default function DesignSystemPage() {
               title="Próximo serviço"
               value="16/10"
               subtitle="Cancelamento com 1h de antecedência"
-              onOptionsClick={() => {}}
-              className="w-[502px]"
+              onReceipt={() => {}}
+              className="w-125.5"
             />
             <DsHighlightCard
               title="Agendamentos"
               value="12"
               subtitle="Nos últimos 2 meses"
-              onOptionsClick={() => {}}
-              className="w-[501px]"
+              className="w-125.25"
             />
             <DsHighlightCard
               title="Horas vendidas por serviço"
@@ -1392,7 +1424,7 @@ export default function DesignSystemPage() {
               iconColor="text-[#e39725]"
               iconBgColor="bg-[rgba(227,151,37,0.1)]"
               valueColor="text-[#e39725]"
-              className="w-[501px] p-10"
+              className="w-125.25 p-10"
             />
             <DsHighlightCard
               title="Vendas concluídas"
@@ -1402,7 +1434,7 @@ export default function DesignSystemPage() {
               iconColor="text-nova-success"
               iconBgColor="bg-nova-success/10"
               valueColor="text-nova-success"
-              className="w-[501px] p-10"
+              className="w-125.25 p-10"
             />
           </div>
         </ComponentRow>
@@ -1417,19 +1449,18 @@ export default function DesignSystemPage() {
                 { label: "Reagendar", variant: "filled", onClick: () => {} },
                 { label: "Cancelar", variant: "outlined", onClick: () => {} },
               ]}
-              className="w-[500px]"
+              className="w-125"
             />
             <DsHighlightCard
               title="Agendamentos"
               value="12"
               subtitle="Nos últimos 2 meses"
-              onOptionsClick={() => {}}
-              className="w-[501px]"
+              className="w-125.25"
             />
             <DsRecurrenceCard
               title="Configurar Recorrência"
               description="Escolha como deseja configurar a recorrência dos serviços"
-              className="w-[501px]"
+              className="w-125.25"
             >
               <div className="flex flex-col gap-1.5">
                 <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -1455,7 +1486,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsServiceHistoryItem — Histórico de serviços">
-          <div className="flex w-[1019px] flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
+          <div className="flex w-254.75 flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
             <div className="flex items-center justify-between">
               <h3 className="text-[20px] font-medium leading-[1.3] text-black">
                 Histórico de serviços
@@ -1504,7 +1535,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsRegisteredCardList — Cartões cadastrados">
-          <DsRegisteredCardList onAdd={() => {}} className="w-full max-w-[500px]">
+          <DsRegisteredCardList onAdd={() => {}} className="w-full max-w-125">
             <DsRegisteredCardItem
               brandSrc="/icons/mastercard.svg"
               lastDigits="0123"
@@ -1521,7 +1552,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsRecentPaymentItem — Pagamentos recentes">
-          <div className="flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8 w-full max-w-[500px]">
+          <div className="flex flex-col gap-6 overflow-clip rounded-4xl border border-nova-gray-100 bg-white px-6 py-8 w-full max-w-125">
             <p className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-black">
               Pagamentos recentes
             </p>
@@ -1570,12 +1601,12 @@ export default function DesignSystemPage() {
             date="16/10"
             onClose={() => {}}
             onReceipt={() => {}}
-            className="w-[540px]"
+            className="w-135"
           >
             <DsServiceDetailRow>
               <div className="flex items-start gap-2">
                 <DsIcon icon={CreditCardIcon} size="lg" className="shrink-0 text-nova-gray-700" />
-                <p className="w-[143px] text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                <p className="w-35.75 text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
                   Terminado em 0123
                 </p>
               </div>
@@ -1604,7 +1635,7 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsPopup — Success Popup">
           <DsButton onClick={() => setPopupOpen(true)}>Open Popup</DsButton>
           <DsPopup open={popupOpen}>
-            <div className="flex w-[331px] flex-col items-center gap-4 text-center">
+            <div className="flex w-82.75 flex-col items-center gap-4 text-center">
               <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
                 E-mail cadastrado com sucesso!
               </h2>
@@ -1612,7 +1643,7 @@ export default function DesignSystemPage() {
                 Prossiga para o pagamento e conclua seu agendamento.
               </p>
             </div>
-            <DsButton size="flow" className="w-[305px]" onClick={() => setPopupOpen(false)}>
+            <DsButton size="flow" className="w-76.25" onClick={() => setPopupOpen(false)}>
               Continuar
             </DsButton>
           </DsPopup>
@@ -1622,7 +1653,7 @@ export default function DesignSystemPage() {
       <DsSection>
         <SectionTitle>New Composite Components</SectionTitle>
         <ComponentRow label="DsPaymentInfoCard — Payment Info">
-          <div className="flex w-[400px] flex-col gap-4">
+          <div className="flex w-100 flex-col gap-4">
             <DsPaymentInfoCard
               icon={CreditCardIcon}
               description="Terminado em 0123"
@@ -1641,12 +1672,22 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsCollapsibleSection — Collapsible">
-          <div className="flex w-[400px] flex-col gap-4">
-            <DsCollapsibleSection icon={MapPinIcon} title="Condominio Le Monde">
+          <div className="flex w-100 flex-col gap-4">
+            <DsCollapsibleSection
+              icon={MapPinIcon}
+              title="Condominio Le Monde"
+              open={collapsible1Open}
+              onOpenChange={setCollapsible1Open}
+            >
               <p className="text-sm text-nova-gray-700">Rua Exemplo, 123 - Bloco A, Apt 101</p>
               <p className="text-sm text-nova-gray-700">Barra da Tijuca, Rio de Janeiro</p>
             </DsCollapsibleSection>
-            <DsCollapsibleSection icon={GearIcon} title="Configurações" defaultOpen={false}>
+            <DsCollapsibleSection
+              icon={GearIcon}
+              title="Configurações"
+              open={collapsible2Open}
+              onOpenChange={setCollapsible2Open}
+            >
               <p className="text-sm text-nova-gray-700">Conteúdo recolhido por padrão</p>
             </DsCollapsibleSection>
           </div>
@@ -1657,7 +1698,7 @@ export default function DesignSystemPage() {
             <DsConfigSection
               title="Com Borda"
               subtitle="Variante padrão com borda"
-              className="w-[300px]"
+              className="w-75"
             >
               <p className="text-sm text-nova-gray-700">Conteúdo com borda</p>
             </DsConfigSection>
@@ -1665,7 +1706,7 @@ export default function DesignSystemPage() {
               bordered={false}
               title="Sem Borda"
               subtitle="Variante sem borda"
-              className="w-[300px]"
+              className="w-75"
             >
               <p className="text-sm text-nova-gray-700">Conteúdo sem borda</p>
             </DsConfigSection>
@@ -1673,7 +1714,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsUserMenu + DsUserMenuItem">
-          <div className="w-[240px] rounded-lg bg-nova-gray-100 p-4">
+          <div className="w-60 rounded-lg bg-nova-gray-100 p-4">
             <DsUserMenu>
               <DsUserMenuItem icon={UserIcon} label="Perfil" active />
               <DsUserMenuItem icon={UserCircleCheckIcon} label="Minha conta" />
@@ -1696,12 +1737,12 @@ export default function DesignSystemPage() {
                 onClick: () => {},
               },
             ]}
-            className="w-[500px]"
+            className="w-125"
           />
         </ComponentRow>
 
         <ComponentRow label="DsServiceDetailPopup — Full Preview">
-          <div className="w-full max-w-[640px] overflow-hidden rounded-[20px] bg-white shadow-2xl">
+          <div className="w-full max-w-160 overflow-hidden rounded-4xl bg-white shadow-2xl">
             <DsServiceDetailPopup
               icon={BroomIcon}
               serviceName="Faxina Regular"
@@ -1834,7 +1875,7 @@ export default function DesignSystemPage() {
 
               <button
                 type="button"
-                className="flex h-[60px] cursor-pointer items-center justify-center gap-1 self-start rounded-[12px] bg-primary px-8 py-4 transition-colors hover:bg-nova-primary-dark"
+                className="flex h-15 cursor-pointer items-center justify-center gap-1 self-start rounded-2xl bg-primary px-8 py-4 transition-colors hover:bg-nova-primary-dark"
               >
                 <DsIcon icon={FloppyDiskIcon} size="lg" className="text-white" />
                 <span className="text-[18px] font-medium leading-normal tracking-[-0.72px] text-white">
@@ -1857,7 +1898,7 @@ export default function DesignSystemPage() {
               { label: "Empresa", value: "-" },
               { label: "Endereço", value: "Av. das Américas, 3500" },
             ]}
-            className="w-full max-w-[640px]"
+            className="w-full max-w-160"
           />
         </ComponentRow>
 
@@ -1873,7 +1914,7 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsServiceInfoCard — Service Info Form">
           <DsServiceInfoCard
-            className="w-[500px]"
+            className="w-125"
             fields={[
               {
                 label: "Tipo de Serviço",
@@ -1909,6 +1950,8 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsEmployeeScheduleCard — Employee Agenda">
           <DsEmployeeScheduleCard
             name="Carlos Magno"
+            currentMonth={new Date(2025, 8, 1)}
+            onCurrentMonthChange={() => {}}
             busyDates={[
               new Date(2025, 8, 1),
               new Date(2025, 8, 2),
@@ -1926,7 +1969,7 @@ export default function DesignSystemPage() {
               new Date(2025, 8, 29),
             ]}
             onClose={() => {}}
-            className="w-[370px]"
+            className="w-92.5"
           />
         </ComponentRow>
 
@@ -1941,8 +1984,7 @@ export default function DesignSystemPage() {
             status={{
               icon: CheckIcon,
               label: "Ativo",
-              color: "text-nova-success",
-              bgColor: "bg-[rgba(0,167,126,0.1)]",
+              variant: "active",
             }}
             details={[
               { label: "Disponibilidade", value: "7h às 18h" },
@@ -1972,7 +2014,7 @@ export default function DesignSystemPage() {
             onReject={() => {}}
             onApprove={() => {}}
             onClose={() => {}}
-            className="w-[520px]"
+            className="w-130"
           />
         </ComponentRow>
 
@@ -2002,7 +2044,7 @@ export default function DesignSystemPage() {
             onReject={() => {}}
             onApprove={() => {}}
             onClose={() => {}}
-            className="w-[520px]"
+            className="w-130"
           />
         </ComponentRow>
       </DsSection>

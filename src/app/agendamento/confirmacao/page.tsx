@@ -56,7 +56,7 @@ export default function ConfirmacaoPage() {
           </div>
         </div>
 
-        <DsButton size="flow" onClick={() => router.push("/criar-conta")} className="w-full">
+        <DsButton size="flow" onClick={() => router.push("/login")} className="w-full">
           Acessar minha área
         </DsButton>
       </div>
