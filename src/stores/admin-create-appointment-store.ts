@@ -1,19 +1,18 @@
 import { create } from "zustand";
 
+import { submitAdminAppointment, type RecurrenceType } from "@/use-cases/create-admin-appointment";
 import {
-  fetchClientOptions,
-  fetchServiceOptions,
-  fetchEmployeeOptions,
-  createAdminAppointment,
-  type ClientOption,
-  type ServiceOption as ApiServiceOption,
+  getActiveEmployeeOptions,
   type EmployeeOption,
-} from "@/api/admin-appointments-api";
-import { HttpClientError } from "@/api/http-client";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
-import { MESSAGES } from "@/lib/messages";
-
-type RecurrenceType = "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+} from "@/use-cases/get-active-employee-options";
+import {
+  getAdminServiceOptions,
+  type AdminServiceOption,
+} from "@/use-cases/get-admin-service-options";
+import {
+  getApprovedClientOptions,
+  type ClientOption,
+} from "@/use-cases/get-approved-client-options";
 
 const DURATION_OPTIONS = [
   { value: 30, label: "30 min" },
@@ -35,12 +34,13 @@ interface AdminCreateAppointmentState {
   selectedDate: Date | undefined;
   selectedTime: string;
   clientOptions: ClientOption[];
-  serviceOptions: ApiServiceOption[];
+  serviceOptions: AdminServiceOption[];
   employeeOptions: EmployeeOption[];
   employeeConflict: string | null;
   isOptionsLoading: boolean;
   isSubmitting: boolean;
   error: string | null;
+  isAuthError: boolean;
   success: boolean;
 }
 
@@ -78,23 +78,9 @@ const initialState: AdminCreateAppointmentState = {
   isOptionsLoading: false,
   isSubmitting: false,
   error: null,
+  isAuthError: false,
   success: false,
 };
-
-function validateForm(state: AdminCreateAppointmentState): string | null {
-  if (!state.serviceId) return MESSAGES.adminAppointments.requiredService;
-  if (!state.clientId) return MESSAGES.adminAppointments.requiredClient;
-  if (!state.selectedDate) return MESSAGES.adminAppointments.requiredDate;
-  if (!state.selectedTime) return MESSAGES.adminAppointments.requiredTime;
-  return null;
-}
-
-function formatDateToISO(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 const useAdminCreateAppointmentStore = create<AdminCreateAppointmentStore>()((set, get) => ({
   ...initialState,
@@ -112,15 +98,17 @@ const useAdminCreateAppointmentStore = create<AdminCreateAppointmentStore>()((se
   loadOptions: async () => {
     set({ isOptionsLoading: true });
     try {
-      const [clients, services, employees] = await Promise.allSettled([
-        fetchClientOptions(),
-        fetchServiceOptions(),
-        fetchEmployeeOptions(),
+      const [clientsResult, servicesResult, employeesResult] = await Promise.allSettled([
+        getApprovedClientOptions(),
+        getAdminServiceOptions(),
+        getActiveEmployeeOptions(),
       ]);
       set({
-        clientOptions: clients.status === "fulfilled" ? clients.value : [],
-        serviceOptions: services.status === "fulfilled" ? services.value : [],
-        employeeOptions: employees.status === "fulfilled" ? employees.value : [],
+        clientOptions: clientsResult.status === "fulfilled" ? (clientsResult.value.data ?? []) : [],
+        serviceOptions:
+          servicesResult.status === "fulfilled" ? (servicesResult.value.data ?? []) : [],
+        employeeOptions:
+          employeesResult.status === "fulfilled" ? (employeesResult.value.data ?? []) : [],
         isOptionsLoading: false,
       });
     } catch {
@@ -130,47 +118,36 @@ const useAdminCreateAppointmentStore = create<AdminCreateAppointmentStore>()((se
 
   submitAppointment: async () => {
     const state = get();
-    const validationError = validateForm(state);
-    if (validationError) {
-      set({ error: validationError });
-      return false;
-    }
-
     set({ isSubmitting: true, error: null, employeeConflict: null });
 
-    try {
-      await createAdminAppointment({
-        date: formatDateToISO(state.selectedDate!),
-        startTime: state.selectedTime,
-        duration: Number(state.duration),
-        recurrenceType: state.recurrenceType,
-        clientId: Number(state.clientId),
-        serviceId: Number(state.serviceId),
-        employeeId:
-          state.employeeId && state.employeeId !== "none" ? Number(state.employeeId) : undefined,
-        locationZip: state.locationZip || undefined,
-        notes: state.notes || undefined,
-      });
+    const result = await submitAdminAppointment({
+      serviceId: state.serviceId,
+      recurrenceType: state.recurrenceType,
+      duration: state.duration,
+      clientId: state.clientId,
+      employeeId: state.employeeId,
+      locationZip: state.locationZip,
+      notes: state.notes,
+      selectedDate: state.selectedDate,
+      selectedTime: state.selectedTime,
+    });
 
-      set({ isSubmitting: false, success: true });
-      return true;
-    } catch (error) {
-      const message =
-        error instanceof HttpClientError
-          ? error.message
-          : resolveErrorMessage(error, MESSAGES.adminAppointments.createError);
-
-      const isEmployeeConflict =
-        error instanceof HttpClientError &&
-        error.status === 400 &&
-        message.toLowerCase().includes("conflict");
-
-      set({
-        isSubmitting: false,
-        error: isEmployeeConflict ? null : message,
-        employeeConflict: isEmployeeConflict ? message : null,
-      });
-      return false;
+    switch (result.type) {
+      case "success":
+        set({ isSubmitting: false, success: true });
+        return true;
+      case "validation_error":
+        set({ isSubmitting: false, error: result.message });
+        return false;
+      case "employee_conflict":
+        set({ isSubmitting: false, employeeConflict: result.message });
+        return false;
+      case "auth_error":
+        set({ isSubmitting: false, error: result.message, isAuthError: true });
+        return false;
+      case "error":
+        set({ isSubmitting: false, error: result.message });
+        return false;
     }
   },
 

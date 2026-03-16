@@ -1,8 +1,14 @@
 import { create } from "zustand";
 
 import type { AgendaItem } from "@/api/admin-dashboard-api";
+import { appConfig } from "@/config/app";
 import { loadTodayAgenda } from "@/use-cases/load-admin-agenda";
 import type { ActiveServiceOption } from "@/use-cases/get-active-service-options";
+
+interface FilterOption {
+  value: string;
+  label: string;
+}
 
 interface AdminAgendaState {
   agendaItems: AgendaItem[];
@@ -12,6 +18,11 @@ interface AdminAgendaState {
   serviceOptions: ActiveServiceOption[];
   isAgendaLoading: boolean;
   isAuthError: boolean;
+}
+
+interface AdminAgendaDerived {
+  totalPages: () => number;
+  filterOptions: () => FilterOption[];
 }
 
 interface AdminAgendaActions {
@@ -26,9 +37,7 @@ interface AdminAgendaActions {
   reset: () => void;
 }
 
-type AdminAgendaStore = AdminAgendaState & AdminAgendaActions;
-
-const AGENDA_PAGE_SIZE = 6;
+type AdminAgendaStore = AdminAgendaState & AdminAgendaDerived & AdminAgendaActions;
 
 const initialState: AdminAgendaState = {
   agendaItems: [],
@@ -51,6 +60,13 @@ let agendaAbortController: AbortController | null = null;
 const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
   ...initialState,
 
+  totalPages: () => Math.max(1, Math.ceil(get().agendaTotal / appConfig.agendaPageSize)),
+
+  filterOptions: () => [
+    { value: "all", label: "Todos" },
+    ...get().serviceOptions.map((s) => ({ value: String(s.id), label: s.name })),
+  ],
+
   hydrateFromDashboard: (items, total, serviceOptions) => {
     set({ agendaItems: items, agendaTotal: total, serviceOptions, agendaPage: 1 });
   },
@@ -62,7 +78,7 @@ const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
 
     set({ isAgendaLoading: true });
 
-    const result = await loadTodayAgenda(page, AGENDA_PAGE_SIZE, serviceId, signal);
+    const result = await loadTodayAgenda(page, appConfig.agendaPageSize, serviceId, signal);
 
     if (result.items) {
       set({
@@ -92,4 +108,4 @@ const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
   reset: () => set(initialState),
 }));
 
-export { useAdminAgendaStore, AGENDA_PAGE_SIZE, type AdminAgendaStore };
+export { useAdminAgendaStore, type AdminAgendaStore };

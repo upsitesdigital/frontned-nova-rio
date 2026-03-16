@@ -3,6 +3,7 @@ import { create } from "zustand";
 import type { PaymentMethod } from "@/types/scheduling";
 import { submitPayment } from "@/use-cases/submit-payment";
 import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
+import { useConfirmationStore } from "@/stores/confirmation-store";
 import { useRegistrationStore } from "@/stores/registration-store";
 import { useServicesStore } from "@/stores/services-store";
 import { useSchedulingStore } from "@/stores/scheduling-store";
@@ -132,6 +133,7 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
     });
 
     if (result.success) {
+      useConfirmationStore.getState().setConfirmation(result.confirmation);
       set({ isSubmitting: false });
       return true;
     }

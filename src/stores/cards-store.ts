@@ -1,17 +1,11 @@
 import { create } from "zustand";
 
-import {
-  listCards,
-  tokenizeCard,
-  addCard,
-  removeCard,
-  type Card,
-  type AddCardRequest,
-} from "@/api/cards-api";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
-import { detectCardBrand } from "@/lib/card-brand";
+import type { Card } from "@/api/cards-api";
 import { MESSAGES } from "@/lib/messages";
 import { useToastStore } from "@/stores/toast-store";
+import { addClientCard } from "@/use-cases/add-client-card";
+import { loadClientCards } from "@/use-cases/load-client-cards";
+import { removeClientCard } from "@/use-cases/remove-client-card";
 import { validateAddCardForm, type AddCardFormErrors } from "@/validation/add-card-schema";
 
 interface AddCardForm {
@@ -67,73 +61,55 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
 
   loadCards: async () => {
     set({ isLoading: true, error: null });
-    try {
-      const cards = await listCards();
-      set({ cards, isLoading: false });
-    } catch (e) {
-      set({
-        error: resolveErrorMessage(e, MESSAGES.cards.loadError),
-        isLoading: false,
-      });
-    }
+
+    const result = await loadClientCards();
+    set({
+      cards: result.data ?? [],
+      isLoading: false,
+      error: result.error,
+    });
   },
 
   addCard: async () => {
     if (!get().validateAddForm()) return;
     const form = get().addForm;
-    const digits = form.cardNumber.replace(/\s/g, "");
-    const lastFourDigits = digits.slice(-4);
-    const brand = detectCardBrand(digits);
-    const expiryMonth = parseInt(form.expiryMonth, 10);
-    const expiryYear = parseInt(form.expiryYear, 10);
 
     set({ isAdding: true });
-    try {
-      const { gatewayToken } = await tokenizeCard({
-        cardNumber: digits,
-        cardCvv: form.cvv,
-        holderName: form.holderName.toUpperCase(),
-        expiryMonth,
-        expiryYear,
-        brand,
-      });
 
-      const data: AddCardRequest = {
-        lastFourDigits,
-        brand,
-        holderName: form.holderName.toUpperCase(),
-        expiryMonth,
-        expiryYear,
-        gatewayToken,
-        isDefault: form.isDefault,
-      };
+    const result = await addClientCard({
+      cardNumber: form.cardNumber,
+      holderName: form.holderName,
+      expiryMonth: form.expiryMonth,
+      expiryYear: form.expiryYear,
+      cvv: form.cvv,
+      isDefault: form.isDefault,
+    });
 
-      const newCard = await addCard(data);
+    if (result.success && result.card) {
       set((state) => ({
-        cards: data.isDefault
-          ? [newCard, ...state.cards.map((c) => ({ ...c, isDefault: false }))]
-          : [...state.cards, newCard],
+        cards: form.isDefault
+          ? [result.card!, ...state.cards.map((c) => ({ ...c, isDefault: false }))]
+          : [...state.cards, result.card!],
         addDialogOpen: false,
         isAdding: false,
         addForm: { ...EMPTY_FORM },
         addFormErrors: {},
       }));
       useToastStore.getState().showToast(MESSAGES.cards.addSuccess, "success");
-    } catch (e) {
-      useToastStore.getState().showToast(resolveErrorMessage(e, MESSAGES.cards.addError), "error");
+    } else {
+      useToastStore.getState().showToast(result.error ?? MESSAGES.cards.addError, "error");
       set({ isAdding: false });
     }
   },
 
   removeCard: async (cardId: number) => {
-    try {
-      await removeCard(cardId);
+    const result = await removeClientCard(cardId);
+
+    if (result.success) {
       set((state) => ({ cards: state.cards.filter((c) => c.id !== cardId) }));
       useToastStore.getState().showToast(MESSAGES.cards.removeSuccess, "success");
-    } catch (e) {
-      useToastStore
-        .getState()
-        .showToast(resolveErrorMessage(e, MESSAGES.cards.removeError), "error");
+    } else {
+      useToastStore.getState().showToast(result.error ?? MESSAGES.cards.removeError, "error");
     }
   },
 

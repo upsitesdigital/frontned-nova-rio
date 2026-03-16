@@ -1,15 +1,10 @@
 import { create } from "zustand";
 
-import type { AdminProfile } from "@/api/admin-dashboard-api";
+import type { AdminProfile } from "@/api/auth-api";
+import { appConfig } from "@/config/app";
 import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
-import {
-  loadAdminDashboardData,
-  type AdminDashboardData,
-} from "@/use-cases/load-admin-dashboard";
-import type { ActiveServiceOption } from "@/use-cases/get-active-service-options";
-
-const AGENDA_PAGE_SIZE = 6;
+import { loadAdminDashboardData, type AdminDashboardData } from "@/use-cases/load-admin-dashboard";
 
 interface AdminProfileState {
   profile: AdminProfile | null;
@@ -47,7 +42,7 @@ const useAdminProfileStore = create<AdminProfileStore>()((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const result = await loadAdminDashboardData(AGENDA_PAGE_SIZE);
+      const result = await loadAdminDashboardData(appConfig.agendaPageSize);
 
       if (result.error || !result.data) {
         set({
@@ -79,9 +74,4 @@ const useAdminProfileStore = create<AdminProfileStore>()((set, get) => ({
   reset: () => set(initialState),
 }));
 
-export {
-  useAdminProfileStore,
-  AGENDA_PAGE_SIZE,
-  type AdminProfileStore,
-  type ActiveServiceOption,
-};
+export { useAdminProfileStore, type AdminProfileStore };

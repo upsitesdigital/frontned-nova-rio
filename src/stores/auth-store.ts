@@ -36,7 +36,8 @@ function syncAuthCookie(state: AuthState): void {
         userType: state.userType,
       },
     });
-    document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(cookieValue)};path=/;SameSite=Lax`;
+    const secure = window.location.protocol === "https:" ? ";Secure" : "";
+    document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(cookieValue)};path=/;SameSite=Lax${secure}`;
   } else {
     document.cookie = `${AUTH_COOKIE_NAME}=;path=/;max-age=0`;
   }

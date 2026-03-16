@@ -1,22 +1,19 @@
 import { create } from "zustand";
-import { format, startOfWeek, endOfWeek } from "date-fns";
 
 import {
-  fetchAdminAppointments,
-  fetchEmployeeOptions,
-  fetchUnitOptions,
-  type AdminAppointmentItem,
+  loadAdminAppointments,
+  type ViewMode,
+} from "@/use-cases/load-admin-appointments";
+import type { AdminAppointmentItem } from "@/api/admin-appointments-api";
+import {
+  getActiveEmployeeOptions,
   type EmployeeOption,
-  type UnitOption,
-} from "@/api/admin-appointments-api";
-import { isAuthError as checkAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
-import { MESSAGES } from "@/lib/messages";
+} from "@/use-cases/get-active-employee-options";
 import {
   getActiveServiceOptions,
   type ActiveServiceOption,
 } from "@/use-cases/get-active-service-options";
-
-type ViewMode = "today" | "week" | "employee" | "unit";
+import { getActiveUnitOptions, type UnitOption } from "@/use-cases/get-active-unit-options";
 
 interface AdminAppointmentsState {
   appointments: AdminAppointmentItem[];
@@ -69,18 +66,6 @@ const initialState: AdminAppointmentsState = {
 
 let abortController: AbortController | null = null;
 
-function buildTodayDate(): string {
-  return format(new Date(), "yyyy-MM-dd");
-}
-
-function buildWeekRange(): { weekStart: string; weekEnd: string } {
-  const now = new Date();
-  return {
-    weekStart: format(startOfWeek(now, { weekStartsOn: 1 }), "yyyy-MM-dd"),
-    weekEnd: format(endOfWeek(now, { weekStartsOn: 1 }), "yyyy-MM-dd"),
-  };
-}
-
 const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) => ({
   ...initialState,
 
@@ -93,70 +78,43 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
 
     set({ isLoading: true, error: null });
 
-    const params: Record<string, string | number | undefined> = {
-      page,
-      limit: PAGE_SIZE,
-    };
+    const result = await loadAdminAppointments(
+      { page, pageSize: PAGE_SIZE, viewMode, statusFilter, employeeFilter, unitFilter },
+      signal,
+    );
 
-    if (viewMode === "today") {
-      params.date = buildTodayDate();
-    } else if (viewMode === "week") {
-      const range = buildWeekRange();
-      params.weekStart = range.weekStart;
-      params.weekEnd = range.weekEnd;
-    } else if (viewMode === "employee" && employeeFilter !== "all") {
-      params.employeeId = Number(employeeFilter);
-    } else if (viewMode === "unit" && unitFilter !== "all") {
-      params.unitId = Number(unitFilter);
-    }
-
-    if (statusFilter !== "all") {
-      params.status = statusFilter;
-    }
-
-    try {
-      const response = await fetchAdminAppointments(
-        {
-          page: params.page as number,
-          limit: params.limit as number,
-          date: params.date as string | undefined,
-          weekStart: params.weekStart as string | undefined,
-          weekEnd: params.weekEnd as string | undefined,
-          employeeId: params.employeeId as number | undefined,
-          unitId: params.unitId as number | undefined,
-          status: params.status as string | undefined,
-        },
-        signal,
-      );
-
+    if (result.data) {
       set({
-        appointments: response.data,
-        total: response.total,
-        page: response.page,
+        appointments: result.data.appointments,
+        total: result.data.total,
+        page: result.data.page,
         isLoading: false,
       });
-    } catch (error) {
-      if (signal.aborted) return;
+    } else if (result.error) {
       set({
         isLoading: false,
-        error: resolveErrorMessage(error, MESSAGES.adminAppointments.loadError),
-        isAuthError: checkAuthError(error),
+        error: result.error,
+        isAuthError: result.isAuthError,
       });
+    } else {
+      set({ isLoading: false });
     }
   },
 
   loadFilterOptions: async () => {
     set({ isOptionsLoading: true });
     try {
-      const [employees, units, services] = await Promise.allSettled([
-        fetchEmployeeOptions(),
-        fetchUnitOptions(),
+      const [employeesResult, unitsResult, servicesResult] = await Promise.allSettled([
+        getActiveEmployeeOptions(),
+        getActiveUnitOptions(),
         getActiveServiceOptions(),
       ]);
       set({
-        employeeOptions: employees.status === "fulfilled" ? employees.value : [],
-        unitOptions: units.status === "fulfilled" ? units.value : [],
-        serviceOptions: services.status === "fulfilled" ? services.value : [],
+        employeeOptions:
+          employeesResult.status === "fulfilled" ? (employeesResult.value.data ?? []) : [],
+        unitOptions: unitsResult.status === "fulfilled" ? (unitsResult.value.data ?? []) : [],
+        serviceOptions:
+          servicesResult.status === "fulfilled" ? (servicesResult.value.data ?? []) : [],
         isOptionsLoading: false,
       });
     } catch {
@@ -189,7 +147,11 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
     get().loadAppointments();
   },
 
-  reset: () => set(initialState),
+  reset: () => {
+    abortController?.abort();
+    abortController = null;
+    set(initialState);
+  },
 }));
 
 export { useAdminAppointmentsStore, PAGE_SIZE, type AdminAppointmentsStore, type ViewMode };
