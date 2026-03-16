@@ -1,7 +1,8 @@
 import { format } from "date-fns";
 
 import { createPublicAppointment } from "@/api/appointments-api";
-import { useConfirmationStore } from "@/stores/confirmation-store";
+import { MESSAGES } from "@/lib/messages";
+import type { AppointmentConfirmation } from "@/types/appointment";
 import type { Address } from "@/types/scheduling";
 
 interface SubmitPaymentParams {
@@ -14,10 +15,9 @@ interface SubmitPaymentParams {
   address: Address | null;
 }
 
-interface SubmitPaymentResult {
-  success: boolean;
-  error: string | null;
-}
+type SubmitPaymentResult =
+  | { success: true; confirmation: AppointmentConfirmation }
+  | { success: false; error: string };
 
 const RECURRENCE_MAP: Record<string, string> = {
   avulso: "SINGLE",
@@ -40,15 +40,17 @@ async function submitPayment(params: SubmitPaymentParams): Promise<SubmitPayment
         : undefined,
     });
 
-    useConfirmationStore.getState().setConfirmation({
-      serviceName: response.service.name,
-      date: response.date,
-      startTime: response.startTime,
-    });
-
-    return { success: true, error: null };
+    return {
+      success: true,
+      confirmation: {
+        serviceName: response.service.name,
+        date: response.date,
+        startTime: response.startTime,
+      },
+    };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erro ao criar agendamento.";
+    const message =
+      error instanceof Error ? error.message : MESSAGES.payment.createAppointmentError;
     return { success: false, error: message };
   }
 }

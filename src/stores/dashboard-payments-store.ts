@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
-import { listCards, type Card } from "@/api/cards-api";
-import { fetchClientPayments, type PaymentEntry } from "@/api/payments-api";
+import type { Card } from "@/api/cards-api";
+import type { PaymentEntry } from "@/api/payments-api";
+import { loadDashboardPayments } from "@/use-cases/load-dashboard-payments";
 
 interface DashboardPaymentsState {
   cards: Card[];
@@ -30,12 +31,13 @@ const useDashboardPaymentsStore = create<DashboardPaymentsStore>()((set) => ({
   loadPaymentsData: async () => {
     set({ isLoading: true, error: null });
 
-    try {
-      const [cards, paymentsResult] = await Promise.all([listCards(), fetchClientPayments(1, 5)]);
-      set({ cards, recentPayments: paymentsResult.data, isLoading: false });
-    } catch {
-      set({ isLoading: false, error: "Erro ao carregar dados de pagamento." });
-    }
+    const result = await loadDashboardPayments();
+    set({
+      cards: result.cards,
+      recentPayments: result.payments,
+      isLoading: false,
+      error: result.error,
+    });
   },
 
   reset: () => set(initialState),

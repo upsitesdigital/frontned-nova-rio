@@ -44,6 +44,7 @@ export { DsPageContainer, type DsPageContainerProps } from "./layout";
 export { DsSection, type DsSectionProps } from "./layout";
 export { DsSectionHeader, type DsSectionHeaderProps } from "./layout";
 export { DsSidebarLayout, type DsSidebarLayoutProps } from "./layout";
+export { DsPageHeader, type DsPageHeaderProps } from "./layout";
 
 // Navigation
 export { DsSidebar, type DsSidebarProps } from "./navigation";
@@ -59,7 +60,12 @@ export { DsCard, type DsCardProps } from "./data-display";
 export { DsStatCard, type DsStatCardProps, type DsStatCardTrend } from "./data-display";
 export { DsDataTable, type DsDataTableProps, type DsDataTableColumn } from "./data-display";
 export { DsTableRowItem, type DsTableRowItemProps } from "./data-display";
-export { DsAvatar, type DsAvatarProps, type DsAvatarSize } from "./data-display";
+export {
+  DsAvatar,
+  type DsAvatarProps,
+  type DsAvatarSize,
+  type DsAvatarVariant,
+} from "./data-display";
 export {
   DsCreditCardDisplay,
   type DsCreditCardDisplayProps,
@@ -73,6 +79,7 @@ export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./data-display";
 export { DsPagination, type DsPaginationProps } from "./data-display";
 export { DsTableCell, type DsTableCellProps, type DsTableCellVariant } from "./data-display";
+export { DsFormCard, type DsFormCardProps } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";
@@ -85,6 +92,7 @@ export { DsSheet, type DsSheetProps, type DsSheetSide } from "./feedback";
 export { DsNotificationBell, type DsNotificationBellProps } from "./feedback";
 export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./feedback";
 export { DsToastContainer } from "./feedback";
+export { DsLoadingState, type DsLoadingStateProps } from "./feedback";
 
 // Forms
 export { DsFormField, type DsFormFieldProps } from "./forms";
@@ -196,3 +204,20 @@ export {
 } from "./composite";
 export { DsDeleteConfirmPopup, type DsDeleteConfirmPopupProps } from "./composite";
 export { DsCancelConfirmPopup, type DsCancelConfirmPopupProps } from "./composite";
+export {
+  DsUserTable,
+  type DsUserTableProps,
+  type DsUserTableUser,
+  type DsUserTableFilter,
+  type DsUserTableStatus,
+} from "./composite";
+export {
+  DsUserFormPopup,
+  type DsUserFormPopupProps,
+  type DsUserFormPopupValues,
+} from "./composite";
+export { DsQuickActionCard, type DsQuickActionCardProps } from "./composite";
+export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./composite";
+export { DsAppointmentRow, type DsAppointmentRowProps } from "./composite";
+export { DsAppointmentTableHeader, type DsAppointmentTableHeaderProps } from "./composite";
+export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./composite";

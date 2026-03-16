@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -13,15 +12,13 @@ import {
   CaretRightIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { DsSidebar } from "@/design-system/navigation";
-import { DsSidebarItem } from "@/design-system/navigation";
-import { DsLogo } from "@/design-system/navigation";
+import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
 
 interface DsAdminSidebarProps {
   activePath?: string;
-  collapsed?: boolean;
-  onCollapsedChange?: (collapsed: boolean) => void;
+  collapsed: boolean;
+  onCollapsedChange: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onSignOut?: () => void;
   className?: string;
@@ -44,22 +41,14 @@ const adminNavItems = [
 
 function DsAdminSidebar({
   activePath,
-  collapsed: controlledCollapsed,
+  collapsed,
   onCollapsedChange,
   onNavigate,
   onSignOut,
   className,
 }: DsAdminSidebarProps) {
-  const [internalCollapsed, setInternalCollapsed] = useState(false);
-  const isControlled = onCollapsedChange !== undefined;
-  const collapsed = isControlled ? (controlledCollapsed ?? false) : internalCollapsed;
-
   const handleToggle = () => {
-    if (isControlled) {
-      onCollapsedChange(!collapsed);
-    } else {
-      setInternalCollapsed((prev) => !prev);
-    }
+    onCollapsedChange(!collapsed);
   };
 
   return (
@@ -74,7 +63,7 @@ function DsAdminSidebar({
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px]",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
               onClick={handleToggle}
@@ -87,7 +76,11 @@ function DsAdminSidebar({
               key={item.path}
               icon={item.icon}
               label={item.label}
-              active={activePath === item.path}
+              active={
+                item.path === "/admin"
+                  ? activePath === item.path
+                  : (activePath?.startsWith(item.path) ?? false)
+              }
               collapsed={collapsed}
               href={item.path}
               onClick={onNavigate ? () => onNavigate(item.path) : undefined}

@@ -281,7 +281,7 @@ function ServiceCard({ entry }) {
 
 This includes state that seems "local" like `isOpen`, `searchQuery`, `selectedTab`. Create a dedicated store for each component/page that needs state.
 
-This rule applies to ALL layers: pages, `_components/`, **and Design System components**.
+This rule applies to ALL layers: pages, `_components/`, **and Design System components**. DS components receive state as required props from the parent, which manages it via Zustand.
 
 ```tsx
 // FORBIDDEN: any use of useState — anywhere in the codebase
@@ -351,27 +351,34 @@ function DsMyComponent({ title, children, className }: DsMyComponentProps) {
 export { DsMyComponent, type DsMyComponentProps };
 ```
 
-### State in DS components — ALWAYS Zustand
+### State in DS components — controlled-only via required props
 
-Interactive DS components that need state **MUST use Zustand**, NEVER `useState`. Create a dedicated store in `src/stores/` for the component.
+Interactive DS components that need state are **purely controlled** — both the value prop and change handler are **required**. The parent passes state from a Zustand store.
 
 ```tsx
 // FORBIDDEN: useState inside DS component
 "use client";
-function DsFilterDropdown({ options }: DsFilterDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);       // FORBIDDEN
-  const [selected, setSelected] = useState<string>(); // FORBIDDEN
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  const [internalOpen, setInternalOpen] = useState(true); // FORBIDDEN
   // ...
 }
 
-// CORRECT: Zustand store for the DS component
+// CORRECT: required props, no internal state
 "use client";
-import { useFilterDropdownStore } from "@/stores/filter-dropdown-store";
-
-function DsFilterDropdown({ options }: DsFilterDropdownProps) {
-  const { isOpen, setIsOpen, selected, setSelected } = useFilterDropdownStore();
+interface DsCollapsibleSectionProps {
+  open: boolean;          // required — no optional fallback
+  onOpenChange: (open: boolean) => void; // required — no optional fallback
   // ...
 }
+
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  return <Collapsible.Root open={open} onOpenChange={onOpenChange} />;
+}
+
+// Parent manages state via Zustand:
+const isOpen = useServiceEditStore((s) => s.addressSectionOpen);
+const setIsOpen = useServiceEditStore((s) => s.setAddressSectionOpen);
+<DsCollapsibleSection open={isOpen} onOpenChange={setIsOpen} />
 ```
 
 ### `"use client"` directive — MANDATORY rules
@@ -383,31 +390,29 @@ Add `"use client"` to any component that:
 
 When in doubt, add it — missing directives break the Next.js build.
 
-### Controlled/Uncontrolled pattern — MANDATORY for optional state props
+### Controlled-only pattern — MANDATORY for state props
 
-Components with controlled props (`open`, `collapsed`, `visible`) MUST support uncontrolled usage via internal state fallback when the change handler is not provided:
+Components with state props (`open`, `collapsed`, `visible`) are **purely controlled** — both the value and the change handler are **required** props. No internal `useState` fallback. State is always managed externally via Zustand stores.
 
 ```tsx
-// CORRECT: supports both controlled and uncontrolled
-function DsCollapsibleSection({ open: controlledOpen, onOpenChange, ...props }) {
-  const [internalOpen, setInternalOpen] = useState(true);
-  const isControlled = onOpenChange !== undefined;
-  const open = isControlled ? (controlledOpen ?? true) : internalOpen;
-
-  const handleOpenChange = (value: boolean) => {
-    if (isControlled) { onOpenChange(value); }
-    else { setInternalOpen(value); }
-  };
+// CORRECT: purely controlled, required props
+interface DsCollapsibleSectionProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  // ...
 }
 
-// WRONG: only works when handler is provided
-function DsCollapsibleSection({ open = true, onOpenChange }) {
-  // If onOpenChange is not passed, toggle does nothing
-  return <Root open={open} onOpenChange={onOpenChange} />;
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  return <Collapsible.Root open={open} onOpenChange={onOpenChange} />;
+}
+
+// WRONG: internal useState fallback
+function DsCollapsibleSection({ open: controlledOpen, onOpenChange }) {
+  const [internalOpen, setInternalOpen] = useState(true); // FORBIDDEN
+  const isControlled = onOpenChange !== undefined;
+  // ...
 }
 ```
-
-Note: `useState` IS allowed in DS components for the controlled/uncontrolled fallback pattern.
 
 ### Keyboard accessibility
 
@@ -431,7 +436,7 @@ onKeyDown={(e) => {
 - [ ] `cn()` for class merging
 - [ ] `className?: string` as optional prop
 - [ ] `"use client"` on any component with hooks, events, or imported by client components
-- [ ] Controlled/Uncontrolled fallback for optional state props
+- [ ] Controlled-only pattern: state props + change handlers are required (no useState fallback)
 - [ ] Space + Enter keyboard handling on `role="button"` elements
 - [ ] File added to the category barrel `index.ts`
 
@@ -463,8 +468,17 @@ className="bg-nova-primary-lighter"   // Lighter green (selection)
 // Semantic
 className="text-nova-success"
 className="text-nova-warning"
+className="bg-nova-warning-light"     // Solid yellow (badges)
+className="bg-nova-warning-lighter"   // 10% orange (icon backgrounds)
 className="text-nova-error"
 className="text-nova-info"
+className="bg-nova-info-light"        // 10% blue (icon backgrounds)
+
+// Category colors
+className="text-nova-purple"          // Purple (clients, categories)
+className="bg-nova-purple-light"      // 10% purple (icon backgrounds)
+className="text-nova-lime"            // Lime/yellow-green (reports)
+className="bg-nova-lime-light"        // 10% lime (icon backgrounds)
 
 // Gray scale
 className="text-nova-gray-400"   // Secondary text, disabled
@@ -474,6 +488,24 @@ className="bg-nova-gray-50"      // Subtle background
 className="bg-nova-gray-100"     // Secondary button background
 className="border-nova-gray-100" // Card borders
 className="border-nova-gray-300" // Outlined button borders
+```
+
+### Hardcoded colors — FORBIDDEN
+
+**NEVER** use hardcoded hex/rgba values in Tailwind classes. Always use design tokens defined in `globals.css`.
+
+If a color from Figma does not exist as a token, **add it to `globals.css`** as a CSS variable (both `--nova-*` definition and `--color-nova-*` Tailwind mapping) and to `src/design-system/tokens/colors.ts` before using it.
+
+```tsx
+// FORBIDDEN: hardcoded colors
+className="text-[#54336f]"
+className="bg-[rgba(84,51,111,0.1)]"
+className="text-[#00a0d2]"
+
+// CORRECT: use design tokens
+className="text-nova-purple"
+className="bg-nova-purple-light"
+className="text-nova-info"
 ```
 
 ### Example: disabled state
@@ -743,7 +775,7 @@ The frontend follows **Clean Architecture** principles (Robert C. Martin / Uncle
 
 1. **Separation of Concerns** — Each layer handles ONE distinct responsibility, making the codebase easier to understand, modify, and maintain.
 2. **Dependency Rule** — Inner layers NEVER depend on outer layers. This keeps core logic framework-agnostic, modular, and easy to refactor.
-3. **Testability** — Business rules can be tested in isolation, without UI, database, or external services.
+3. **Testability** — Business rules and use cases can be tested in isolation, without UI, database, or external services.
 4. **Framework Independence** — Core logic uses plain TypeScript. Next.js, React, and Zustand are implementation details confined to their respective layers.
 
 ### Layer diagram
@@ -751,40 +783,44 @@ The frontend follows **Clean Architecture** principles (Robert C. Martin / Uncle
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  Frameworks & Drivers           (Outermost Layer)                │
-│  Next.js pages, server actions, React components, styles         │
+│  Next.js pages, _components/, layouts, styles                    │
 │  ← src/app/**/page.tsx, _components/                             │
 │  ONLY consumes: stores, design-system, lib                       │
 ├──────────────────────────────────────────────────────────────────┤
 │  Interface Adapters             (Controllers / Presenters)       │
-│  Stores orchestrate use cases, format data for UI                │
+│  Zustand stores: thin state containers that delegate to use cases│
 │  ← src/stores/                                                   │
-│  ONLY consumes: api, lib                                         │
+│  ONLY consumes: use-cases, lib                                   │
 ├──────────────────────────────────────────────────────────────────┤
 │  Application Layer              (Use Cases)                      │
-│  Business logic: what the system CAN DO                          │
-│  API functions = one use case per endpoint                        │
+│  Business logic orchestration: what the system CAN DO            │
+│  Error handling, data transformation, multi-API coordination     │
+│  ← src/use-cases/                                                │
+│  ONLY consumes: api, lib                                         │
+├──────────────────────────────────────────────────────────────────┤
+│  Infrastructure / Gateway       (API Layer)                      │
+│  Pure HTTP wrappers, one function per endpoint                   │
 │  ← src/api/                                                      │
-│  ONLY consumes: lib                                              │
+│  ONLY consumes: lib (http-client)                                │
 ├──────────────────────────────────────────────────────────────────┤
 │  Design System                  (Presentation)                   │
 │  Pure UI components, no business logic                           │
-│  Interactive state managed via Zustand stores                    │
 │  ← src/design-system/                                            │
-│  ONLY consumes: stores, lib (cn())                               │
+│  ONLY consumes: lib (cn())                                       │
 ├──────────────────────────────────────────────────────────────────┤
 │  Domain / Entities              (Innermost Layer)                │
-│  Types, interfaces, models, utilities, contracts                 │
+│  Types, interfaces, pure functions, constants, messages          │
 │  Enterprise Business Rules — rarely change                       │
-│  ← src/lib/, src/types/, src/interfaces/                         │
+│  ← src/lib/, src/types/, src/validation/                         │
 │  IMPORTS NOTHING from outer layers                               │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 ### Layer responsibilities in detail
 
-#### Domain / Entities (`src/lib/`, `src/types/`)
+#### Domain / Entities (`src/lib/`, `src/types/`, `src/validation/`)
 
-The **innermost layer**. Defines core business models, type contracts, validation rules, and utility functions using plain TypeScript. These represent "Enterprise Business Rules" — rules that rarely change when external factors (UI framework, database, API provider) shift.
+The **innermost layer**. Defines core business models, type contracts, validation rules, centralized messages, and utility functions using plain TypeScript. These represent "Enterprise Business Rules" — rules that rarely change when external factors (UI framework, database, API provider) shift.
 
 ```tsx
 // src/types/appointment.ts — Domain entity (plain TypeScript, no framework imports)
@@ -805,103 +841,187 @@ function canCancelAppointment(appointment: Appointment): boolean {
   const hoursUntil = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
   return hoursUntil >= 1 && appointment.status === "scheduled";
 }
+
+// src/lib/messages.ts — Centralized user-facing strings
+const MESSAGES = {
+  auth: { sessionExpired: "Sessão expirada. Faça login novamente." },
+  profile: { loadError: "Erro ao carregar o perfil.", updated: "Perfil atualizado!" },
+  adminEmployees: { loadError: "Erro ao carregar funcionários." },
+  // ... all user-facing strings live here, NEVER hardcoded in stores/use-cases
+} as const;
 ```
 
 **Rules:**
-- NEVER import from pages, stores, api, or design-system
+- NEVER import from pages, stores, use-cases, api, or design-system
 - NEVER use React, Next.js, or Zustand here
-- Only plain TypeScript: types, interfaces, pure functions
+- Only plain TypeScript: types, interfaces, pure functions, constants
+- ALL user-facing Portuguese strings MUST be defined in `src/lib/messages.ts`
 
-#### Application Layer / Use Cases (`src/api/`)
+#### Infrastructure / Gateway (`src/api/`)
 
-Defines what the system **can do**. Each API function represents ONE use case (one HTTP call for one endpoint). Accepts typed input, returns typed output, and encapsulates all HTTP implementation details.
+Pure HTTP wrappers. Each function maps to ONE backend endpoint. No business logic, no error classification, no data transformation. Just HTTP in, typed response out.
 
 ```tsx
-// src/api/appointments-api.ts — One use case per function
-// Auth tokens handled internally by configureAuthProvider — NEVER pass tokens as params
-async function getAppointments(): Promise<Appointment[]> {
-  return httpAuthGet<Appointment[]>("/appointments");
+// src/api/admin-employees-api.ts — Pure HTTP gateway
+async function fetchAdminEmployees(
+  params: ListAdminEmployeesParams,
+  signal?: AbortSignal,
+): Promise<AdminEmployeesResponse> {
+  const searchParams = new URLSearchParams({ page: String(params.page), limit: String(params.limit) });
+  if (params.status) searchParams.set("status", params.status);
+  return httpAuthGet<AdminEmployeesResponse>(`/employees?${searchParams}`, signal);
 }
 
-async function cancelAppointment(id: number): Promise<void> {
-  return httpAuthPatch(`/appointments/${id}/cancel`);
+async function fetchAdminEmployeeById(id: number): Promise<AdminEmployee> {
+  return httpAuthGet<AdminEmployee>(`/employees/${id}`);
 }
 
-async function rescheduleAppointment(
-  id: number,
-  data: { date: string; startTime: string }
-): Promise<Appointment> {
-  return httpAuthPost<Appointment>(`/appointments/${id}/reschedule`, data);
+async function updateAdminEmployee(id: number, data: Partial<AdminEmployee>): Promise<AdminEmployee> {
+  return httpAuthPatchWithBody<AdminEmployee>(`/employees/${id}`, data);
 }
 ```
 
 **Rules:**
 - ONE function per endpoint (Single Responsibility)
 - Auth handled by `configureAuthProvider` — NEVER pass tokens as parameters
-- Use cases MUST NOT call other use cases directly
-- ONLY imports from `lib/` (types, http helpers)
-- NEVER imports from pages, stores, or design-system
-- Encapsulates ALL HTTP details (headers, base URL, serialization)
+- ZERO business logic — no try/catch, no error classification, no data mapping
+- ONLY imports from `lib/` (http-client helpers, types)
+- NEVER imports from pages, stores, use-cases, or design-system
+
+#### Application Layer / Use Cases (`src/use-cases/`)
+
+Defines what the system **can do**. Each use case orchestrates one or more API calls, handles errors, classifies error types (auth vs transient), transforms data, and returns a typed result. This is where **business logic lives** on the frontend.
+
+```tsx
+// src/use-cases/load-admin-employees.ts — Business logic orchestration
+import { fetchAdminEmployees, type AdminEmployee } from "@/api/admin-employees-api";
+import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
+
+interface LoadAdminEmployeesInput {
+  page: number;
+  limit: number;
+  status?: string;
+  search?: string;
+}
+
+interface AdminEmployeesLoadResult {
+  data: { employees: AdminEmployee[]; total: number } | null;
+  error: string | null;
+  isAuthError: boolean;
+}
+
+async function loadAdminEmployees(
+  input: LoadAdminEmployeesInput,
+): Promise<AdminEmployeesLoadResult> {
+  try {
+    const params = { page: input.page, limit: input.limit };
+    if (input.status && input.status !== "all") params.status = input.status;
+    if (input.search) params.search = input.search;
+
+    const response = await fetchAdminEmployees(params);
+    return { data: { employees: response.data, total: response.total }, error: null, isAuthError: false };
+  } catch (error) {
+    return {
+      data: null,
+      error: resolveErrorMessage(error, MESSAGES.adminEmployees.loadError),
+      isAuthError: isAuthError(error),
+    };
+  }
+}
+
+export { loadAdminEmployees, type LoadAdminEmployeesInput, type AdminEmployeesLoadResult };
+```
+
+**Use case patterns:**
+
+| Pattern | When to use | Example |
+|---------|-------------|---------|
+| `{ data, error, isAuthError }` | Data loading with auth redirect | `loadAdminAppointments`, `loadAdminEmployees` |
+| `{ success: true, data } \| { success: false, error }` | Mutations (save, delete) | `saveAdminEmployee`, `submitPayment` |
+| `Promise<Date[]>` | Simple data without error UI | `loadEmployeeBusyDates` |
+| `Promise<void>` | Fire-and-forget actions | `downloadReceipt` |
+
+**Rules:**
+- ONE use case per file, named by its action (NEVER `call`, `execute`, `run`)
+- Import from `src/api/` and `src/lib/` ONLY
+- NEVER import from stores, pages, or design-system
+- ALL error strings come from `MESSAGES` — never hardcoded
+- Use `resolveErrorMessage()` and `isAuthError()` from `@/lib/auth-helpers` for consistent error handling
+- Can orchestrate multiple API calls (e.g., `Promise.all([fetchEmployee, fetchUnits])`)
+- Shared use cases eliminate duplication (e.g., `loadEmployeeBusyDates` used by two stores)
+
+**Orchestration use cases (`sign-out-admin`, `sign-out-client`):**
+
+Some use cases coordinate store resets instead of API calls. These live in `src/use-cases/` because they orchestrate application-level behavior:
+
+```tsx
+// src/use-cases/sign-out-client.ts — Orchestration use case
+import { useAuthStore } from "@/stores/auth-store";
+import { useDashboardStore } from "@/stores/dashboard-store";
+// ... other store imports
+
+function signOutClient(): void {
+  useAuthStore.getState().reset();
+  useDashboardStore.getState().reset();
+  // ... reset all client-scoped stores
+}
+```
 
 #### Interface Adapters / Controllers (`src/stores/`)
 
-Zustand stores act as **controllers** in Clean Architecture. They orchestrate use cases (API calls), manage application state, handle loading/error states, and format data for UI consumption (presenter role).
+Zustand stores act as **thin state containers**. They hold UI state (loading, error, pagination, filters) and delegate all business logic to use cases. Stores NEVER call API functions directly or contain error handling/classification logic.
 
 ```tsx
-// src/stores/appointments-store.ts — Controller + Presenter
+// src/stores/admin-employees-store.ts — Thin state container
 import { create } from "zustand";
-import { getAppointments, cancelAppointment } from "@/api/appointments-api";
-import { HttpClientError } from "@/api/http-client";
-import { canCancelAppointment } from "@/lib/appointment-rules";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
+import { loadAdminEmployees } from "@/use-cases/load-admin-employees";
+import type { AdminEmployee } from "@/api/admin-employees-api";
 
-interface AppointmentsState {
-  appointments: Appointment[];
-  isLoading: boolean;
-  error: string | null;
-  isAuthError: boolean;
-  fetchAppointments: () => Promise<void>;
-  cancel: (id: string) => Promise<void>;
-}
-
-const useAppointmentsStore = create<AppointmentsState>((set, get) => ({
-  appointments: [],
+const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
+  employees: [],
+  totalEmployees: 0,
+  currentPage: 1,
   isLoading: false,
   error: null,
   isAuthError: false,
+  statusFilter: "all",
+  searchQuery: "",
 
-  fetchAppointments: async () => {
-    // Auth tokens handled internally by httpAuth* — no token passing needed
-    set({ isLoading: true, error: null });
-    try {
-      const appointments = await getAppointments();
-      set({ appointments, isLoading: false });
-    } catch (error) {
-      const isAuth = error instanceof HttpClientError && (error.status === 401 || error.status === 403);
-      set({
-        isLoading: false,
-        error: resolveErrorMessage(error, "Erro ao carregar agendamentos"),
-        isAuthError: isAuth,
-      });
+  // Store delegates to use case — no try/catch, no error classification
+  loadEmployees: async () => {
+    const { statusFilter, searchQuery, currentPage } = get();
+    set({ isLoading: true, error: null, isAuthError: false });
+
+    const result = await loadAdminEmployees({
+      page: currentPage,
+      limit: PAGE_SIZE,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      search: searchQuery || undefined,
+    });
+
+    if (result.data) {
+      set({ employees: result.data.employees, totalEmployees: result.data.total, isLoading: false });
+    } else {
+      set({ isLoading: false, error: result.error, isAuthError: result.isAuthError });
     }
   },
 
-  cancel: async (id: string) => {
-    const appointment = get().appointments.find((a) => a.id === id);
-    if (!appointment || !canCancelAppointment(appointment)) return;
-    await cancelAppointment(id);
-    await get().fetchAppointments(); // refresh data
+  setStatusFilter: (filter) => {
+    set({ statusFilter: filter, currentPage: 1 });
+    get().loadEmployees();
   },
 }));
 ```
 
 **Rules:**
 - ONE store per domain (appointments, auth, dashboard, etc.)
-- Stores call API functions (use cases), NEVER raw `fetch`
+- Stores delegate to use cases — NEVER call API functions directly
+- NEVER contain try/catch for API errors — that belongs in use cases
+- NEVER import from `src/api/` (except for type-only imports)
 - Auth tokens handled internally by `httpAuth*` — NEVER pass tokens manually
-- Distinguish auth errors (401/403) from transient errors — use `isAuthError` flag
-- Stores use domain rules from `lib/`, NEVER implement business logic inline
-- Stores handle loading, error, and success states
+- Distinguish auth errors (401/403) from transient errors — use `isAuthError` flag from use case result
+- Stores handle loading, error, and success states (UI concerns)
 - NEVER imports from pages or design-system
 
 **Auth hydration — MANDATORY on mount:**
@@ -938,30 +1058,35 @@ persist(
 
 #### Frameworks & Drivers (`src/app/**/`, `src/design-system/`)
 
-The **outermost layer**. Next.js pages, `_components/`, and DS components. Pages compose UI using design-system components and connect to stores. They NEVER contain business logic or HTTP calls.
+The **outermost layer**. Next.js pages, `_components/`, and DS components. Pages compose UI using design-system components and connect to stores. They NEVER contain business logic, HTTP calls, or functions.
 
 ```tsx
-// src/app/dashboard/agendamentos/page.tsx — Thin UI layer
+// src/app/admin/funcionarios/page.tsx — Thin UI layer
 "use client";
 
 import { useEffect } from "react";
-import { useAppointmentsStore } from "@/stores/appointments-store";
-import { DsPageContainer, DsEmptyState, DsSkeleton } from "@/design-system";
+import { useAdminEmployeesStore } from "@/stores/admin-employees-store";
+import { waitForAuthHydration } from "@/stores/auth-store";
+import { DsPageHeader, DsSkeleton, DsAlert } from "@/design-system";
+import { EmployeesFilterBar } from "./_components/employees-filter-bar";
+import { EmployeesList } from "./_components/employees-list";
 
-function AppointmentsPage() {
-  const { appointments, isLoading, fetchAppointments } = useAppointmentsStore();
+export default function AdminEmployeesPage() {
+  const { isLoading, error, loadEmployees } = useAdminEmployeesStore();
 
-  useEffect(() => { fetchAppointments(); }, [fetchAppointments]);
+  useEffect(() => {
+    waitForAuthHydration().then(() => loadEmployees());
+  }, [loadEmployees]);
 
   if (isLoading) return <DsSkeleton className="h-40" />;
-  if (!appointments.length) return <DsEmptyState icon={CalendarIcon} title="Sem agendamentos" />;
+  if (error) return <DsAlert variant="error" title={error} />;
 
   return (
-    <DsPageContainer title="Agendamentos">
-      {appointments.map((a) => (
-        <AppointmentCard key={a.id} appointment={a} />
-      ))}
-    </DsPageContainer>
+    <div className="flex flex-col gap-6">
+      <DsPageHeader title="Funcionários" subtitle="Gerencie a equipe." />
+      <EmployeesFilterBar />
+      <EmployeesList />
+    </div>
   );
 }
 ```
@@ -970,35 +1095,40 @@ function AppointmentsPage() {
 - Pages are THIN — compose DS components and connect to stores
 - NEVER call `fetch`, axios, or HTTP directly
 - NEVER implement business logic (validation, calculations, formatting)
+- NEVER create functions in UI files — extract to `src/lib/` or bind store actions directly (e.g., `onClick={saveEmployee}`, not `onClick={handleSave}` where handleSave is a trivial wrapper)
 - Design System components are PURE — no business logic, no API calls
 
 ### Dependency Rule (strict)
 
 | Layer | Path | Can import from | CANNOT import from |
 |---|---|---|---|
-| Frameworks & Drivers | `src/app/**/` | stores, design-system, lib | api (directly) |
-| Interface Adapters | `src/stores/` | api, lib | pages, design-system |
-| Application (Use Cases) | `src/api/` | lib | pages, stores, design-system |
-| Presentation | `src/design-system/` | stores, lib (`cn()`) | pages, api |
+| Frameworks & Drivers | `src/app/**/` | stores, design-system, lib | api, use-cases (directly) |
+| Interface Adapters | `src/stores/` | use-cases, lib | pages, design-system, api (except type-only) |
+| Application (Use Cases) | `src/use-cases/` | api, lib | pages, stores, design-system |
+| Infrastructure (Gateway) | `src/api/` | lib | pages, stores, use-cases, design-system |
+| Presentation | `src/design-system/` | lib (`cn()`) | pages, api, stores, use-cases |
 | Domain / Entities | `src/lib/`, `src/types/` | nothing (innermost) | everything above |
 
 ### Data flow
 
 ```
 User clicks button
-  → Page calls store action           (Frameworks → Interface Adapters)
-    → Store calls API function         (Interface Adapters → Application)
-      → API function calls httpAuth*   (Application → Infrastructure detail)
-        → HTTP response returns
-      → API returns typed data
-    → Store updates state
-  → Page re-renders with new data      (React reactivity)
+  → Page calls store action              (Frameworks → Interface Adapters)
+    → Store calls use case function       (Interface Adapters → Application)
+      → Use case calls API function(s)    (Application → Infrastructure)
+        → API calls httpAuth*             (Infrastructure → HTTP)
+          → HTTP response returns
+        → API returns typed data
+      → Use case transforms/classifies data, handles errors
+      → Use case returns typed result
+    → Store updates state from result
+  → Page re-renders with new data         (React reactivity)
 ```
 
 ### WRONG Examples
 
 ```tsx
-// WRONG: page calling fetch directly (skips store and api layer)
+// WRONG: page calling fetch directly (skips all layers)
 function DashboardPage() {
   const [data, setData] = useState(null);
   useEffect(() => {
@@ -1006,63 +1136,79 @@ function DashboardPage() {
   }, []);
 }
 
-// WRONG: store knows HTTP implementation details (skips api layer)
-const useDashboardStore = create((set) => ({
-  fetchSummary: async () => {
-    const res = await fetch("http://localhost:3001/dashboard/summary", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    set({ summary: data });
+// WRONG: store calling API directly (skips use case layer)
+const useEmployeesStore = create((set) => ({
+  loadEmployees: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await fetchAdminEmployees({ page: 1, limit: 20 });
+      set({ employees: response.data, isLoading: false });
+    } catch (error) {
+      // Business logic leaked into store: error classification, message resolution
+      set({ error: resolveErrorMessage(error, "Erro"), isAuthError: isAuthError(error) });
+    }
   },
 }));
+
+// WRONG: hardcoded Portuguese strings in store/use-case
+set({ error: "Erro ao carregar funcionários" }); // should use MESSAGES.adminEmployees.loadError
 
 // WRONG: business logic inside a React component
 function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const hoursUntil = (new Date(appointment.date).getTime() - Date.now()) / 3600000;
   const canCancel = hoursUntil >= 1 && appointment.status === "scheduled";
-  // ...
 }
 
-// WRONG: API function importing from store
-import { useAuthStore } from "@/stores/auth-store"; // FORBIDDEN in api layer
-async function getAppointments() {
-  const token = useAuthStore.getState().accessToken;
-  return httpAuthGet("/appointments", token);
-}
+// WRONG: trivial passthrough handler in page
+const handleSave = async () => { await saveEmployee(); };
+<DsButton onClick={handleSave}>Salvar</DsButton>
+// CORRECT: bind directly
+<DsButton onClick={saveEmployee}>Salvar</DsButton>
+
+// WRONG: lib/ importing from stores (inverted dependency)
+// src/lib/sign-out.ts
+import { useAuthStore } from "@/stores/auth-store"; // FORBIDDEN in lib layer
 ```
 
 ### CORRECT Examples
 
 ```tsx
-// CORRECT: page uses store → store uses api layer
-// src/app/dashboard/page.tsx
-function DashboardPage() {
-  const { summary, isLoading, fetchSummary } = useDashboardStore();
-  useEffect(() => { fetchSummary(); }, [fetchSummary]);
+// CORRECT: page → store → use case → api (full layer chain)
+
+// src/api/admin-employees-api.ts — Pure HTTP wrapper
+async function fetchAdminEmployees(params: ListAdminEmployeesParams): Promise<AdminEmployeesResponse> {
+  return httpAuthGet<AdminEmployeesResponse>(`/employees?${buildSearchParams(params)}`);
 }
 
-// src/stores/dashboard-store.ts — store orchestrates, calls api
-const useDashboardStore = create((set) => ({
-  fetchSummary: async () => {
-    const token = useAuthStore.getState().accessToken;
-    const summary = await getDashboardSummary(token);
-    set({ summary });
-  },
-}));
-
-// src/api/dashboard-api.ts — api encapsulates HTTP details
-async function getDashboardSummary(token: string) {
-  return httpAuthGet<DashboardSummary>("/dashboard/summary", token);
+// src/use-cases/load-admin-employees.ts — Business logic + error handling
+async function loadAdminEmployees(input: LoadAdminEmployeesInput): Promise<AdminEmployeesLoadResult> {
+  try {
+    const response = await fetchAdminEmployees(buildParams(input));
+    return { data: { employees: response.data, total: response.total }, error: null, isAuthError: false };
+  } catch (error) {
+    return { data: null, error: resolveErrorMessage(error, MESSAGES.adminEmployees.loadError), isAuthError: isAuthError(error) };
+  }
 }
 
-// CORRECT: business logic in domain layer, consumed by store
+// src/stores/admin-employees-store.ts — Thin state container
+loadEmployees: async () => {
+  set({ isLoading: true, error: null });
+  const result = await loadAdminEmployees({ page, limit, status, search });
+  if (result.data) set({ employees: result.data.employees, isLoading: false });
+  else set({ error: result.error, isAuthError: result.isAuthError, isLoading: false });
+},
+
+// src/app/admin/funcionarios/page.tsx — Thin UI
+const { employees, isLoading, loadEmployees } = useAdminEmployeesStore();
+useEffect(() => { waitForAuthHydration().then(() => loadEmployees()); }, [loadEmployees]);
+
+// CORRECT: business logic in domain layer, consumed by use case
 // src/lib/appointment-rules.ts
 function canCancelAppointment(appointment: Appointment): boolean { /* ... */ }
 
-// src/stores/appointments-store.ts
-import { canCancelAppointment } from "@/lib/appointment-rules";
-// store uses the domain rule, doesn't reimplement it
+// CORRECT: shared use case eliminates duplication
+// src/use-cases/load-employee-busy-dates.ts — used by both admin-employee-edit-store AND admin-employee-schedule-store
+async function loadEmployeeBusyDates(input: LoadBusyDatesInput): Promise<Date[]> { /* ... */ }
 ```
 
 ### Why this matters
@@ -1070,20 +1216,25 @@ import { canCancelAppointment } from "@/lib/appointment-rules";
 | Benefit | How Clean Architecture achieves it |
 |---|---|
 | **UI Independence** | Business logic works regardless of React, Next.js, or any UI framework |
-| **Testability** | Domain rules and use cases can be unit tested without rendering components |
+| **Testability** | Use cases can be unit tested without rendering components or mocking stores |
 | **Maintainability** | Changing the HTTP client or API provider only touches `src/api/` |
+| **No duplication** | Shared use cases (e.g., `loadEmployeeBusyDates`) are reused across stores |
+| **Consistent errors** | All error handling lives in use cases, all strings in `MESSAGES` |
 | **Team scalability** | Developers can work on different layers in parallel without conflicts |
-| **Refactoring safety** | Replacing Zustand with another state manager only touches `src/stores/` |
+| **Refactoring safety** | Replacing Zustand only touches `src/stores/` — use cases and API are unaffected |
 
 ### Checklist for every feature
 
 - [ ] Domain types defined in `src/types/` or `src/lib/`
 - [ ] Business rules as pure functions in `src/lib/`
-- [ ] API function (one per endpoint) in `src/api/`
-- [ ] Store action orchestrates API + state in `src/stores/`
+- [ ] User-facing strings added to `src/lib/messages.ts` (NEVER hardcoded)
+- [ ] API function (one per endpoint) in `src/api/` — pure HTTP, no logic
+- [ ] Use case in `src/use-cases/` — orchestrates API calls, handles errors, returns typed result
+- [ ] Store action delegates to use case — thin, no try/catch, no error classification
 - [ ] Page/component is thin — only composes DS + connects to store
 - [ ] No layer imports from a layer above it
-- [ ] Loading and error states handled in the store
+- [ ] Shared logic extracted into reusable use cases (not duplicated across stores)
+- [ ] Loading and error states handled in the store from use case results
 
 ---
 
@@ -1098,9 +1249,27 @@ Each unit has ONE responsibility:
 | DS Component | Render pure UI, no business logic |
 | Page (`page.tsx`) | Compose components and connect to store |
 | `_components/*` | Isolated page section |
-| Store (Zustand) | Orchestrate state and logic for ONE domain |
-| API function | ONE HTTP call for ONE endpoint |
+| Store (Zustand) | Thin state container for ONE domain — delegates to use cases |
+| Use case (`use-cases/`) | ONE business operation — orchestrate API, handle errors, transform data |
+| API function (`api/`) | ONE HTTP call for ONE endpoint — no logic |
 | Utility (`lib/`) | ONE transformation or calculation |
+| Messages (`lib/messages.ts`) | ALL user-facing strings — single source of truth |
+
+```tsx
+// WRONG: store does everything (API calls + error handling + business logic)
+const useEmployeeStore = create((set) => ({
+  loadEmployee: async (id) => {
+    try {
+      const [employee, units] = await Promise.all([fetchEmployee(id), fetchUnits()]);
+      // data mapping, error classification, toast triggers — ALL leaked into store
+    } catch (error) { /* ... */ }
+  },
+}));
+
+// CORRECT: responsibilities split across layers
+// src/use-cases/load-admin-employee-detail.ts → orchestration + error handling
+// src/stores/admin-employee-edit-store.ts     → thin state from use case result
+```
 
 ```tsx
 // WRONG: store does everything (auth + dashboard + services)
@@ -1112,7 +1281,7 @@ const useAppStore = create((set) => ({
 }));
 
 // CORRECT: stores separated by domain
-// src/stores/auth-store.ts     → authentication
+// src/stores/auth-store.ts     → authentication state
 // src/stores/dashboard-store.ts → dashboard data
 // src/stores/login-store.ts    → login flow
 ```
@@ -1121,11 +1290,17 @@ const useAppStore = create((set) => ({
 
 DS components are **open for extension** (new optional props) and **closed for modification** (don't change existing behavior).
 
+Use cases follow OCP by returning typed results that stores interpret — adding new error types or data fields doesn't require modifying the store.
+
 ```tsx
 // CORRECT: extend DsButton with new variant without breaking existing ones
 // Before: variant = "primary" | "secondary" | "ghost"
 // After:  variant = "primary" | "secondary" | "ghost" | "danger"
 // Existing props keep working the same
+
+// CORRECT: extend use case result without modifying stores
+// Before: { data, error, isAuthError }
+// After:  { data, error, isAuthError, retryable } — stores that don't use retryable still work
 
 // WRONG: create <DsButtonV2> or <CustomButton> in parallel
 // WRONG: change variant="primary" behavior to accommodate new use case
@@ -1149,12 +1324,19 @@ DS components that share an interface must be interchangeable in the expected co
 
 ### I — Interface Segregation Principle (ISP)
 
-Stores and prop interfaces must be focused — consumers use only what they need.
+Stores, use case results, and prop interfaces must be focused — consumers use only what they need.
 
 ```tsx
 // CORRECT: segregated stores, each with minimal interface
 const { accessToken } = useAuthStore();           // only needs the token
 const { summary, isLoading } = useDashboardStore(); // only needs the summary
+
+// CORRECT: use case returns only what the store needs
+interface AdminEmployeesLoadResult {
+  data: { employees: AdminEmployee[]; total: number } | null;
+  error: string | null;
+  isAuthError: boolean;
+}
 
 // WRONG: god-store that forces everyone to know everything
 const { user, services, payments, notifications, settings } = useAppStore();
@@ -1178,45 +1360,52 @@ interface DsEmptyStateProps {
 
 ### D — Dependency Inversion Principle (DIP)
 
-Upper layers depend on abstractions (interfaces/types), not implementation details.
+Upper layers depend on abstractions (interfaces/typed results), not implementation details. The key chain: Page → Store → Use Case → API → HTTP Client.
 
 ```tsx
-// CORRECT: page depends on store (abstraction), not on fetch/API directly
+// CORRECT: page depends on store (abstraction), not on use-cases or API
 function DashboardPage() {
   const { summary } = useDashboardStore(); // doesn't know where data comes from
 }
 
-// CORRECT: store depends on api layer function, not on raw fetch
-const useDashboardStore = create((set) => ({
-  fetchSummary: async () => {
-    const data = await getDashboardSummary(token); // abstraction
-    set({ summary: data });
-  },
-}));
+// CORRECT: store depends on use case (abstraction), not on raw API calls
+loadEmployees: async () => {
+  const result = await loadAdminEmployees(input); // abstraction
+  if (result.data) set({ employees: result.data.employees });
+},
 
-// CORRECT: api layer encapsulates HTTP details
-async function getDashboardSummary(token: string) {
-  return httpAuthGet<DashboardSummary>("/dashboard/summary", token);
+// CORRECT: use case depends on API function, not on raw fetch
+async function loadAdminEmployees(input) {
+  const response = await fetchAdminEmployees(params); // abstraction
+  return { data: { employees: response.data, total: response.total } };
 }
 
-// WRONG: store knows HTTP implementation details
-const useDashboardStore = create((set) => ({
-  fetchSummary: async () => {
-    const res = await fetch("http://localhost:3001/dashboard/summary", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    set({ summary: data });
-  },
-}));
+// CORRECT: API encapsulates HTTP details
+async function fetchAdminEmployees(params) {
+  return httpAuthGet<AdminEmployeesResponse>(`/employees?${searchParams}`);
+}
+
+// WRONG: store calling API directly (skips use case abstraction)
+loadEmployees: async () => {
+  const response = await fetchAdminEmployees({ page: 1, limit: 20 });
+  set({ employees: response.data });
+},
+
+// WRONG: store knows HTTP/error implementation details
+loadEmployees: async () => {
+  try {
+    const res = await fetch("/employees", { headers: { Authorization: `Bearer ${token}` } });
+    set({ employees: await res.json() });
+  } catch (e) { /* error classification leaked into store */ }
+},
 ```
 
 ### Practical summary
 
 | Principle | Frontend rule |
 |---|---|
-| **SRP** | 1 component/file, 1 store/domain, 1 function/endpoint |
-| **OCP** | Extend DS with optional props, never create parallel version |
+| **SRP** | 1 component/file, 1 store/domain, 1 use-case/action, 1 api-fn/endpoint |
+| **OCP** | Extend DS with optional props, extend use case results without modifying stores |
 | **LSP** | DS components with same interface behave consistently |
-| **ISP** | Stores focused per domain, minimal and optional props when possible |
-| **DIP** | Page → Store → API → HTTP Client (each layer abstracts the next) |
+| **ISP** | Stores focused per domain, use case results minimal, props optional when possible |
+| **DIP** | Page → Store → Use Case → API → HTTP Client (each layer abstracts the next) |

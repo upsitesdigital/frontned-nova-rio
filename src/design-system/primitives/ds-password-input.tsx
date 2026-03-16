@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react/dist/ssr";
 
 import { cn } from "@/lib/utils";
@@ -9,27 +8,19 @@ import { Input } from "@/design-system/ui/input";
 import { DsIcon } from "@/design-system/media";
 
 type DsPasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
-  visible?: boolean;
-  onVisibilityChange?: (visible: boolean) => void;
+  visible: boolean;
+  onVisibilityChange: (visible: boolean) => void;
   className?: string;
 };
 
 function DsPasswordInput({
-  visible: controlledVisible,
+  visible,
   onVisibilityChange,
   className,
   ...props
 }: DsPasswordInputProps) {
-  const [internalVisible, setInternalVisible] = useState(false);
-  const isControlled = onVisibilityChange !== undefined;
-  const visible = isControlled ? (controlledVisible ?? false) : internalVisible;
-
   const handleToggle = () => {
-    if (isControlled) {
-      onVisibilityChange(!visible);
-    } else {
-      setInternalVisible((prev) => !prev);
-    }
+    onVisibilityChange(!visible);
   };
 
   return (

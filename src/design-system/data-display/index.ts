@@ -2,7 +2,7 @@ export { DsCard, type DsCardProps } from "./ds-card";
 export { DsStatCard, type DsStatCardProps, type DsStatCardTrend } from "./ds-stat-card";
 export { DsDataTable, type DsDataTableProps, type DsDataTableColumn } from "./ds-data-table";
 export { DsTableRowItem, type DsTableRowItemProps } from "./ds-table-row-item";
-export { DsAvatar, type DsAvatarProps, type DsAvatarSize } from "./ds-avatar";
+export { DsAvatar, type DsAvatarProps, type DsAvatarSize, type DsAvatarVariant } from "./ds-avatar";
 export {
   DsCreditCardDisplay,
   type DsCreditCardDisplayProps,
@@ -16,3 +16,4 @@ export { DsAgendaCard, type DsAgendaCardProps } from "./ds-agenda-card";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./ds-line-chart";
 export { DsPagination, type DsPaginationProps } from "./ds-pagination";
 export { DsTableCell, type DsTableCellProps, type DsTableCellVariant } from "./ds-table-cell";
+export { DsFormCard, type DsFormCardProps } from "./ds-form-card";

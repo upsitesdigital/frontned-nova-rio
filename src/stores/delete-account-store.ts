@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
-import { deleteClientAccount } from "@/api/profile-api";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
-import { MESSAGES } from "@/lib/messages";
+import { removeClientAccount } from "@/use-cases/delete-client-account";
 
 interface DeleteAccountState {
   deleteDialogOpen: boolean;
@@ -41,19 +39,17 @@ const useDeleteAccountStore = create<DeleteAccountStore>()((set, get) => ({
     const { deletePhrase } = get();
     set({ isSaving: true, error: null });
 
-    try {
-      await deleteClientAccount(deletePhrase);
+    const result = await removeClientAccount(deletePhrase);
+
+    if (result.success) {
       const { useAuthStore } = await import("@/stores/auth-store");
       useAuthStore.getState().reset();
       set(initialState);
       return true;
-    } catch (error) {
-      set({
-        isSaving: false,
-        error: resolveErrorMessage(error, MESSAGES.profile.deleteError),
-      });
-      return false;
     }
+
+    set({ isSaving: false, error: result.error });
+    return false;
   },
 
   reset: () => set(initialState),

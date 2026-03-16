@@ -1,4 +1,5 @@
 import { registerClient } from "@/api/auth-api";
+import { MESSAGES } from "@/lib/messages";
 import { HttpClientError } from "@/api/http-client";
 import {
   validateRegister,
@@ -21,7 +22,7 @@ function validateRegistrationInput(input: RegistrationInput): RegisterFieldError
   });
 }
 
-async function executeRegistration(input: RegistrationInput): Promise<RegisterFieldErrors> {
+async function submitRegistration(input: RegistrationInput): Promise<RegisterFieldErrors> {
   try {
     await registerClient({
       name: input.name,
@@ -35,8 +36,8 @@ async function executeRegistration(input: RegistrationInput): Promise<RegisterFi
     if (error instanceof HttpClientError) {
       return mapApiErrorToField(error.status, error.message);
     }
-    return { email: "Erro ao cadastrar. Tente novamente." };
+    return { email: MESSAGES.registration.genericError };
   }
 }
 
-export { validateRegistrationInput, executeRegistration, type RegistrationInput };
+export { validateRegistrationInput, submitRegistration, type RegistrationInput };
