@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { configureAuthProvider } from "@/api/http-client";
 import type { UserType } from "@/api/auth-api";
+import { appConfig } from "@/config/app";
 
 interface AuthState {
   accessToken: string | null;
@@ -23,7 +24,7 @@ const initialState: AuthState = {
   userType: null,
 };
 
-const AUTH_COOKIE_NAME = "nova-rio-auth";
+const AUTH_COOKIE_NAME = appConfig.authCookieName;
 
 function syncAuthCookie(state: AuthState): void {
   if (typeof document === "undefined") return;

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { appConfig } from "@/config/app";
 
 const ADMIN_PATH_PREFIX = "/admin";
 const LOGIN_PATH = "/login";
 const DASHBOARD_PATH = "/dashboard";
-const AUTH_COOKIE = "nova-rio-auth";
+const AUTH_COOKIE = appConfig.authCookieName;
 
-function parseAuthCookie(request: NextRequest): { userType: string | null; accessToken: string | null } {
+function parseAuthCookie(request: NextRequest): {
+  userType: string | null;
+  accessToken: string | null;
+} {
   const raw = request.cookies.get(AUTH_COOKIE)?.value;
   if (!raw) {
     // Zustand persist uses localStorage by default, not cookies.
