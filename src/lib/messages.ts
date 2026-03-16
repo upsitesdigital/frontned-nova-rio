@@ -66,6 +66,17 @@ const MESSAGES = {
   payments: {
     loadError: "Erro ao carregar pagamentos",
   },
+
+  adminAppointments: {
+    loadError: "Erro ao carregar agendamentos. Tente novamente.",
+    createSuccess: "Agendamento criado com sucesso!",
+    createError: "Erro ao criar agendamento. Tente novamente.",
+    optionsError: "Erro ao carregar opções do formulário.",
+    requiredService: "Selecione o tipo de serviço.",
+    requiredClient: "Selecione o cliente.",
+    requiredDate: "Selecione a data.",
+    requiredTime: "Selecione o horário.",
+  },
 } as const;
 
 export { MESSAGES };
