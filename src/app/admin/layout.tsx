@@ -3,12 +3,12 @@
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
-import { DsToastContainer } from "@/design-system";
+import { AppToastContainer } from "@/app/_components/app-toast-container";
 import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
 import { useAdminProfileStore } from "@/stores/admin-profile-store";
 import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { signOutAdmin } from "@/use-cases/sign-out-admin";
+import { signOutAdmin } from "@/lib/sign-out-admin";
 
 // Direct file import required for next/dynamic code-splitting
 const DsAdminDashboardShell = dynamic(
@@ -47,8 +47,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleSignOut = () => {
     signOutAdmin();
-    useAdminProfileStore.getState().reset();
-    useAdminAgendaStore.getState().reset();
     router.push("/login");
   };
 
@@ -75,7 +73,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         {children}
       </DsAdminDashboardShell>
-      <DsToastContainer />
+      <AppToastContainer />
     </>
   );
 }

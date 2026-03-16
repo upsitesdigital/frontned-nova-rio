@@ -2,14 +2,19 @@
 
 import { useEffect, useRef } from "react";
 
-import { useToastStore, type Toast } from "@/stores/toast-store";
-import { DsAlert } from "./ds-alert";
+import { DsAlert, type DsAlertVariant } from "./ds-alert";
 
 const DISPLAY_DURATION = 5000;
 const ANIMATION_DURATION = 400;
 
-function DsToastItem({ toast }: { toast: Toast }) {
-  const removeToast = useToastStore((s) => s.removeToast);
+interface DsToastItemProps {
+  id: number;
+  variant: DsAlertVariant;
+  title: string;
+  onRemove: (id: number) => void;
+}
+
+function DsToastItem({ id, variant, title, onRemove }: DsToastItemProps) {
   const elRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,17 +22,17 @@ function DsToastItem({ toast }: { toast: Toast }) {
       elRef.current?.classList.remove("animate-[slideInRight_0.4s_ease-out_forwards]");
       elRef.current?.classList.add("animate-[slideOutRight_0.4s_ease-in_forwards]");
 
-      setTimeout(() => removeToast(toast.id), ANIMATION_DURATION);
+      setTimeout(() => onRemove(id), ANIMATION_DURATION);
     }, DISPLAY_DURATION);
 
     return () => clearTimeout(timer);
-  }, [toast.id, removeToast]);
+  }, [id, onRemove]);
 
   return (
     <div ref={elRef} className="animate-[slideInRight_0.4s_ease-out_forwards]">
-      <DsAlert variant={toast.variant} title={toast.title} />
+      <DsAlert variant={variant} title={title} />
     </div>
   );
 }
 
-export { DsToastItem };
+export { DsToastItem, type DsToastItemProps };

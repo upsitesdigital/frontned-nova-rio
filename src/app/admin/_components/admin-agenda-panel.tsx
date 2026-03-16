@@ -6,8 +6,9 @@ import {
   DsEmptyState,
   DsPagination,
 } from "@/design-system";
+import { appConfig } from "@/config/app";
 import { formatShortDate } from "@/lib/date-helpers";
-import { useAdminAgendaStore, AGENDA_PAGE_SIZE } from "@/stores/admin-agenda-store";
+import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
 
 function AdminAgendaPanel() {
   const {
@@ -16,17 +17,11 @@ function AdminAgendaPanel() {
     agendaPage,
     agendaServiceFilter,
     isAgendaLoading,
-    serviceOptions,
     setAgendaPage,
     setAgendaServiceFilter,
+    totalPages,
+    filterOptions,
   } = useAdminAgendaStore();
-
-  const totalPages = Math.max(1, Math.ceil(agendaTotal / AGENDA_PAGE_SIZE));
-
-  const filterOptions = [
-    { value: "all", label: "Todos" },
-    ...serviceOptions.map((s) => ({ value: String(s.id), label: s.name })),
-  ];
 
   return (
     <div className="flex flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
@@ -34,7 +29,7 @@ function AdminAgendaPanel() {
         <p className="text-xl font-medium leading-[1.3] text-black">Agenda do dia</p>
         <DsFilterDropdown
           label="Filtrar por"
-          options={filterOptions}
+          options={filterOptions()}
           value={agendaServiceFilter}
           onValueChange={setAgendaServiceFilter}
           placeholder="Todos"
@@ -61,9 +56,9 @@ function AdminAgendaPanel() {
           </div>
           <DsPagination
             currentPage={agendaPage}
-            totalPages={totalPages}
+            totalPages={totalPages()}
             totalItems={agendaTotal}
-            pageSize={AGENDA_PAGE_SIZE}
+            pageSize={appConfig.agendaPageSize}
             onPageChange={setAgendaPage}
           />
         </div>
