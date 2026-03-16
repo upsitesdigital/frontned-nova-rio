@@ -16,17 +16,16 @@ interface ClientLoginRequest {
   password: string;
 }
 
-interface TokenPair {
+interface ClientLoginResponse {
   accessToken: string;
-  refreshToken: string;
 }
 
 async function registerClient(data: ClientRegisterRequest): Promise<ClientRegisterResponse> {
   return httpPost<ClientRegisterResponse>("/auth/client/register", data);
 }
 
-async function loginClient(data: ClientLoginRequest): Promise<TokenPair> {
-  return httpPost<TokenPair>("/auth/client/login", data);
+async function loginClient(data: ClientLoginRequest): Promise<ClientLoginResponse> {
+  return httpPost<ClientLoginResponse>("/auth/client/login", data);
 }
 
 interface ForgotPasswordRequest {
@@ -55,20 +54,15 @@ async function resetPassword(data: ResetPasswordRequest): Promise<ResetPasswordR
   return httpPost<ResetPasswordResponse>("/auth/reset-password", data);
 }
 
-async function refreshTokens(refreshToken: string): Promise<TokenPair> {
-  return httpPost<TokenPair>("/auth/refresh", { refreshToken });
-}
-
 export {
   registerClient,
   loginClient,
-  refreshTokens,
   requestPasswordReset,
   resetPassword,
   type ClientRegisterRequest,
   type ClientRegisterResponse,
   type ClientLoginRequest,
-  type TokenPair,
+  type ClientLoginResponse,
   type ForgotPasswordRequest,
   type ForgotPasswordResponse,
   type ResetPasswordRequest,
