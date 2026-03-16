@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { NextRequest } from "next/server";
 import { middleware } from "./middleware";
+import { appConfig } from "@/config/app";
+
+const AUTH_COOKIE = appConfig.authCookieName;
 
 function buildAdminJwt(): string {
   const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
@@ -80,7 +83,7 @@ describe("middleware", () => {
       const token = buildAdminJwt();
       const cookieValue = JSON.stringify({ state: { userType: "admin", accessToken: token } });
       const response = middleware(
-        createRequest("/admin", { cookie: `nova-rio-auth=${encodeURIComponent(cookieValue)}` }),
+        createRequest("/admin", { cookie: `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}` }),
       );
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
@@ -89,7 +92,7 @@ describe("middleware", () => {
       const token = buildClientJwt();
       const cookieValue = JSON.stringify({ state: { userType: "client", accessToken: token } });
       const response = middleware(
-        createRequest("/admin", { cookie: `nova-rio-auth=${encodeURIComponent(cookieValue)}` }),
+        createRequest("/admin", { cookie: `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}` }),
       );
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
@@ -97,12 +100,12 @@ describe("middleware", () => {
   });
 
   describe("malformed tokens", () => {
-    it("should pass through with malformed JWT (cannot determine type)", () => {
+    it("should redirect to /login with malformed JWT (cannot determine type)", () => {
       const response = middleware(
         createRequest("/admin", { authorization: "Bearer not-a-jwt" }),
       );
-      // Cannot determine type, so it passes through (backend will reject)
-      expect(response.headers.get("x-middleware-next")).toBe("1");
+      expect(response.status).toBe(307);
+      expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
     });
   });
 });

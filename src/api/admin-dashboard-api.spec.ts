@@ -7,13 +7,13 @@ vi.mock("./http-client", () => ({
 const { httpAuthGet } = await import("./http-client");
 
 import {
-  fetchAdminProfile,
   fetchTodayAppointmentsCount,
   fetchActiveClientsCount,
   fetchPendingAppointmentsCount,
   fetchTodayAgenda,
-  fetchServices,
+  fetchAdminDashboardServices,
 } from "./admin-dashboard-api";
+import { fetchAdminProfile } from "./auth-api";
 
 describe("admin-dashboard-api", () => {
   beforeEach(() => {
@@ -107,7 +107,7 @@ describe("admin-dashboard-api", () => {
     });
   });
 
-  describe("fetchServices", () => {
+  describe("fetchAdminDashboardServices", () => {
     it("should return raw service data without filtering", async () => {
       const rawData = [
         { id: 1, name: "Limpeza", isActive: true },
@@ -116,7 +116,7 @@ describe("admin-dashboard-api", () => {
       ];
       vi.mocked(httpAuthGet).mockResolvedValue({ data: rawData });
 
-      const result = await fetchServices();
+      const result = await fetchAdminDashboardServices();
 
       expect(result).toEqual(rawData);
     });
@@ -124,7 +124,7 @@ describe("admin-dashboard-api", () => {
     it("should call /services endpoint", async () => {
       vi.mocked(httpAuthGet).mockResolvedValue({ data: [] });
 
-      await fetchServices();
+      await fetchAdminDashboardServices();
 
       expect(httpAuthGet).toHaveBeenCalledWith("/services");
     });

@@ -6,11 +6,7 @@ vi.mock("./http-client", () => ({
 
 const { httpAuthGet } = await import("./http-client");
 
-import {
-  fetchAdminAppointments,
-  fetchEmployeeOptions,
-  fetchUnitOptions,
-} from "./admin-appointments-api";
+import { fetchAdminAppointments, fetchEmployees, fetchUnits } from "./admin-appointments-api";
 
 describe("admin-appointments-api", () => {
   beforeEach(() => {
@@ -104,51 +100,46 @@ describe("admin-appointments-api", () => {
     });
   });
 
-  describe("fetchEmployeeOptions", () => {
-    it("should filter active employees and map to options", async () => {
-      vi.mocked(httpAuthGet).mockResolvedValue({
-        data: [
-          { id: 1, name: "Carlos", isActive: true },
-          { id: 2, name: "Inativo", isActive: false },
-          { id: 3, name: "Ana", isActive: true },
-        ],
-      });
+  describe("fetchEmployees", () => {
+    it("should return raw employee data without filtering", async () => {
+      const rawData = [
+        { id: 1, name: "Carlos", isActive: true },
+        { id: 2, name: "Inativo", isActive: false },
+        { id: 3, name: "Ana", isActive: true },
+      ];
+      vi.mocked(httpAuthGet).mockResolvedValue({ data: rawData });
 
-      const result = await fetchEmployeeOptions();
+      const result = await fetchEmployees();
 
-      expect(result).toEqual([
-        { id: 1, name: "Carlos" },
-        { id: 3, name: "Ana" },
-      ]);
+      expect(result).toEqual(rawData);
     });
 
     it("should call /employees endpoint with limit", async () => {
       vi.mocked(httpAuthGet).mockResolvedValue({ data: [] });
 
-      await fetchEmployeeOptions();
+      await fetchEmployees();
 
       expect(httpAuthGet).toHaveBeenCalledWith("/employees?limit=100");
     });
   });
 
-  describe("fetchUnitOptions", () => {
-    it("should filter active units and map to options", async () => {
-      vi.mocked(httpAuthGet).mockResolvedValue({
-        data: [
-          { id: 1, name: "Centro", isActive: true },
-          { id: 2, name: "Fechada", isActive: false },
-        ],
-      });
+  describe("fetchUnits", () => {
+    it("should return raw unit data without filtering", async () => {
+      const rawData = [
+        { id: 1, name: "Centro", isActive: true },
+        { id: 2, name: "Fechada", isActive: false },
+      ];
+      vi.mocked(httpAuthGet).mockResolvedValue({ data: rawData });
 
-      const result = await fetchUnitOptions();
+      const result = await fetchUnits();
 
-      expect(result).toEqual([{ id: 1, name: "Centro" }]);
+      expect(result).toEqual(rawData);
     });
 
     it("should call /units endpoint with limit", async () => {
       vi.mocked(httpAuthGet).mockResolvedValue({ data: [] });
 
-      await fetchUnitOptions();
+      await fetchUnits();
 
       expect(httpAuthGet).toHaveBeenCalledWith("/units?limit=100");
     });
