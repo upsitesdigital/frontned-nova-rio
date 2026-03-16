@@ -1,4 +1,4 @@
-import { httpPost } from "./http-client";
+import { httpAuthGet, httpPost } from "./http-client";
 
 interface ClientRegisterRequest {
   name: string;
@@ -67,12 +67,26 @@ async function refreshTokens(refreshToken: string): Promise<TokenPair> {
   return httpPost<TokenPair>("/auth/refresh", { refreshToken });
 }
 
+interface AdminProfile {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+}
+
+async function fetchAdminProfile(): Promise<AdminProfile> {
+  return httpAuthGet<AdminProfile>("/auth/me");
+}
+
 export {
   registerClient,
   login,
   refreshTokens,
   requestPasswordReset,
   resetPassword,
+  fetchAdminProfile,
   type ClientRegisterRequest,
   type ClientRegisterResponse,
   type LoginRequest,
@@ -83,4 +97,5 @@ export {
   type ForgotPasswordResponse,
   type ResetPasswordRequest,
   type ResetPasswordResponse,
+  type AdminProfile,
 };

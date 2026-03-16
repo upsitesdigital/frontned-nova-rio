@@ -1,5 +1,7 @@
 import { httpAuthGet, httpAuthPost } from "./http-client";
 
+const MAX_OPTIONS_LIMIT = 100;
+
 interface AdminAppointmentItem {
   id: number;
   uuid: string;
@@ -38,14 +40,31 @@ interface ListAdminAppointmentsParams {
   status?: string;
 }
 
-interface EmployeeOption {
+interface RawEmployee {
   id: number;
   name: string;
+  isActive: boolean;
 }
 
-interface UnitOption {
+interface RawUnit {
   id: number;
   name: string;
+  isActive: boolean;
+}
+
+interface RawClient {
+  id: number;
+  name: string;
+  status: string;
+}
+
+interface RawAdminService {
+  id: number;
+  name: string;
+  isActive: boolean;
+  allowSingle: boolean;
+  allowPackage: boolean;
+  allowRecurrence: boolean;
 }
 
 async function fetchAdminAppointments(
@@ -70,62 +89,28 @@ async function fetchAdminAppointments(
   );
 }
 
-async function fetchEmployeeOptions(): Promise<EmployeeOption[]> {
-  const response = await httpAuthGet<{
-    data: { id: number; name: string; isActive: boolean }[];
-  }>("/employees?limit=100");
-  return response.data.filter((e) => e.isActive).map((e) => ({ id: e.id, name: e.name }));
+async function fetchEmployees(): Promise<RawEmployee[]> {
+  const response = await httpAuthGet<{ data: RawEmployee[] }>(
+    `/employees?limit=${MAX_OPTIONS_LIMIT}`,
+  );
+  return response.data;
 }
 
-async function fetchUnitOptions(): Promise<UnitOption[]> {
-  const response = await httpAuthGet<{
-    data: { id: number; name: string; isActive: boolean }[];
-  }>("/units?limit=100");
-  return response.data.filter((u) => u.isActive).map((u) => ({ id: u.id, name: u.name }));
+async function fetchUnits(): Promise<RawUnit[]> {
+  const response = await httpAuthGet<{ data: RawUnit[] }>(`/units?limit=${MAX_OPTIONS_LIMIT}`);
+  return response.data;
 }
 
-interface ClientOption {
-  id: number;
-  name: string;
+async function fetchClients(): Promise<RawClient[]> {
+  const response = await httpAuthGet<{ data: RawClient[] }>(`/clients?limit=${MAX_OPTIONS_LIMIT}`);
+  return response.data;
 }
 
-async function fetchClientOptions(): Promise<ClientOption[]> {
-  const response = await httpAuthGet<{
-    data: { id: number; name: string; status: string }[];
-  }>("/clients?limit=100");
-  return response.data
-    .filter((c) => c.status === "APPROVED")
-    .map((c) => ({ id: c.id, name: c.name }));
-}
-
-interface ServiceOption {
-  id: number;
-  name: string;
-  allowSingle: boolean;
-  allowPackage: boolean;
-  allowRecurrence: boolean;
-}
-
-async function fetchServiceOptions(): Promise<ServiceOption[]> {
-  const response = await httpAuthGet<{
-    data: {
-      id: number;
-      name: string;
-      isActive: boolean;
-      allowSingle: boolean;
-      allowPackage: boolean;
-      allowRecurrence: boolean;
-    }[];
-  }>("/services?limit=100");
-  return response.data
-    .filter((s) => s.isActive)
-    .map((s) => ({
-      id: s.id,
-      name: s.name,
-      allowSingle: s.allowSingle,
-      allowPackage: s.allowPackage,
-      allowRecurrence: s.allowRecurrence,
-    }));
+async function fetchAdminServices(): Promise<RawAdminService[]> {
+  const response = await httpAuthGet<{ data: RawAdminService[] }>(
+    `/services?limit=${MAX_OPTIONS_LIMIT}`,
+  );
+  return response.data;
 }
 
 interface CreateAppointmentPayload {
@@ -148,17 +133,18 @@ async function createAdminAppointment(
 
 export {
   fetchAdminAppointments,
-  fetchEmployeeOptions,
-  fetchUnitOptions,
-  fetchClientOptions,
-  fetchServiceOptions,
+  fetchEmployees,
+  fetchUnits,
+  fetchClients,
+  fetchAdminServices,
   createAdminAppointment,
+  MAX_OPTIONS_LIMIT,
   type AdminAppointmentItem,
   type AdminAppointmentsResponse,
   type ListAdminAppointmentsParams,
-  type EmployeeOption,
-  type UnitOption,
-  type ClientOption,
-  type ServiceOption,
+  type RawEmployee,
+  type RawUnit,
+  type RawClient,
+  type RawAdminService,
   type CreateAppointmentPayload,
 };

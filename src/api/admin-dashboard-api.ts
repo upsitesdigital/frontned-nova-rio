@@ -1,14 +1,5 @@
 import { httpAuthGet } from "./http-client";
 
-interface AdminProfile {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  createdAt: string;
-}
-
 interface CountResponse {
   count: number;
 }
@@ -28,10 +19,6 @@ interface TodayAgendaResponse {
   total: number;
   page: number;
   limit: number;
-}
-
-async function fetchAdminProfile(): Promise<AdminProfile> {
-  return httpAuthGet<AdminProfile>("/auth/me");
 }
 
 async function fetchTodayAppointmentsCount(): Promise<CountResponse> {
@@ -66,19 +53,17 @@ interface RawServiceItem {
   isActive: boolean;
 }
 
-async function fetchServices(): Promise<RawServiceItem[]> {
+async function fetchAdminDashboardServices(): Promise<RawServiceItem[]> {
   const response = await httpAuthGet<{ data: RawServiceItem[] }>("/services");
   return response.data;
 }
 
 export {
-  fetchAdminProfile,
   fetchTodayAppointmentsCount,
   fetchActiveClientsCount,
   fetchPendingAppointmentsCount,
   fetchTodayAgenda,
-  fetchServices,
-  type AdminProfile,
+  fetchAdminDashboardServices,
   type AgendaItem,
   type TodayAgendaResponse,
   type RawServiceItem,
