@@ -27,6 +27,7 @@ interface LoginResponse {
 interface TokenPair {
   accessToken: string;
   refreshToken: string;
+  userType: "client" | "admin";
 }
 
 async function registerClient(data: ClientRegisterRequest): Promise<ClientRegisterResponse> {
