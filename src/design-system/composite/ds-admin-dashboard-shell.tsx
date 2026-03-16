@@ -7,8 +7,8 @@ import { DsUserActions } from "./ds-user-actions";
 
 interface DsAdminDashboardShellProps {
   activePath?: string;
-  sidebarCollapsed?: boolean;
-  onSidebarCollapsedChange?: (collapsed: boolean) => void;
+  sidebarCollapsed: boolean;
+  onSidebarCollapsedChange: (collapsed: boolean) => void;
   userInitials: string;
   notificationCount?: number;
   onNavigate?: (path: string) => void;
@@ -20,7 +20,7 @@ interface DsAdminDashboardShellProps {
 
 function DsAdminDashboardShell({
   activePath,
-  sidebarCollapsed = false,
+  sidebarCollapsed,
   onSidebarCollapsedChange,
   userInitials,
   notificationCount = 0,

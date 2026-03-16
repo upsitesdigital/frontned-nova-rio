@@ -1,10 +1,7 @@
 import { create } from "zustand";
 
 import type { RegisterFieldErrors } from "@/validation/register-schema";
-import {
-  validateRegistrationInput,
-  executeRegistration,
-} from "@/use-cases/submit-registration";
+import { validateRegistrationInput, submitRegistration } from "@/use-cases/submit-registration";
 
 interface RegistrationState {
   name: string;
@@ -55,7 +52,7 @@ const useRegistrationStore = create<RegistrationStore>()((set) => ({
     }
 
     set({ isRegistering: true, errors: {} });
-    const apiErrors = await executeRegistration({ name, email, phone, password });
+    const apiErrors = await submitRegistration({ name, email, phone, password });
 
     if (Object.keys(apiErrors).length === 0) {
       set({ isRegistering: false, success: true });

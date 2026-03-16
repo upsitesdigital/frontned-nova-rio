@@ -1,11 +1,10 @@
 import { create } from "zustand";
 
-import { downloadReceipt } from "@/api/receipts-api";
+import { fetchReceiptBlob } from "@/api/receipts-api";
+import { triggerBlobDownload } from "@/lib/download-helpers";
 import { MESSAGES } from "@/lib/messages";
-import {
-  rescheduleClientAppointment,
-  cancelClientAppointment,
-} from "@/use-cases/appointment-actions";
+import { cancelClientAppointment } from "@/use-cases/cancel-client-appointment";
+import { rescheduleClientAppointment } from "@/use-cases/reschedule-client-appointment";
 
 type RecurrenceType = "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
 
@@ -121,7 +120,8 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   },
 
   downloadServiceReceipt: async (paymentId) => {
-    await downloadReceipt(paymentId);
+    const blob = await fetchReceiptBlob(paymentId);
+    triggerBlobDownload(blob, `recibo-${paymentId}.pdf`);
   },
 
   reset: () => set(initialState),

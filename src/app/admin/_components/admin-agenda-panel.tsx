@@ -1,13 +1,14 @@
 "use client";
 
-import { format, parseISO, isValid } from "date-fns";
 import {
   DsFilterDropdown,
   DsServiceHistoryItem,
   DsEmptyState,
   DsPagination,
 } from "@/design-system";
-import { useAdminDashboardStore, AGENDA_PAGE_SIZE } from "@/stores/admin-dashboard-store";
+import { appConfig } from "@/config/app";
+import { formatShortDate } from "@/lib/date-helpers";
+import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
 
 function AdminAgendaPanel() {
   const {
@@ -16,17 +17,11 @@ function AdminAgendaPanel() {
     agendaPage,
     agendaServiceFilter,
     isAgendaLoading,
-    serviceOptions,
     setAgendaPage,
     setAgendaServiceFilter,
-  } = useAdminDashboardStore();
-
-  const totalPages = Math.max(1, Math.ceil(agendaTotal / AGENDA_PAGE_SIZE));
-
-  const filterOptions = [
-    { value: "all", label: "Todos" },
-    ...serviceOptions.map((s) => ({ value: String(s.id), label: s.name })),
-  ];
+    totalPages,
+    filterOptions,
+  } = useAdminAgendaStore();
 
   return (
     <div className="flex flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
@@ -34,7 +29,7 @@ function AdminAgendaPanel() {
         <p className="text-xl font-medium leading-[1.3] text-black">Agenda do dia</p>
         <DsFilterDropdown
           label="Filtrar por"
-          options={filterOptions}
+          options={filterOptions()}
           value={agendaServiceFilter}
           onValueChange={setAgendaServiceFilter}
           placeholder="Todos"
@@ -50,23 +45,20 @@ function AdminAgendaPanel() {
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
           <div className="flex flex-col">
-            {agendaItems.map((entry) => {
-              const parsed = parseISO(entry.date);
-              return (
-                <DsServiceHistoryItem
-                  key={entry.appointmentId}
-                  date={isValid(parsed) ? format(parsed, "dd/MM") : "--/--"}
-                  clientName={entry.clientName}
-                  label={entry.serviceName}
-                />
-              );
-            })}
+            {agendaItems.map((entry) => (
+              <DsServiceHistoryItem
+                key={entry.appointmentId}
+                date={formatShortDate(entry.date)}
+                clientName={entry.clientName}
+                label={entry.serviceName}
+              />
+            ))}
           </div>
           <DsPagination
             currentPage={agendaPage}
-            totalPages={totalPages}
+            totalPages={totalPages()}
             totalItems={agendaTotal}
-            pageSize={AGENDA_PAGE_SIZE}
+            pageSize={appConfig.agendaPageSize}
             onPageChange={setAgendaPage}
           />
         </div>

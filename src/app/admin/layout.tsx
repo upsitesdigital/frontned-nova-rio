@@ -3,11 +3,12 @@
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
-import { DsToastContainer } from "@/design-system";
+import { AppToastContainer } from "@/app/_components/app-toast-container";
 import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminDashboardStore } from "@/stores/admin-dashboard-store";
+import { useAdminProfileStore } from "@/stores/admin-profile-store";
+import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { useToastStore } from "@/stores/toast-store";
+import { signOutAdmin } from "@/lib/sign-out-admin";
 
 // Direct file import required for next/dynamic code-splitting
 const DsAdminDashboardShell = dynamic(
@@ -21,16 +22,20 @@ const DsAdminDashboardShell = dynamic(
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { profile, isLoading, isAuthError, loadDashboard } = useAdminDashboardStore();
+  const { profile, isLoading, isAuthError, loadDashboard } = useAdminProfileStore();
+  const hydrateAgenda = useAdminAgendaStore((s) => s.hydrateFromDashboard);
   const userType = useAuthStore((s) => s.userType);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
 
   useEffect(() => {
-    waitForAuthHydration().then(() => {
-      loadDashboard();
+    waitForAuthHydration().then(async () => {
+      const data = await loadDashboard();
+      if (data) {
+        hydrateAgenda(data.agendaItems, data.agendaTotal, data.serviceOptions);
+      }
     });
-  }, [loadDashboard]);
+  }, [loadDashboard, hydrateAgenda]);
 
   useEffect(() => {
     if (isAuthError && !profile) {
@@ -41,10 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [isAuthError, profile, userType, router]);
 
   const handleSignOut = () => {
-    useAuthStore.getState().reset();
-    useAdminDashboardStore.getState().reset();
-    useSidebarStore.getState().setCollapsed(false);
-    useToastStore.getState().reset();
+    signOutAdmin();
     router.push("/login");
   };
 
@@ -71,7 +73,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         {children}
       </DsAdminDashboardShell>
-      <DsToastContainer />
+      <AppToastContainer />
     </>
   );
 }

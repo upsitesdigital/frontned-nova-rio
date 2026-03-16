@@ -1,10 +1,8 @@
 import { create } from "zustand";
 
 import { MESSAGES } from "@/lib/messages";
-import {
-  rescheduleClientAppointment,
-  cancelClientAppointment,
-} from "@/use-cases/appointment-actions";
+import { cancelClientAppointment } from "@/use-cases/cancel-client-appointment";
+import { rescheduleClientAppointment } from "@/use-cases/reschedule-client-appointment";
 
 interface SidePanelRescheduleState {
   rescheduleOpen: boolean;

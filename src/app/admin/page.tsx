@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { BroomIcon, UsersThreeIcon, HourglassIcon } from "@phosphor-icons/react/dist/ssr";
-import { DsHighlightCard } from "@/design-system";
-import { useAdminDashboardStore } from "@/stores/admin-dashboard-store";
+import { DsHighlightCard, DsLoadingState, DsAlert } from "@/design-system";
+import { useAdminProfileStore } from "@/stores/admin-profile-store";
 import { AdminAgendaPanel } from "./_components/admin-agenda-panel";
 import { AdminQuickActionsPanel } from "./_components/admin-quick-actions-panel";
 
@@ -16,22 +16,16 @@ export default function AdminDashboardPage() {
     pendingServicesCount,
     isLoading,
     error,
-  } = useAdminDashboardStore();
+  } = useAdminProfileStore();
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-base text-nova-gray-400" role="status">
-          Carregando...
-        </p>
-      </div>
-    );
+    return <DsLoadingState className="my-20" />;
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center py-20" role="alert">
-        <p className="text-base text-nova-error">{error}</p>
+      <div className="py-20">
+        <DsAlert variant="error" title="Erro" description={error} />
       </div>
     );
   }

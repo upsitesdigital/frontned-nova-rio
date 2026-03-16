@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import { registerClient } from "@/api/auth-api";
 import { HttpClientError } from "@/api/http-client";
+import { MESSAGES } from "@/lib/messages";
 import {
   validateCreateAccount,
   mapApiErrorToField,
@@ -50,8 +51,7 @@ const useCreateAccountStore = create<CreateAccountStore>()((set) => ({
   setConfirmPassword: (confirmPassword) => set({ confirmPassword, errors: {} }),
 
   submit: async () => {
-    const { name, email, phone, password, confirmPassword } =
-      useCreateAccountStore.getState();
+    const { name, email, phone, password, confirmPassword } = useCreateAccountStore.getState();
 
     const validationErrors = validateCreateAccount({
       name,
@@ -82,7 +82,7 @@ const useCreateAccountStore = create<CreateAccountStore>()((set) => ({
       const errors =
         error instanceof HttpClientError
           ? mapApiErrorToField(error.status, error.message)
-          : { email: "Erro ao cadastrar. Tente novamente." };
+          : { email: MESSAGES.registration.genericError };
 
       set({ isSubmitting: false, errors });
       return false;

@@ -3,21 +3,12 @@
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
-import { DsToastContainer } from "@/design-system";
-import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
-import { useCardsStore } from "@/stores/cards-store";
+import { AppToastContainer } from "@/app/_components/app-toast-container";
+import { waitForAuthHydration } from "@/stores/auth-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
-import { useDeleteAccountStore } from "@/stores/delete-account-store";
-import { useEmailChangeStore } from "@/stores/email-change-store";
-import { usePasswordChangeStore } from "@/stores/password-change-store";
-import { usePaymentsPageStore } from "@/stores/payments-page-store";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
-import { useServiceEditStore } from "@/stores/service-edit-store";
-import { useServicesHistoryStore } from "@/stores/services-history-store";
-import { useSidePanelRescheduleStore } from "@/stores/side-panel-reschedule-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { useToastStore } from "@/stores/toast-store";
+import { signOutClient } from "@/lib/sign-out-client";
 
 const DsClientDashboardShell = dynamic(
   () =>
@@ -49,20 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [isAuthError, summary, router]);
 
   const handleSignOut = () => {
-    useAuthStore.getState().reset();
-    useDashboardStore.getState().reset();
-    useDashboardPaymentsStore.getState().reset();
-    useProfileInfoStore.getState().reset();
-    useCardsStore.getState().reset();
-    useEmailChangeStore.getState().reset();
-    usePasswordChangeStore.getState().reset();
-    useDeleteAccountStore.getState().reset();
-    useServiceEditStore.getState().reset();
-    useServicesHistoryStore.getState().reset();
-    useSidePanelRescheduleStore.getState().reset();
-    useSidebarStore.getState().setCollapsed(false);
-    useToastStore.getState().reset();
-    usePaymentsPageStore.getState().setFilter("ALL");
+    signOutClient();
     router.push("/login");
   };
 
@@ -82,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       >
         {children}
       </DsClientDashboardShell>
-      <DsToastContainer />
+      <AppToastContainer />
     </>
   );
 }
