@@ -1,14 +1,11 @@
 import { create } from "zustand";
 
-import {
-  fetchClientDashboardSummary,
-  type ClientDashboardSummary,
-  type ServiceDetailModalEntry,
-  type ServiceHistoryEntry,
+import type {
+  ClientDashboardSummary,
+  ServiceDetailModalEntry,
+  ServiceHistoryEntry,
 } from "@/api/dashboard-api";
-import { HttpClientError } from "@/api/http-client";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
-import { MESSAGES } from "@/lib/messages";
+import { loadClientDashboard } from "@/use-cases/load-client-dashboard";
 
 interface DashboardState {
   summary: ClientDashboardSummary | null;
@@ -49,18 +46,13 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
   loadSummary: async () => {
     set({ isLoading: true, error: null });
 
-    try {
-      const summary = await fetchClientDashboardSummary();
-      set({ summary, isLoading: false });
-    } catch (error) {
-      const isAuth =
-        error instanceof HttpClientError && (error.status === 401 || error.status === 403);
-      set({
-        isLoading: false,
-        error: resolveErrorMessage(error, MESSAGES.dashboard.loadError),
-        isAuthError: isAuth,
-      });
-    }
+    const result = await loadClientDashboard();
+    set({
+      summary: result.data,
+      isLoading: false,
+      error: result.error,
+      isAuthError: result.isAuthError,
+    });
   },
 
   setSelectedDetailEntry: (entry) => set({ selectedDetailEntry: entry }),

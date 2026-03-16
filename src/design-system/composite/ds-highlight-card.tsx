@@ -1,3 +1,5 @@
+"use client";
+
 import { ScrollIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
@@ -46,7 +48,7 @@ function DsHighlightCard({
             onClick={onReceipt}
             disabled={receiptDisabled}
             className={cn(
-              "flex items-center gap-1 rounded-[6px] border px-3 py-1.5 transition-colors",
+              "flex items-center gap-1 rounded-[6px] border px-3 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-nova-primary focus-visible:outline-none",
               receiptDisabled
                 ? "cursor-not-allowed border-nova-gray-300"
                 : "cursor-pointer border-nova-gray-300 hover:bg-nova-gray-50",

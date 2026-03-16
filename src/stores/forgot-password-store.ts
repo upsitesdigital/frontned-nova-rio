@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
-import { requestPasswordReset, resetPassword } from "@/api/auth-api";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
+import { requestPasswordResetCode } from "@/use-cases/request-password-reset";
+import { resetUserPassword } from "@/use-cases/reset-user-password";
 import {
   getPasswordHints,
   validateResetPassword,
@@ -98,17 +98,15 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
 
     set({ isSubmitting: true, error: null });
 
-    try {
-      await requestPasswordReset({ email });
+    const result = await requestPasswordResetCode(email);
+
+    if (result.success) {
       set({ isSubmitting: false, step: "code" });
       return true;
-    } catch (error) {
-      set({
-        isSubmitting: false,
-        error: resolveErrorMessage(error, MESSAGES.password.resetSendError),
-      });
-      return false;
     }
+
+    set({ isSubmitting: false, error: result.error });
+    return false;
   },
 
   submitCodeStep: async () => {
@@ -123,17 +121,15 @@ const useForgotPasswordStore = create<ForgotPasswordStore>()((set) => ({
 
     set({ isSubmitting: true, error: null });
 
-    try {
-      await resetPassword({ email, code, newPassword });
+    const result = await resetUserPassword(email, code, newPassword);
+
+    if (result.success) {
       set({ isSubmitting: false, step: "success" });
       return true;
-    } catch (error) {
-      set({
-        isSubmitting: false,
-        error: resolveErrorMessage(error, MESSAGES.password.resetError),
-      });
-      return false;
     }
+
+    set({ isSubmitting: false, error: result.error });
+    return false;
   },
 
   reset: () => set(initialState),

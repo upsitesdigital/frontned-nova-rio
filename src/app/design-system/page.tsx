@@ -222,6 +222,13 @@ export default function DesignSystemPage() {
       ],
     },
   ]);
+  const [pwdVisible, setPwdVisible] = useState(false);
+  const [flowPwdVisible, setFlowPwdVisible] = useState(false);
+  const [authPwdVisible, setAuthPwdVisible] = useState(false);
+  const [authPwdConfirmVisible, setAuthPwdConfirmVisible] = useState(false);
+  const [adminSidebarCollapsed, setAdminSidebarCollapsed] = useState(false);
+  const [collapsible1Open, setCollapsible1Open] = useState(true);
+  const [collapsible2Open, setCollapsible2Open] = useState(false);
   const [payOptCards, setPayOptCards] = useState<DsPaymentOptionsCardOption[]>([
     { id: "avulso", label: "Avulso", enabled: true },
     { id: "pacote", label: "Pacote", enabled: false },
@@ -282,7 +289,12 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsPasswordInput">
-          <DsPasswordInput placeholder="Enter password..." className="max-w-xs" />
+          <DsPasswordInput
+            placeholder="Enter password..."
+            className="max-w-xs"
+            visible={pwdVisible}
+            onVisibilityChange={setPwdVisible}
+          />
         </ComponentRow>
 
         <ComponentRow label="DsTextarea">
@@ -616,7 +628,12 @@ export default function DesignSystemPage() {
               <DsInput id="email" placeholder="john@example.com" type="email" />
             </DsFormField>
             <DsFormField label="Password" required htmlFor="pwd">
-              <DsPasswordInput id="pwd" placeholder="Enter password" />
+              <DsPasswordInput
+                id="pwd"
+                placeholder="Enter password"
+                visible={pwdVisible}
+                onVisibilityChange={setPwdVisible}
+              />
             </DsFormField>
           </DsFormGroup>
         </ComponentRow>
@@ -822,7 +839,11 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsAdminSidebar — Admin Navigation">
           <div className="h-225 overflow-hidden rounded-lg border">
-            <DsAdminSidebar activePath="/admin" />
+            <DsAdminSidebar
+              activePath="/admin"
+              collapsed={adminSidebarCollapsed}
+              onCollapsedChange={setAdminSidebarCollapsed}
+            />
           </div>
         </ComponentRow>
       </DsSection>
@@ -1097,7 +1118,12 @@ export default function DesignSystemPage() {
                   <DsInput id="flow-phone" placeholder="Digite seu telefone" />
                 </DsFormField>
                 <DsFormField label="Senha" htmlFor="flow-pwd">
-                  <DsPasswordInput id="flow-pwd" placeholder="Digite sua senha" />
+                  <DsPasswordInput
+                    id="flow-pwd"
+                    placeholder="Digite sua senha"
+                    visible={flowPwdVisible}
+                    onVisibilityChange={setFlowPwdVisible}
+                  />
                 </DsFormField>
               </div>
               <DsButton size="flow">Cadastrar e-mail</DsButton>
@@ -1201,10 +1227,20 @@ export default function DesignSystemPage() {
                   <DsInput id="auth-phone" placeholder="Digite seu telefone" />
                 </DsFormField>
                 <DsFormField label="Senha" htmlFor="auth-pwd">
-                  <DsPasswordInput id="auth-pwd" placeholder="Digite sua senha" />
+                  <DsPasswordInput
+                    id="auth-pwd"
+                    placeholder="Digite sua senha"
+                    visible={authPwdVisible}
+                    onVisibilityChange={setAuthPwdVisible}
+                  />
                 </DsFormField>
                 <DsFormField label="Confirmar senha" htmlFor="auth-pwd-confirm">
-                  <DsPasswordInput id="auth-pwd-confirm" placeholder="Confirme sua senha" />
+                  <DsPasswordInput
+                    id="auth-pwd-confirm"
+                    placeholder="Confirme sua senha"
+                    visible={authPwdConfirmVisible}
+                    onVisibilityChange={setAuthPwdConfirmVisible}
+                  />
                 </DsFormField>
               </div>
               <div className="flex flex-col items-center gap-6">
@@ -1637,11 +1673,21 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsCollapsibleSection — Collapsible">
           <div className="flex w-100 flex-col gap-4">
-            <DsCollapsibleSection icon={MapPinIcon} title="Condominio Le Monde">
+            <DsCollapsibleSection
+              icon={MapPinIcon}
+              title="Condominio Le Monde"
+              open={collapsible1Open}
+              onOpenChange={setCollapsible1Open}
+            >
               <p className="text-sm text-nova-gray-700">Rua Exemplo, 123 - Bloco A, Apt 101</p>
               <p className="text-sm text-nova-gray-700">Barra da Tijuca, Rio de Janeiro</p>
             </DsCollapsibleSection>
-            <DsCollapsibleSection icon={GearIcon} title="Configurações" open={false}>
+            <DsCollapsibleSection
+              icon={GearIcon}
+              title="Configurações"
+              open={collapsible2Open}
+              onOpenChange={setCollapsible2Open}
+            >
               <p className="text-sm text-nova-gray-700">Conteúdo recolhido por padrão</p>
             </DsCollapsibleSection>
           </div>
@@ -1938,8 +1984,7 @@ export default function DesignSystemPage() {
             status={{
               icon: CheckIcon,
               label: "Ativo",
-              color: "text-nova-success",
-              bgColor: "bg-[rgba(0,167,126,0.1)]",
+              variant: "active",
             }}
             details={[
               { label: "Disponibilidade", value: "7h às 18h" },

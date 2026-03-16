@@ -1,11 +1,9 @@
 import { create } from "zustand";
 
-import { downloadReceipt } from "@/api/receipts-api";
 import { MESSAGES } from "@/lib/messages";
-import {
-  rescheduleClientAppointment,
-  cancelClientAppointment,
-} from "@/use-cases/appointment-actions";
+import { downloadReceipt } from "@/use-cases/download-receipt";
+import { cancelClientAppointment } from "@/use-cases/cancel-client-appointment";
+import { rescheduleClientAppointment } from "@/use-cases/reschedule-client-appointment";
 
 type RecurrenceType = "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
 

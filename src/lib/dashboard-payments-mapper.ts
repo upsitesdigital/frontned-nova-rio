@@ -5,11 +5,11 @@ import { resolvePaymentStatus } from "@/lib/payment-status-map";
 import type { RegisteredCard, RecentPayment } from "@/types/payment";
 
 const BRAND_ICON_MAP: Record<string, string> = {
-  VISA: "/icons/master-card-icon.svg",
+  VISA: "/icons/Visa.svg",
   MASTERCARD: "/icons/master-card-icon.svg",
-  AMEX: "/icons/master-card-icon.svg",
-  ELO: "/icons/master-card-icon.svg",
-  HIPERCARD: "/icons/master-card-icon.svg",
+  AMEX: "/icons/Amex.svg",
+  ELO: "/icons/Elo.svg",
+  HIPERCARD: "/icons/Hipercard.svg",
 };
 
 function mapCardsToPanel(cards: Card[]): RegisteredCard[] {

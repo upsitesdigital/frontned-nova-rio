@@ -34,6 +34,19 @@ const MESSAGES = {
 
   dashboard: {
     loadError: "Erro ao carregar o painel. Tente novamente.",
+    paymentsLoadError: "Erro ao carregar dados de pagamento.",
+  },
+
+  adminDashboard: {
+    loadError: "Erro ao carregar o painel administrativo. Tente novamente.",
+  },
+
+  agenda: {
+    loadError: "Erro ao carregar a agenda. Tente novamente.",
+  },
+
+  scheduling: {
+    loadTimeSlotsError: "Erro ao carregar horários.",
   },
 
   appointments: {
@@ -61,6 +74,49 @@ const MESSAGES = {
 
   payments: {
     loadError: "Erro ao carregar pagamentos",
+  },
+
+  services: {
+    loadError: "Erro ao carregar serviços.",
+  },
+
+  registration: {
+    genericError: "Erro ao cadastrar. Tente novamente.",
+  },
+
+  adminAppointments: {
+    loadError: "Erro ao carregar agendamentos. Tente novamente.",
+    createSuccess: "Agendamento criado com sucesso!",
+    createError: "Erro ao criar agendamento. Tente novamente.",
+    optionsError: "Erro ao carregar opções do formulário.",
+    employeesError: "Erro ao carregar funcionários.",
+    unitsError: "Erro ao carregar unidades.",
+    clientsError: "Erro ao carregar clientes.",
+    servicesError: "Erro ao carregar serviços.",
+    requiredService: "Selecione o tipo de serviço.",
+    requiredClient: "Selecione o cliente.",
+    requiredDate: "Selecione a data.",
+    requiredTime: "Selecione o horário.",
+  },
+
+  adminEmployees: {
+    loadError: "Erro ao carregar funcionários.",
+    loadDetailError: "Erro ao carregar funcionário.",
+    saveSuccess: "Funcionário salvo com sucesso",
+    saveError: "Erro ao salvar funcionário.",
+    scheduleError: "Erro ao carregar agenda.",
+  },
+
+  address: {
+    outOfCoverage: "Endereço fora da área de atendimento.",
+    validationError: "Erro ao validar o endereço. Tente novamente.",
+  },
+
+  payment: {
+    missingEmail: "E-mail não cadastrado. Volte ao passo de cadastro.",
+    missingService: "Nenhum serviço selecionado.",
+    missingDateTime: "Data e horário não selecionados.",
+    createAppointmentError: "Erro ao criar agendamento.",
   },
 } as const;
 

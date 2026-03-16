@@ -38,8 +38,10 @@ export default function LoginPage() {
   const canSubmit = email.trim().length > 0 && password.trim().length > 0 && !isSubmitting;
 
   const handleSubmit = useCallback(async () => {
-    const success = await submit();
-    if (success) {
+    const userType = await submit();
+    if (userType === "admin") {
+      router.push("/admin");
+    } else if (userType === "client") {
       router.push("/dashboard");
     }
   }, [submit, router]);
