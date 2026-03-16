@@ -281,7 +281,7 @@ function ServiceCard({ entry }) {
 
 This includes state that seems "local" like `isOpen`, `searchQuery`, `selectedTab`. Create a dedicated store for each component/page that needs state.
 
-This rule applies to ALL layers: pages, `_components/`, **and Design System components**.
+This rule applies to ALL layers: pages, `_components/`, **and Design System components**. DS components receive state as required props from the parent, which manages it via Zustand.
 
 ```tsx
 // FORBIDDEN: any use of useState — anywhere in the codebase
@@ -351,27 +351,34 @@ function DsMyComponent({ title, children, className }: DsMyComponentProps) {
 export { DsMyComponent, type DsMyComponentProps };
 ```
 
-### State in DS components — ALWAYS Zustand
+### State in DS components — controlled-only via required props
 
-Interactive DS components that need state **MUST use Zustand**, NEVER `useState`. Create a dedicated store in `src/stores/` for the component.
+Interactive DS components that need state are **purely controlled** — both the value prop and change handler are **required**. The parent passes state from a Zustand store.
 
 ```tsx
 // FORBIDDEN: useState inside DS component
 "use client";
-function DsFilterDropdown({ options }: DsFilterDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);       // FORBIDDEN
-  const [selected, setSelected] = useState<string>(); // FORBIDDEN
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  const [internalOpen, setInternalOpen] = useState(true); // FORBIDDEN
   // ...
 }
 
-// CORRECT: Zustand store for the DS component
+// CORRECT: required props, no internal state
 "use client";
-import { useFilterDropdownStore } from "@/stores/filter-dropdown-store";
-
-function DsFilterDropdown({ options }: DsFilterDropdownProps) {
-  const { isOpen, setIsOpen, selected, setSelected } = useFilterDropdownStore();
+interface DsCollapsibleSectionProps {
+  open: boolean;          // required — no optional fallback
+  onOpenChange: (open: boolean) => void; // required — no optional fallback
   // ...
 }
+
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  return <Collapsible.Root open={open} onOpenChange={onOpenChange} />;
+}
+
+// Parent manages state via Zustand:
+const isOpen = useServiceEditStore((s) => s.addressSectionOpen);
+const setIsOpen = useServiceEditStore((s) => s.setAddressSectionOpen);
+<DsCollapsibleSection open={isOpen} onOpenChange={setIsOpen} />
 ```
 
 ### `"use client"` directive — MANDATORY rules
@@ -383,31 +390,29 @@ Add `"use client"` to any component that:
 
 When in doubt, add it — missing directives break the Next.js build.
 
-### Controlled/Uncontrolled pattern — MANDATORY for optional state props
+### Controlled-only pattern — MANDATORY for state props
 
-Components with controlled props (`open`, `collapsed`, `visible`) MUST support uncontrolled usage via internal state fallback when the change handler is not provided:
+Components with state props (`open`, `collapsed`, `visible`) are **purely controlled** — both the value and the change handler are **required** props. No internal `useState` fallback. State is always managed externally via Zustand stores.
 
 ```tsx
-// CORRECT: supports both controlled and uncontrolled
-function DsCollapsibleSection({ open: controlledOpen, onOpenChange, ...props }) {
-  const [internalOpen, setInternalOpen] = useState(true);
-  const isControlled = onOpenChange !== undefined;
-  const open = isControlled ? (controlledOpen ?? true) : internalOpen;
-
-  const handleOpenChange = (value: boolean) => {
-    if (isControlled) { onOpenChange(value); }
-    else { setInternalOpen(value); }
-  };
+// CORRECT: purely controlled, required props
+interface DsCollapsibleSectionProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  // ...
 }
 
-// WRONG: only works when handler is provided
-function DsCollapsibleSection({ open = true, onOpenChange }) {
-  // If onOpenChange is not passed, toggle does nothing
-  return <Root open={open} onOpenChange={onOpenChange} />;
+function DsCollapsibleSection({ open, onOpenChange }: DsCollapsibleSectionProps) {
+  return <Collapsible.Root open={open} onOpenChange={onOpenChange} />;
+}
+
+// WRONG: internal useState fallback
+function DsCollapsibleSection({ open: controlledOpen, onOpenChange }) {
+  const [internalOpen, setInternalOpen] = useState(true); // FORBIDDEN
+  const isControlled = onOpenChange !== undefined;
+  // ...
 }
 ```
-
-Note: `useState` IS allowed in DS components for the controlled/uncontrolled fallback pattern.
 
 ### Keyboard accessibility
 
@@ -431,7 +436,7 @@ onKeyDown={(e) => {
 - [ ] `cn()` for class merging
 - [ ] `className?: string` as optional prop
 - [ ] `"use client"` on any component with hooks, events, or imported by client components
-- [ ] Controlled/Uncontrolled fallback for optional state props
+- [ ] Controlled-only pattern: state props + change handlers are required (no useState fallback)
 - [ ] Space + Enter keyboard handling on `role="button"` elements
 - [ ] File added to the category barrel `index.ts`
 
