@@ -60,7 +60,12 @@ export { DsCard, type DsCardProps } from "./data-display";
 export { DsStatCard, type DsStatCardProps, type DsStatCardTrend } from "./data-display";
 export { DsDataTable, type DsDataTableProps, type DsDataTableColumn } from "./data-display";
 export { DsTableRowItem, type DsTableRowItemProps } from "./data-display";
-export { DsAvatar, type DsAvatarProps, type DsAvatarSize } from "./data-display";
+export {
+  DsAvatar,
+  type DsAvatarProps,
+  type DsAvatarSize,
+  type DsAvatarVariant,
+} from "./data-display";
 export {
   DsCreditCardDisplay,
   type DsCreditCardDisplayProps,
@@ -74,6 +79,7 @@ export { DsAgendaCard, type DsAgendaCardProps } from "./data-display";
 export { DsLineChart, type DsLineChartProps, type DsLineChartDataPoint } from "./data-display";
 export { DsPagination, type DsPaginationProps } from "./data-display";
 export { DsTableCell, type DsTableCellProps, type DsTableCellVariant } from "./data-display";
+export { DsFormCard, type DsFormCardProps } from "./data-display";
 
 // Feedback
 export { DsDialog, type DsDialogProps } from "./feedback";
