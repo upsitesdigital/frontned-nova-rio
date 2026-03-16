@@ -7,8 +7,8 @@ import { DsUserActions } from "./ds-user-actions";
 
 interface DsClientDashboardShellProps {
   activePath?: string;
-  sidebarCollapsed?: boolean;
-  onSidebarCollapsedChange?: (collapsed: boolean) => void;
+  sidebarCollapsed: boolean;
+  onSidebarCollapsedChange: (collapsed: boolean) => void;
   userInitials: string;
   notificationCount?: number;
   onNavigate?: (path: string) => void;
@@ -21,7 +21,7 @@ interface DsClientDashboardShellProps {
 
 function DsClientDashboardShell({
   activePath,
-  sidebarCollapsed = false,
+  sidebarCollapsed,
   onSidebarCollapsedChange,
   userInitials,
   notificationCount = 0,

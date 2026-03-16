@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   HouseIcon,
   BroomIcon,
@@ -19,8 +18,8 @@ import { DsIcon } from "@/design-system/media";
 
 interface DsClientSidebarProps {
   activePath?: string;
-  collapsed?: boolean;
-  onCollapsedChange?: (collapsed: boolean) => void;
+  collapsed: boolean;
+  onCollapsedChange: (collapsed: boolean) => void;
   onNavigate?: (path: string) => void;
   onScheduleService?: () => void;
   onSignOut?: () => void;
@@ -35,23 +34,15 @@ const clientNavItems = [
 
 function DsClientSidebar({
   activePath,
-  collapsed: controlledCollapsed,
+  collapsed,
   onCollapsedChange,
   onNavigate,
   onScheduleService,
   onSignOut,
   className,
 }: DsClientSidebarProps) {
-  const [internalCollapsed, setInternalCollapsed] = useState(false);
-  const isControlled = onCollapsedChange !== undefined;
-  const collapsed = isControlled ? (controlledCollapsed ?? false) : internalCollapsed;
-
   const handleToggle = () => {
-    if (isControlled) {
-      onCollapsedChange(!collapsed);
-    } else {
-      setInternalCollapsed((prev) => !prev);
-    }
+    onCollapsedChange(!collapsed);
   };
 
   return (
