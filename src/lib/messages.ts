@@ -98,6 +98,26 @@ const MESSAGES = {
     requiredDate: "Selecione a data.",
     requiredTime: "Selecione o horário.",
   },
+
+  adminEmployees: {
+    loadError: "Erro ao carregar funcionários.",
+    loadDetailError: "Erro ao carregar funcionário.",
+    saveSuccess: "Funcionário salvo com sucesso",
+    saveError: "Erro ao salvar funcionário.",
+    scheduleError: "Erro ao carregar agenda.",
+  },
+
+  address: {
+    outOfCoverage: "Endereço fora da área de atendimento.",
+    validationError: "Erro ao validar o endereço. Tente novamente.",
+  },
+
+  payment: {
+    missingEmail: "E-mail não cadastrado. Volte ao passo de cadastro.",
+    missingService: "Nenhum serviço selecionado.",
+    missingDateTime: "Data e horário não selecionados.",
+    createAppointmentError: "Erro ao criar agendamento.",
+  },
 } as const;
 
 export { MESSAGES };
