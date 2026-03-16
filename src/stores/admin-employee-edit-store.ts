@@ -1,13 +1,11 @@
 import { create } from "zustand";
-import { startOfMonth, endOfMonth, format } from "date-fns";
-import {
-  fetchAdminEmployeeById,
-  updateAdminEmployee,
-  type AdminEmployee,
-} from "@/api/admin-employees-api";
-import { fetchAdminAppointments, fetchUnits, type RawUnit } from "@/api/admin-appointments-api";
+import type { AdminEmployee } from "@/api/admin-employees-api";
+import type { RawUnit } from "@/api/admin-appointments-api";
+import { loadAdminEmployeeDetail } from "@/use-cases/load-admin-employee-detail";
+import { saveAdminEmployee } from "@/use-cases/save-admin-employee";
+import { loadEmployeeBusyDates } from "@/use-cases/load-employee-busy-dates";
 import { useToastStore } from "@/stores/toast-store";
-import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 interface EmployeeFormData {
   name: string;
@@ -79,11 +77,10 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
   loadEmployee: async (id: number) => {
     set({ isLoading: true, error: null, isAuthError: false });
 
-    try {
-      const [employee, units] = await Promise.all([
-        fetchAdminEmployeeById(id),
-        fetchUnits().catch(() => [] as RawUnit[]),
-      ]);
+    const result = await loadAdminEmployeeDetail(id);
+
+    if (result.data) {
+      const { employee, units } = result.data;
       set({
         employee,
         unitOptions: units,
@@ -104,17 +101,18 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
         isLoading: false,
       });
       get().loadBusyDates();
-    } catch (error) {
+    } else {
       set({
         isLoading: false,
-        error: resolveErrorMessage(error, "Erro ao carregar funcionário"),
-        isAuthError: isAuthError(error),
+        error: result.error,
+        isAuthError: result.isAuthError,
       });
     }
   },
 
   loadUnits: async () => {
     try {
+      const { fetchUnits } = await import("@/api/admin-appointments-api");
       const units = await fetchUnits();
       set({ unitOptions: units });
     } catch {
@@ -134,28 +132,29 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
 
     set({ isSaving: true, saveError: null });
 
-    try {
-      await updateAdminEmployee(employee.id, {
-        name: form.name,
-        email: form.email,
-        cpf: form.cpf,
-        phone: form.phone || undefined,
-        address: form.address || undefined,
-        availabilityFrom: form.availabilityFrom || undefined,
-        availabilityTo: form.availabilityTo || undefined,
-        notes: form.notes || undefined,
-        unitId: form.unitId ?? undefined,
-        status: form.status as "ACTIVE" | "INACTIVE",
-      });
+    const result = await saveAdminEmployee({
+      id: employee.id,
+      name: form.name,
+      email: form.email,
+      cpf: form.cpf,
+      phone: form.phone || undefined,
+      address: form.address || undefined,
+      availabilityFrom: form.availabilityFrom || undefined,
+      availabilityTo: form.availabilityTo || undefined,
+      notes: form.notes || undefined,
+      unitId: form.unitId ?? undefined,
+      status: form.status as "ACTIVE" | "INACTIVE",
+    });
+
+    if (result.success) {
       set({ isSaving: false });
-      useToastStore.getState().showToast("Funcionário salvo com sucesso", "success");
+      useToastStore.getState().showToast(MESSAGES.adminEmployees.saveSuccess, "success");
       return true;
-    } catch (error) {
-      const message = resolveErrorMessage(error, "Erro ao salvar funcionário");
-      set({ isSaving: false, saveError: message });
-      useToastStore.getState().showToast(message, "error");
-      return false;
     }
+
+    set({ isSaving: false, saveError: result.error });
+    useToastStore.getState().showToast(result.error, "error");
+    return false;
   },
 
   setCurrentMonth: (date: Date) => {
@@ -167,19 +166,12 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
     const { employee, currentMonth } = get();
     if (!employee) return;
 
-    const monthStart = format(startOfMonth(currentMonth), "yyyy-MM-dd");
-    const monthEnd = format(endOfMonth(currentMonth), "yyyy-MM-dd");
-
     try {
-      const response = await fetchAdminAppointments({
-        page: 1,
-        limit: 100,
+      const dates = await loadEmployeeBusyDates({
         employeeId: employee.id,
-        weekStart: monthStart,
-        weekEnd: monthEnd,
-        status: "SCHEDULED",
+        currentMonth,
       });
-      set({ busyDates: response.data.map((item) => new Date(item.date)) });
+      set({ busyDates: dates });
     } catch {
       // Silent fail for calendar — non-critical
     }

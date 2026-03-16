@@ -1,6 +1,9 @@
 import { create } from "zustand";
-import { fetchAdminEmployees, type AdminEmployee, type EmployeeStatus } from "@/api/admin-employees-api";
-import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
+import {
+  loadAdminEmployees,
+  type LoadAdminEmployeesInput,
+} from "@/use-cases/load-admin-employees";
+import type { AdminEmployee, EmployeeStatus } from "@/api/admin-employees-api";
 
 type StatusFilter = "all" | EmployeeStatus;
 
@@ -41,24 +44,26 @@ const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
 
     set({ isLoading: true, error: null, isAuthError: false });
 
-    try {
-      const response = await fetchAdminEmployees({
-        page: currentPage,
-        limit: PAGE_SIZE,
-        status: statusFilter === "all" ? undefined : statusFilter,
-        search: searchQuery || undefined,
-      });
+    const input: LoadAdminEmployeesInput = {
+      page: currentPage,
+      limit: PAGE_SIZE,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      search: searchQuery || undefined,
+    };
 
+    const result = await loadAdminEmployees(input);
+
+    if (result.data) {
       set({
-        employees: response.data,
-        totalEmployees: response.total,
+        employees: result.data.employees,
+        totalEmployees: result.data.total,
         isLoading: false,
       });
-    } catch (error) {
+    } else {
       set({
         isLoading: false,
-        error: resolveErrorMessage(error, "Erro ao carregar funcionários"),
-        isAuthError: isAuthError(error),
+        error: result.error,
+        isAuthError: result.isAuthError,
       });
     }
   },

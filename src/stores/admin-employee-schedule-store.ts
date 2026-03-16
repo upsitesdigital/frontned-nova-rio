@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { startOfMonth, endOfMonth, format } from "date-fns";
-import { fetchAdminAppointments } from "@/api/admin-appointments-api";
+import { loadEmployeeBusyDates } from "@/use-cases/load-employee-busy-dates";
 import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 interface AdminEmployeeScheduleState {
   open: boolean;
@@ -59,27 +59,15 @@ const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, g
     const { employeeId, currentMonth } = get();
     if (!employeeId) return;
 
-    const monthStart = format(startOfMonth(currentMonth), "yyyy-MM-dd");
-    const monthEnd = format(endOfMonth(currentMonth), "yyyy-MM-dd");
-
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetchAdminAppointments({
-        page: 1,
-        limit: 100,
-        employeeId,
-        weekStart: monthStart,
-        weekEnd: monthEnd,
-        status: "SCHEDULED",
-      });
-
-      const dates = response.data.map((item) => new Date(item.date));
+      const dates = await loadEmployeeBusyDates({ employeeId, currentMonth });
       set({ busyDates: dates, isLoading: false });
     } catch (error) {
       set({
         isLoading: false,
-        error: resolveErrorMessage(error, "Erro ao carregar agenda"),
+        error: resolveErrorMessage(error, MESSAGES.adminEmployees.scheduleError),
         isAuthError: isAuthError(error),
       });
     }
