@@ -1,21 +1,17 @@
+import { z } from "zod/v4";
 import { MESSAGES } from "@/lib/messages";
-import { isValidEmail } from "@/validation/email-schema";
 
-interface LoginInput {
-  email: string;
-  password: string;
-}
+const loginSchema = z.object({
+  email: z.string().min(1, MESSAGES.auth.fillAllFields).email(MESSAGES.auth.invalidEmail),
+  password: z.string().min(1, MESSAGES.auth.fillAllFields),
+});
+
+type LoginInput = z.infer<typeof loginSchema>;
 
 function validateLoginInput(input: LoginInput): string | null {
-  if (!input.email.trim() || !input.password.trim()) {
-    return MESSAGES.auth.fillAllFields;
-  }
-
-  if (!isValidEmail(input.email)) {
-    return MESSAGES.auth.invalidEmail;
-  }
-
-  return null;
+  const result = loginSchema.safeParse(input);
+  if (result.success) return null;
+  return result.error.issues[0]?.message ?? MESSAGES.auth.fillAllFields;
 }
 
-export { validateLoginInput, type LoginInput };
+export { validateLoginInput, loginSchema, type LoginInput };
