@@ -1,12 +1,11 @@
 import {
-  fetchAdminProfile,
   fetchTodayAppointmentsCount,
   fetchActiveClientsCount,
   fetchPendingAppointmentsCount,
   fetchTodayAgenda,
-  type AdminProfile,
   type AgendaItem,
 } from "@/api/admin-dashboard-api";
+import { fetchAdminProfile, type AdminProfile } from "@/api/auth-api";
 import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
 import { getActiveServiceOptions, type ActiveServiceOption } from "./get-active-service-options";
@@ -55,7 +54,7 @@ async function loadAdminDashboardData(agendaPageSize: number): Promise<Dashboard
       pendingServicesCount: pendingR.status === "fulfilled" ? pendingR.value.count : 0,
       agendaItems: agendaR.status === "fulfilled" ? agendaR.value.items : [],
       agendaTotal: agendaR.status === "fulfilled" ? agendaR.value.total : 0,
-      serviceOptions: servicesR.status === "fulfilled" ? servicesR.value : [],
+      serviceOptions: servicesR.status === "fulfilled" ? (servicesR.value.data ?? []) : [],
     },
     error: null,
     isAuthError: false,

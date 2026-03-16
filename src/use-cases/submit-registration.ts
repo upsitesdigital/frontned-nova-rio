@@ -21,7 +21,7 @@ function validateRegistrationInput(input: RegistrationInput): RegisterFieldError
   });
 }
 
-async function executeRegistration(input: RegistrationInput): Promise<RegisterFieldErrors> {
+async function submitRegistration(input: RegistrationInput): Promise<RegisterFieldErrors> {
   try {
     await registerClient({
       name: input.name,
@@ -39,4 +39,4 @@ async function executeRegistration(input: RegistrationInput): Promise<RegisterFi
   }
 }
 
-export { validateRegistrationInput, executeRegistration, type RegistrationInput };
+export { validateRegistrationInput, submitRegistration, type RegistrationInput };

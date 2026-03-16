@@ -1,5 +1,6 @@
 import { fetchTodayAgenda, type AgendaItem } from "@/api/admin-dashboard-api";
-import { isAuthError } from "@/lib/auth-helpers";
+import { isAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
+import { MESSAGES } from "@/lib/messages";
 
 interface AgendaLoadResult {
   items: AgendaItem[];
@@ -36,7 +37,7 @@ async function loadTodayAgenda(
     return {
       items: null,
       total: null,
-      error: null,
+      error: resolveErrorMessage(error, MESSAGES.agenda.loadError),
       isAuthError: isAuthError(error),
     };
   }
