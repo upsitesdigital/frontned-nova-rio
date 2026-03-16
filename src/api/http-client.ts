@@ -122,6 +122,7 @@ async function httpAuthRequest<T>(
   path: string,
   body?: unknown,
   signal?: AbortSignal,
+  responseParser: (response: Response) => Promise<T> = (r) => r.json() as Promise<T>,
 ): Promise<T> {
   const auth = getAuthProvider();
   const latestToken = auth.getAccessToken() ?? "";
@@ -141,6 +142,13 @@ async function httpAuthRequest<T>(
       init.body = JSON.stringify(body);
     }
     return init;
+  };
+
+  const parseSuccessResponse = (res: Response): Promise<T> => {
+    if (res.status === 204 || res.headers.get("content-length") === "0") {
+      return Promise.resolve(undefined as T);
+    }
+    return responseParser(res);
   };
 
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, buildInit(latestToken));
@@ -163,10 +171,7 @@ async function httpAuthRequest<T>(
       throw new HttpClientError(retryResponse.status, message);
     }
 
-    if (retryResponse.status === 204 || retryResponse.headers.get("content-length") === "0") {
-      return undefined as T;
-    }
-    return retryResponse.json() as Promise<T>;
+    return parseSuccessResponse(retryResponse);
   }
 
   if (!response.ok) {
@@ -175,10 +180,7 @@ async function httpAuthRequest<T>(
     throw new HttpClientError(response.status, message);
   }
 
-  if (response.status === 204 || response.headers.get("content-length") === "0") {
-    return undefined as T;
-  }
-  return response.json() as Promise<T>;
+  return parseSuccessResponse(response);
 }
 
 async function httpAuthGet<T>(path: string, signal?: AbortSignal): Promise<T> {
@@ -201,46 +203,8 @@ async function httpAuthDelete<T>(path: string): Promise<T> {
   return httpAuthRequest<T>("DELETE", path);
 }
 
-async function httpAuthGetBlob(path: string): Promise<Blob> {
-  const auth = getAuthProvider();
-  const latestToken = auth.getAccessToken() ?? "";
-
-  const buildHeaders = (token: string): HeadersInit => ({
-    Authorization: `Bearer ${token}`,
-  });
-
-  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
-    method: "GET",
-    headers: buildHeaders(latestToken),
-  });
-
-  if (response.status === 401) {
-    const newToken = await refreshAccessToken();
-
-    if (!newToken) {
-      throw new HttpClientError(401, `GET ${path} failed: Unauthorized`);
-    }
-
-    const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, {
-      method: "GET",
-      headers: buildHeaders(newToken),
-    });
-
-    if (!retryResponse.ok) {
-      throw new HttpClientError(
-        retryResponse.status,
-        `GET ${path} failed: ${retryResponse.statusText}`,
-      );
-    }
-
-    return retryResponse.blob();
-  }
-
-  if (!response.ok) {
-    throw new HttpClientError(response.status, `GET ${path} failed: ${response.statusText}`);
-  }
-
-  return response.blob();
+function httpAuthGetBlob(path: string): Promise<Blob> {
+  return httpAuthRequest<Blob>("GET", path, undefined, undefined, (r) => r.blob());
 }
 
 export {
