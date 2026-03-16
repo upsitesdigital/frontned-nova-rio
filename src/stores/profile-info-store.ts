@@ -1,14 +1,10 @@
 import { create } from "zustand";
 
-import {
-  fetchClientProfile,
-  updateClientProfile,
-  type ClientProfile,
-  type UpdateProfileData,
-} from "@/api/profile-api";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
+import type { ClientProfile, UpdateProfileData } from "@/api/profile-api";
 import { MESSAGES } from "@/lib/messages";
 import { useToastStore } from "@/stores/toast-store";
+import { loadClientProfile } from "@/use-cases/load-client-profile";
+import { updateProfile } from "@/use-cases/update-client-profile";
 
 interface ProfileInfoState {
   profile: ClientProfile | null;
@@ -59,15 +55,11 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
 
   loadProfile: async () => {
     set({ isLoading: true, error: null });
-
-    try {
-      const profile = await fetchClientProfile();
-      set({ profile, isLoading: false });
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: resolveErrorMessage(error, MESSAGES.profile.loadError),
-      });
+    const result = await loadClientProfile();
+    if (result.success) {
+      set({ profile: result.profile, isLoading: false });
+    } else {
+      set({ isLoading: false, error: result.error });
     }
   },
 
@@ -107,18 +99,14 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
 
     set({ isSaving: true, error: null });
 
-    try {
-      const profile = await updateClientProfile(data);
-      set({ profile, isSaving: false, isEditing: false });
+    const result = await updateProfile(data);
+    if (result.success) {
+      set({ profile: result.profile, isSaving: false, isEditing: false });
       useToastStore.getState().showToast(MESSAGES.profile.updated);
       return true;
-    } catch (error) {
-      set({
-        isSaving: false,
-        error: resolveErrorMessage(error, MESSAGES.profile.saveError),
-      });
-      return false;
     }
+    set({ isSaving: false, error: result.error });
+    return false;
   },
 
   reset: () => set(initialState),

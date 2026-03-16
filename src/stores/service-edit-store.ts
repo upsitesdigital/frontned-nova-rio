@@ -1,8 +1,7 @@
 import { create } from "zustand";
 
-import { fetchReceiptBlob } from "@/api/receipts-api";
-import { triggerBlobDownload } from "@/lib/download-helpers";
 import { MESSAGES } from "@/lib/messages";
+import { downloadReceipt } from "@/use-cases/download-receipt";
 import { cancelClientAppointment } from "@/use-cases/cancel-client-appointment";
 import { rescheduleClientAppointment } from "@/use-cases/reschedule-client-appointment";
 
@@ -120,8 +119,7 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   },
 
   downloadServiceReceipt: async (paymentId) => {
-    const blob = await fetchReceiptBlob(paymentId);
-    triggerBlobDownload(blob, `recibo-${paymentId}.pdf`);
+    await downloadReceipt(paymentId);
   },
 
   reset: () => set(initialState),

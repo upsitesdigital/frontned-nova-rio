@@ -8,7 +8,7 @@ import { waitForAuthHydration } from "@/stores/auth-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { signOutClient } from "@/lib/sign-out-client";
+import { signOutClient } from "@/use-cases/sign-out-client";
 
 const DsClientDashboardShell = dynamic(
   () =>

@@ -16,7 +16,7 @@ function DsToggleButton({ label, active = false, onClick, className }: DsToggleB
         "whitespace-nowrap rounded-[10px] px-4 py-2.5 text-base font-medium leading-[1.3] text-nova-gray-700 transition-colors",
         active
           ? "bg-nova-gray-100"
-          : "border border-nova-gray-300 hover:bg-nova-gray-50",
+          : "border border-nova-gray-200 bg-transparent hover:bg-nova-gray-50",
         className,
       )}
     >
