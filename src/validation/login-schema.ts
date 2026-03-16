@@ -2,8 +2,14 @@ import { z } from "zod/v4";
 import { MESSAGES } from "@/lib/messages";
 
 const loginSchema = z.object({
-  email: z.string().min(1, MESSAGES.auth.fillAllFields).email(MESSAGES.auth.invalidEmail),
-  password: z.string().min(1, MESSAGES.auth.fillAllFields),
+  email: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().min(1, MESSAGES.auth.fillAllFields).email(MESSAGES.auth.invalidEmail)),
+  password: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().min(1, MESSAGES.auth.fillAllFields)),
 });
 
 type LoginInput = z.infer<typeof loginSchema>;
