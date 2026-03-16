@@ -45,4 +45,12 @@ describe("decodeJwtPayload", () => {
     const result = decodeJwtPayload(token);
     expect(result?.type).toBe("admin");
   });
+
+  it("should handle base64 payload without padding", () => {
+    const header = btoa(JSON.stringify({ alg: "HS256" }));
+    const payload = btoa(JSON.stringify({ type: "admin" })).replace(/=+$/, "");
+    const token = `${header}.${payload}.sig`;
+    const result = decodeJwtPayload(token);
+    expect(result?.type).toBe("admin");
+  });
 });
