@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
 
 interface DsTransactionTableColumn {
   key: string;
@@ -20,11 +21,11 @@ function DsTransactionTable({
   className,
 }: DsTransactionTableProps) {
   return (
-    <div className={cn("rounded-[10px] bg-nova-gray-50 p-6", className)}>
+    <div className={cn("rounded-2.5 bg-nova-gray-50 p-6", className)}>
       <div className="flex items-center p-4">
         {columns.map((col) => (
           <div key={col.key} className={cn("flex flex-1 items-center", col.className)}>
-            <span className="text-base font-medium leading-[1.3] text-[#4d4d4f]">
+            <span className="text-base font-medium leading-[1.3] text-nova-gray-600">
               {col.header}
             </span>
           </div>
@@ -32,9 +33,7 @@ function DsTransactionTable({
       </div>
       <div className="flex flex-col gap-2">
         {data.length === 0 ? (
-          <div className="rounded-md bg-white p-4 text-center text-base text-nova-gray-400">
-            {emptyMessage}
-          </div>
+          <DsEmptyState message={emptyMessage} className="rounded-md bg-white p-4" />
         ) : (
           data.map((row, i) => (
             <div

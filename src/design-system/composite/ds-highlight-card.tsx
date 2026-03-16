@@ -1,4 +1,6 @@
-import { DotsThreeVerticalIcon } from "@phosphor-icons/react/dist/ssr";
+"use client";
+
+import { ScrollIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
@@ -11,7 +13,8 @@ interface DsHighlightCardProps {
   iconColor?: string;
   iconBgColor?: string;
   valueColor?: string;
-  onOptionsClick?: () => void;
+  onReceipt?: () => void;
+  receiptDisabled?: boolean;
   className?: string;
 }
 
@@ -24,9 +27,12 @@ function DsHighlightCard({
   iconColor,
   iconBgColor,
   valueColor,
-  onOptionsClick,
+  onReceipt,
+  receiptDisabled,
   className,
 }: DsHighlightCardProps) {
+  const showReceipt = onReceipt !== undefined || receiptDisabled;
+
   return (
     <div
       className={cn(
@@ -34,7 +40,36 @@ function DsHighlightCard({
         className,
       )}
     >
-      <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
+        {showReceipt && (
+          <button
+            type="button"
+            onClick={onReceipt}
+            disabled={receiptDisabled}
+            className={cn(
+              "flex items-center gap-1 rounded-[6px] border px-3 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-nova-primary focus-visible:outline-none",
+              receiptDisabled
+                ? "cursor-not-allowed border-nova-gray-300"
+                : "cursor-pointer border-nova-gray-300 hover:bg-nova-gray-50",
+            )}
+          >
+            <DsIcon
+              icon={ScrollIcon}
+              size="md"
+              className={receiptDisabled ? "text-nova-gray-400" : "text-nova-gray-700"}
+            />
+            <span
+              className={cn(
+                "text-base leading-[1.3] tracking-[-0.64px]",
+                receiptDisabled ? "text-nova-gray-400" : "text-nova-gray-700",
+              )}
+            >
+              Recibo
+            </span>
+          </button>
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-4">
           {icon && (
@@ -67,15 +102,6 @@ function DsHighlightCard({
           </p>
         )}
       </div>
-      {onOptionsClick && (
-        <button
-          type="button"
-          onClick={onOptionsClick}
-          className="absolute right-[17px] top-[15px] flex size-8 cursor-pointer items-center justify-center rounded-[6px] border border-nova-gray-300 transition-colors hover:bg-nova-gray-50"
-        >
-          <DsIcon icon={DotsThreeVerticalIcon} size="lg" />
-        </button>
-      )}
     </div>
   );
 }

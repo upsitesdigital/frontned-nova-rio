@@ -3,6 +3,8 @@
 import { UsersIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
+import { DsButton } from "@/design-system/primitives";
+import { DsStatusPill, type DsStatusPillVariant } from "@/design-system/composite/ds-status-pill";
 
 interface DsEmployeeInfoCardContact {
   icon: DsIconComponent;
@@ -23,8 +25,7 @@ interface DsEmployeeInfoCardAction {
 interface DsEmployeeInfoCardStatus {
   icon: DsIconComponent;
   label: string;
-  color: string;
-  bgColor: string;
+  variant: DsStatusPillVariant;
 }
 
 interface DsEmployeeInfoCardProps {
@@ -54,23 +55,17 @@ function DsEmployeeInfoCard({
       )}
     >
       <div className="flex gap-20">
-        <div className="flex gap-4">
+        <div className="flex w-75 shrink-0 gap-4">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-nova-info/10">
             <DsIcon icon={IconComponent} size="lg" className="text-nova-info" />
           </div>
-          <div className="flex flex-col gap-6 py-2">
-            <p className="text-xl font-medium leading-[1.3] text-nova-primary-dark">
-              {name}
-            </p>
+          <div className="flex min-w-0 flex-col gap-6 py-2">
+            <p className="truncate text-xl font-medium leading-[1.3] text-nova-gray-600">{name}</p>
             {contacts.length > 0 && (
               <div className="flex flex-col gap-2">
                 {contacts.map((contact) => (
                   <div key={contact.value} className="flex items-center gap-2">
-                    <DsIcon
-                      icon={contact.icon}
-                      size="lg"
-                      className="shrink-0 text-nova-gray-700"
-                    />
+                    <DsIcon icon={contact.icon} size="lg" className="shrink-0 text-nova-info" />
                     <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
                       {contact.value}
                     </span>
@@ -82,18 +77,14 @@ function DsEmployeeInfoCard({
         </div>
 
         {(status || details.length > 0) && (
-          <div className="flex w-[308px] flex-col gap-4 py-2">
+          <div className="flex w-77 flex-col gap-4 py-2">
             {status && (
-              <span
-                className={cn(
-                  "inline-flex w-fit items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-base leading-normal tracking-[-0.64px]",
-                  status.bgColor,
-                  status.color,
-                )}
-              >
-                <DsIcon icon={status.icon} size="sm" />
-                {status.label}
-              </span>
+              <DsStatusPill
+                icon={status.icon}
+                label={status.label}
+                variant={status.variant}
+                className="w-fit"
+              />
             )}
             {details.map((detail) => (
               <div
@@ -111,15 +102,16 @@ function DsEmployeeInfoCard({
       {actions.length > 0 && (
         <div className="flex items-center gap-6">
           {actions.map((action) => (
-            <button
+            <DsButton
               key={action.label}
-              type="button"
+              variant="outline"
+              size="flow-sm"
               onClick={action.onClick}
-              className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] border border-nova-gray-200 px-6 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-50"
+              className="border-nova-gray-200 px-6 text-nova-gray-700 hover:bg-nova-gray-50"
             >
-              {action.icon && <DsIcon icon={action.icon} size="lg" />}
+              {action.icon && <DsIcon icon={action.icon} size="lg" className="text-nova-info" />}
               {action.label}
-            </button>
+            </DsButton>
           ))}
         </div>
       )}

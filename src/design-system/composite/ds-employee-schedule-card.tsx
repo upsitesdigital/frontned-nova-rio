@@ -9,10 +9,11 @@ import { DsAgendaCard } from "@/design-system/data-display";
 interface DsEmployeeScheduleCardProps {
   name: string;
   icon?: DsIconComponent;
+  currentMonth: Date;
+  onCurrentMonthChange: (date: Date) => void;
   busyDates?: Date[];
   selectedDate?: Date;
   onDateSelect?: (date: Date) => void;
-  onMonthChange?: (date: Date) => void;
   onClose?: () => void;
   className?: string;
 }
@@ -20,10 +21,11 @@ interface DsEmployeeScheduleCardProps {
 function DsEmployeeScheduleCard({
   name,
   icon: IconComponent = UsersIcon,
+  currentMonth,
+  onCurrentMonthChange,
   busyDates,
   selectedDate,
   onDateSelect,
-  onMonthChange,
   onClose,
   className,
 }: DsEmployeeScheduleCardProps) {
@@ -56,10 +58,11 @@ function DsEmployeeScheduleCard({
       <DsSeparator />
 
       <DsAgendaCard
+        currentMonth={currentMonth}
+        onCurrentMonthChange={onCurrentMonthChange}
         busyDates={busyDates}
         selectedDate={selectedDate}
         onDateSelect={onDateSelect}
-        onMonthChange={onMonthChange}
         className="border-0 p-0"
       />
     </div>

@@ -1,16 +1,18 @@
 "use client";
 
 import {
-  Eye,
-  PencilSimpleLine,
-  Trash,
-  Check,
-  X,
+  EyeIcon,
+  PencilSimpleLineIcon,
+  TrashIcon,
+  CheckIcon,
+  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { DsIcon } from "@/design-system/media";
-import { DsToggleButton } from "@/design-system/primitives";
+import { DsIconButton, DsToggleButton } from "@/design-system/primitives";
 import { DsSearchInput } from "@/design-system/forms";
+import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
+import { DsTableCell } from "@/design-system/data-display/ds-table-cell";
+import { DsStatusPill, type DsStatusPillVariant } from "./ds-status-pill";
 
 type DsUserTableFilter = "all" | "active";
 
@@ -39,18 +41,10 @@ interface DsUserTableProps {
 
 const statusConfig: Record<
   DsUserTableStatus,
-  { icon: typeof Check; label: string; style: string }
+  { icon: typeof CheckIcon; label: string; variant: DsStatusPillVariant }
 > = {
-  active: {
-    icon: Check,
-    label: "Ativo",
-    style: "bg-[rgba(0,167,126,0.1)] text-[#008053]",
-  },
-  inactive: {
-    icon: X,
-    label: "Inativo",
-    style: "bg-[rgba(219,65,70,0.1)] text-nova-error",
-  },
+  active: { icon: CheckIcon, label: "Ativo", variant: "active" },
+  inactive: { icon: XIcon, label: "Inativo", variant: "inactive" },
 };
 
 const columns = ["Nome", "Role", "E-mail", "Status", "Cadastro", "Ações"];
@@ -69,15 +63,13 @@ function DsUserTable({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8",
+        "flex flex-col gap-6 overflow-clip rounded-4xl border border-nova-gray-100 bg-white px-6 py-8",
         className,
       )}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">
-            Usuários
-          </p>
+          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">Usuários</p>
           <div className="flex items-start gap-4">
             <DsToggleButton
               label="Todos"
@@ -95,26 +87,25 @@ function DsUserTable({
           placeholder="Pesquisar"
           value={searchValue}
           onChange={(e) => onSearchChange?.(e.target.value)}
-          className="w-[346px]"
+          className="w-86.5"
         />
       </div>
 
-      <div className="rounded-[10px] bg-nova-gray-50 p-6">
+      <div className="rounded-2.5 bg-nova-gray-50 p-6">
         <div className="flex items-center p-4">
-          {columns.map((col) => (
-            <div key={col} className="flex flex-1 items-center justify-center first:justify-start">
-              <span className="text-base font-medium leading-[1.3] text-nova-primary-dark">
-                {col}
-              </span>
-            </div>
+          {columns.map((col, i) => (
+            <DsTableCell key={col} variant="header" align={i === 0 ? "start" : "center"}>
+              {col}
+            </DsTableCell>
           ))}
         </div>
 
         <div className="flex flex-col gap-2">
           {users.length === 0 ? (
-            <div className="rounded-md bg-white p-4 text-center text-base text-nova-gray-400">
-              Nenhum usuário encontrado.
-            </div>
+            <DsEmptyState
+              message="Nenhum usuário encontrado."
+              className="rounded-md bg-white p-4"
+            />
           ) : (
             users.map((user) => {
               const status = statusConfig[user.status];
@@ -123,71 +114,56 @@ function DsUserTable({
                   key={user.id}
                   className="flex items-center rounded-md border border-nova-gray-100 bg-white p-4"
                 >
-                  <div className="flex flex-1 items-center">
-                    <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-primary-dark">
-                      {user.name}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 items-center justify-center">
-                    <span className="text-base leading-normal tracking-[-0.64px] text-nova-primary-dark">
-                      {user.role}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 items-center justify-center">
-                    <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-primary-dark">
-                      {user.email}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 items-center justify-center">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-base leading-normal tracking-[-0.64px]",
-                        status.style,
-                      )}
-                    >
-                      <DsIcon icon={status.icon} size="sm" />
-                      {status.label}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 items-center justify-center">
-                    <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-primary-dark">
-                      {user.registrationDate}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 items-center justify-center">
+                  <DsTableCell align="start" bold>
+                    {user.name}
+                  </DsTableCell>
+                  <DsTableCell>{user.role}</DsTableCell>
+                  <DsTableCell>{user.email}</DsTableCell>
+                  <DsTableCell variant="custom">
+                    <DsStatusPill
+                      icon={status.icon}
+                      label={status.label}
+                      variant={status.variant}
+                    />
+                  </DsTableCell>
+                  <DsTableCell>{user.registrationDate}</DsTableCell>
+                  <DsTableCell variant="custom">
                     <div className="flex items-center gap-4">
                       {onView && (
-                        <button
-                          type="button"
+                        <DsIconButton
+                          icon={EyeIcon}
+                          iconSize="md"
+                          variant="ghost"
+                          size="icon-sm"
+                          ariaLabel={`Visualizar ${user.name}`}
                           onClick={() => onView(user)}
-                          className="cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
-                          aria-label={`Visualizar ${user.name}`}
-                        >
-                          <DsIcon icon={Eye} size="md" />
-                        </button>
+                          className="text-nova-gray-700 hover:bg-transparent hover:text-black"
+                        />
                       )}
                       {onEdit && (
-                        <button
-                          type="button"
+                        <DsIconButton
+                          icon={PencilSimpleLineIcon}
+                          iconSize="md"
+                          variant="ghost"
+                          size="icon-sm"
+                          ariaLabel={`Editar ${user.name}`}
                           onClick={() => onEdit(user)}
-                          className="cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
-                          aria-label={`Editar ${user.name}`}
-                        >
-                          <DsIcon icon={PencilSimpleLine} size="md" />
-                        </button>
+                          className="text-nova-gray-700 hover:bg-transparent hover:text-black"
+                        />
                       )}
                       {onDelete && (
-                        <button
-                          type="button"
+                        <DsIconButton
+                          icon={TrashIcon}
+                          iconSize="lg"
+                          variant="ghost"
+                          size="icon-sm"
+                          ariaLabel={`Excluir ${user.name}`}
                           onClick={() => onDelete(user)}
-                          className="cursor-pointer text-nova-gray-700 transition-colors hover:text-nova-error"
-                          aria-label={`Excluir ${user.name}`}
-                        >
-                          <DsIcon icon={Trash} size="lg" />
-                        </button>
+                          className="text-nova-gray-700 hover:bg-transparent hover:text-nova-error"
+                        />
                       )}
                     </div>
-                  </div>
+                  </DsTableCell>
                 </div>
               );
             })

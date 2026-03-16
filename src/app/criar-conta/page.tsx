@@ -5,16 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-  DsButton,
-  DsFormField,
-  DsInput,
-  DsLogo,
-  DsPasswordInput,
-} from "@/design-system";
+import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
 import { FLOW_INPUT_CLASS } from "@/lib/constants";
 import { formatPhone } from "@/lib/formatters";
 import { useCreateAccountStore } from "@/stores/create-account-store";
+import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
 
 export default function CriarContaPage() {
   const router = useRouter();
@@ -34,6 +29,10 @@ export default function CriarContaPage() {
   const setConfirmPassword = useCreateAccountStore((s) => s.setConfirmPassword);
   const submit = useCreateAccountStore((s) => s.submit);
   const reset = useCreateAccountStore((s) => s.reset);
+
+  const pwdVisible = usePasswordVisibilityStore((s) => s.isVisible("register-password"));
+  const confirmPwdVisible = usePasswordVisibilityStore((s) => s.isVisible("register-confirm"));
+  const setPwdVisibility = usePasswordVisibilityStore((s) => s.setVisibility);
 
   useEffect(() => {
     reset();
@@ -63,9 +62,9 @@ export default function CriarContaPage() {
   return (
     <div className="flex min-h-screen">
       <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-[61px]" />
+        <DsLogo className="mt-15.25" />
 
-        <div className="mt-12 flex w-full max-w-[589px] flex-col items-center gap-12">
+        <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
           <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
             Crie sua conta
           </h1>
@@ -108,6 +107,8 @@ export default function CriarContaPage() {
                 placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                visible={pwdVisible}
+                onVisibilityChange={(v) => setPwdVisibility("register-password", v)}
                 aria-invalid={!!errors.password}
                 className={FLOW_INPUT_CLASS}
               />
@@ -118,6 +119,8 @@ export default function CriarContaPage() {
                 placeholder="Confirme sua senha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                visible={confirmPwdVisible}
+                onVisibilityChange={(v) => setPwdVisibility("register-confirm", v)}
                 aria-invalid={!!errors.confirmPassword}
                 className={FLOW_INPUT_CLASS}
               />
@@ -125,12 +128,7 @@ export default function CriarContaPage() {
           </div>
 
           <div className="flex flex-col items-start gap-6">
-            <DsButton
-              size="flow"
-              disabled={!canSubmit}
-              onClick={handleSubmit}
-              className="w-[257px]"
-            >
+            <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
               {isSubmitting ? "Criando conta..." : "Criar conta"}
             </DsButton>
 
@@ -143,8 +141,8 @@ export default function CriarContaPage() {
           </div>
         </div>
 
-        <p className="mt-auto pb-[104px] text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
-          ©2025 Nova Rio Pay Per Use
+        <p className="mt-auto pb-26 text-base leading-normal tracking-[-0.64px] text-nova-gray-700">
+          ©{new Date().getFullYear()} Nova Rio Pay Per Use
         </p>
       </div>
 

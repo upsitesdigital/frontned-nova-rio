@@ -1,8 +1,14 @@
 import { create } from "zustand";
 
+import { MESSAGES } from "@/lib/messages";
 import type { PaymentMethod } from "@/types/scheduling";
 import { submitPayment } from "@/use-cases/submit-payment";
 import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
+import { useConfirmationStore } from "@/stores/confirmation-store";
+import { useRegistrationStore } from "@/stores/registration-store";
+import { useServicesStore } from "@/stores/services-store";
+import { useSchedulingStore } from "@/stores/scheduling-store";
+import { useAddressStore } from "@/stores/address-store";
 
 interface PaymentState {
   paymentMethod: PaymentMethod | null;
@@ -95,10 +101,40 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
     const isValid = usePaymentStore.getState().validate();
     if (!isValid) return false;
 
+    const email = useRegistrationStore.getState().email;
+    if (!email) {
+      set({ submitError: MESSAGES.payment.missingEmail });
+      return false;
+    }
+
+    const selectedServiceId = useServicesStore.getState().selectedServiceId;
+    if (!selectedServiceId) {
+      set({ submitError: MESSAGES.payment.missingService });
+      return false;
+    }
+
+    const { selectedDate, selectedTime, recurrenceType } = useSchedulingStore.getState();
+    if (!selectedDate || !selectedTime) {
+      set({ submitError: MESSAGES.payment.missingDateTime });
+      return false;
+    }
+
+    const { cep, address } = useAddressStore.getState();
+
     set({ isSubmitting: true, submitError: null });
-    const result = await submitPayment();
+
+    const result = await submitPayment({
+      email,
+      selectedServiceId,
+      selectedDate,
+      selectedTime,
+      recurrenceType,
+      cep,
+      address,
+    });
 
     if (result.success) {
+      useConfirmationStore.getState().setConfirmation(result.confirmation);
       set({ isSubmitting: false });
       return true;
     }
