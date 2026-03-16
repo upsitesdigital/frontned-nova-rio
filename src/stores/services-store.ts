@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
-import { fetchServices } from "@/api/services-api";
 import type { Service } from "@/types/service";
+import { loadPublicServices } from "@/use-cases/load-public-services";
 
 interface ServicesState {
   services: Service[];
@@ -30,11 +30,11 @@ const useServicesStore = create<ServicesStore>()((set) => ({
 
   loadServices: async () => {
     set({ isLoadingServices: true, error: null });
-    try {
-      const services = await fetchServices();
-      set({ services, isLoadingServices: false });
-    } catch {
-      set({ isLoadingServices: false, error: "Erro ao carregar serviços." });
+    const result = await loadPublicServices();
+    if (result.data) {
+      set({ services: result.data, isLoadingServices: false });
+    } else {
+      set({ isLoadingServices: false, error: result.error });
     }
   },
 

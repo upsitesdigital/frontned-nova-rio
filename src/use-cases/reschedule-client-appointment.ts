@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-import { rescheduleAppointment, cancelAppointment } from "@/api/appointments-api";
+import { rescheduleAppointment } from "@/api/appointments-api";
 import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
 
@@ -32,21 +32,4 @@ async function rescheduleClientAppointment(
   }
 }
 
-async function cancelClientAppointment(appointmentId: number): Promise<AppointmentActionResult> {
-  try {
-    await cancelAppointment(appointmentId);
-    return { success: true, error: null };
-  } catch (error) {
-    return {
-      success: false,
-      error: resolveErrorMessage(error, MESSAGES.appointments.cancelError),
-    };
-  }
-}
-
-export {
-  rescheduleClientAppointment,
-  cancelClientAppointment,
-  type RescheduleAppointmentParams,
-  type AppointmentActionResult,
-};
+export { rescheduleClientAppointment, type RescheduleAppointmentParams, type AppointmentActionResult };

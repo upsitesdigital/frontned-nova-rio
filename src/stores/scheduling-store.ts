@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
-import { fetchTimeSlots } from "@/api/scheduling-api";
 import type { RecurrenceFrequency, RecurrenceType, TimeSlot } from "@/types/scheduling";
+import { loadTimeSlots } from "@/use-cases/load-time-slots";
 
 interface SchedulingState {
   recurrenceType: RecurrenceType | null;
@@ -48,12 +48,13 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
 
   loadTimeSlots: async (date) => {
     set({ isLoadingTimeSlots: true, error: null });
-    try {
-      const timeSlots = await fetchTimeSlots(date);
-      set({ timeSlots, isLoadingTimeSlots: false });
-    } catch {
-      set({ timeSlots: [], isLoadingTimeSlots: false, error: "Erro ao carregar horários." });
-    }
+
+    const result = await loadTimeSlots(date);
+    set({
+      timeSlots: result.data ?? [],
+      isLoadingTimeSlots: false,
+      error: result.error,
+    });
   },
 
   reset: () => set(initialState),

@@ -19,6 +19,8 @@ interface DsUserFormPopupValues {
 interface DsUserFormPopupProps {
   title?: string;
   values: DsUserFormPopupValues;
+  passwordVisible: boolean;
+  onPasswordVisibilityChange: (visible: boolean) => void;
   roleOptions?: readonly DsSelectOption[];
   activeOptions?: readonly DsSelectOption[];
   onFieldChange?: (field: keyof DsUserFormPopupValues, value: string) => void;
@@ -41,6 +43,8 @@ const defaultActiveOptions: DsSelectOption[] = [
 function DsUserFormPopup({
   title = "Criar novo usuario",
   values,
+  passwordVisible,
+  onPasswordVisibilityChange,
   roleOptions = defaultRoleOptions,
   activeOptions = defaultActiveOptions,
   onFieldChange,
@@ -93,6 +97,8 @@ function DsUserFormPopup({
         <DsPasswordInput
           value={values.password}
           onChange={(e) => onFieldChange?.("password", e.target.value)}
+          visible={passwordVisible}
+          onVisibilityChange={onPasswordVisibilityChange}
           placeholder="••••••••••••"
         />
       </DsFormField>

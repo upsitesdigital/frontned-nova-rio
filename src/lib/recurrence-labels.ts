@@ -1,13 +1,6 @@
-const RECURRENCE_LABELS: Record<string, string> = {
-  SINGLE: "Avulso",
-  PACKAGE: "Pacote",
-  WEEKLY: "Semanal",
-  BIWEEKLY: "Quinzenal",
-  MONTHLY: "Mensal",
-};
+import { getRecurrenceLabel } from "@/lib/appointment-labels";
 
-function resolveRecurrenceLabel(type: string): string {
-  return RECURRENCE_LABELS[type] ?? type;
-}
+/** @deprecated Use getRecurrenceLabel from appointment-labels instead */
+const resolveRecurrenceLabel = getRecurrenceLabel;
 
-export { RECURRENCE_LABELS, resolveRecurrenceLabel };
+export { resolveRecurrenceLabel };
