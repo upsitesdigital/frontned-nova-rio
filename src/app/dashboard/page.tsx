@@ -1,9 +1,7 @@
 "use client";
 
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-
 import { DsDiscountCard, DsHighlightCard } from "@/design-system";
+import { getCurrentMonthLabel } from "@/lib/date-helpers";
 import { mapCardsToPanel, mapPaymentsToPanel } from "@/lib/dashboard-payments-mapper";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
@@ -78,7 +76,7 @@ export default function DashboardPage() {
         <DashboardPaymentsPanel
           cards={mapCardsToPanel(cards)}
           payments={mapPaymentsToPanel(recentPayments)}
-          paymentsMonthLabel={format(new Date(), "MMMM", { locale: ptBR })}
+          paymentsMonthLabel={getCurrentMonthLabel()}
         />
       </div>
       <ServiceDetailModal

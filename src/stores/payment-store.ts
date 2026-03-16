@@ -1,8 +1,10 @@
 import { create } from "zustand";
 
+import { MESSAGES } from "@/lib/messages";
 import type { PaymentMethod } from "@/types/scheduling";
 import { submitPayment } from "@/use-cases/submit-payment";
 import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
+import { useConfirmationStore } from "@/stores/confirmation-store";
 import { useRegistrationStore } from "@/stores/registration-store";
 import { useServicesStore } from "@/stores/services-store";
 import { useSchedulingStore } from "@/stores/scheduling-store";
@@ -101,19 +103,19 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
 
     const email = useRegistrationStore.getState().email;
     if (!email) {
-      set({ submitError: "E-mail não cadastrado. Volte ao passo de cadastro." });
+      set({ submitError: MESSAGES.payment.missingEmail });
       return false;
     }
 
     const selectedServiceId = useServicesStore.getState().selectedServiceId;
     if (!selectedServiceId) {
-      set({ submitError: "Nenhum serviço selecionado." });
+      set({ submitError: MESSAGES.payment.missingService });
       return false;
     }
 
     const { selectedDate, selectedTime, recurrenceType } = useSchedulingStore.getState();
     if (!selectedDate || !selectedTime) {
-      set({ submitError: "Data e horário não selecionados." });
+      set({ submitError: MESSAGES.payment.missingDateTime });
       return false;
     }
 
@@ -132,6 +134,7 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
     });
 
     if (result.success) {
+      useConfirmationStore.getState().setConfirmation(result.confirmation);
       set({ isSubmitting: false });
       return true;
     }

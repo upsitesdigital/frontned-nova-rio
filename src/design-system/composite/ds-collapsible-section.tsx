@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
@@ -9,8 +8,8 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 interface DsCollapsibleSectionProps {
   icon: DsIconComponent;
   title: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
 }
@@ -18,25 +17,13 @@ interface DsCollapsibleSectionProps {
 function DsCollapsibleSection({
   icon,
   title,
-  open: controlledOpen,
+  open,
   onOpenChange,
   children,
   className,
 }: DsCollapsibleSectionProps) {
-  const [internalOpen, setInternalOpen] = useState(true);
-  const isControlled = onOpenChange !== undefined;
-  const open = isControlled ? (controlledOpen ?? true) : internalOpen;
-
-  const handleOpenChange = (value: boolean) => {
-    if (isControlled) {
-      onOpenChange(value);
-    } else {
-      setInternalOpen(value);
-    }
-  };
-
   return (
-    <Collapsible.Root open={open} onOpenChange={handleOpenChange} asChild>
+    <Collapsible.Root open={open} onOpenChange={onOpenChange} asChild>
       <div
         className={cn("overflow-clip rounded-[10px] border border-nova-gray-100 p-4", className)}
       >
