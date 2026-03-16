@@ -44,6 +44,7 @@ export { DsPageContainer, type DsPageContainerProps } from "./layout";
 export { DsSection, type DsSectionProps } from "./layout";
 export { DsSectionHeader, type DsSectionHeaderProps } from "./layout";
 export { DsSidebarLayout, type DsSidebarLayoutProps } from "./layout";
+export { DsPageHeader, type DsPageHeaderProps } from "./layout";
 
 // Navigation
 export { DsSidebar, type DsSidebarProps } from "./navigation";
@@ -85,6 +86,7 @@ export { DsSheet, type DsSheetProps, type DsSheetSide } from "./feedback";
 export { DsNotificationBell, type DsNotificationBellProps } from "./feedback";
 export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./feedback";
 export { DsToastContainer } from "./feedback";
+export { DsLoadingState, type DsLoadingStateProps } from "./feedback";
 
 // Forms
 export { DsFormField, type DsFormFieldProps } from "./forms";
@@ -210,3 +212,6 @@ export {
 } from "./composite";
 export { DsQuickActionCard, type DsQuickActionCardProps } from "./composite";
 export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./composite";
+export { DsAppointmentRow, type DsAppointmentRowProps } from "./composite";
+export { DsAppointmentTableHeader, type DsAppointmentTableHeaderProps } from "./composite";
+export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./composite";

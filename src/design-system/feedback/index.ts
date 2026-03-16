@@ -9,3 +9,4 @@ export { DsNotificationBell, type DsNotificationBellProps } from "./ds-notificat
 export { DsAlert, type DsAlertProps, type DsAlertVariant } from "./ds-alert";
 export { DsToastItem } from "./ds-toast-item";
 export { DsToastContainer } from "./ds-toast-container";
+export { DsLoadingState, type DsLoadingStateProps } from "./ds-loading-state";

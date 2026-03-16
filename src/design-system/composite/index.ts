@@ -128,3 +128,9 @@ export {
 } from "./ds-user-form-popup";
 export { DsQuickActionCard, type DsQuickActionCardProps } from "./ds-quick-action-card";
 export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./ds-admin-dashboard-shell";
+export { DsAppointmentRow, type DsAppointmentRowProps } from "./ds-appointment-row";
+export {
+  DsAppointmentTableHeader,
+  type DsAppointmentTableHeaderProps,
+} from "./ds-appointment-table-header";
+export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./ds-appointment-calendar";
