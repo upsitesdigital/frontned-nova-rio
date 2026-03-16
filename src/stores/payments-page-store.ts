@@ -1,11 +1,7 @@
 import { create } from "zustand";
 
-import {
-  fetchClientPayments,
-  type PaymentEntry,
-  type PaymentStatus,
-} from "@/api/payments-api";
-import { MESSAGES } from "@/lib/messages";
+import type { PaymentEntry, PaymentStatus } from "@/api/payments-api";
+import { loadClientPayments } from "@/use-cases/load-client-payments";
 
 type FilterValue = "ALL" | PaymentStatus;
 
@@ -49,20 +45,21 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
     const status = filter === "ALL" ? undefined : (filter as PaymentStatus);
 
     set({ isLoading: true, error: null });
-    try {
-      const result = await fetchClientPayments(page, limit, status, controller.signal);
-      if (controller.signal.aborted) return;
-      set({ payments: result.data, total: result.total });
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "AbortError") return;
-      set({ error: MESSAGES.payments.loadError });
-    } finally {
-      if (!controller.signal.aborted) {
-        set({ isLoading: false });
-      }
-      if (currentController === controller) {
-        currentController = null;
-      }
+
+    const result = await loadClientPayments({ page, limit, status, signal: controller.signal });
+
+    if (controller.signal.aborted) return;
+
+    if (result.data) {
+      set({ payments: result.data.payments, total: result.data.total, isLoading: false });
+    } else if (result.error) {
+      set({ error: result.error, isLoading: false });
+    } else {
+      set({ isLoading: false });
+    }
+
+    if (currentController === controller) {
+      currentController = null;
     }
   },
 

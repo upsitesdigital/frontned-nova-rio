@@ -1,11 +1,8 @@
 import { create } from "zustand";
 
-import { registerClient } from "@/api/auth-api";
-import { HttpClientError } from "@/api/http-client";
-import { MESSAGES } from "@/lib/messages";
+import { registerNewAccount } from "@/use-cases/register-new-account";
 import {
   validateCreateAccount,
-  mapApiErrorToField,
   type CreateAccountFieldErrors,
 } from "@/validation/create-account-schema";
 
@@ -68,25 +65,20 @@ const useCreateAccountStore = create<CreateAccountStore>()((set) => ({
 
     set({ isSubmitting: true, errors: {} });
 
-    try {
-      await registerClient({
-        name,
-        email,
-        phone: phone || undefined,
-        password,
-      });
+    const errors = await registerNewAccount({
+      name,
+      email,
+      phone: phone || undefined,
+      password,
+    });
 
-      set({ isSubmitting: false });
-      return true;
-    } catch (error) {
-      const errors =
-        error instanceof HttpClientError
-          ? mapApiErrorToField(error.status, error.message)
-          : { email: MESSAGES.registration.genericError };
-
+    if (Object.keys(errors).length > 0) {
       set({ isSubmitting: false, errors });
       return false;
     }
+
+    set({ isSubmitting: false });
+    return true;
   },
 
   reset: () => set(initialState),

@@ -1,8 +1,7 @@
 import { create } from "zustand";
 
-import { fetchPublicServices } from "@/api/services-api";
-import { MESSAGES } from "@/lib/messages";
 import type { Service } from "@/types/service";
+import { loadPublicServices } from "@/use-cases/load-public-services";
 
 interface ServicesState {
   services: Service[];
@@ -31,11 +30,11 @@ const useServicesStore = create<ServicesStore>()((set) => ({
 
   loadServices: async () => {
     set({ isLoadingServices: true, error: null });
-    try {
-      const services = await fetchPublicServices();
-      set({ services, isLoadingServices: false });
-    } catch {
-      set({ isLoadingServices: false, error: MESSAGES.services.loadError });
+    const result = await loadPublicServices();
+    if (result.data) {
+      set({ services: result.data, isLoadingServices: false });
+    } else {
+      set({ isLoadingServices: false, error: result.error });
     }
   },
 
