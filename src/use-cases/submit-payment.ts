@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 
 import { createPublicAppointment } from "@/api/appointments-api";
+import { MESSAGES } from "@/lib/messages";
 import type { AppointmentConfirmation } from "@/types/appointment";
 import type { Address } from "@/types/scheduling";
 
@@ -48,7 +49,8 @@ async function submitPayment(params: SubmitPaymentParams): Promise<SubmitPayment
       },
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erro ao criar agendamento.";
+    const message =
+      error instanceof Error ? error.message : MESSAGES.payment.createAppointmentError;
     return { success: false, error: message };
   }
 }

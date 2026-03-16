@@ -1,4 +1,5 @@
 import { registerClient } from "@/api/auth-api";
+import { MESSAGES } from "@/lib/messages";
 import { HttpClientError } from "@/api/http-client";
 import {
   validateRegister,
@@ -35,7 +36,7 @@ async function submitRegistration(input: RegistrationInput): Promise<RegisterFie
     if (error instanceof HttpClientError) {
       return mapApiErrorToField(error.status, error.message);
     }
-    return { email: "Erro ao cadastrar. Tente novamente." };
+    return { email: MESSAGES.registration.genericError };
   }
 }
 
