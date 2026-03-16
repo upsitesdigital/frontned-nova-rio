@@ -1,43 +1,26 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { useAdminCreateAppointmentStore } from "./admin-create-appointment-store";
 
-vi.mock("@/api/admin-appointments-api", () => ({
-  fetchClientOptions: vi.fn(),
-  fetchServiceOptions: vi.fn(),
-  fetchEmployeeOptions: vi.fn(),
-  createAdminAppointment: vi.fn(),
+vi.mock("@/use-cases/create-admin-appointment", () => ({
+  submitAdminAppointment: vi.fn(),
 }));
 
-vi.mock("@/api/http-client", () => ({
-  HttpClientError: class HttpClientError extends Error {
-    constructor(
-      public readonly status: number,
-      message: string,
-    ) {
-      super(message);
-      this.name = "HttpClientError";
-    }
-  },
+vi.mock("@/use-cases/get-approved-client-options", () => ({
+  getApprovedClientOptions: vi.fn(),
 }));
 
-vi.mock("@/lib/auth-helpers", () => ({
-  resolveErrorMessage: (_error: unknown, fallback: string) => fallback,
+vi.mock("@/use-cases/get-admin-service-options", () => ({
+  getAdminServiceOptions: vi.fn(),
 }));
 
-vi.mock("@/lib/messages", () => ({
-  MESSAGES: {
-    adminAppointments: {
-      createSuccess: "Agendamento criado!",
-      createError: "Erro ao criar",
-      requiredService: "Selecione o serviço",
-      requiredClient: "Selecione o cliente",
-      requiredDate: "Selecione a data",
-      requiredTime: "Selecione o horário",
-    },
-  },
+vi.mock("@/use-cases/get-active-employee-options", () => ({
+  getActiveEmployeeOptions: vi.fn(),
 }));
 
-const api = await import("@/api/admin-appointments-api");
+const createUseCase = await import("@/use-cases/create-admin-appointment");
+const clientOptionsUseCase = await import("@/use-cases/get-approved-client-options");
+const serviceOptionsUseCase = await import("@/use-cases/get-admin-service-options");
+const employeeOptionsUseCase = await import("@/use-cases/get-active-employee-options");
 
 function resetStore() {
   useAdminCreateAppointmentStore.getState().reset();
@@ -51,11 +34,26 @@ describe("AdminCreateAppointmentStore", () => {
 
   describe("loadOptions", () => {
     it("should load all options successfully", async () => {
-      vi.mocked(api.fetchClientOptions).mockResolvedValue([{ id: 1, name: "Maria" }]);
-      vi.mocked(api.fetchServiceOptions).mockResolvedValue([
-        { id: 1, name: "Faxina", allowSingle: true, allowPackage: false, allowRecurrence: false },
-      ]);
-      vi.mocked(api.fetchEmployeeOptions).mockResolvedValue([{ id: 1, name: "Carlos" }]);
+      vi.mocked(clientOptionsUseCase.getApprovedClientOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Maria" }],
+        error: null,
+      });
+      vi.mocked(serviceOptionsUseCase.getAdminServiceOptions).mockResolvedValue({
+        data: [
+          {
+            id: 1,
+            name: "Faxina",
+            allowSingle: true,
+            allowPackage: false,
+            allowRecurrence: false,
+          },
+        ],
+        error: null,
+      });
+      vi.mocked(employeeOptionsUseCase.getActiveEmployeeOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Carlos" }],
+        error: null,
+      });
 
       await useAdminCreateAppointmentStore.getState().loadOptions();
 
@@ -67,9 +65,15 @@ describe("AdminCreateAppointmentStore", () => {
     });
 
     it("should handle partial failures gracefully", async () => {
-      vi.mocked(api.fetchClientOptions).mockRejectedValue(new Error("fail"));
-      vi.mocked(api.fetchServiceOptions).mockResolvedValue([]);
-      vi.mocked(api.fetchEmployeeOptions).mockResolvedValue([{ id: 1, name: "Carlos" }]);
+      vi.mocked(clientOptionsUseCase.getApprovedClientOptions).mockRejectedValue(new Error("fail"));
+      vi.mocked(serviceOptionsUseCase.getAdminServiceOptions).mockResolvedValue({
+        data: [],
+        error: null,
+      });
+      vi.mocked(employeeOptionsUseCase.getActiveEmployeeOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Carlos" }],
+        error: null,
+      });
 
       await useAdminCreateAppointmentStore.getState().loadOptions();
 
@@ -80,46 +84,36 @@ describe("AdminCreateAppointmentStore", () => {
   });
 
   describe("submitAppointment", () => {
-    it("should validate required service", async () => {
+    it("should return false on validation error", async () => {
+      vi.mocked(createUseCase.submitAdminAppointment).mockResolvedValue({
+        type: "validation_error",
+        message: "Selecione o serviço",
+      });
+
       const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
 
       expect(result).toBe(false);
       expect(useAdminCreateAppointmentStore.getState().error).toBe("Selecione o serviço");
     });
 
-    it("should validate required client", async () => {
-      useAdminCreateAppointmentStore.setState({ serviceId: "1" });
+    it("should return true on success", async () => {
+      vi.mocked(createUseCase.submitAdminAppointment).mockResolvedValue({ type: "success" });
 
-      const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
-
-      expect(result).toBe(false);
-      expect(useAdminCreateAppointmentStore.getState().error).toBe("Selecione o cliente");
-    });
-
-    it("should validate required date", async () => {
-      useAdminCreateAppointmentStore.setState({ serviceId: "1", clientId: "1" });
-
-      const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
-
-      expect(result).toBe(false);
-      expect(useAdminCreateAppointmentStore.getState().error).toBe("Selecione a data");
-    });
-
-    it("should validate required time", async () => {
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",
-        clientId: "1",
+        clientId: "2",
         selectedDate: new Date(2026, 2, 15),
+        selectedTime: "10:00",
       });
 
       const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
 
-      expect(result).toBe(false);
-      expect(useAdminCreateAppointmentStore.getState().error).toBe("Selecione o horário");
+      expect(result).toBe(true);
+      expect(useAdminCreateAppointmentStore.getState().success).toBe(true);
     });
 
-    it("should submit successfully with valid data", async () => {
-      vi.mocked(api.createAdminAppointment).mockResolvedValue({} as never);
+    it("should pass form state to use case", async () => {
+      vi.mocked(createUseCase.submitAdminAppointment).mockResolvedValue({ type: "success" });
 
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",
@@ -133,25 +127,26 @@ describe("AdminCreateAppointmentStore", () => {
         notes: "Test notes",
       });
 
-      const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
+      await useAdminCreateAppointmentStore.getState().submitAppointment();
 
-      expect(result).toBe(true);
-      expect(api.createAdminAppointment).toHaveBeenCalledWith({
-        date: "2026-03-15",
-        startTime: "10:00",
-        duration: 60,
+      expect(createUseCase.submitAdminAppointment).toHaveBeenCalledWith({
+        serviceId: "1",
+        clientId: "2",
+        employeeId: "3",
+        duration: "60",
         recurrenceType: "SINGLE",
-        clientId: 2,
-        serviceId: 1,
-        employeeId: 3,
+        selectedDate: expect.any(Date),
+        selectedTime: "10:00",
         locationZip: "20040-020",
         notes: "Test notes",
       });
-      expect(useAdminCreateAppointmentStore.getState().success).toBe(true);
     });
 
-    it("should omit optional fields when empty", async () => {
-      vi.mocked(api.createAdminAppointment).mockResolvedValue({} as never);
+    it("should handle employee conflict", async () => {
+      vi.mocked(createUseCase.submitAdminAppointment).mockResolvedValue({
+        type: "employee_conflict",
+        message: "Employee has a conflict",
+      });
 
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",
@@ -160,16 +155,20 @@ describe("AdminCreateAppointmentStore", () => {
         selectedTime: "10:00",
       });
 
-      await useAdminCreateAppointmentStore.getState().submitAppointment();
+      const result = await useAdminCreateAppointmentStore.getState().submitAppointment();
 
-      const payload = vi.mocked(api.createAdminAppointment).mock.calls[0][0];
-      expect(payload.employeeId).toBeUndefined();
-      expect(payload.locationZip).toBeUndefined();
-      expect(payload.notes).toBeUndefined();
+      expect(result).toBe(false);
+      expect(useAdminCreateAppointmentStore.getState().employeeConflict).toBe(
+        "Employee has a conflict",
+      );
+      expect(useAdminCreateAppointmentStore.getState().error).toBeNull();
     });
 
-    it("should set error on API failure", async () => {
-      vi.mocked(api.createAdminAppointment).mockRejectedValue(new Error("Network error"));
+    it("should set error on generic failure", async () => {
+      vi.mocked(createUseCase.submitAdminAppointment).mockResolvedValue({
+        type: "error",
+        message: "Erro ao criar",
+      });
 
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",

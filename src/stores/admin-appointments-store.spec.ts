@@ -21,50 +21,26 @@ const mockAppointment = {
   unit: null,
 };
 
-const mockResponse = {
-  data: [mockAppointment],
-  total: 1,
-  page: 1,
-  limit: 10,
-};
+vi.mock("@/use-cases/load-admin-appointments", () => ({
+  loadAdminAppointments: vi.fn(),
+}));
 
-vi.mock("@/api/admin-appointments-api", () => ({
-  fetchAdminAppointments: vi.fn(),
-  fetchEmployeeOptions: vi.fn(),
-  fetchUnitOptions: vi.fn(),
+vi.mock("@/use-cases/get-active-employee-options", () => ({
+  getActiveEmployeeOptions: vi.fn(),
+}));
+
+vi.mock("@/use-cases/get-active-unit-options", () => ({
+  getActiveUnitOptions: vi.fn(),
 }));
 
 vi.mock("@/use-cases/get-active-service-options", () => ({
   getActiveServiceOptions: vi.fn(),
 }));
 
-vi.mock("@/api/http-client", () => ({
-  HttpClientError: class HttpClientError extends Error {
-    constructor(
-      public readonly status: number,
-      message: string,
-    ) {
-      super(message);
-      this.name = "HttpClientError";
-    }
-  },
-}));
-
-vi.mock("@/lib/auth-helpers", () => ({
-  isAuthError: (error: unknown) =>
-    error instanceof Error &&
-    "status" in error &&
-    ((error as { status: number }).status === 401 || (error as { status: number }).status === 403),
-  resolveErrorMessage: (_error: unknown, fallback: string) => fallback,
-}));
-
-vi.mock("@/lib/messages", () => ({
-  MESSAGES: { adminAppointments: { loadError: "Failed to load appointments" } },
-}));
-
-const appointmentsApi = await import("@/api/admin-appointments-api");
+const loadAppointmentsUseCase = await import("@/use-cases/load-admin-appointments");
+const employeeOptionsUseCase = await import("@/use-cases/get-active-employee-options");
+const unitOptionsUseCase = await import("@/use-cases/get-active-unit-options");
 const serviceOptionsUseCase = await import("@/use-cases/get-active-service-options");
-const { HttpClientError } = await import("@/api/http-client");
 
 function resetStore() {
   useAdminAppointmentsStore.getState().reset();
@@ -78,7 +54,11 @@ describe("AdminAppointmentsStore", () => {
 
   describe("loadAppointments", () => {
     it("should load appointments successfully", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue(mockResponse);
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [mockAppointment], total: 1, page: 1 },
+        error: null,
+        isAuthError: false,
+      });
 
       await useAdminAppointmentsStore.getState().loadAppointments();
 
@@ -89,124 +69,98 @@ describe("AdminAppointmentsStore", () => {
       expect(state.error).toBeNull();
     });
 
-    it("should pass date param when viewMode is today", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should pass correct input to use case with today viewMode", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.date).toBeDefined();
-      expect(params.weekStart).toBeUndefined();
+      const input = vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mock.calls[0][0];
+      expect(input.viewMode).toBe("today");
+      expect(input.page).toBe(1);
+      expect(input.pageSize).toBe(10);
     });
 
-    it("should pass weekStart and weekEnd when viewMode is week", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should pass week viewMode to use case", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ viewMode: "week" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.weekStart).toBeDefined();
-      expect(params.weekEnd).toBeDefined();
-      expect(params.date).toBeUndefined();
+      const input = vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mock.calls[0][0];
+      expect(input.viewMode).toBe("week");
     });
 
-    it("should pass employeeId when viewMode is employee and filter is set", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should pass employee filter to use case", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ viewMode: "employee", employeeFilter: "5" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.employeeId).toBe(5);
+      const input = vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mock.calls[0][0];
+      expect(input.employeeFilter).toBe("5");
     });
 
-    it("should pass unitId when viewMode is unit and filter is set", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should pass unit filter to use case", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ viewMode: "unit", unitFilter: "3" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.unitId).toBe(3);
+      const input = vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mock.calls[0][0];
+      expect(input.unitFilter).toBe("3");
     });
 
-    it("should pass status filter when not 'all'", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should pass status filter to use case", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ statusFilter: "SCHEDULED" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.status).toBe("SCHEDULED");
+      const input = vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mock.calls[0][0];
+      expect(input.statusFilter).toBe("SCHEDULED");
     });
 
-    it("should not pass status when filter is 'all'", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+    it("should set isAuthError when use case returns auth error", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: null,
+        error: "Unauthorized",
+        isAuthError: true,
       });
-
-      await useAdminAppointmentsStore.getState().loadAppointments();
-
-      const params = vi.mocked(appointmentsApi.fetchAdminAppointments).mock.calls[0][0];
-      expect(params.status).toBeUndefined();
-    });
-
-    it("should set isAuthError on 401", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockRejectedValue(
-        new HttpClientError(401, "Unauthorized"),
-      );
 
       await useAdminAppointmentsStore.getState().loadAppointments();
 
       const state = useAdminAppointmentsStore.getState();
       expect(state.isAuthError).toBe(true);
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe("Failed to load appointments");
+      expect(state.error).toBe("Unauthorized");
     });
 
-    it("should set isAuthError on 403", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockRejectedValue(
-        new HttpClientError(403, "Forbidden"),
-      );
-
-      await useAdminAppointmentsStore.getState().loadAppointments();
-
-      expect(useAdminAppointmentsStore.getState().isAuthError).toBe(true);
-    });
-
-    it("should set error but not isAuthError on 500", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockRejectedValue(
-        new HttpClientError(500, "Server error"),
-      );
+    it("should set error but not isAuthError on generic error", async () => {
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: null,
+        error: "Failed to load appointments",
+        isAuthError: false,
+      });
 
       await useAdminAppointmentsStore.getState().loadAppointments();
 
@@ -218,13 +172,18 @@ describe("AdminAppointmentsStore", () => {
 
   describe("loadFilterOptions", () => {
     it("should load all filter options", async () => {
-      vi.mocked(appointmentsApi.fetchEmployeeOptions).mockResolvedValue([
-        { id: 1, name: "Carlos" },
-      ]);
-      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([{ id: 1, name: "Centro" }]);
-      vi.mocked(serviceOptionsUseCase.getActiveServiceOptions).mockResolvedValue([
-        { id: 1, name: "Limpeza" },
-      ]);
+      vi.mocked(employeeOptionsUseCase.getActiveEmployeeOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Carlos" }],
+        error: null,
+      });
+      vi.mocked(unitOptionsUseCase.getActiveUnitOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Centro" }],
+        error: null,
+      });
+      vi.mocked(serviceOptionsUseCase.getActiveServiceOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Limpeza" }],
+        error: null,
+      });
 
       await useAdminAppointmentsStore.getState().loadFilterOptions();
 
@@ -236,8 +195,13 @@ describe("AdminAppointmentsStore", () => {
     });
 
     it("should handle partial failures gracefully", async () => {
-      vi.mocked(appointmentsApi.fetchEmployeeOptions).mockRejectedValue(new Error("fail"));
-      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([{ id: 1, name: "Centro" }]);
+      vi.mocked(employeeOptionsUseCase.getActiveEmployeeOptions).mockRejectedValue(
+        new Error("fail"),
+      );
+      vi.mocked(unitOptionsUseCase.getActiveUnitOptions).mockResolvedValue({
+        data: [{ id: 1, name: "Centro" }],
+        error: null,
+      });
       vi.mocked(serviceOptionsUseCase.getActiveServiceOptions).mockRejectedValue(new Error("fail"));
 
       await useAdminAppointmentsStore.getState().loadFilterOptions();
@@ -251,11 +215,10 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setViewMode", () => {
     it("should reset page and filters when changing view mode", () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ page: 3, employeeFilter: "5", unitFilter: "2" });
@@ -271,11 +234,10 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setStatusFilter", () => {
     it("should update status filter and reset page", () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 1 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.setState({ page: 5 });
@@ -289,22 +251,25 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setPage", () => {
     it("should update page and reload", () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue({
-        data: [],
-        total: 0,
-        page: 2,
-        limit: 10,
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [], total: 0, page: 2 },
+        error: null,
+        isAuthError: false,
       });
 
       useAdminAppointmentsStore.getState().setPage(2);
 
-      expect(appointmentsApi.fetchAdminAppointments).toHaveBeenCalled();
+      expect(loadAppointmentsUseCase.loadAdminAppointments).toHaveBeenCalled();
     });
   });
 
   describe("reset", () => {
     it("should restore initial state", async () => {
-      vi.mocked(appointmentsApi.fetchAdminAppointments).mockResolvedValue(mockResponse);
+      vi.mocked(loadAppointmentsUseCase.loadAdminAppointments).mockResolvedValue({
+        data: { appointments: [mockAppointment], total: 1, page: 1 },
+        error: null,
+        isAuthError: false,
+      });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
       useAdminAppointmentsStore.getState().reset();
