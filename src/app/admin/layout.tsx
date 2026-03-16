@@ -8,7 +8,7 @@ import { useAuthStore, waitForAuthHydration } from "@/stores/auth-store";
 import { useAdminProfileStore } from "@/stores/admin-profile-store";
 import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { signOutAdmin } from "@/lib/sign-out-admin";
+import { signOutAdmin } from "@/use-cases/sign-out-admin";
 
 // Direct file import required for next/dynamic code-splitting
 const DsAdminDashboardShell = dynamic(
