@@ -1,11 +1,14 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { configureAuthProvider } from "@/api/http-client";
 
 interface AuthState {
   accessToken: string | null;
+  refreshToken: string | null;
 }
 
 interface AuthActions {
+  setTokens: (accessToken: string, refreshToken: string) => void;
   setAccessToken: (token: string) => void;
   reset: () => void;
 }
@@ -14,23 +17,45 @@ type AuthStore = AuthState & AuthActions;
 
 const initialState: AuthState = {
   accessToken: null,
+  refreshToken: null,
 };
 
-const useAuthStore = create<AuthStore>()((set) => ({
-  ...initialState,
+const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  setAccessToken: (token) => set({ accessToken: token }),
+      setTokens: (accessToken, refreshToken) => set({ accessToken, refreshToken }),
 
-  reset: () => set(initialState),
-}));
+      setAccessToken: (token) => set({ accessToken: token }),
+
+      reset: () => set(initialState),
+    }),
+    {
+      name: "nova-rio-auth",
+      partialize: (state) => ({ accessToken: state.accessToken, refreshToken: state.refreshToken }),
+    },
+  ),
+);
 
 function waitForAuthHydration(): Promise<void> {
-  return Promise.resolve();
+  return new Promise((resolve) => {
+    if (useAuthStore.persist.hasHydrated()) {
+      resolve();
+      return;
+    }
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      unsub();
+      resolve();
+    });
+  });
 }
 
 configureAuthProvider({
   getAccessToken: () => useAuthStore.getState().accessToken,
-  setAccessToken: (token) => useAuthStore.getState().setAccessToken(token),
+  getRefreshToken: () => useAuthStore.getState().refreshToken,
+  setTokens: (accessToken, refreshToken) =>
+    useAuthStore.getState().setTokens(accessToken, refreshToken),
   reset: () => useAuthStore.getState().reset(),
 });
 
