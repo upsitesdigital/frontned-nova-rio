@@ -32,7 +32,6 @@ function syncAuthCookie(state: AuthState): void {
   if (state.accessToken) {
     const cookieValue = JSON.stringify({
       state: {
-        accessToken: state.accessToken,
         userType: state.userType,
       },
     });

@@ -5,26 +5,16 @@ import { appConfig } from "@/config/app";
 
 const AUTH_COOKIE = appConfig.authCookieName;
 
-function buildAdminJwt(): string {
-  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = btoa(JSON.stringify({ sub: 1, email: "admin@test.com", type: "admin" }));
-  const signature = "fakesig";
-  return `${header}.${payload}.${signature}`;
-}
-
-function buildClientJwt(): string {
-  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = btoa(JSON.stringify({ sub: 2, email: "client@test.com", type: "client" }));
-  const signature = "fakesig";
-  return `${header}.${payload}.${signature}`;
-}
-
-function createRequest(path: string, options?: { authorization?: string; cookie?: string }): NextRequest {
+function createRequest(path: string, options?: { cookie?: string }): NextRequest {
   const url = `http://localhost:3000${path}`;
   const headers = new Headers();
-  if (options?.authorization) headers.set("authorization", options.authorization);
   if (options?.cookie) headers.set("cookie", options.cookie);
   return new NextRequest(url, { headers });
+}
+
+function buildCookie(userType: string): string {
+  const cookieValue = JSON.stringify({ state: { userType } });
+  return `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}`;
 }
 
 describe("middleware", () => {
@@ -46,7 +36,7 @@ describe("middleware", () => {
   });
 
   describe("admin routes without auth", () => {
-    it("should redirect to /login when no token", () => {
+    it("should redirect to /login when no cookie", () => {
       const response = middleware(createRequest("/admin"));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
@@ -59,50 +49,25 @@ describe("middleware", () => {
     });
   });
 
-  describe("admin routes with admin JWT", () => {
-    it("should pass through when Authorization header has admin JWT", () => {
-      const response = middleware(
-        createRequest("/admin", { authorization: `Bearer ${buildAdminJwt()}` }),
-      );
+  describe("admin routes with admin cookie", () => {
+    it("should pass through with admin userType in cookie", () => {
+      const response = middleware(createRequest("/admin", { cookie: buildCookie("admin") }));
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
   });
 
-  describe("admin routes with client JWT", () => {
+  describe("admin routes with client cookie", () => {
     it("should redirect to /dashboard when client tries to access admin", () => {
-      const response = middleware(
-        createRequest("/admin", { authorization: `Bearer ${buildClientJwt()}` }),
-      );
+      const response = middleware(createRequest("/admin", { cookie: buildCookie("client") }));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
     });
   });
 
-  describe("admin routes with cookie auth", () => {
-    it("should pass through with admin token in cookie", () => {
-      const token = buildAdminJwt();
-      const cookieValue = JSON.stringify({ state: { userType: "admin", accessToken: token } });
+  describe("malformed cookie", () => {
+    it("should redirect to /login with invalid cookie JSON", () => {
       const response = middleware(
-        createRequest("/admin", { cookie: `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}` }),
-      );
-      expect(response.headers.get("x-middleware-next")).toBe("1");
-    });
-
-    it("should redirect client token in cookie to /dashboard", () => {
-      const token = buildClientJwt();
-      const cookieValue = JSON.stringify({ state: { userType: "client", accessToken: token } });
-      const response = middleware(
-        createRequest("/admin", { cookie: `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}` }),
-      );
-      expect(response.status).toBe(307);
-      expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
-    });
-  });
-
-  describe("malformed tokens", () => {
-    it("should redirect to /login with malformed JWT (cannot determine type)", () => {
-      const response = middleware(
-        createRequest("/admin", { authorization: "Bearer not-a-jwt" }),
+        createRequest("/admin", { cookie: `${AUTH_COOKIE}=not-valid-json` }),
       );
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
