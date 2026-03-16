@@ -54,6 +54,8 @@ describe("PaymentsPageStore", () => {
       vi.mocked(fetchClientPayments).mockResolvedValue({
         data: mockPayments as never,
         total: 2,
+        page: 1,
+        limit: 20,
       });
 
       await usePaymentsPageStore.getState().loadPayments();
@@ -69,6 +71,8 @@ describe("PaymentsPageStore", () => {
       vi.mocked(fetchClientPayments).mockResolvedValue({
         data: [],
         total: 0,
+        page: 1,
+        limit: 20,
       });
       usePaymentsPageStore.setState({ filter: "PAID" as never });
 
@@ -81,6 +85,8 @@ describe("PaymentsPageStore", () => {
       vi.mocked(fetchClientPayments).mockResolvedValue({
         data: [],
         total: 0,
+        page: 1,
+        limit: 20,
       });
 
       await usePaymentsPageStore.getState().loadPayments();
@@ -110,7 +116,7 @@ describe("PaymentsPageStore", () => {
 
   describe("setFilter", () => {
     it("should update filter, reset page to 1, and trigger load", async () => {
-      vi.mocked(fetchClientPayments).mockResolvedValue({ data: [], total: 0 });
+      vi.mocked(fetchClientPayments).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
       usePaymentsPageStore.setState({ page: 3 });
 
       usePaymentsPageStore.getState().setFilter("PAID" as never);
@@ -124,7 +130,7 @@ describe("PaymentsPageStore", () => {
 
   describe("setPage", () => {
     it("should update page and trigger load", async () => {
-      vi.mocked(fetchClientPayments).mockResolvedValue({ data: [], total: 0 });
+      vi.mocked(fetchClientPayments).mockResolvedValue({ data: [], total: 0, page: 5, limit: 20 });
 
       usePaymentsPageStore.getState().setPage(5);
 
