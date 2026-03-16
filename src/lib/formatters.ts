@@ -43,6 +43,14 @@ function formatCurrency(value: number): string {
   return `R$${value.toFixed(2).replace(".", ",")}`;
 }
 
+function stripDdi(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length > 11 && digits.startsWith("55")) {
+    return digits.slice(2);
+  }
+  return digits;
+}
+
 export {
   formatPrice,
   formatCep,
@@ -51,4 +59,5 @@ export {
   formatExpiry,
   formatCpfCnpj,
   formatCurrency,
+  stripDdi,
 };
