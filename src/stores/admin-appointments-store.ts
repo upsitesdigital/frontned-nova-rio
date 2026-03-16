@@ -9,10 +9,12 @@ import {
   type EmployeeOption,
   type UnitOption,
 } from "@/api/admin-appointments-api";
-import { fetchServices, type ServiceOption } from "@/api/admin-dashboard-api";
-import { HttpClientError } from "@/api/http-client";
-import { resolveErrorMessage } from "@/lib/auth-helpers";
+import { isAuthError as checkAuthError, resolveErrorMessage } from "@/lib/auth-helpers";
 import { MESSAGES } from "@/lib/messages";
+import {
+  getActiveServiceOptions,
+  type ActiveServiceOption,
+} from "@/use-cases/get-active-service-options";
 
 type ViewMode = "today" | "week" | "employee" | "unit";
 
@@ -26,7 +28,7 @@ interface AdminAppointmentsState {
   unitFilter: string;
   employeeOptions: EmployeeOption[];
   unitOptions: UnitOption[];
-  serviceOptions: ServiceOption[];
+  serviceOptions: ActiveServiceOption[];
   isLoading: boolean;
   isOptionsLoading: boolean;
   error: string | null;
@@ -135,12 +137,10 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
       });
     } catch (error) {
       if (signal.aborted) return;
-      const isAuth =
-        error instanceof HttpClientError && (error.status === 401 || error.status === 403);
       set({
         isLoading: false,
         error: resolveErrorMessage(error, MESSAGES.adminAppointments.loadError),
-        isAuthError: isAuth,
+        isAuthError: checkAuthError(error),
       });
     }
   },
@@ -151,7 +151,7 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
       const [employees, units, services] = await Promise.allSettled([
         fetchEmployeeOptions(),
         fetchUnitOptions(),
-        fetchServices(),
+        getActiveServiceOptions(),
       ]);
       set({
         employeeOptions: employees.status === "fulfilled" ? employees.value : [],

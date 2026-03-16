@@ -34,8 +34,8 @@ vi.mock("@/api/admin-appointments-api", () => ({
   fetchUnitOptions: vi.fn(),
 }));
 
-vi.mock("@/api/admin-dashboard-api", () => ({
-  fetchServices: vi.fn(),
+vi.mock("@/use-cases/get-active-service-options", () => ({
+  getActiveServiceOptions: vi.fn(),
 }));
 
 vi.mock("@/api/http-client", () => ({
@@ -51,6 +51,10 @@ vi.mock("@/api/http-client", () => ({
 }));
 
 vi.mock("@/lib/auth-helpers", () => ({
+  isAuthError: (error: unknown) =>
+    error instanceof Error &&
+    "status" in error &&
+    ((error as { status: number }).status === 401 || (error as { status: number }).status === 403),
   resolveErrorMessage: (_error: unknown, fallback: string) => fallback,
 }));
 
@@ -59,7 +63,7 @@ vi.mock("@/lib/messages", () => ({
 }));
 
 const appointmentsApi = await import("@/api/admin-appointments-api");
-const dashboardApi = await import("@/api/admin-dashboard-api");
+const serviceOptionsUseCase = await import("@/use-cases/get-active-service-options");
 const { HttpClientError } = await import("@/api/http-client");
 
 function resetStore() {
@@ -217,10 +221,8 @@ describe("AdminAppointmentsStore", () => {
       vi.mocked(appointmentsApi.fetchEmployeeOptions).mockResolvedValue([
         { id: 1, name: "Carlos" },
       ]);
-      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([
-        { id: 1, name: "Centro" },
-      ]);
-      vi.mocked(dashboardApi.fetchServices).mockResolvedValue([
+      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([{ id: 1, name: "Centro" }]);
+      vi.mocked(serviceOptionsUseCase.getActiveServiceOptions).mockResolvedValue([
         { id: 1, name: "Limpeza" },
       ]);
 
@@ -235,10 +237,8 @@ describe("AdminAppointmentsStore", () => {
 
     it("should handle partial failures gracefully", async () => {
       vi.mocked(appointmentsApi.fetchEmployeeOptions).mockRejectedValue(new Error("fail"));
-      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([
-        { id: 1, name: "Centro" },
-      ]);
-      vi.mocked(dashboardApi.fetchServices).mockRejectedValue(new Error("fail"));
+      vi.mocked(appointmentsApi.fetchUnitOptions).mockResolvedValue([{ id: 1, name: "Centro" }]);
+      vi.mocked(serviceOptionsUseCase.getActiveServiceOptions).mockRejectedValue(new Error("fail"));
 
       await useAdminAppointmentsStore.getState().loadFilterOptions();
 
