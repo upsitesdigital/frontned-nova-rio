@@ -23,20 +23,50 @@ const initialState: AuthState = {
   userType: null,
 };
 
+const AUTH_COOKIE_NAME = "nova-rio-auth";
+
+function syncAuthCookie(state: AuthState): void {
+  if (typeof document === "undefined") return;
+
+  if (state.accessToken) {
+    const cookieValue = JSON.stringify({
+      state: {
+        accessToken: state.accessToken,
+        userType: state.userType,
+      },
+    });
+    document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(cookieValue)};path=/;SameSite=Lax`;
+  } else {
+    document.cookie = `${AUTH_COOKIE_NAME}=;path=/;max-age=0`;
+  }
+}
+
 const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       ...initialState,
 
-      setTokens: (accessToken, refreshToken, userType) =>
-        set({ accessToken, refreshToken, userType }),
+      setTokens: (accessToken, refreshToken, userType) => {
+        const next = { accessToken, refreshToken, userType };
+        syncAuthCookie(next);
+        set(next);
+      },
 
-      setAccessToken: (token) => set({ accessToken: token }),
+      setAccessToken: (token) => {
+        set((prev) => {
+          const next = { ...prev, accessToken: token };
+          syncAuthCookie(next);
+          return { accessToken: token };
+        });
+      },
 
-      reset: () => set(initialState),
+      reset: () => {
+        syncAuthCookie(initialState);
+        set(initialState);
+      },
     }),
     {
-      name: "nova-rio-auth",
+      name: AUTH_COOKIE_NAME,
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
