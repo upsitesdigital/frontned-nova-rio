@@ -103,39 +103,22 @@ describe("admin-dashboard-api", () => {
 
       await fetchTodayAgenda(1, 6, undefined, controller.signal);
 
-      expect(httpAuthGet).toHaveBeenCalledWith(
-        expect.any(String),
-        controller.signal,
-      );
+      expect(httpAuthGet).toHaveBeenCalledWith(expect.any(String), controller.signal);
     });
   });
 
   describe("fetchServices", () => {
-    it("should filter only active services and map to ServiceOption", async () => {
-      vi.mocked(httpAuthGet).mockResolvedValue({
-        data: [
-          { id: 1, name: "Limpeza", isActive: true },
-          { id: 2, name: "Inativo", isActive: false },
-          { id: 3, name: "Jardinagem", isActive: true },
-        ],
-      });
+    it("should return raw service data without filtering", async () => {
+      const rawData = [
+        { id: 1, name: "Limpeza", isActive: true },
+        { id: 2, name: "Inativo", isActive: false },
+        { id: 3, name: "Jardinagem", isActive: true },
+      ];
+      vi.mocked(httpAuthGet).mockResolvedValue({ data: rawData });
 
       const result = await fetchServices();
 
-      expect(result).toEqual([
-        { id: 1, name: "Limpeza" },
-        { id: 3, name: "Jardinagem" },
-      ]);
-    });
-
-    it("should return empty array when no active services", async () => {
-      vi.mocked(httpAuthGet).mockResolvedValue({
-        data: [{ id: 1, name: "Inativo", isActive: false }],
-      });
-
-      const result = await fetchServices();
-
-      expect(result).toEqual([]);
+      expect(result).toEqual(rawData);
     });
 
     it("should call /services endpoint", async () => {

@@ -60,16 +60,15 @@ async function fetchTodayAgenda(
   );
 }
 
-interface ServiceOption {
+interface RawServiceItem {
   id: number;
   name: string;
+  isActive: boolean;
 }
 
-async function fetchServices(): Promise<ServiceOption[]> {
-  const response = await httpAuthGet<{ data: { id: number; name: string; isActive: boolean }[] }>(
-    "/services",
-  );
-  return response.data.filter((s) => s.isActive).map((s) => ({ id: s.id, name: s.name }));
+async function fetchServices(): Promise<RawServiceItem[]> {
+  const response = await httpAuthGet<{ data: RawServiceItem[] }>("/services");
+  return response.data;
 }
 
 export {
@@ -82,5 +81,5 @@ export {
   type AdminProfile,
   type AgendaItem,
   type TodayAgendaResponse,
-  type ServiceOption,
+  type RawServiceItem,
 };
