@@ -32,10 +32,6 @@ export default function AdminEmployeeEditPage() {
     }
   }, [isAuthError, router]);
 
-  const handleSave = async () => {
-    await saveEmployee();
-  };
-
   if (isLoading) {
     return (
       <div className="flex flex-col gap-6">
@@ -64,7 +60,7 @@ export default function AdminEmployeeEditPage() {
         subtitle="Atualizar informações do funcionário cadastrado."
         onBack={() => router.push("/admin/funcionarios")}
         action={
-          <DsButton variant="default" size="flow" disabled={isSaving} onClick={handleSave}>
+          <DsButton variant="default" size="flow" disabled={isSaving} onClick={saveEmployee}>
             <DsIcon icon={FloppyDiskIcon} size="lg" className="text-white" />
             Salvar
           </DsButton>
