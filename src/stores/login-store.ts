@@ -52,7 +52,7 @@ const useLoginStore = create<LoginStore>()((set) => ({
 
     try {
       const tokens = await loginClient({ email, password });
-      useAuthStore.getState().setAccessToken(tokens.accessToken);
+      useAuthStore.getState().setTokens(tokens.accessToken, tokens.refreshToken);
       set({ isSubmitting: false });
       return true;
     } catch (error) {
