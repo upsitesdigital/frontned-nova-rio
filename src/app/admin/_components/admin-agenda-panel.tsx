@@ -1,13 +1,13 @@
 "use client";
 
-import { format, parseISO, isValid } from "date-fns";
 import {
   DsFilterDropdown,
   DsServiceHistoryItem,
   DsEmptyState,
   DsPagination,
 } from "@/design-system";
-import { useAdminDashboardStore, AGENDA_PAGE_SIZE } from "@/stores/admin-dashboard-store";
+import { formatShortDate } from "@/lib/date-helpers";
+import { useAdminAgendaStore, AGENDA_PAGE_SIZE } from "@/stores/admin-agenda-store";
 
 function AdminAgendaPanel() {
   const {
@@ -19,7 +19,7 @@ function AdminAgendaPanel() {
     serviceOptions,
     setAgendaPage,
     setAgendaServiceFilter,
-  } = useAdminDashboardStore();
+  } = useAdminAgendaStore();
 
   const totalPages = Math.max(1, Math.ceil(agendaTotal / AGENDA_PAGE_SIZE));
 
@@ -50,17 +50,14 @@ function AdminAgendaPanel() {
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
           <div className="flex flex-col">
-            {agendaItems.map((entry) => {
-              const parsed = parseISO(entry.date);
-              return (
-                <DsServiceHistoryItem
-                  key={entry.appointmentId}
-                  date={isValid(parsed) ? format(parsed, "dd/MM") : "--/--"}
-                  clientName={entry.clientName}
-                  label={entry.serviceName}
-                />
-              );
-            })}
+            {agendaItems.map((entry) => (
+              <DsServiceHistoryItem
+                key={entry.appointmentId}
+                date={formatShortDate(entry.date)}
+                clientName={entry.clientName}
+                label={entry.serviceName}
+              />
+            ))}
           </div>
           <DsPagination
             currentPage={agendaPage}
