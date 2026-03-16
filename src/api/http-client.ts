@@ -12,8 +12,7 @@ class HttpClientError extends Error {
 
 interface AuthProvider {
   getAccessToken: () => string | null;
-  getRefreshToken: () => string | null;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setAccessToken: (token: string) => void;
   reset: () => void;
 }
 
@@ -41,6 +40,7 @@ async function httpGet<T>(path: string): Promise<T> {
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -57,6 +57,7 @@ async function httpPost<T>(path: string, body: unknown): Promise<T> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -73,18 +74,12 @@ let refreshPromise: Promise<string | null> | null = null;
 
 async function tryRefreshToken(): Promise<string | null> {
   const auth = getAuthProvider();
-  const refreshToken = auth.getRefreshToken();
-
-  if (!refreshToken) {
-    auth.reset();
-    return null;
-  }
 
   try {
     const response = await fetch(`${appConfig.apiBaseUrl}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -92,9 +87,9 @@ async function tryRefreshToken(): Promise<string | null> {
       return null;
     }
 
-    const tokens = (await response.json()) as { accessToken: string; refreshToken: string };
-    auth.setTokens(tokens.accessToken, tokens.refreshToken);
-    return tokens.accessToken;
+    const data = (await response.json()) as { accessToken: string };
+    auth.setAccessToken(data.accessToken);
+    return data.accessToken;
   } catch {
     auth.reset();
     return null;
@@ -135,6 +130,7 @@ async function httpAuthRequest<T>(
     const init: RequestInit = {
       method,
       headers: buildHeaders(token),
+      credentials: "include",
       signal,
     };
     if (body !== undefined) {
@@ -212,6 +208,7 @@ async function httpAuthGetBlob(path: string): Promise<Blob> {
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     method: "GET",
     headers: buildHeaders(latestToken),
+    credentials: "include",
   });
 
   if (response.status === 401) {
@@ -224,6 +221,7 @@ async function httpAuthGetBlob(path: string): Promise<Blob> {
     const retryResponse = await fetch(`${appConfig.apiBaseUrl}${path}`, {
       method: "GET",
       headers: buildHeaders(newToken),
+      credentials: "include",
     });
 
     if (!retryResponse.ok) {
