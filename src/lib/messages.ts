@@ -99,6 +99,12 @@ const MESSAGES = {
     requiredTime: "Selecione o horário.",
   },
 
+  adminClients: {
+    loadError: "Erro ao carregar clientes.",
+    approveError: "Erro ao aprovar cliente. Tente novamente.",
+    rejectError: "Erro ao reprovar cliente. Tente novamente.",
+  },
+
   adminEmployees: {
     loadError: "Erro ao carregar funcionários.",
     loadDetailError: "Erro ao carregar funcionário.",

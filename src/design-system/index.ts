@@ -221,3 +221,10 @@ export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./compos
 export { DsAppointmentRow, type DsAppointmentRowProps } from "./composite";
 export { DsAppointmentTableHeader, type DsAppointmentTableHeaderProps } from "./composite";
 export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./composite";
+export {
+  DsClientTable,
+  type DsClientTableProps,
+  type DsClientTableClient,
+  type DsClientTableFilter,
+  type DsClientTableStatus,
+} from "./composite";

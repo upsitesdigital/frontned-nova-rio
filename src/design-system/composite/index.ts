@@ -134,3 +134,10 @@ export {
   type DsAppointmentTableHeaderProps,
 } from "./ds-appointment-table-header";
 export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./ds-appointment-calendar";
+export {
+  DsClientTable,
+  type DsClientTableProps,
+  type DsClientTableClient,
+  type DsClientTableFilter,
+  type DsClientTableStatus,
+} from "./ds-client-table";
