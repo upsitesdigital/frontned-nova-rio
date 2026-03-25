@@ -29,14 +29,19 @@ const adminNavItems = [
   { path: "/admin/agendamentos", label: "Agendamentos", icon: BroomIcon },
   { path: "/admin/funcionarios", label: "Funcionários", icon: UsersIcon },
   { path: "/admin/clientes", label: "Clientes", icon: UsersThreeIcon },
+  // TODO: remove disabled when page is implemented
   {
     path: "/admin/pagamentos",
     label: "Pagamentos",
     icon: CurrencyDollarSimpleIcon,
+    disabled: true,
   },
-  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon },
-  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon },
-  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon },
+  // TODO: remove disabled when page is implemented
+  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon, disabled: true },
+  // TODO: remove disabled when page is implemented
+  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon, disabled: true },
+  // TODO: remove disabled when page is implemented
+  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon, disabled: true },
 ];
 
 function DsAdminSidebar({
@@ -82,8 +87,9 @@ function DsAdminSidebar({
                   : (activePath?.startsWith(item.path) ?? false)
               }
               collapsed={collapsed}
+              disabled={item.disabled}
               href={item.path}
-              onClick={onNavigate ? () => onNavigate(item.path) : undefined}
+              onClick={onNavigate && !item.disabled ? () => onNavigate(item.path) : undefined}
             />
           ))}
         </nav>

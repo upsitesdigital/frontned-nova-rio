@@ -14,8 +14,8 @@ interface DsTableCellProps {
 }
 
 const textStyles: Record<Exclude<DsTableCellVariant, "custom">, string> = {
-  body: "text-base leading-[1.3] tracking-[-0.64px] text-nova-primary-dark",
-  header: "text-base font-medium leading-[1.3] text-nova-primary-dark",
+  body: "text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-600",
+  header: "text-base font-medium leading-[1.3] text-nova-gray-600",
 };
 
 function DsTableCell({
