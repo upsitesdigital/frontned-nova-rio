@@ -24,7 +24,7 @@ function parseAuthCookie(request: NextRequest): {
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!pathname.startsWith(ADMIN_PATH_PREFIX)) {

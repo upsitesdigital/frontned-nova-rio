@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { NextRequest } from "next/server";
-import { middleware } from "./middleware";
+import { proxy } from "./proxy";
 import { appConfig } from "@/config/app";
 
 const AUTH_COOKIE = appConfig.authCookieName;
@@ -17,33 +17,33 @@ function buildCookie(userType: string): string {
   return `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}`;
 }
 
-describe("middleware", () => {
+describe("proxy", () => {
   describe("non-admin routes", () => {
     it("should pass through for /login", () => {
-      const response = middleware(createRequest("/login"));
+      const response = proxy(createRequest("/login"));
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
 
     it("should pass through for /dashboard", () => {
-      const response = middleware(createRequest("/dashboard"));
+      const response = proxy(createRequest("/dashboard"));
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
 
     it("should pass through for root", () => {
-      const response = middleware(createRequest("/"));
+      const response = proxy(createRequest("/"));
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
   });
 
   describe("admin routes without auth", () => {
     it("should redirect to /login when no cookie", () => {
-      const response = middleware(createRequest("/admin"));
+      const response = proxy(createRequest("/admin"));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
     });
 
     it("should redirect to /login for nested admin routes", () => {
-      const response = middleware(createRequest("/admin/clientes"));
+      const response = proxy(createRequest("/admin/clientes"));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
     });
@@ -51,14 +51,14 @@ describe("middleware", () => {
 
   describe("admin routes with admin cookie", () => {
     it("should pass through with admin userType in cookie", () => {
-      const response = middleware(createRequest("/admin", { cookie: buildCookie("admin") }));
+      const response = proxy(createRequest("/admin", { cookie: buildCookie("admin") }));
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
   });
 
   describe("admin routes with client cookie", () => {
     it("should redirect to /dashboard when client tries to access admin", () => {
-      const response = middleware(createRequest("/admin", { cookie: buildCookie("client") }));
+      const response = proxy(createRequest("/admin", { cookie: buildCookie("client") }));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
     });
@@ -66,9 +66,7 @@ describe("middleware", () => {
 
   describe("malformed cookie", () => {
     it("should redirect to /login with invalid cookie JSON", () => {
-      const response = middleware(
-        createRequest("/admin", { cookie: `${AUTH_COOKIE}=not-valid-json` }),
-      );
+      const response = proxy(createRequest("/admin", { cookie: `${AUTH_COOKIE}=not-valid-json` }));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
     });
