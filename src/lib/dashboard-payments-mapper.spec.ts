@@ -1,7 +1,6 @@
 import { vi, describe, it, expect } from "vitest";
 
 vi.mock("@/lib/payment-format", () => ({
-  formatPaymentMethod: (p: { method: string }) => (p.method === "PIX" ? "PIX" : "Cartão"),
   formatPaymentAmount: (amount: number) => `R$ ${(amount / 100).toFixed(2)}`,
 }));
 
@@ -91,6 +90,17 @@ describe("mapPaymentsToPanel", () => {
       status: "success",
       statusLabel: "Pago",
     });
+  });
+
+  it("should map card payment label with last 4 digits", () => {
+    const result = mapPaymentsToPanel([
+      {
+        ...basePayment,
+        card: { lastFourDigits: "0123" },
+      },
+    ] as never[]);
+
+    expect(result[0].methodLabel).toBe("Terminado em 0123");
   });
 
   it("should map PIX payment method", () => {

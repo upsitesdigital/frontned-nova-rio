@@ -29,7 +29,12 @@ function DsRecentPaymentItem({
   className,
 }: DsRecentPaymentItemProps) {
   return (
-    <div className={cn("flex items-center justify-between overflow-clip rounded-2.5", className)}>
+    <div
+      className={cn(
+        "flex w-full items-center justify-between overflow-clip rounded-[10px]",
+        className,
+      )}
+    >
       <div className="flex items-start gap-2">
         <DsIcon icon={icon} size="lg" className="shrink-0 text-nova-gray-700" />
         <div className="flex w-35.75 flex-col gap-1 leading-[1.3] text-nova-gray-700">
@@ -37,7 +42,7 @@ function DsRecentPaymentItem({
           <p className="text-xs tracking-[-0.48px]">{service}</p>
         </div>
       </div>
-      <div className="flex flex-col items-end leading-[1.3] text-center">
+      <div className="flex flex-col items-end leading-[1.3] whitespace-nowrap">
         <p className="text-base font-medium text-nova-gray-700">{amount}</p>
         <p className={cn("text-xs tracking-[-0.48px]", statusColors[status])}>{statusLabel}</p>
       </div>
