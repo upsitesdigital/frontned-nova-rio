@@ -1,6 +1,6 @@
 import type { Card } from "@/api/cards-api";
 import type { PaymentEntry } from "@/api/payments-api";
-import { formatPaymentMethod, formatPaymentAmount } from "@/lib/payment-format";
+import { formatPaymentAmount } from "@/lib/payment-format";
 import { resolvePaymentStatus } from "@/lib/payment-status-map";
 import type { RegisteredCard, RecentPayment } from "@/types/payment";
 
@@ -11,6 +11,14 @@ const BRAND_ICON_MAP: Record<string, string> = {
   ELO: "/icons/Elo.svg",
   HIPERCARD: "/icons/Hipercard.svg",
 };
+
+function mapDashboardPaymentMethodLabel(payment: PaymentEntry): string {
+  if (payment.method === "PIX") return "PIX";
+  if (payment.card?.lastFourDigits) {
+    return `Terminado em ${payment.card.lastFourDigits}`;
+  }
+  return "Cartão";
+}
 
 function mapCardsToPanel(cards: Card[]): RegisteredCard[] {
   return cards.map((card) => ({
@@ -27,7 +35,7 @@ function mapPaymentsToPanel(payments: PaymentEntry[]): RecentPayment[] {
     return {
       id: p.id,
       method: p.method === "PIX" ? "pix" : "card",
-      methodLabel: formatPaymentMethod(p),
+      methodLabel: mapDashboardPaymentMethodLabel(p),
       service: p.appointment.service.name,
       amount: formatPaymentAmount(p.amount),
       status: mapped.status,
