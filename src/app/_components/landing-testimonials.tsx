@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Star, ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { motion } from "motion/react";
 
 const TESTIMONIALS = [
   {
@@ -51,17 +52,30 @@ function LandingTestimonials() {
   return (
     <section className="bg-white py-20">
       <div className="mx-auto max-w-304 px-6">
-        <div className="mx-auto mb-12 flex max-w-200 flex-col items-center gap-6 text-center">
+        <motion.div
+          className="mx-auto mb-12 flex max-w-200 flex-col items-center gap-6 text-center"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.45 }}
+        >
           <p className="text-base leading-[1.2] font-semibold tracking-[1.6px] text-nova-primary-dark uppercase">
             Depoimentos
           </p>
           <h2 className="text-[36px] leading-[1.3] font-medium tracking-[-1.44px] text-black">
             Empresas que confiam na Nova Rio
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid gap-8 lg:grid-cols-[488px_1fr]">
-          <div className="relative h-115 overflow-hidden bg-nova-gray-700">
+          <motion.div
+            className="relative h-115 overflow-hidden bg-nova-gray-700"
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.45 }}
+            whileHover={{ scale: 1.01 }}
+          >
             <Image
               src="/images/landing/handshake.jpg"
               alt="Parceiros em reunião corporativa"
@@ -70,9 +84,15 @@ function LandingTestimonials() {
             />
             <div className="absolute inset-0 bg-nova-gray-700/15" />
             <div className="absolute bottom-14 left-9 h-15.25 w-4.5 bg-nova-primary" />
-          </div>
+          </motion.div>
 
-          <div className="flex h-115 flex-col border border-nova-gray-300 px-10.5 py-14">
+          <motion.div
+            className="flex h-115 flex-col border border-nova-gray-300 px-10.5 py-14"
+            initial={{ opacity: 0, x: 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.45 }}
+          >
             <div className="flex flex-1 flex-col gap-10">
               <div className="flex items-center gap-1">
                 {Array.from({ length: testimonial.stars }).map((_, i) => (
@@ -100,7 +120,7 @@ function LandingTestimonials() {
                   <button
                     key={i}
                     onClick={() => setCurrent(i % TESTIMONIALS.length)}
-                    className={`size-2 rounded-full ${i === current ? "bg-nova-primary" : "bg-[#cccccc]"}`}
+                    className={`size-2 rounded-full transition-transform duration-200 hover:scale-125 ${i === current ? "bg-nova-primary" : "bg-[#cccccc]"}`}
                     aria-label={`Depoimento ${i + 1}`}
                   />
                 ))}
@@ -109,21 +129,21 @@ function LandingTestimonials() {
               <div className="flex items-center gap-8">
                 <button
                   onClick={prev}
-                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white opacity-30"
+                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white opacity-30 transition-all duration-200 hover:-translate-y-0.5 hover:opacity-70"
                   aria-label="Depoimento anterior"
                 >
                   <ArrowLeft size={20} className="text-nova-primary-dark" />
                 </button>
                 <button
                   onClick={next}
-                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white"
+                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-12px_rgba(0,0,0,0.45)]"
                   aria-label="Próximo depoimento"
                 >
                   <ArrowRight size={20} className="text-nova-primary-dark" />
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

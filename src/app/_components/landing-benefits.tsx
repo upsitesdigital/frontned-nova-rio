@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
@@ -8,6 +10,7 @@ import {
   ShieldCheck,
   CalendarX,
 } from "@phosphor-icons/react/dist/ssr";
+import { motion } from "motion/react";
 import { DsButton, DsIcon } from "@/design-system";
 
 const BENEFITS_ROWS = [
@@ -59,13 +62,17 @@ interface BenefitItem {
 
 function BenefitColumn({ icon, title, description }: BenefitItem) {
   return (
-    <article className="flex w-full flex-col gap-4">
+    <motion.article
+      className="flex w-full flex-col gap-4 rounded-lg p-2 transition-colors duration-250 hover:bg-nova-gray-100"
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 280, damping: 22 }}
+    >
       <DsIcon icon={icon} size="xl" className="text-nova-primary-dark" />
       <div className="flex flex-col gap-2">
         <h3 className="text-xl leading-[1.3] font-medium text-black">{title}</h3>
         <p className="text-base leading-normal text-nova-gray-600">{description}</p>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -75,7 +82,13 @@ function LandingBenefits() {
       <div className="mx-auto max-w-304 border-b border-nova-gray-300 px-6 py-16 lg:min-h-174.25 lg:px-0 lg:py-0">
         <div className="flex flex-col gap-14 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex w-full flex-col lg:w-97.25 lg:pt-0">
-            <div className="flex flex-col gap-6">
+            <motion.div
+              className="flex flex-col gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.45 }}
+            >
               <p className="text-base font-semibold tracking-[1.6px] text-nova-primary-dark uppercase">
                 Benefícios
               </p>
@@ -83,18 +96,24 @@ function LandingBenefits() {
                 Por que escolher a <span className="text-nova-primary-dark">Nova Rio Pay Per Use</span>{" "}
                 para sua empresa
               </h2>
-            </div>
+            </motion.div>
 
-            <DsButton
-              asChild
-              size="flow"
-              className="mt-8 h-15 w-fit rounded-xl bg-linear-to-r from-nova-primary-dark to-nova-primary px-8 text-lg tracking-[-0.72px]"
-            >
-              <Link href="/agendamento" className="flex items-center gap-4">
-                Agende sua limpeza agora
-                <ArrowRight size={20} weight="bold" />
-              </Link>
-            </DsButton>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.985 }}>
+              <DsButton
+                asChild
+                size="flow"
+                className="mt-8 h-15 w-fit rounded-xl bg-linear-to-r from-nova-primary-dark to-nova-primary px-8 text-lg tracking-[-0.72px]"
+              >
+                <Link href="/agendamento" className="group flex items-center gap-4">
+                  Agende sua limpeza agora
+                  <ArrowRight
+                    size={20}
+                    weight="bold"
+                    className="transition-transform duration-200 group-hover:translate-x-1"
+                  />
+                </Link>
+              </DsButton>
+            </motion.div>
 
             <div className="mt-37.5 flex flex-col gap-8 lg:pb-16">
               <p className="text-base leading-normal text-nova-gray-600">Nossos selos e certificações:</p>
@@ -106,7 +125,7 @@ function LandingBenefits() {
                     alt={cert.alt}
                     width={76}
                     height={80}
-                    className="h-20 w-19"
+                    className="h-20 w-19 transition-transform duration-250 hover:scale-105"
                   />
                 ))}
               </div>
