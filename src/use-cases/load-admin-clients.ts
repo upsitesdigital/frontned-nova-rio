@@ -22,6 +22,7 @@ interface AdminClientsLoadResult {
 
 const STATUS_MAP: Record<string, DsClientTableStatus> = {
   ACTIVE: "active",
+  INACTIVE: "inactive",
   PENDING: "pending",
 };
 
@@ -40,7 +41,7 @@ function mapClient(client: AdminClient): DsClientTableClient {
     company: client.company ?? "—",
     document: client.cpfCnpj ?? "—",
     unit: client.unit?.name ?? "—",
-    status: STATUS_MAP[client.status] ?? "pending",
+    status: STATUS_MAP[client.status] ?? "active",
     registrationDate: formatDate(client.createdAt),
     email: client.email,
   };

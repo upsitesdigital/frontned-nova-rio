@@ -101,6 +101,13 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   approveSelectedClient: async () => {
     const { selectedClient } = get();
     if (!selectedClient) return;
+    if (selectedClient.status !== "pending") {
+      set({
+        error: "Apenas clientes pendentes podem ser aprovados.",
+        selectedClient: null,
+      });
+      return;
+    }
 
     set({ isApproving: true });
 
@@ -117,6 +124,13 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   rejectSelectedClient: async () => {
     const { selectedClient } = get();
     if (!selectedClient) return;
+    if (selectedClient.status !== "pending") {
+      set({
+        error: "Apenas clientes pendentes podem ser reprovados.",
+        selectedClient: null,
+      });
+      return;
+    }
 
     set({ isRejecting: true });
 
