@@ -5,6 +5,7 @@ import {
   PencilSimpleLineIcon,
   CheckIcon,
   HourglassIcon,
+  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { DsIconButton, DsToggleButton, DsSkeleton } from "@/design-system/primitives";
@@ -15,7 +16,7 @@ import { DsStatusPill, type DsStatusPillVariant } from "./ds-status-pill";
 
 type DsClientTableFilter = "all" | "active" | "pending";
 
-type DsClientTableStatus = "active" | "pending";
+type DsClientTableStatus = "active" | "inactive" | "pending";
 
 interface DsClientTableClient {
   id: string;
@@ -45,6 +46,7 @@ const statusConfig: Record<
   { icon: typeof CheckIcon; label: string; variant: DsStatusPillVariant }
 > = {
   active: { icon: CheckIcon, label: "Ativo", variant: "active" },
+  inactive: { icon: XIcon, label: "Inativo", variant: "inactive" },
   pending: { icon: HourglassIcon, label: "Pendente", variant: "pending" },
 };
 

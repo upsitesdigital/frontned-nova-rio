@@ -58,10 +58,20 @@ function DsAppointmentRow({
         {packageLabel}
       </p>
       <div className="flex flex-1 items-center justify-end gap-4">
-        <button type="button" onClick={onView} className="cursor-pointer text-nova-gray-700">
+        <button
+          type="button"
+          onClick={onView}
+          disabled={!onView}
+          className="cursor-pointer text-nova-gray-700 disabled:cursor-not-allowed disabled:text-nova-gray-300"
+        >
           <DsIcon icon={EyeIcon} size="md" />
         </button>
-        <button type="button" onClick={onEdit} className="cursor-pointer text-nova-gray-700">
+        <button
+          type="button"
+          onClick={onEdit}
+          disabled={!onEdit}
+          className="cursor-pointer text-nova-gray-700 disabled:cursor-not-allowed disabled:text-nova-gray-300"
+        >
           <DsIcon icon={PencilSimpleLineIcon} size="md" />
         </button>
       </div>

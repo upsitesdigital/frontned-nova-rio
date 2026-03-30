@@ -1,4 +1,4 @@
-import { httpAuthGet, httpAuthPost } from "./http-client";
+import { httpAuthGet, httpAuthPatch, httpAuthPatchWithBody, httpAuthPost } from "./http-client";
 
 const MAX_OPTIONS_LIMIT = 100;
 
@@ -125,10 +125,55 @@ interface CreateAppointmentPayload {
   serviceId: number;
 }
 
+interface UpdateAppointmentPayload {
+  date?: string;
+  startTime?: string;
+  duration?: number;
+  recurrenceType?: "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+  locationZip?: string;
+  locationAddress?: string;
+  notes?: string;
+  employeeId?: number;
+  serviceId?: number;
+  packageId?: number;
+  unitId?: number;
+}
+
+interface RescheduleAppointmentPayload {
+  date: string;
+  startTime: string;
+}
+
 async function createAdminAppointment(
   payload: CreateAppointmentPayload,
 ): Promise<AdminAppointmentItem> {
   return httpAuthPost<AdminAppointmentItem>("/admin/appointments", payload);
+}
+
+async function fetchAdminAppointmentById(id: number): Promise<AdminAppointmentItem> {
+  return httpAuthGet<AdminAppointmentItem>(`/admin/appointments/${id}`);
+}
+
+async function updateAdminAppointment(
+  id: number,
+  payload: UpdateAppointmentPayload,
+): Promise<AdminAppointmentItem> {
+  return httpAuthPatchWithBody<AdminAppointmentItem>(`/admin/appointments/${id}`, payload);
+}
+
+async function rescheduleAdminAppointment(
+  id: number,
+  payload: RescheduleAppointmentPayload,
+): Promise<AdminAppointmentItem> {
+  return httpAuthPost<AdminAppointmentItem>(`/admin/appointments/${id}/reschedule`, payload);
+}
+
+async function cancelAdminAppointment(id: number): Promise<void> {
+  return httpAuthPatch(`/admin/appointments/${id}/cancel`);
+}
+
+async function completeAdminAppointment(id: number): Promise<AdminAppointmentItem> {
+  return httpAuthPatchWithBody<AdminAppointmentItem>(`/admin/appointments/${id}/complete`, {});
 }
 
 export {
@@ -138,6 +183,11 @@ export {
   fetchClients,
   fetchAdminServices,
   createAdminAppointment,
+  fetchAdminAppointmentById,
+  updateAdminAppointment,
+  rescheduleAdminAppointment,
+  cancelAdminAppointment,
+  completeAdminAppointment,
   MAX_OPTIONS_LIMIT,
   type AdminAppointmentItem,
   type AdminAppointmentsResponse,
@@ -147,4 +197,6 @@ export {
   type RawClient,
   type RawAdminService,
   type CreateAppointmentPayload,
+  type UpdateAppointmentPayload,
+  type RescheduleAppointmentPayload,
 };
