@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
+import type { DsIconComponent } from "@/design-system/media";
 
 interface DsAdminSidebarProps {
   activePath?: string;
@@ -27,7 +28,14 @@ interface DsAdminSidebarProps {
   className?: string;
 }
 
-const adminNavItems = [
+type AdminNavItem = {
+  path: string;
+  label: string;
+  icon: DsIconComponent;
+  disabled?: boolean;
+};
+
+const adminNavItems: AdminNavItem[] = [
   { path: "/admin", label: "Minha Área", icon: HouseIcon },
   { path: "/admin/agendamentos", label: "Agendamentos", icon: BroomIcon },
   { path: "/admin/funcionarios", label: "Funcionários", icon: UsersIcon },
