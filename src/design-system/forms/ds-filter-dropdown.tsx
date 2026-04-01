@@ -39,7 +39,7 @@ function DsFilterDropdown({
         {label}
       </span>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="h-auto w-[154px] gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black shadow-none [&>svg]:hidden">
+        <SelectTrigger className="h-auto w-38.5 gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black shadow-none [&>svg]:hidden">
           <SelectValue placeholder={placeholder} />
           <span className="flex shrink-0 items-center">
             <DsIcon icon={CaretDownIcon} size="md" className="text-black" />
