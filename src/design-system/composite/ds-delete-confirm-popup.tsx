@@ -30,7 +30,7 @@ function DsDeleteConfirmPopup({
   return (
     <div
       className={cn(
-        "relative flex w-full max-w-[512px] flex-col items-center gap-12 rounded-2xl bg-white px-8 py-12",
+        "relative flex w-full max-w-lg flex-col items-center gap-12 rounded-2xl bg-white px-8 py-12",
         className,
       )}
     >
@@ -44,7 +44,7 @@ function DsDeleteConfirmPopup({
         </button>
       )}
 
-      <div className="flex w-full max-w-[448px] flex-col items-center gap-2 text-center">
+      <div className="flex w-full max-w-md flex-col items-center gap-2 text-center">
         <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
           {title}
         </p>
@@ -70,7 +70,7 @@ function DsDeleteConfirmPopup({
           <button
             type="button"
             onClick={onCancel}
-            className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
+            className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-200"
           >
             {cancelLabel}
           </button>
