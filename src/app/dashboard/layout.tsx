@@ -8,6 +8,11 @@ import { waitForAuthHydration } from "@/stores/auth-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
+import { useAddressStore } from "@/stores/address-store";
+import { useSchedulingStore } from "@/stores/scheduling-store";
+import { useServicesStore } from "@/stores/services-store";
+import { usePaymentStore } from "@/stores/payment-store";
+import { useConfirmationStore } from "@/stores/confirmation-store";
 import { signOutClient } from "@/use-cases/sign-out-client";
 
 const DsClientDashboardShell = dynamic(
@@ -44,6 +49,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/login");
   };
 
+  const handleScheduleService = () => {
+    useServicesStore.getState().reset();
+    useSchedulingStore.getState().reset();
+    useAddressStore.getState().reset();
+    usePaymentStore.getState().reset();
+    useConfirmationStore.getState().reset();
+    router.push("/dashboard/agendamento/servico");
+  };
+
   return (
     <>
       <DsClientDashboardShell
@@ -53,7 +67,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         userInitials={summary?.clientName?.charAt(0) ?? ""}
         notificationCount={0}
         onNavigate={(path) => router.push(path)}
-        onScheduleService={() => router.push("/agendamento")}
+        onScheduleService={handleScheduleService}
         onSignOut={handleSignOut}
         onProfileClick={() => router.push("/dashboard/perfil")}
         onAccountClick={() => router.push("/dashboard/conta")}
