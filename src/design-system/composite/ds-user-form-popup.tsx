@@ -56,7 +56,7 @@ function DsUserFormPopup({
   return (
     <div
       className={cn(
-        "relative flex w-full max-w-[600px] flex-col gap-8 rounded-2xl bg-white p-8",
+        "relative flex w-full max-w-150 flex-col gap-8 rounded-2xl bg-white p-8",
         className,
       )}
     >
@@ -104,7 +104,7 @@ function DsUserFormPopup({
       </DsFormField>
 
       <div className="flex items-center justify-between gap-8">
-        <DsFormField label="Role" className="w-[248px]">
+        <DsFormField label="Role" className="w-62">
           <DsSelect
             options={[...roleOptions]}
             value={values.role}
@@ -112,7 +112,7 @@ function DsUserFormPopup({
             placeholder="Selecionar role"
           />
         </DsFormField>
-        <DsFormField label="Ativo" className="w-[248px]">
+        <DsFormField label="Ativo" className="w-62">
           <DsSelect
             options={[...activeOptions]}
             value={values.active}
@@ -126,7 +126,7 @@ function DsUserFormPopup({
         <button
           type="button"
           onClick={onSave}
-          className="flex h-[60px] w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
+          className="flex h-15 w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
         >
           <DsIcon icon={FloppyDisk} size="lg" />
           {saveLabel}
