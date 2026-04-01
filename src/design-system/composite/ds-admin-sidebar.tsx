@@ -5,6 +5,9 @@ import {
   BroomIcon,
   UsersIcon,
   UsersThreeIcon,
+  MapPinIcon,
+  TimerIcon,
+  CalendarBlankIcon,
   CurrencyDollarSimpleIcon,
   NoteIcon,
   SignOutIcon,
@@ -29,19 +32,17 @@ const adminNavItems = [
   { path: "/admin/agendamentos", label: "Agendamentos", icon: BroomIcon },
   { path: "/admin/funcionarios", label: "Funcionários", icon: UsersIcon },
   { path: "/admin/clientes", label: "Clientes", icon: UsersThreeIcon },
-  // TODO: remove disabled when page is implemented
   {
     path: "/admin/pagamentos",
     label: "Pagamentos",
     icon: CurrencyDollarSimpleIcon,
-    disabled: true,
   },
-  // TODO: remove disabled when page is implemented
-  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon, disabled: true },
-  // TODO: remove disabled when page is implemented
-  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon, disabled: true },
-  // TODO: remove disabled when page is implemented
-  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon, disabled: true },
+  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon },
+  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon },
+  { path: "/admin/unidades", label: "Unidades", icon: MapPinIcon },
+  { path: "/admin/pacotes", label: "Pacotes", icon: TimerIcon },
+  { path: "/admin/feriados", label: "Feriados", icon: CalendarBlankIcon },
+  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon },
 ];
 
 function DsAdminSidebar({
