@@ -53,7 +53,7 @@ function DsServiceManageCard({
             {description}
           </p>
           {price && (
-            <p className="text-sm font-medium leading-[1.5] text-nova-gray-400">
+            <p className="text-sm font-medium leading-normal text-nova-gray-400">
               {price}
             </p>
           )}
@@ -66,7 +66,7 @@ function DsServiceManageCard({
             <button
               type="button"
               onClick={onEdit}
-              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-200"
+              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-200"
             >
               {editLabel}
             </button>
@@ -75,7 +75,7 @@ function DsServiceManageCard({
             <button
               type="button"
               onClick={onDelete}
-              className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
+              className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
             >
               <DsIcon icon={TrashIcon} size="lg" />
               {deleteLabel}
