@@ -34,41 +34,8 @@ async function registerClient(data: ClientRegisterRequest): Promise<ClientRegist
   return httpPost<ClientRegisterResponse>("/auth/client/register", data);
 }
 
-interface RawLoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  userType?: UserType;
-}
-
-function normalizeLoginResponse(raw: RawLoginResponse, fallbackUserType: UserType): LoginResponse {
-  return {
-    accessToken: raw.accessToken,
-    refreshToken: raw.refreshToken,
-    userType: raw.userType ?? fallbackUserType,
-  };
-}
-
 async function login(data: LoginRequest): Promise<LoginResponse> {
-  // Compatibility flow:
-  // 1) Try split routes used by older backend containers.
-  // 2) Fallback to unified /auth/login used by newer backend code.
-  // This keeps login working without forcing immediate backend container rebuild.
-  try {
-    const admin = await httpPost<RawLoginResponse>("/auth/admin/login", data);
-    return normalizeLoginResponse(admin, "admin");
-  } catch {
-    // Ignore and continue to next path.
-  }
-
-  try {
-    const client = await httpPost<RawLoginResponse>("/auth/client/login", data);
-    return normalizeLoginResponse(client, "client");
-  } catch {
-    // Ignore and continue to next path.
-  }
-
-  const unified = await httpPost<RawLoginResponse>("/auth/login", data);
-  return normalizeLoginResponse(unified, "client");
+  return httpPost<LoginResponse>("/auth/login", data);
 }
 
 interface ForgotPasswordRequest {
