@@ -32,8 +32,7 @@ jobs:
             cd /root/frontend-nova-rio
 
             echo "Pulling latest changes..."
-            git fetch origin develop
-            git reset --hard origin/develop
+            git pull origin develop
 
             echo "Starting containers..."
             docker compose -p nova-rio-frontend --env-file .env.production -f docker-compose.production.yml up --build -d
