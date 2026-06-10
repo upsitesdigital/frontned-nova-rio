@@ -24,6 +24,7 @@ interface DsSchedulePopupProps {
   disabledDayTooltip?: string;
   cancelLabel?: string;
   confirmLabel?: string;
+  confirmDisabled?: boolean;
   className?: string;
 }
 
@@ -42,6 +43,7 @@ function DsSchedulePopup({
   disabledDayTooltip = DEFAULT_DISABLED_TOOLTIP,
   cancelLabel,
   confirmLabel,
+  confirmDisabled,
   className,
 }: DsSchedulePopupProps) {
   if (!open) return null;
@@ -93,6 +95,7 @@ function DsSchedulePopup({
           disabledDayTooltip={disabledDayTooltip}
           cancelLabel={cancelLabel}
           confirmLabel={confirmLabel}
+          confirmDisabled={confirmDisabled}
           className="rounded-2 border-nova-gray-200"
         />
       </div>

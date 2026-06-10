@@ -137,7 +137,6 @@ function DsAppointmentCalendar({
                 "[&:last-child[data-selected=true]_button]:rounded-r-md",
                 rdp.day,
               ),
-              table: "w-full border-collapse",
               today: cn("", rdp.today),
               outside: cn("opacity-30 text-nova-gray-700", rdp.outside),
               disabled: cn("text-muted-foreground opacity-30", rdp.disabled),

@@ -27,6 +27,7 @@ interface DsApprovalPopupProps {
   rejectIcon?: DsIconComponent;
   rejectDestructive?: boolean;
   approveLabel?: string;
+  disabled?: boolean;
   onReject?: () => void;
   onApprove?: () => void;
   onClose?: () => void;
@@ -44,6 +45,7 @@ function DsApprovalPopup({
   rejectIcon,
   rejectDestructive = false,
   approveLabel = "Aprovar cadastro",
+  disabled = false,
   onReject,
   onApprove,
   onClose,
@@ -115,8 +117,9 @@ function DsApprovalPopup({
               <button
                 type="button"
                 onClick={onReject}
+                disabled={disabled}
                 className={cn(
-                  "flex h-[60px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] transition-colors",
+                  "flex h-[60px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] transition-colors disabled:cursor-not-allowed disabled:opacity-60",
                   rejectDestructive
                     ? "border-nova-error text-nova-error hover:bg-red-50"
                     : "border-nova-gray-400 text-nova-gray-700 hover:bg-nova-gray-50",
@@ -130,7 +133,8 @@ function DsApprovalPopup({
               <button
                 type="button"
                 onClick={onApprove}
-                className="flex h-[60px] flex-1 cursor-pointer items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
+                disabled={disabled}
+                className="flex h-[60px] flex-1 cursor-pointer items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {approveLabel}
               </button>

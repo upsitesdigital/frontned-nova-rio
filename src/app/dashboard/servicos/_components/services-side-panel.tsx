@@ -48,6 +48,7 @@ function ServicesSidePanel({
     rescheduleDate,
     rescheduleTime,
     cancelOpen,
+    isSaving,
     openReschedule,
     closeReschedule,
     setRescheduleDate,
@@ -129,6 +130,7 @@ function ServicesSidePanel({
             onChanged?.();
           }
         }}
+        confirmDisabled={isSaving}
       />
 
       <DsCancelConfirmPopup
@@ -143,6 +145,7 @@ function ServicesSidePanel({
             onChanged?.();
           }
         }}
+        confirmDisabled={isSaving}
       />
     </div>
   );
