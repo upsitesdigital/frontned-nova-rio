@@ -67,6 +67,7 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   setRescheduleTime: (time) => set({ rescheduleTime: time }),
 
   confirmReschedule: async (appointmentId) => {
+    if (get().isSaving) return false;
     const { rescheduleDate, rescheduleTime } = get();
     if (!rescheduleDate || !rescheduleTime) {
       set({ saveError: MESSAGES.appointments.selectDateTime });
@@ -101,6 +102,7 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   closeCancel: () => set({ cancelOpen: false }),
 
   confirmCancel: async (appointmentId) => {
+    if (get().isSaving) return false;
     set({ isSaving: true, saveError: null, saveSuccess: null });
 
     const result = await cancelClientAppointment(appointmentId);

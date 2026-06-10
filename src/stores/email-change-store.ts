@@ -61,7 +61,8 @@ const useEmailChangeStore = create<EmailChangeStore>()((set, get) => ({
   setEmailCode: (value) => set({ emailCode: value }),
 
   submitEmailChange: async () => {
-    const { newEmail } = get();
+    const { newEmail, isSaving } = get();
+    if (isSaving) return false;
 
     if (!isValidEmail(newEmail)) {
       set({ error: MESSAGES.auth.invalidEmail });
@@ -84,7 +85,8 @@ const useEmailChangeStore = create<EmailChangeStore>()((set, get) => ({
   },
 
   submitEmailVerification: async () => {
-    const { emailCode, newEmail } = get();
+    const { emailCode, newEmail, isSaving } = get();
+    if (isSaving) return false;
     set({ isSaving: true, error: null });
 
     try {

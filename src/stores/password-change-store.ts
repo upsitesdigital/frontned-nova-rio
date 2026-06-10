@@ -67,6 +67,7 @@ const usePasswordChangeStore = create<PasswordChangeStore>()((set, get) => ({
   setConfirmPassword: (value) => set({ confirmPassword: value }),
 
   submitPasswordChange: async () => {
+    if (get().isSaving) return false;
     set({ isSaving: true, error: null });
 
     try {
@@ -83,7 +84,8 @@ const usePasswordChangeStore = create<PasswordChangeStore>()((set, get) => ({
   },
 
   submitPasswordVerification: async () => {
-    const { passwordCode, newPassword, confirmPassword } = get();
+    const { passwordCode, newPassword, confirmPassword, isSaving } = get();
+    if (isSaving) return false;
 
     const matchError = validatePasswordMatch(newPassword, confirmPassword);
     if (matchError) {

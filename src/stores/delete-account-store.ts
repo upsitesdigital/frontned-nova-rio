@@ -36,7 +36,8 @@ const useDeleteAccountStore = create<DeleteAccountStore>()((set, get) => ({
   setDeletePhrase: (value) => set({ deletePhrase: value }),
 
   submitDeleteAccount: async () => {
-    const { deletePhrase } = get();
+    const { deletePhrase, isSaving } = get();
+    if (isSaving) return false;
     set({ isSaving: true, error: null });
 
     const result = await removeClientAccount(deletePhrase);

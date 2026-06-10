@@ -34,7 +34,7 @@ const initialState: RegistrationState = {
   success: false,
 };
 
-const useRegistrationStore = create<RegistrationStore>()((set) => ({
+const useRegistrationStore = create<RegistrationStore>()((set, get) => ({
   ...initialState,
 
   setName: (name) => set({ name, errors: {} }),
@@ -43,6 +43,7 @@ const useRegistrationStore = create<RegistrationStore>()((set) => ({
   setPassword: (password) => set({ password, errors: {} }),
 
   submit: async () => {
+    if (get().isRegistering) return false;
     const { name, email, phone, password } = useRegistrationStore.getState();
 
     const validationErrors = validateRegistrationInput({ name, email, phone, password });
