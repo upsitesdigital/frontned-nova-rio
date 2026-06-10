@@ -22,6 +22,7 @@ interface AdminEmployeeScheduleActions {
 }
 
 type AdminEmployeeScheduleStore = AdminEmployeeScheduleState & AdminEmployeeScheduleActions;
+let scheduleBusyDatesSeq = 0;
 
 const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, get) => ({
   open: false,
@@ -47,6 +48,7 @@ const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, g
   },
 
   closeSchedule: () => {
+    scheduleBusyDatesSeq++;
     set({ open: false, employeeId: null, employeeName: "", busyDates: [] });
   },
 
@@ -58,13 +60,16 @@ const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, g
   loadBusyDates: async () => {
     const { employeeId, currentMonth } = get();
     if (!employeeId) return;
+    const seq = ++scheduleBusyDatesSeq;
 
     set({ isLoading: true, error: null });
 
     try {
       const dates = await loadEmployeeBusyDates({ employeeId, currentMonth });
+      if (seq !== scheduleBusyDatesSeq) return;
       set({ busyDates: dates, isLoading: false });
     } catch (error) {
+      if (seq !== scheduleBusyDatesSeq) return;
       set({
         isLoading: false,
         error: resolveErrorMessage(error, MESSAGES.adminEmployees.scheduleError),

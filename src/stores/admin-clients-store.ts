@@ -5,6 +5,7 @@ import { rejectAdminClient } from "@/use-cases/reject-admin-client";
 import type { DsClientTableClient, DsClientTableFilter } from "@/design-system";
 
 const PAGE_SIZE = 20;
+let clientsLoadSeq = 0;
 
 interface AdminClientsState {
   clients: DsClientTableClient[];
@@ -48,6 +49,7 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
 
   loadClients: async () => {
     const { statusFilter, searchQuery, currentPage } = get();
+    const seq = ++clientsLoadSeq;
 
     set({ isLoading: true, error: null, isAuthError: false });
 
@@ -59,6 +61,7 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
     };
 
     const result = await loadAdminClients(input);
+    if (seq !== clientsLoadSeq) return;
 
     if (result.data) {
       set({
@@ -99,8 +102,8 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   },
 
   approveSelectedClient: async () => {
-    const { selectedClient } = get();
-    if (!selectedClient) return;
+    const { selectedClient, isApproving } = get();
+    if (!selectedClient || isApproving) return;
     if (selectedClient.status !== "pending") {
       set({
         error: "Apenas clientes pendentes podem ser aprovados.",
@@ -122,8 +125,8 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   },
 
   rejectSelectedClient: async () => {
-    const { selectedClient } = get();
-    if (!selectedClient) return;
+    const { selectedClient, isRejecting } = get();
+    if (!selectedClient || isRejecting) return;
     if (selectedClient.status !== "pending") {
       set({
         error: "Apenas clientes pendentes podem ser reprovados.",
