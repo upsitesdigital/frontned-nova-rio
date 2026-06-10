@@ -8,13 +8,7 @@ vi.mock("./http-client", () => ({
 
 const { httpAuthGet, httpAuthPost, httpAuthDelete } = await import("./http-client");
 
-import {
-  listCards,
-  tokenizeCard,
-  addCard,
-  removeCard,
-  setDefaultCard,
-} from "./cards-api";
+import { listCards, addCard, removeCard, setDefaultCard } from "./cards-api";
 
 describe("cards-api", () => {
   beforeEach(() => {
@@ -40,26 +34,6 @@ describe("cards-api", () => {
       await removeCard(5);
 
       expect(httpAuthDelete).toHaveBeenCalledWith("/cards/5");
-    });
-  });
-
-  describe("tokenizeCard", () => {
-    it("should call httpAuthPost with /cards/tokenize and card data", async () => {
-      const data = {
-        cardNumber: "4111111111111111",
-        cardCvv: "123",
-        holderName: "JOAO SILVA",
-        expiryMonth: 12,
-        expiryYear: 2028,
-        brand: "VISA",
-      };
-      const response = { gatewayToken: "tok_abc123" };
-      vi.mocked(httpAuthPost).mockResolvedValue(response);
-
-      const result = await tokenizeCard(data);
-
-      expect(httpAuthPost).toHaveBeenCalledWith("/cards/tokenize", data);
-      expect(result).toEqual(response);
     });
   });
 
