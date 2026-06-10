@@ -8,6 +8,7 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   userType: UserType | null;
+  authEpoch: number;
 }
 
 interface AuthActions {
@@ -17,14 +18,23 @@ interface AuthActions {
 }
 
 type AuthStore = AuthState & AuthActions;
+type AuthBroadcastMessage =
+  | { type: "tokens"; accessToken: string; refreshToken: string; userType: UserType }
+  | { type: "reset" };
 
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
   userType: null,
+  authEpoch: 0,
 };
 
 const AUTH_COOKIE_NAME = appConfig.authCookieName;
+const authChannel =
+  typeof window !== "undefined" && "BroadcastChannel" in window
+    ? new BroadcastChannel("nova-rio-auth")
+    : null;
+let isApplyingRemoteAuthMessage = false;
 
 function syncAuthCookie(state: AuthState): void {
   if (typeof document === "undefined") return;
@@ -42,15 +52,26 @@ function syncAuthCookie(state: AuthState): void {
   }
 }
 
+function broadcastAuthMessage(message: AuthBroadcastMessage): void {
+  if (isApplyingRemoteAuthMessage) return;
+  authChannel?.postMessage(message);
+}
+
 const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       ...initialState,
 
       setTokens: (accessToken, refreshToken, userType) => {
-        const next = { accessToken, refreshToken, userType };
+        const next = {
+          accessToken,
+          refreshToken,
+          userType,
+          authEpoch: useAuthStore.getState().authEpoch,
+        };
         syncAuthCookie(next);
         set(next);
+        broadcastAuthMessage({ type: "tokens", accessToken, refreshToken, userType });
       },
 
       setAccessToken: (token) => {
@@ -63,7 +84,8 @@ const useAuthStore = create<AuthStore>()(
 
       reset: () => {
         syncAuthCookie(initialState);
-        set(initialState);
+        set((state) => ({ ...initialState, authEpoch: state.authEpoch + 1 }));
+        broadcastAuthMessage({ type: "reset" });
       },
     }),
     {
@@ -72,10 +94,27 @@ const useAuthStore = create<AuthStore>()(
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         userType: state.userType,
+        authEpoch: state.authEpoch,
       }),
     },
   ),
 );
+
+authChannel?.addEventListener("message", (event: MessageEvent<AuthBroadcastMessage>) => {
+  isApplyingRemoteAuthMessage = true;
+  try {
+    if (event.data.type === "reset") {
+      useAuthStore.getState().reset();
+      return;
+    }
+
+    useAuthStore
+      .getState()
+      .setTokens(event.data.accessToken, event.data.refreshToken, event.data.userType);
+  } finally {
+    isApplyingRemoteAuthMessage = false;
+  }
+});
 
 function waitForAuthHydration(): Promise<void> {
   return new Promise((resolve) => {
@@ -93,6 +132,7 @@ function waitForAuthHydration(): Promise<void> {
 configureAuthProvider({
   getAccessToken: () => useAuthStore.getState().accessToken,
   getRefreshToken: () => useAuthStore.getState().refreshToken,
+  getAuthEpoch: () => useAuthStore.getState().authEpoch,
   setTokens: (accessToken, refreshToken) => {
     const currentType = useAuthStore.getState().userType ?? "client";
     useAuthStore.getState().setTokens(accessToken, refreshToken, currentType);

@@ -57,7 +57,7 @@ const initialState: PaymentState = {
   submitError: null,
 };
 
-const usePaymentStore = create<PaymentStore>()((set) => ({
+const usePaymentStore = create<PaymentStore>()((set, get) => ({
   ...initialState,
 
   setPaymentMethod: (method) => set({ paymentMethod: method, errors: {}, submitError: null }),
@@ -98,6 +98,7 @@ const usePaymentStore = create<PaymentStore>()((set) => ({
   },
 
   pay: async () => {
+    if (get().isSubmitting) return false;
     const isValid = usePaymentStore.getState().validate();
     if (!isValid) return false;
 

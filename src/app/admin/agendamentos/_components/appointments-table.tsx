@@ -574,6 +574,7 @@ function AppointmentsTable() {
         onConfirm={handleReschedule}
         cancelLabel="Voltar"
         confirmLabel={isSubmitting ? "Remarcando..." : "Confirmar remarcacao"}
+        confirmDisabled={isSubmitting}
         className="w-full max-w-160"
       />
 

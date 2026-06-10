@@ -8,6 +8,7 @@ import type { AdminEmployee, EmployeeStatus } from "@/api/admin-employees-api";
 type StatusFilter = "all" | EmployeeStatus;
 
 const PAGE_SIZE = 20;
+let employeesLoadSeq = 0;
 
 interface AdminEmployeesState {
   employees: AdminEmployee[];
@@ -41,6 +42,7 @@ const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
 
   loadEmployees: async () => {
     const { statusFilter, searchQuery, currentPage } = get();
+    const seq = ++employeesLoadSeq;
 
     set({ isLoading: true, error: null, isAuthError: false });
 
@@ -52,6 +54,7 @@ const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
     };
 
     const result = await loadAdminEmployees(input);
+    if (seq !== employeesLoadSeq) return;
 
     if (result.data) {
       set({

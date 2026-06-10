@@ -38,7 +38,7 @@ const initialState: CreateAccountState = {
   errors: {},
 };
 
-const useCreateAccountStore = create<CreateAccountStore>()((set) => ({
+const useCreateAccountStore = create<CreateAccountStore>()((set, get) => ({
   ...initialState,
 
   setName: (name) => set({ name, errors: {} }),
@@ -48,6 +48,7 @@ const useCreateAccountStore = create<CreateAccountStore>()((set) => ({
   setConfirmPassword: (confirmPassword) => set({ confirmPassword, errors: {} }),
 
   submit: async () => {
+    if (get().isSubmitting) return false;
     const { name, email, phone, password, confirmPassword } = useCreateAccountStore.getState();
 
     const validationErrors = validateCreateAccount({

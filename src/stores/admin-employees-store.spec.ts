@@ -90,7 +90,7 @@ describe("AdminEmployeesStore", () => {
       await useAdminEmployeesStore.getState().loadEmployees();
 
       expect(fetchAdminEmployees).toHaveBeenCalledWith(
-        expect.objectContaining({ status: undefined }),
+        expect.not.objectContaining({ status: expect.anything() }),
       );
     });
 
@@ -111,7 +111,7 @@ describe("AdminEmployeesStore", () => {
       await useAdminEmployeesStore.getState().loadEmployees();
 
       expect(fetchAdminEmployees).toHaveBeenCalledWith(
-        expect.objectContaining({ search: undefined }),
+        expect.not.objectContaining({ search: expect.anything() }),
       );
     });
 
@@ -122,7 +122,7 @@ describe("AdminEmployeesStore", () => {
 
       const state = useAdminEmployeesStore.getState();
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe("Erro ao carregar funcionários");
+      expect(state.error).toBe("Erro ao carregar funcionários.");
     });
 
     it("should set isAuthError on 401 error", async () => {

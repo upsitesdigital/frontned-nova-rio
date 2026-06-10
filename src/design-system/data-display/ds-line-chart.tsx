@@ -132,12 +132,12 @@ function DsLineChart({
               boxShadow: "0px 12px 44px rgba(111, 124, 142, 0.1)",
               padding: "8px 12px",
             }}
-            formatter={(value: number | undefined) => [
-              value != null
+            formatter={(value) => [
+              typeof value === "number"
                 ? tooltipFormatter
                   ? tooltipFormatter(value)
                   : value.toLocaleString("pt-BR")
-                : "",
+                : String(value ?? ""),
               "",
             ]}
             labelStyle={{ color: "#4b4b4b", fontWeight: 500, marginBottom: 2 }}

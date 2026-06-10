@@ -18,6 +18,7 @@ interface DsDateTimePickerProps {
   disabledDayTooltip?: string;
   cancelLabel?: string;
   confirmLabel?: string;
+  confirmDisabled?: boolean;
   showActions?: boolean;
   className?: string;
 }
@@ -61,6 +62,7 @@ function DsDateTimePicker({
   disabledDayTooltip,
   cancelLabel = "Cancelar",
   confirmLabel = "Ok",
+  confirmDisabled = false,
   showActions = true,
   className,
 }: DsDateTimePickerProps) {
@@ -97,7 +99,7 @@ function DsDateTimePicker({
             <DsButton variant="ghost" size="sm" onClick={onCancel}>
               {cancelLabel}
             </DsButton>
-            <DsButton size="sm" onClick={onConfirm}>
+            <DsButton size="sm" onClick={onConfirm} disabled={confirmDisabled}>
               {confirmLabel}
             </DsButton>
           </div>

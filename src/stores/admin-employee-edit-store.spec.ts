@@ -93,7 +93,7 @@ describe("AdminEmployeeEditStore", () => {
 
       const state = useAdminEmployeeEditStore.getState();
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe("Erro ao carregar funcionário");
+      expect(state.error).toBe("Erro ao carregar funcionário.");
     });
 
     it("should still succeed if fetchUnits fails", async () => {
@@ -149,7 +149,7 @@ describe("AdminEmployeeEditStore", () => {
       const result = await useAdminEmployeeEditStore.getState().saveEmployee();
 
       expect(result).toBe(false);
-      expect(useAdminEmployeeEditStore.getState().saveError).toBe("Erro ao salvar funcionário");
+      expect(useAdminEmployeeEditStore.getState().saveError).toBe("Erro ao salvar funcionário.");
       expect(useAdminEmployeeEditStore.getState().isSaving).toBe(false);
     });
   });

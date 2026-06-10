@@ -257,6 +257,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
           onCancel={closeReschedule}
           onClose={closeReschedule}
           onConfirm={closeReschedule}
+          confirmDisabled={isSaving}
         />
 
         <DsCancelConfirmPopup
@@ -271,6 +272,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
               onSaved?.();
             }
           }}
+          confirmDisabled={isSaving}
         />
       </SheetContent>
     </Sheet>

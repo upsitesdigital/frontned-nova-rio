@@ -14,6 +14,8 @@ export default function AdminClientsPage() {
     statusFilter,
     searchQuery,
     selectedClient,
+    isApproving,
+    isRejecting,
     loadClients,
     setStatusFilter,
     setSearchQuery,
@@ -62,6 +64,7 @@ export default function AdminClientsPage() {
         onApprove={approveSelectedClient}
         onReject={rejectSelectedClient}
         onClose={closeApprovalPopup}
+        disabled={isApproving || isRejecting}
       />
     </div>
   );
