@@ -9,6 +9,7 @@ interface DsCancelConfirmPopupProps {
   title?: string;
   description?: string;
   confirmLabel?: string;
+  confirmDisabled?: boolean;
   cancelLabel?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
@@ -21,6 +22,7 @@ function DsCancelConfirmPopup({
   title = "Deseja cancelar o serviço?",
   description = "Cancelamento com 1h de antecedência",
   confirmLabel = "Sim, cancelar",
+  confirmDisabled = false,
   cancelLabel = "Manter agendamento",
   onConfirm,
   onCancel,
@@ -74,7 +76,8 @@ function DsCancelConfirmPopup({
           <button
             type="button"
             onClick={onConfirm}
-            className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
+            disabled={confirmDisabled}
+            className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {confirmLabel}
           </button>

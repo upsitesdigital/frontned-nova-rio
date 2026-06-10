@@ -28,6 +28,7 @@ interface DashboardActions {
 }
 
 type DashboardStore = DashboardState & DashboardActions;
+let dashboardLoadSeq = 0;
 
 const initialState: DashboardState = {
   summary: null,
@@ -44,9 +45,11 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
   ...initialState,
 
   loadSummary: async () => {
+    const seq = ++dashboardLoadSeq;
     set({ isLoading: true, error: null });
 
     const result = await loadClientDashboard();
+    if (seq !== dashboardLoadSeq) return;
     set({
       summary: result.data,
       isLoading: false,
@@ -63,7 +66,10 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
 
   setSidePanelRecurrenceType: (type) => set({ sidePanelRecurrenceType: type }),
 
-  reset: () => set(initialState),
+  reset: () => {
+    dashboardLoadSeq++;
+    set(initialState);
+  },
 }));
 
 export { useDashboardStore, type DashboardStore };

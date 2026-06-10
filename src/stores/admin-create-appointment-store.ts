@@ -118,6 +118,7 @@ const useAdminCreateAppointmentStore = create<AdminCreateAppointmentStore>()((se
 
   submitAppointment: async () => {
     const state = get();
+    if (state.isSubmitting) return false;
     set({ isSubmitting: true, error: null, employeeConflict: null });
 
     const result = await submitAdminAppointment({

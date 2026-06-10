@@ -23,6 +23,7 @@ interface SchedulingActions {
 }
 
 type SchedulingStore = SchedulingState & SchedulingActions;
+let timeSlotsLoadSeq = 0;
 
 const initialState: SchedulingState = {
   recurrenceType: null,
@@ -47,9 +48,11 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
   setSelectedTime: (time) => set({ selectedTime: time }),
 
   loadTimeSlots: async (date) => {
+    const seq = ++timeSlotsLoadSeq;
     set({ isLoadingTimeSlots: true, error: null });
 
     const result = await loadTimeSlots(date);
+    if (seq !== timeSlotsLoadSeq) return;
     set({
       timeSlots: result.data ?? [],
       isLoadingTimeSlots: false,
@@ -57,7 +60,10 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
     });
   },
 
-  reset: () => set(initialState),
+  reset: () => {
+    timeSlotsLoadSeq++;
+    set(initialState);
+  },
 }));
 
 export { useSchedulingStore, type SchedulingStore };

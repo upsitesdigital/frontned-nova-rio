@@ -18,6 +18,7 @@ interface AddressActions {
 }
 
 type AddressStore = AddressState & AddressActions;
+let addressLoadSeq = 0;
 
 const initialState: AddressState = {
   cep: "",
@@ -26,28 +27,37 @@ const initialState: AddressState = {
   cepError: null,
 };
 
-const useAddressStore = create<AddressStore>()((set) => ({
+const useAddressStore = create<AddressStore>()((set, get) => ({
   ...initialState,
 
   setCep: (cep) => set({ cep }),
 
   loadAddressByCep: async (cep) => {
+    const seq = ++addressLoadSeq;
     set({ isLoadingAddress: true, cepError: null });
     try {
       const result = await validateAddress(cep);
+      if (seq !== addressLoadSeq || (get().cep !== "" && get().cep !== cep)) return;
       set({
         address: result.address,
         isLoadingAddress: false,
         cepError: result.error,
       });
     } catch {
+      if (seq !== addressLoadSeq || (get().cep !== "" && get().cep !== cep)) return;
       set({ address: null, isLoadingAddress: false, cepError: "CEP não encontrado" });
     }
   },
 
-  clearAddress: () => set({ address: null, cepError: null }),
+  clearAddress: () => {
+    addressLoadSeq++;
+    set({ address: null, cepError: null });
+  },
 
-  reset: () => set(initialState),
+  reset: () => {
+    addressLoadSeq++;
+    set(initialState);
+  },
 }));
 
 export { useAddressStore, type AddressStore };

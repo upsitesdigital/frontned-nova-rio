@@ -135,7 +135,7 @@ describe("AdminEmployeeScheduleStore", () => {
 
       const state = useAdminEmployeeScheduleStore.getState();
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe("Erro ao carregar agenda");
+      expect(state.error).toBe("Erro ao carregar agenda.");
     });
 
     it("should pass correct params including employeeId and SCHEDULED status", async () => {

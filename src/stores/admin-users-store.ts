@@ -162,7 +162,8 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
   },
 
   createUser: async () => {
-    const { form } = get();
+    const { form, isSaving } = get();
+    if (isSaving) return false;
     const name = form.name.trim();
     const email = form.email.trim().toLowerCase();
     const password = form.password;
@@ -263,8 +264,8 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
   },
 
   deactivateSelectedUser: async () => {
-    const { selectedDeleteUser } = get();
-    if (!selectedDeleteUser) return false;
+    const { selectedDeleteUser, deactivatingUserId } = get();
+    if (!selectedDeleteUser || deactivatingUserId === selectedDeleteUser.id) return false;
 
     set({ deactivatingUserId: selectedDeleteUser.id, isAuthError: false });
 

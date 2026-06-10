@@ -46,6 +46,8 @@ interface AdminEmployeeEditActions {
 }
 
 type AdminEmployeeEditStore = AdminEmployeeEditState & AdminEmployeeEditActions;
+let employeeLoadSeq = 0;
+let busyDatesLoadSeq = 0;
 
 const INITIAL_FORM: EmployeeFormData = {
   name: "",
@@ -75,9 +77,11 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
   unitOptions: [],
 
   loadEmployee: async (id: number) => {
+    const seq = ++employeeLoadSeq;
     set({ isLoading: true, error: null, isAuthError: false });
 
     const result = await loadAdminEmployeeDetail(id);
+    if (seq !== employeeLoadSeq) return;
 
     if (result.data) {
       const { employee, units } = result.data;
@@ -129,6 +133,7 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
   saveEmployee: async () => {
     const { employee, form } = get();
     if (!employee) return false;
+    if (get().isSaving) return false;
 
     set({ isSaving: true, saveError: null });
 
@@ -165,12 +170,14 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
   loadBusyDates: async () => {
     const { employee, currentMonth } = get();
     if (!employee) return;
+    const seq = ++busyDatesLoadSeq;
 
     try {
       const dates = await loadEmployeeBusyDates({
         employeeId: employee.id,
         currentMonth,
       });
+      if (seq !== busyDatesLoadSeq) return;
       set({ busyDates: dates });
     } catch {
       // Silent fail for calendar — non-critical
@@ -178,6 +185,8 @@ const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => (
   },
 
   reset: () => {
+    employeeLoadSeq++;
+    busyDatesLoadSeq++;
     set({
       employee: null,
       form: { ...INITIAL_FORM },

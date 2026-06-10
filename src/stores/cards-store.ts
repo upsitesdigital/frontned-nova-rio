@@ -35,6 +35,7 @@ interface CardsState {
   addForm: AddCardForm;
   addFormErrors: AddCardFormErrors;
   confirmRemoveCardId: number | null;
+  removingCardIds: number[];
 }
 
 interface CardsActions {
@@ -58,6 +59,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   addForm: { ...EMPTY_FORM },
   addFormErrors: {},
   confirmRemoveCardId: null,
+  removingCardIds: [],
 
   loadCards: async () => {
     set({ isLoading: true, error: null });
@@ -71,6 +73,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   },
 
   addCard: async () => {
+    if (get().isAdding) return;
     if (!get().validateAddForm()) return;
     const form = get().addForm;
 
@@ -103,6 +106,8 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   },
 
   removeCard: async (cardId: number) => {
+    if (get().removingCardIds.includes(cardId)) return;
+    set((state) => ({ removingCardIds: [...state.removingCardIds, cardId] }));
     const result = await removeClientCard(cardId);
 
     if (result.success) {
@@ -111,6 +116,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
     } else {
       useToastStore.getState().showToast(result.error ?? MESSAGES.cards.removeError, "error");
     }
+    set((state) => ({ removingCardIds: state.removingCardIds.filter((id) => id !== cardId) }));
   },
 
   openAddDialog: () => set({ addDialogOpen: true, addForm: { ...EMPTY_FORM }, addFormErrors: {} }),
@@ -141,6 +147,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
       addForm: { ...EMPTY_FORM },
       addFormErrors: {},
       confirmRemoveCardId: null,
+      removingCardIds: [],
     }),
 }));
 

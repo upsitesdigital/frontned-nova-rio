@@ -13,6 +13,7 @@ class HttpClientError extends Error {
 interface AuthProvider {
   getAccessToken: () => string | null;
   getRefreshToken: () => string | null;
+  getAuthEpoch: () => number;
   setTokens: (accessToken: string, refreshToken: string) => void;
   reset: () => void;
 }
@@ -71,9 +72,29 @@ async function httpPost<T>(path: string, body: unknown): Promise<T> {
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
 
+type NavigatorWithOptionalLocks = Navigator & {
+  locks?: {
+    request<T>(name: string, callback: () => Promise<T>): Promise<T>;
+  };
+};
+
+async function withRefreshLock<T>(callback: () => Promise<T>): Promise<T> {
+  if (typeof navigator === "undefined") {
+    return callback();
+  }
+
+  const locks = (navigator as NavigatorWithOptionalLocks).locks;
+  if (!locks) {
+    return callback();
+  }
+
+  return locks.request("nova-rio-auth-refresh", callback);
+}
+
 async function tryRefreshToken(): Promise<string | null> {
   const auth = getAuthProvider();
   const refreshToken = auth.getRefreshToken();
+  const authEpoch = auth.getAuthEpoch();
 
   if (!refreshToken) {
     auth.reset();
@@ -93,6 +114,9 @@ async function tryRefreshToken(): Promise<string | null> {
     }
 
     const tokens = (await response.json()) as { accessToken: string; refreshToken: string };
+    if (auth.getAuthEpoch() !== authEpoch || !auth.getRefreshToken()) {
+      return null;
+    }
     auth.setTokens(tokens.accessToken, tokens.refreshToken);
     return tokens.accessToken;
   } catch {
@@ -107,7 +131,7 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 
   isRefreshing = true;
-  refreshPromise = tryRefreshToken().finally(() => {
+  refreshPromise = withRefreshLock(tryRefreshToken).finally(() => {
     isRefreshing = false;
     refreshPromise = null;
   });

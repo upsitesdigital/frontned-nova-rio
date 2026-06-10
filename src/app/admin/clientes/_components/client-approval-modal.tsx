@@ -20,6 +20,7 @@ interface ClientApprovalModalProps {
   onApprove: () => void;
   onReject: () => void;
   onClose: () => void;
+  disabled?: boolean;
 }
 
 function buildDetails(client: DsClientTableClient): DsApprovalPopupDetail[] {
@@ -31,7 +32,13 @@ function buildDetails(client: DsClientTableClient): DsApprovalPopupDetail[] {
   ];
 }
 
-function ClientApprovalModal({ client, onApprove, onReject, onClose }: ClientApprovalModalProps) {
+function ClientApprovalModal({
+  client,
+  onApprove,
+  onReject,
+  onClose,
+  disabled = false,
+}: ClientApprovalModalProps) {
   if (!client) return null;
 
   return (
@@ -57,6 +64,7 @@ function ClientApprovalModal({ client, onApprove, onReject, onClose }: ClientApp
         onReject={onReject}
         onApprove={onApprove}
         onClose={onClose}
+        disabled={disabled}
         className="relative w-full max-w-150 shadow-lg shadow-nova-gray-300/10"
       />
     </div>
