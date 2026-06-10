@@ -1,4 +1,5 @@
-import { tokenizeCard, addCard, type Card, type AddCardRequest } from "@/api/cards-api";
+import { addCard, type Card, type AddCardRequest } from "@/api/cards-api";
+import { tokenizeCardWithVindi } from "@/api/vindi-api";
 import { resolveErrorMessage } from "@/lib/auth-helpers";
 import { detectCardBrand } from "@/lib/card-brand";
 import { MESSAGES } from "@/lib/messages";
@@ -26,7 +27,7 @@ async function addClientCard(input: AddCardInput): Promise<AddCardResult> {
   const expiryYear = parseInt(input.expiryYear, 10);
 
   try {
-    const { gatewayToken } = await tokenizeCard({
+    const { gatewayToken } = await tokenizeCardWithVindi({
       cardNumber: digits,
       cardCvv: input.cvv,
       holderName: input.holderName.toUpperCase(),

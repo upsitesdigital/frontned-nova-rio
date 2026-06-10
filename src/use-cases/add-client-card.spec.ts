@@ -1,8 +1,11 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
 vi.mock("@/api/cards-api", () => ({
-  tokenizeCard: vi.fn(),
   addCard: vi.fn(),
+}));
+
+vi.mock("@/api/vindi-api", () => ({
+  tokenizeCardWithVindi: vi.fn(),
 }));
 
 vi.mock("@/api/http-client", () => ({
@@ -36,6 +39,7 @@ vi.mock("@/lib/messages", () => ({
 }));
 
 const api = await import("@/api/cards-api");
+const vindi = await import("@/api/vindi-api");
 const cardBrand = await import("@/lib/card-brand");
 const { addClientCard } = await import("./add-client-card");
 
@@ -67,7 +71,7 @@ describe("addClientCard", () => {
 
   describe("success", () => {
     it("should return success with card on valid input", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       const result = await addClientCard(validInput);
@@ -76,23 +80,23 @@ describe("addClientCard", () => {
     });
 
     it("should strip spaces from card number before tokenizing", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard(validInput);
 
-      expect(api.tokenizeCard).toHaveBeenCalledWith(
+      expect(vindi.tokenizeCardWithVindi).toHaveBeenCalledWith(
         expect.objectContaining({ cardNumber: "4111111111111111" }),
       );
     });
 
     it("should uppercase holder name for tokenize and addCard", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard({ ...validInput, holderName: "jane smith" });
 
-      expect(api.tokenizeCard).toHaveBeenCalledWith(
+      expect(vindi.tokenizeCardWithVindi).toHaveBeenCalledWith(
         expect.objectContaining({ holderName: "JANE SMITH" }),
       );
       expect(api.addCard).toHaveBeenCalledWith(
@@ -101,23 +105,21 @@ describe("addClientCard", () => {
     });
 
     it("should pass last four digits to addCard", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard(validInput);
 
-      expect(api.addCard).toHaveBeenCalledWith(
-        expect.objectContaining({ lastFourDigits: "1111" }),
-      );
+      expect(api.addCard).toHaveBeenCalledWith(expect.objectContaining({ lastFourDigits: "1111" }));
     });
 
     it("should parse expiryMonth and expiryYear as integers", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard(validInput);
 
-      expect(api.tokenizeCard).toHaveBeenCalledWith(
+      expect(vindi.tokenizeCardWithVindi).toHaveBeenCalledWith(
         expect.objectContaining({ expiryMonth: 12, expiryYear: 2028 }),
       );
       expect(api.addCard).toHaveBeenCalledWith(
@@ -126,7 +128,7 @@ describe("addClientCard", () => {
     });
 
     it("should detect card brand from stripped digits", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard(validInput);
@@ -135,7 +137,7 @@ describe("addClientCard", () => {
     });
 
     it("should pass gatewayToken from tokenize to addCard", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "gw-token-xyz" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "gw-token-xyz" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard(validInput);
@@ -146,20 +148,18 @@ describe("addClientCard", () => {
     });
 
     it("should pass isDefault flag to addCard", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockResolvedValue(fakeCard);
 
       await addClientCard({ ...validInput, isDefault: false });
 
-      expect(api.addCard).toHaveBeenCalledWith(
-        expect.objectContaining({ isDefault: false }),
-      );
+      expect(api.addCard).toHaveBeenCalledWith(expect.objectContaining({ isDefault: false }));
     });
   });
 
   describe("error handling", () => {
     it("should return error when tokenization fails", async () => {
-      vi.mocked(api.tokenizeCard).mockRejectedValue(new Error("Tokenize failed"));
+      vi.mocked(vindi.tokenizeCardWithVindi).mockRejectedValue(new Error("Tokenize failed"));
 
       const result = await addClientCard(validInput);
 
@@ -167,7 +167,7 @@ describe("addClientCard", () => {
     });
 
     it("should return error when addCard fails", async () => {
-      vi.mocked(api.tokenizeCard).mockResolvedValue({ gatewayToken: "token-abc" });
+      vi.mocked(vindi.tokenizeCardWithVindi).mockResolvedValue({ gatewayToken: "token-abc" });
       vi.mocked(api.addCard).mockRejectedValue(new Error("Save failed"));
 
       const result = await addClientCard(validInput);
@@ -176,7 +176,7 @@ describe("addClientCard", () => {
     });
 
     it("should not call addCard when tokenization fails", async () => {
-      vi.mocked(api.tokenizeCard).mockRejectedValue(new Error("Tokenize failed"));
+      vi.mocked(vindi.tokenizeCardWithVindi).mockRejectedValue(new Error("Tokenize failed"));
 
       await addClientCard(validInput);
 
