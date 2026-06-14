@@ -118,6 +118,7 @@ function normalizeTimeValue(value: string): string {
 }
 
 let abortController: AbortController | null = null;
+let loadRequestId = 0;
 
 const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) => ({
   ...initialState,
@@ -126,6 +127,7 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
     abortController?.abort();
     abortController = new AbortController();
     const { signal } = abortController;
+    const requestId = ++loadRequestId;
 
     const { page, viewMode, statusFilter, employeeFilter, unitFilter } = get();
 
@@ -135,6 +137,10 @@ const useAdminAppointmentsStore = create<AdminAppointmentsStore>()((set, get) =>
       { page, pageSize: pageSize, viewMode, statusFilter, employeeFilter, unitFilter },
       signal,
     );
+
+    if (signal.aborted || requestId !== loadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({

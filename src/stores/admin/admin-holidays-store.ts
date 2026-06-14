@@ -73,6 +73,7 @@ const initialState: AdminHolidaysState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listLoadRequestId = 0;
 
 function toDateInputValue(value: string): string {
   return value.slice(0, 10);
@@ -84,6 +85,8 @@ const useAdminHolidaysStore = create<AdminHolidaysStore>()((set, get) => ({
   loadHolidays: async (year) => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listLoadRequestId;
+    const signal = listAbortController.signal;
 
     const targetYear = year ?? Number(get().yearFilter);
 
@@ -91,8 +94,12 @@ const useAdminHolidaysStore = create<AdminHolidaysStore>()((set, get) => ({
 
     const result = await LoadAdminHolidays.loadAdminHolidays(
       targetYear,
-      listAbortController.signal,
+      signal,
     );
+
+    if (signal.aborted || requestId !== listLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({ holidays: result.data, isLoading: false });

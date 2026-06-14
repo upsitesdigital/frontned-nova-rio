@@ -23,11 +23,12 @@ interface AdminEmployeesActions {
   setStatusFilter: (filter: StatusFilter) => void;
   setSearchQuery: (query: string) => void;
   setCurrentPage: (page: number) => void;
+  reset: () => void;
 }
 
 type AdminEmployeesStore = AdminEmployeesState & AdminEmployeesActions;
 
-const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
+const initialState: AdminEmployeesState = {
   employees: [],
   totalEmployees: 0,
   currentPage: 1,
@@ -36,6 +37,10 @@ const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
   isAuthError: false,
   statusFilter: "all",
   searchQuery: "",
+};
+
+const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
+  ...initialState,
 
   loadEmployees: async () => {
     const { statusFilter, searchQuery, currentPage } = get();
@@ -76,6 +81,10 @@ const useAdminEmployeesStore = create<AdminEmployeesStore>((set, get) => ({
   setSearchQuery: (query: string) => {
     set({ searchQuery: query, currentPage: 1 });
     get().loadEmployees();
+  },
+
+  reset: () => {
+    set(initialState);
   },
 
   setCurrentPage: (page: number) => {

@@ -4,6 +4,8 @@ import { Messages } from "@/lib/core/messages";
 import { useAuthStore } from "@/stores/auth/auth-store";
 import { AuthenticateUser } from "@/use-cases/auth/authenticate-user";
 import { validateLoginInput } from "@/validation/login-schema";
+import { SignOutAdmin } from "@/use-cases/auth/sign-out-admin";
+import { SignOutClient } from "@/use-cases/auth/sign-out-client";
 
 import type { UserType } from "@/api/core/auth-api";
 
@@ -55,6 +57,11 @@ const useLoginStore = create<LoginStore>()((set) => ({
 
     switch (result.type) {
       case "success": {
+        if (result.userType === "admin") {
+          SignOutAdmin.execute();
+        } else {
+          SignOutClient.execute();
+        }
         useAuthStore.getState().setTokens(result.accessToken, result.refreshToken, result.userType);
         set({ isSubmitting: false });
         return result.userType;

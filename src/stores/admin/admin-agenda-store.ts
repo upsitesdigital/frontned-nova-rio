@@ -56,6 +56,7 @@ function parseServiceId(filter: string): number | undefined {
 }
 
 let agendaAbortController: AbortController | null = null;
+let loadAgendaRequestId = 0;
 
 const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
   ...initialState,
@@ -75,10 +76,15 @@ const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
     agendaAbortController?.abort();
     agendaAbortController = new AbortController();
     const { signal } = agendaAbortController;
+    const requestId = ++loadAgendaRequestId;
 
     set({ isAgendaLoading: true });
 
     const result = await LoadAdminAgenda.loadTodayAgenda(page, AppConfig.agendaPageSize, serviceId, signal);
+
+    if (signal.aborted || requestId !== loadAgendaRequestId) {
+      return;
+    }
 
     if (result.items) {
       set({

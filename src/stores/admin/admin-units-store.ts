@@ -77,6 +77,7 @@ const initialState: AdminUnitsState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listLoadRequestId = 0;
 
 function toNumber(value: string): number | null {
   const trimmed = value.trim();
@@ -98,6 +99,8 @@ const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
   loadUnits: async (page) => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listLoadRequestId;
+    const signal = listAbortController.signal;
 
     const targetPage = page ?? get().currentPage;
 
@@ -105,8 +108,12 @@ const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
 
     const result = await LoadAdminUnits.loadAdminUnits(
       { page: targetPage, limit: get().pageSize },
-      listAbortController.signal,
+      signal,
     );
+
+    if (signal.aborted || requestId !== listLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({

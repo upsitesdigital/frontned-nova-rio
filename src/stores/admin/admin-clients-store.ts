@@ -30,11 +30,12 @@ interface AdminClientsActions {
   closeApprovalPopup: () => void;
   approveSelectedClient: () => Promise<void>;
   rejectSelectedClient: () => Promise<void>;
+  reset: () => void;
 }
 
 type AdminClientsStore = AdminClientsState & AdminClientsActions;
 
-const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
+const initialState: AdminClientsState = {
   clients: [],
   totalClients: 0,
   currentPage: 1,
@@ -46,6 +47,10 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   selectedClient: null,
   isApproving: false,
   isRejecting: false,
+};
+
+const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
+  ...initialState,
 
   loadClients: async () => {
     const { statusFilter, searchQuery, currentPage } = get();
@@ -86,6 +91,10 @@ const useAdminClientsStore = create<AdminClientsStore>((set, get) => ({
   setSearchQuery: (query: string) => {
     set({ searchQuery: query, currentPage: 1 });
     get().loadClients();
+  },
+
+  reset: () => {
+    set(initialState);
   },
 
   setCurrentPage: (page: number) => {

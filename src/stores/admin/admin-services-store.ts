@@ -86,6 +86,7 @@ const initialState: AdminServicesState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listLoadRequestId = 0;
 
 function formatBasePriceInput(value: number): string {
   return value.toFixed(2).replace(".", ",");
@@ -140,10 +141,16 @@ const useAdminServicesStore = create<AdminServicesStore>()((set, get) => ({
   loadServices: async () => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listLoadRequestId;
+    const signal = listAbortController.signal;
 
     set({ isLoading: true, error: null, isAuthError: false });
 
-    const result = await LoadAdminServices.loadAdminServices(listAbortController.signal);
+    const result = await LoadAdminServices.loadAdminServices(signal);
+
+    if (signal.aborted || requestId !== listLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({ services: result.data, isLoading: false });

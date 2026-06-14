@@ -91,6 +91,7 @@ const initialState: AdminPackagesState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listLoadRequestId = 0;
 
 function toNumber(value: string): number | null {
   const trimmed = value.trim();
@@ -122,6 +123,8 @@ const useAdminPackagesStore = create<AdminPackagesStore>()((set, get) => ({
   loadPackages: async (page) => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listLoadRequestId;
+    const signal = listAbortController.signal;
 
     const targetPage = page ?? get().currentPage;
     const statusFilter = get().statusFilter;
@@ -136,8 +139,12 @@ const useAdminPackagesStore = create<AdminPackagesStore>()((set, get) => ({
         active: statusFilter === "active" ? true : undefined,
         serviceId: serviceFilter !== "all" ? Number(serviceFilter) : undefined,
       },
-      listAbortController.signal,
+      signal,
     );
+
+    if (signal.aborted || requestId !== listLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({

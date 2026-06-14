@@ -55,6 +55,8 @@ const initialState: AdminPaymentsState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listLoadRequestId = 0;
+let detailLoadRequestId = 0;
 
 const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
   ...initialState,
@@ -62,6 +64,8 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
   loadPayments: async () => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listLoadRequestId;
+    const signal = listAbortController.signal;
 
     const { page, statusFilter, methodFilter, dateFrom, dateTo } = get();
 
@@ -74,8 +78,12 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
       methodFilter,
       dateFrom: dateFrom || undefined,
       dateTo: dateTo || undefined,
-      signal: listAbortController.signal,
+      signal,
     });
+
+    if (signal.aborted || requestId !== listLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({
@@ -136,6 +144,8 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
   },
 
   openDetails: async (paymentId) => {
+    const requestId = ++detailLoadRequestId;
+
     set({
       selectedPaymentId: paymentId,
       selectedPayment: null,
@@ -145,6 +155,10 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
     });
 
     const result = await LoadAdminPaymentDetail.loadAdminPaymentDetail(paymentId);
+
+    if (requestId !== detailLoadRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({ selectedPayment: result.data, isDetailLoading: false });
@@ -169,6 +183,8 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
 
   reset: () => {
     listAbortController?.abort();
+    listLoadRequestId++;
+    detailLoadRequestId++;
     listAbortController = null;
     set(initialState);
   },

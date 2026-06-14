@@ -83,6 +83,8 @@ const initialState: AdminUsersState = {
 };
 
 let listAbortController: AbortController | null = null;
+let listRequestId = 0;
+let detailRequestId = 0;
 
 function isValidEmail(value: string): boolean {
   return /\S+@\S+\.\S+/.test(value);
@@ -98,6 +100,8 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
   loadUsers: async () => {
     listAbortController?.abort();
     listAbortController = new AbortController();
+    const requestId = ++listRequestId;
+    const signal = listAbortController.signal;
 
     const { filter, searchQuery } = get();
 
@@ -106,8 +110,12 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     const result = await LoadAdminUsers.loadAdminUsers({
       filter,
       search: searchQuery,
-      signal: listAbortController.signal,
+      signal,
     });
+
+    if (signal.aborted || requestId !== listRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({
@@ -229,6 +237,8 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
   },
 
   openUserDetails: async (userId) => {
+    const requestId = ++detailRequestId;
+
     set({
       isDetailModalOpen: true,
       isLoadingDetail: true,
@@ -238,6 +248,10 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     });
 
     const result = await LoadAdminUserDetail.loadAdminUserDetail(userId);
+
+    if (requestId !== detailRequestId) {
+      return;
+    }
 
     if (result.data) {
       set({ isLoadingDetail: false, selectedUser: result.data });
@@ -295,6 +309,8 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
 
   reset: () => {
     listAbortController?.abort();
+    listRequestId++;
+    detailRequestId++;
     listAbortController = null;
     set(initialState);
   },

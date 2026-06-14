@@ -19,12 +19,12 @@ interface AdminEmployeeScheduleActions {
   closeSchedule: () => void;
   setCurrentMonth: (date: Date) => void;
   loadBusyDates: () => Promise<void>;
+  reset: () => void;
 }
 
 type AdminEmployeeScheduleStore = AdminEmployeeScheduleState & AdminEmployeeScheduleActions;
-let scheduleBusyDatesSeq = 0;
 
-const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, get) => ({
+const initialState: AdminEmployeeScheduleState = {
   open: false,
   employeeId: null,
   employeeName: "",
@@ -33,6 +33,11 @@ const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, g
   isLoading: false,
   error: null,
   isAuthError: false,
+};
+let scheduleBusyDatesSeq = 0;
+
+const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, get) => ({
+  ...initialState,
 
   openSchedule: (employeeId: number, employeeName: string) => {
     set({
@@ -50,6 +55,11 @@ const useAdminEmployeeScheduleStore = create<AdminEmployeeScheduleStore>((set, g
   closeSchedule: () => {
     scheduleBusyDatesSeq++;
     set({ open: false, employeeId: null, employeeName: "", busyDates: [] });
+  },
+
+  reset: () => {
+    set(initialState);
+    scheduleBusyDatesSeq++;
   },
 
   setCurrentMonth: (date: Date) => {
