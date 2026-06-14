@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { MESSAGES } from "@/lib/messages";
+import { Messages } from "@/lib/core/messages";
 
 const addCardSchema = z.object({
   cardNumber: z
@@ -8,17 +8,17 @@ const addCardSchema = z.object({
     .pipe(
       z
         .string()
-        .min(13, MESSAGES.cards.invalidNumber)
-        .max(19, MESSAGES.cards.invalidNumber)
-        .refine((v) => luhnCheck(v), MESSAGES.cards.invalidNumber),
+        .min(13, Messages.cards.invalidNumber)
+        .max(19, Messages.cards.invalidNumber)
+        .refine((v) => luhnCheck(v), Messages.cards.invalidNumber),
     ),
-  holderName: z.string().min(1, MESSAGES.cards.missingHolder),
-  expiryMonth: z.string().min(1, MESSAGES.cards.missingMonth),
-  expiryYear: z.string().min(1, MESSAGES.cards.missingYear),
+  holderName: z.string().min(1, Messages.cards.missingHolder),
+  expiryMonth: z.string().min(1, Messages.cards.missingMonth),
+  expiryYear: z.string().min(1, Messages.cards.missingYear),
   cvv: z
     .string()
-    .min(1, MESSAGES.cards.missingCvv)
-    .regex(/^\d{3,4}$/, MESSAGES.cards.invalidCvv),
+    .min(1, Messages.cards.missingCvv)
+    .regex(/^\d{3,4}$/, Messages.cards.invalidCvv),
 });
 
 function luhnCheck(value: string): boolean {
