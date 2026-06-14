@@ -13,10 +13,10 @@ import {
   DsInput,
   DsSkeleton,
 } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatCep } from "@/lib/formatters";
-import { useAddressStore } from "@/stores/address-store";
-import { useSchedulingStore } from "@/stores/scheduling-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useAddressStore } from "@/stores/scheduling/address-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 
 export default function DashboardDiaHorarioPage() {
   const router = useRouter();
@@ -76,7 +76,7 @@ export default function DashboardDiaHorarioPage() {
 
   const handleCepChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const formatted = formatCep(e.target.value);
+      const formatted = Formatters.formatCep(e.target.value);
       setCep(formatted);
 
       const digits = formatted.replace(/\D/g, "");
@@ -103,6 +103,8 @@ export default function DashboardDiaHorarioPage() {
       <div className="flex w-full items-start gap-16">
         <div className="shrink-0">
           <DsDateTimePicker
+            cancelLabel="Cancelar"
+            confirmLabel="Ok"
             date={selectedDate ?? undefined}
             time={selectedTime ?? undefined}
             onDateChange={handleDateChange}
@@ -123,7 +125,7 @@ export default function DashboardDiaHorarioPage() {
               placeholder="Digite seu CEP"
               value={cep}
               onChange={handleCepChange}
-              className={FLOW_INPUT_CLASS}
+              className={Constants.flowInputClass}
             />
           </DsFormField>
 

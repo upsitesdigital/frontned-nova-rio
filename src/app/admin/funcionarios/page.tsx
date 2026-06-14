@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsAlert, DsButton, DsIcon, DsPageHeader } from "@/design-system";
-import { useAdminEmployeesStore } from "@/stores/admin-employees-store";
-import { waitForAuthHydration } from "@/stores/auth-store";
+import { useAdminEmployeesStore } from "@/stores/admin/admin-employees-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { EmployeesFilterBar } from "./_components/employees-filter-bar";
 import { EmployeesList } from "./_components/employees-list";
 import { EmployeeSchedulePopup } from "./_components/employee-schedule-popup";

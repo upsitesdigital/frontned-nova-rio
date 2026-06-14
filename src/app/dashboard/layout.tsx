@@ -3,17 +3,25 @@
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
+import { HouseIcon, BroomIcon, CurrencyDollarSimpleIcon } from "@phosphor-icons/react/dist/ssr";
+import type { DsClientNavItem } from "@/design-system";
 import { AppToastContainer } from "@/app/_components/app-toast-container";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useDashboardStore } from "@/stores/dashboard-store";
-import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
-import { useSidebarStore } from "@/stores/sidebar-store";
-import { useAddressStore } from "@/stores/address-store";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
-import { usePaymentStore } from "@/stores/payment-store";
-import { useConfirmationStore } from "@/stores/confirmation-store";
-import { signOutClient } from "@/use-cases/sign-out-client";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
+import { useDashboardPaymentsStore } from "@/stores/client/dashboard-payments-store";
+import { useSidebarStore } from "@/stores/ui/sidebar-store";
+import { useAddressStore } from "@/stores/scheduling/address-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+import { useServicesStore } from "@/stores/client/services-store";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
+import { useConfirmationStore } from "@/stores/scheduling/confirmation-store";
+import { signOutClient } from "@/stores/auth/sign-out-client";
+
+const clientNavItems: DsClientNavItem[] = [
+  { path: "/dashboard", label: "Minha Área", icon: HouseIcon },
+  { path: "/dashboard/servicos", label: "Meus serviços", icon: BroomIcon },
+  { path: "/dashboard/pagamentos", label: "Pagamentos", icon: CurrencyDollarSimpleIcon },
+];
 
 const DsClientDashboardShell = dynamic(
   () =>
@@ -61,6 +69,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <>
       <DsClientDashboardShell
+        items={clientNavItems}
+        scheduleLabel="Agendar serviço"
+        signOutLabel="Sair"
+        expandLabel="Expandir menu"
+        collapseLabel="Recolher menu"
+        notificationsLabel="Notificações"
+        settingsLabel="Configurações"
+        menuLabel="Menu do usuário"
+        profileLabel="Perfil"
+        accountLabel="Minha conta"
         activePath={pathname}
         sidebarCollapsed={sidebarCollapsed}
         onSidebarCollapsedChange={setSidebarCollapsed}

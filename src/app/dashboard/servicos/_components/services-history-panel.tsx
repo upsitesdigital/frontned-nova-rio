@@ -10,8 +10,8 @@ import {
 import {
   useServicesHistoryStore,
   type ServiceHistoryFilter,
-} from "@/stores/services-history-store";
-import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/dashboard-api";
+} from "@/stores/client/services-history-store";
+import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/client/dashboard-api";
 
 interface ServicesHistoryPanelProps {
   months: ServiceHistoryMonth[];
@@ -19,7 +19,7 @@ interface ServicesHistoryPanelProps {
   onEditEntry?: (id: number) => void;
 }
 
-const PAGE_SIZE = 10;
+const pageSize = 10;
 
 const filterOptions = [
   { value: "all", label: "Todos" },
@@ -38,9 +38,9 @@ function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHist
   }, [months, filter]);
 
   const totalItems = allEntries.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const paginatedEntries = allEntries.slice(startIndex, startIndex + PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedEntries = allEntries.slice(startIndex, startIndex + pageSize);
 
   const groupedByMonth = useMemo(() => {
     const groups: {
@@ -85,6 +85,8 @@ function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHist
               <div className="flex flex-col">
                 {group.entries.map((entry) => (
                   <DsServiceHistoryItem
+                    viewLabel="Visualizar"
+                    editLabel="Editar"
                     key={entry.id}
                     date={entry.date}
                     label={entry.label}
@@ -99,7 +101,7 @@ function ServicesHistoryPanel({ months, onViewEntry, onEditEntry }: ServicesHist
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={totalItems}
-            pageSize={PAGE_SIZE}
+            pageSize={pageSize}
             onPageChange={setCurrentPage}
           />
         </div>

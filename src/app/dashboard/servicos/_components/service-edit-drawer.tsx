@@ -13,16 +13,17 @@ import {
   DsInput,
   DsFormField,
   DsButton,
+  DsIconButton,
   DsCancelConfirmPopup,
   DsAlert,
 } from "@/design-system";
 import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
-import { getServiceIcon } from "@/lib/icon-map";
-import { resolvePaymentStatus } from "@/lib/payment-status-map";
-import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
-import { useToastStore } from "@/stores/toast-store";
-import type { ServiceHistoryEntry } from "@/api/dashboard-api";
+import { IconMap } from "@/lib/display/icon-map";
+import { PaymentStatus } from "@/lib/display/payment-status-map";
+import { useServiceEditStore, type RecurrenceType } from "@/stores/client/service-edit-store";
+import { useToastStore } from "@/stores/ui/toast-store";
+import type { ServiceHistoryEntry } from "@/api/client/dashboard-api";
 
 interface ServiceEditDrawerProps {
   entry: ServiceHistoryEntry | null;
@@ -67,8 +68,10 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
 
   if (!entry) return null;
 
-  const serviceIcon = getServiceIcon(entry.icon);
-  const paymentStatus = entry.payment ? resolvePaymentStatus(entry.payment.status) : null;
+  const serviceIcon = IconMap.getServiceIcon(entry.icon);
+  const paymentStatus = entry.payment
+    ? PaymentStatus.resolvePaymentStatus(entry.payment.status)
+    : null;
 
   return (
     <Sheet
@@ -84,13 +87,14 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
       >
         <div className="flex flex-col gap-8 px-15 py-30">
           {/* Close button */}
-          <button
-            type="button"
+          <DsIconButton
+            icon={XIcon}
+            iconSize="lg"
+            ariaLabel="Fechar"
+            variant="ghost"
             onClick={onClose}
-            className="absolute left-16 top-10 flex size-11 cursor-pointer items-center justify-center rounded-[6px] bg-nova-gray-50 transition-colors hover:bg-nova-gray-100"
-          >
-            <DsIcon icon={XIcon} size="lg" className="text-nova-gray-700" />
-          </button>
+            className="absolute left-16 top-10 size-11 cursor-pointer rounded-[6px] bg-nova-gray-50 text-nova-gray-700 hover:bg-nova-gray-100"
+          />
 
           {/* Header via DsServiceDetailPopup (stripped popup styling for drawer context) */}
           <DsServiceDetailPopup
@@ -249,6 +253,10 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
         </div>
 
         <DsSchedulePopup
+          closeLabel="Fechar"
+          title="Escolher data e horário"
+          cancelLabel="Cancelar"
+          confirmLabel="Ok"
           open={rescheduleOpen}
           date={rescheduleDate}
           time={rescheduleTime}
@@ -261,6 +269,11 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
         />
 
         <DsCancelConfirmPopup
+          closeLabel="Fechar"
+          description="Cancelamento com 1h de antecedência"
+          title="Deseja cancelar o serviço?"
+          confirmLabel="Sim, cancelar"
+          cancelLabel="Manter agendamento"
           open={cancelOpen}
           onCancel={closeCancel}
           onClose={closeCancel}

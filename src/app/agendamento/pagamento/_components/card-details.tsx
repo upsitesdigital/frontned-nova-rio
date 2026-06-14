@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import { Question } from "@phosphor-icons/react/dist/ssr";
+import { QuestionIcon } from "@phosphor-icons/react/dist/ssr";
 
 import { DsFormField, DsIcon, DsInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatCardNumber, formatExpiry } from "@/lib/formatters";
-import { usePaymentStore } from "@/stores/payment-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
 
 function CardDetails() {
   const cardNumber = usePaymentStore((s) => s.cardNumber);
@@ -21,12 +21,14 @@ function CardDetails() {
   const setCardName = usePaymentStore((s) => s.setCardName);
 
   const handleCardNumberChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setCardNumber(formatCardNumber(e.target.value)),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setCardNumber(Formatters.formatCardNumber(e.target.value)),
     [setCardNumber],
   );
 
   const handleExpiryChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setCardExpiry(formatExpiry(e.target.value)),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setCardExpiry(Formatters.formatExpiry(e.target.value)),
     [setCardExpiry],
   );
 
@@ -48,7 +50,7 @@ function CardDetails() {
             value={cardNumber}
             onChange={handleCardNumberChange}
             aria-invalid={!!errors.cardNumber}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
         <div className="flex gap-5">
@@ -58,7 +60,7 @@ function CardDetails() {
               value={cardExpiry}
               onChange={handleExpiryChange}
               aria-invalid={!!errors.cardExpiry}
-              className={FLOW_INPUT_CLASS}
+              className={Constants.flowInputClass}
             />
           </DsFormField>
           <DsFormField label="CVV" className="flex-1" error={errors.cardCvv}>
@@ -68,10 +70,10 @@ function CardDetails() {
                 value={cardCvv}
                 onChange={handleCvvChange}
                 aria-invalid={!!errors.cardCvv}
-                className={`${FLOW_INPUT_CLASS} pr-10`}
+                className={`${Constants.flowInputClass} pr-10`}
               />
               <DsIcon
-                icon={Question}
+                icon={QuestionIcon}
                 size="md"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-nova-gray-500"
               />
@@ -84,7 +86,7 @@ function CardDetails() {
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
             aria-invalid={!!errors.cardName}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
       </div>

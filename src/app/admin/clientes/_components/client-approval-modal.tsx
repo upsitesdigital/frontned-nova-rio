@@ -8,7 +8,7 @@ import {
   type DsApprovalPopupStatus,
 } from "@/design-system";
 
-const PENDING_STATUS: DsApprovalPopupStatus = {
+const pendingStatus: DsApprovalPopupStatus = {
   icon: HourglassIcon,
   label: "Pendente",
   color: "text-nova-warning",
@@ -57,7 +57,7 @@ function ClientApprovalModal({
         title="Registro de clientes"
         subtitle="Solicitação de novo cadastro de cliente"
         entityName={client.name}
-        status={PENDING_STATUS}
+        status={pendingStatus}
         details={buildDetails(client)}
         rejectLabel="Reprovar cadastro"
         approveLabel="Aprovar cadastro"

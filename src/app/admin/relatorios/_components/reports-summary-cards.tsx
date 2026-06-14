@@ -6,7 +6,7 @@ import {
   ClockIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { DsCard, DsIcon } from "@/design-system";
-import { useAdminReportsStore } from "@/stores/admin-reports-store";
+import { useAdminReportsStore } from "@/stores/admin/admin-reports-store";
 
 const numberFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -53,10 +53,7 @@ function ReportsSummaryCards() {
   return (
     <div className="grid gap-4 xl:grid-cols-3">
       {cards.map((card) => (
-        <DsCard
-          key={card.label}
-          className="rounded-[10px] border-nova-gray-100 bg-white p-10"
-        >
+        <DsCard key={card.label} className="rounded-[10px] border-nova-gray-100 bg-white p-10">
           <div className="flex w-full items-center">
             <span className="text-[20px] font-medium leading-[1.3] text-black">{card.label}</span>
           </div>
@@ -73,7 +70,9 @@ function ReportsSummaryCards() {
               {isLoading && !summary ? "..." : card.value}
             </strong>
             {card.footer ? (
-              <span className="text-sm font-normal leading-normal text-nova-gray-700">{card.footer}</span>
+              <span className="text-sm font-normal leading-normal text-nova-gray-700">
+                {card.footer}
+              </span>
             ) : null}
           </div>
         </DsCard>

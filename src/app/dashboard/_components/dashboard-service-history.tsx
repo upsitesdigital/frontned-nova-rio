@@ -1,8 +1,8 @@
 "use client";
 
 import { DsFilterDropdown, DsServiceHistoryItem, DsEmptyState } from "@/design-system";
-import { useDashboardStore } from "@/stores/dashboard-store";
-import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/dashboard-api";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
+import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/client/dashboard-api";
 
 interface DashboardServiceHistoryProps {
   months: ServiceHistoryMonth[];
@@ -50,6 +50,8 @@ function DashboardServiceHistory({
             <div className="flex flex-col">
               {month.entries.map((entry) => (
                 <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
                   key={entry.id}
                   date={entry.date}
                   label={entry.label}

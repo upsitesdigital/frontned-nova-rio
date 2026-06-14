@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { DsAlert, DsClientTable, DsPageHeader, type DsClientTableClient } from "@/design-system";
-import { useAdminClientsStore } from "@/stores/admin-clients-store";
-import { waitForAuthHydration } from "@/stores/auth-store";
+import { useAdminClientsStore } from "@/stores/admin/admin-clients-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { ClientApprovalModal } from "./_components/client-approval-modal";
 
 export default function AdminClientsPage() {
@@ -50,6 +50,8 @@ export default function AdminClientsPage() {
       <DsPageHeader title="Clientes" subtitle="Visão geral dos clientes." />
 
       <DsClientTable
+        headerTitle="Clientes"
+        searchPlaceholder="Pesquisar"
         clients={clients}
         filter={statusFilter}
         onFilterChange={setStatusFilter}

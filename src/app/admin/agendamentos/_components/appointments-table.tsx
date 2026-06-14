@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   PlusIcon,
@@ -27,22 +26,8 @@ import {
   DsStatusPill,
   DsSwitch,
 } from "@/design-system";
-import { MESSAGES } from "@/lib/messages";
-import { useToastStore } from "@/stores/toast-store";
-import { useAdminAppointmentsStore, PAGE_SIZE } from "@/stores/admin-appointments-store";
-import { cancelAppointment } from "@/use-cases/cancel-admin-appointment";
-import { completeAppointment } from "@/use-cases/complete-admin-appointment";
-import { rescheduleAppointment } from "@/use-cases/reschedule-admin-appointment";
-import { saveAdminAppointment } from "@/use-cases/update-admin-appointment";
-import type { AdminAppointmentItem } from "@/api/admin-appointments-api";
-import {
-  getStatusLabel,
-  getStatusVariant,
-  getStatusIcon,
-  getRecurrenceLabel,
-  formatAppointmentDate,
-  formatDurationTime,
-} from "@/lib/appointment-labels";
+import { useAdminAppointmentsStore, pageSize } from "@/stores/admin/admin-appointments-store";
+import { AppointmentLabels } from "@/lib/display/appointment-labels";
 
 function parseDateStringToLocalDate(value: string): Date | undefined {
   if (!value) return undefined;
@@ -110,23 +95,37 @@ function AppointmentsTable() {
     isLoading,
     setPage,
     employeeOptions,
-    loadAppointments,
+    selectedAppointment,
+    viewOpen,
+    editOpen,
+    rescheduleOpen,
+    cancelOpen,
+    completeOpen,
+    editClientId,
+    editEmployeeId,
+    rescheduleDate,
+    rescheduleTime,
+    actionError,
+    isSubmitting,
+    setViewOpen,
+    setEditOpen,
+    setRescheduleOpen,
+    setCancelOpen,
+    setCompleteOpen,
+    setEditClientId,
+    setEditEmployeeId,
+    setRescheduleDate,
+    setRescheduleTime,
+    resetActionError,
+    openViewDialog,
+    openEditDialog,
+    saveEdit,
+    reschedule,
+    cancelAppointment,
+    completeAppointment,
   } = useAdminAppointmentsStore();
 
-  const [selectedAppointment, setSelectedAppointment] = useState<AdminAppointmentItem | null>(null);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [rescheduleOpen, setRescheduleOpen] = useState(false);
-  const [cancelOpen, setCancelOpen] = useState(false);
-  const [completeOpen, setCompleteOpen] = useState(false);
-  const [editClientId, setEditClientId] = useState("");
-  const [editEmployeeId, setEditEmployeeId] = useState("");
-  const [rescheduleDate, setRescheduleDate] = useState("");
-  const [rescheduleTime, setRescheduleTime] = useState("");
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const employeeSelectOptions = employeeOptions.map((employee) => ({
     value: String(employee.id),
@@ -144,126 +143,6 @@ function AppointmentsTable() {
       ]),
     ).values(),
   );
-
-  function resetActionError() {
-    setActionError(null);
-  }
-
-  function openViewDialog(appointment: AdminAppointmentItem) {
-    setSelectedAppointment(appointment);
-    resetActionError();
-    setViewOpen(true);
-  }
-
-  function openEditDialog(appointment: AdminAppointmentItem) {
-    setSelectedAppointment(appointment);
-    setEditClientId(String(appointment.client.id));
-    setEditEmployeeId(appointment.employee ? String(appointment.employee.id) : "");
-    setRescheduleDate(appointment.date);
-    setRescheduleTime(normalizeTimeValue(appointment.startTime));
-    resetActionError();
-    setEditOpen(true);
-  }
-
-  async function refreshAppointmentsWithSuccess(message: string) {
-    await loadAppointments();
-    useToastStore.getState().showToast(message, "success");
-  }
-
-  async function handleSaveEdit() {
-    if (!selectedAppointment) return;
-
-    const nextEmployeeId = editEmployeeId ? Number(editEmployeeId) : undefined;
-    const currentEmployeeId = selectedAppointment.employee?.id;
-
-    if (currentEmployeeId === nextEmployeeId) {
-      setEditOpen(false);
-      return;
-    }
-
-    setIsSubmitting(true);
-    setActionError(null);
-
-    const result = await saveAdminAppointment({
-      id: selectedAppointment.id,
-      employeeId: nextEmployeeId,
-    });
-
-    setIsSubmitting(false);
-
-    if (!result.success) {
-      setActionError(result.error ?? MESSAGES.adminAppointments.updateError);
-      return;
-    }
-
-    setEditOpen(false);
-    await refreshAppointmentsWithSuccess(MESSAGES.adminAppointments.updateSuccess);
-  }
-
-  async function handleReschedule() {
-    if (!selectedAppointment) return;
-
-    if (!rescheduleDate || !rescheduleTime) {
-      setActionError("Informe a nova data e o novo horario.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setActionError(null);
-
-    const result = await rescheduleAppointment({
-      id: selectedAppointment.id,
-      date: rescheduleDate,
-      startTime: rescheduleTime,
-    });
-
-    setIsSubmitting(false);
-
-    if (!result.success) {
-      setActionError(result.error ?? MESSAGES.adminAppointments.rescheduleError);
-      return;
-    }
-
-    setRescheduleOpen(false);
-    setEditOpen(false);
-    await refreshAppointmentsWithSuccess(MESSAGES.adminAppointments.rescheduleSuccess);
-  }
-
-  async function handleCancelAppointment() {
-    if (!selectedAppointment) return;
-
-    setIsSubmitting(true);
-    setActionError(null);
-    const result = await cancelAppointment(selectedAppointment.id);
-    setIsSubmitting(false);
-
-    if (!result.success) {
-      setActionError(result.error ?? MESSAGES.adminAppointments.cancelError);
-      return;
-    }
-
-    setCancelOpen(false);
-    setEditOpen(false);
-    await refreshAppointmentsWithSuccess(MESSAGES.adminAppointments.cancelSuccess);
-  }
-
-  async function handleCompleteAppointment() {
-    if (!selectedAppointment) return;
-
-    setIsSubmitting(true);
-    setActionError(null);
-    const result = await completeAppointment(selectedAppointment.id);
-    setIsSubmitting(false);
-
-    if (!result.success) {
-      setActionError(result.error ?? MESSAGES.adminAppointments.completeError);
-      return;
-    }
-
-    setCompleteOpen(false);
-    setEditOpen(false);
-    await refreshAppointmentsWithSuccess(MESSAGES.adminAppointments.completeSuccess);
-  }
 
   if (isLoading) {
     return <DsLoadingState message="Carregando agendamentos..." />;
@@ -283,20 +162,33 @@ function AppointmentsTable() {
 
   return (
     <div className="flex flex-col gap-0 rounded-[10px] bg-nova-gray-50 p-6">
-      <DsAppointmentTableHeader />
+      <DsAppointmentTableHeader
+        columns={[
+          { label: "Data" },
+          { label: "Serviço" },
+          { label: "Duração/ Horário" },
+          { label: "Funcionário" },
+          { label: "Status" },
+          { label: "Pacote" },
+          { label: "Ações", align: "right" },
+        ]}
+      />
 
       <div className="flex flex-col gap-2">
         {appointments.map((appointment) => (
           <DsAppointmentRow
             key={appointment.id}
-            date={formatAppointmentDate(appointment.date)}
+            date={AppointmentLabels.formatAppointmentDate(appointment.date)}
             serviceName={appointment.service.name}
-            durationTime={formatDurationTime(appointment.duration, appointment.startTime)}
+            durationTime={AppointmentLabels.formatDurationTime(
+              appointment.duration,
+              appointment.startTime,
+            )}
             employeeName={appointment.employee?.name ?? "—"}
-            statusLabel={getStatusLabel(appointment.status)}
-            statusVariant={getStatusVariant(appointment.status)}
-            statusIcon={getStatusIcon(appointment.status)}
-            packageLabel={getRecurrenceLabel(appointment.recurrenceType)}
+            statusLabel={AppointmentLabels.getStatusLabel(appointment.status)}
+            statusVariant={AppointmentLabels.getStatusVariant(appointment.status)}
+            statusIcon={AppointmentLabels.getStatusIcon(appointment.status)}
+            packageLabel={AppointmentLabels.getRecurrenceLabel(appointment.recurrenceType)}
             onView={() => openViewDialog(appointment)}
             onEdit={
               appointment.status === "SCHEDULED" ? () => openEditDialog(appointment) : undefined
@@ -309,7 +201,7 @@ function AppointmentsTable() {
         currentPage={page}
         totalPages={totalPages}
         totalItems={total}
-        pageSize={PAGE_SIZE}
+        pageSize={pageSize}
         onPageChange={setPage}
       />
 
@@ -337,7 +229,9 @@ function AppointmentsTable() {
           </p>
           <p>
             <span className="font-medium text-black">Data:</span>{" "}
-            {selectedAppointment ? formatAppointmentDate(selectedAppointment.date) : "-"}
+            {selectedAppointment
+              ? AppointmentLabels.formatAppointmentDate(selectedAppointment.date)
+              : "-"}
           </p>
           <p>
             <span className="font-medium text-black">Horario:</span>{" "}
@@ -357,11 +251,15 @@ function AppointmentsTable() {
           </p>
           <p>
             <span className="font-medium text-black">Status:</span>{" "}
-            {selectedAppointment ? getStatusLabel(selectedAppointment.status) : "-"}
+            {selectedAppointment
+              ? AppointmentLabels.getStatusLabel(selectedAppointment.status)
+              : "-"}
           </p>
           <p>
             <span className="font-medium text-black">Tipo:</span>{" "}
-            {selectedAppointment ? getRecurrenceLabel(selectedAppointment.recurrenceType) : "-"}
+            {selectedAppointment
+              ? AppointmentLabels.getRecurrenceLabel(selectedAppointment.recurrenceType)
+              : "-"}
           </p>
           <p>
             <span className="font-medium text-black">Pacote:</span>{" "}
@@ -420,19 +318,19 @@ function AppointmentsTable() {
                   </p>
                   <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-600">
                     {selectedAppointment
-                      ? getRecurrenceLabel(selectedAppointment.recurrenceType)
+                      ? AppointmentLabels.getRecurrenceLabel(selectedAppointment.recurrenceType)
                       : "-"}
                   </p>
                 </div>
               </div>
 
-              <button
-                type="button"
+              <DsButton
+                variant="outline"
                 className="inline-flex items-center gap-2 rounded-full border border-nova-gray-300 px-3 py-1.5 text-sm leading-[1.3] tracking-[-0.56px] text-nova-gray-700"
               >
                 Recibo
                 <DsIcon icon={ScrollIcon} size="sm" className="text-nova-primary" />
-              </button>
+              </DsButton>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
@@ -441,9 +339,9 @@ function AppointmentsTable() {
               </p>
               {selectedAppointment && (
                 <DsStatusPill
-                  icon={getStatusIcon(selectedAppointment.status)}
-                  label={getStatusLabel(selectedAppointment.status)}
-                  variant={getStatusVariant(selectedAppointment.status)}
+                  icon={AppointmentLabels.getStatusIcon(selectedAppointment.status)}
+                  label={AppointmentLabels.getStatusLabel(selectedAppointment.status)}
+                  variant={AppointmentLabels.getStatusVariant(selectedAppointment.status)}
                   className="text-sm"
                 />
               )}
@@ -545,7 +443,7 @@ function AppointmentsTable() {
 
           <div className="mt-auto border-t border-nova-gray-100 pt-4">
             <DsButton
-              onClick={handleSaveEdit}
+              onClick={saveEdit}
               disabled={isSubmitting || selectedAppointment?.status !== "SCHEDULED"}
               className="h-12 w-full rounded-xl text-base"
             >
@@ -557,6 +455,7 @@ function AppointmentsTable() {
       </DsSheet>
 
       <DsSchedulePopup
+        closeLabel="Fechar"
         open={rescheduleOpen}
         title="Remarcar agendamento"
         date={parseDateStringToLocalDate(rescheduleDate)}
@@ -571,7 +470,7 @@ function AppointmentsTable() {
           setRescheduleOpen(false);
           resetActionError();
         }}
-        onConfirm={handleReschedule}
+        onConfirm={reschedule}
         cancelLabel="Voltar"
         confirmLabel={isSubmitting ? "Remarcando..." : "Confirmar remarcacao"}
         confirmDisabled={isSubmitting}
@@ -586,7 +485,7 @@ function AppointmentsTable() {
         confirmLabel={isSubmitting ? "Cancelando..." : "Sim, cancelar"}
         cancelLabel="Voltar"
         variant="destructive"
-        onConfirm={handleCancelAppointment}
+        onConfirm={cancelAppointment}
       />
 
       <DsConfirmDialog
@@ -596,7 +495,7 @@ function AppointmentsTable() {
         description="Confirma que o servico foi executado e deve ser marcado como concluido?"
         confirmLabel={isSubmitting ? "Concluindo..." : "Sim, concluir"}
         cancelLabel="Voltar"
-        onConfirm={handleCompleteAppointment}
+        onConfirm={completeAppointment}
       />
     </div>
   );

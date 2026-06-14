@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton } from "@/design-system";
 
@@ -49,9 +49,12 @@ function LandingCTABanner() {
               size="flow"
               className="h-14.75 w-76.5 rounded-xl bg-black px-8 text-base hover:bg-black/90"
             >
-              <Link href="/agendamento" className="group inline-flex items-center justify-center gap-2">
+              <Link
+                href="/agendamento"
+                className="group inline-flex items-center justify-center gap-2"
+              >
                 Agende sua limpeza agora
-                <ArrowRight
+                <ArrowRightIcon
                   size={18}
                   weight="bold"
                   className="transition-transform duration-200 group-hover:translate-x-1"

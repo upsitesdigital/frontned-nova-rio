@@ -9,10 +9,10 @@ import {
   DsTransactionTable,
   type DsTransactionTableColumn,
 } from "@/design-system";
-import { formatPaymentAmount } from "@/lib/payment-format";
-import { useAdminPaymentsStore } from "@/stores/admin-payments-store";
+import { PaymentFormat } from "@/lib/formatting/payment-format";
+import { useAdminPaymentsStore } from "@/stores/admin/admin-payments-store";
 
-const COLUMNS: DsTransactionTableColumn[] = [
+const columns: DsTransactionTableColumn[] = [
   { key: "date", header: "Data", className: "max-w-28" },
   { key: "service", header: "Serviço" },
   { key: "client", header: "Cliente" },
@@ -32,7 +32,9 @@ function getMethodLabel(method: "CREDIT_CARD" | "DEBIT_CARD" | "PIX", cardLastDi
   return `Cartão •••• ${digits}`;
 }
 
-function getRecurrenceLabel(recurrenceType: "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY") {
+function getRecurrenceLabel(
+  recurrenceType: "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY",
+) {
   if (recurrenceType === "SINGLE") return "Avulso";
   if (recurrenceType === "PACKAGE") return "Pacote";
   if (recurrenceType === "WEEKLY") return "Semanal";
@@ -80,7 +82,7 @@ function AdminPaymentsTable() {
     status: <DsPaymentStatusPill status={payment.status} />,
     value: (
       <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-600">
-        {formatPaymentAmount(payment.amount)}
+        {PaymentFormat.formatPaymentAmount(payment.amount)}
       </span>
     ),
     package: (
@@ -113,7 +115,11 @@ function AdminPaymentsTable() {
   }));
 
   return (
-    <DsTransactionTable columns={COLUMNS} data={rows} emptyMessage="Nenhuma transação encontrada." />
+    <DsTransactionTable
+      columns={columns}
+      data={rows}
+      emptyMessage="Nenhuma transação encontrada."
+    />
   );
 }
 

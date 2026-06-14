@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
@@ -11,21 +11,18 @@ import {
   DsServiceEditPopup,
   DsServiceManageCard,
 } from "@/design-system";
-import { getServiceIcon } from "@/lib/icon-map";
-import { formatPrice } from "@/lib/formatters";
-import { waitForAuthHydration } from "@/stores/auth-store";
+import { IconMap } from "@/lib/display/icon-map";
+import { Formatters } from "@/lib/formatting/formatters";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import {
   useAdminServicesStore,
   type PaymentOption,
   type ServiceFrequency,
-} from "@/stores/admin-services-store";
+} from "@/stores/admin/admin-services-store";
 
-const CREATED_ALERT_DURATION = 4000;
+const createdAlertDuration = 4000;
 
 export default function AdminServicesPage() {
-  const [showCreatedAlert, setShowCreatedAlert] = useState(false);
-  const [pendingDeleteServiceId, setPendingDeleteServiceId] = useState<number | null>(null);
-
   const {
     services,
     isLoading,
@@ -33,8 +30,12 @@ export default function AdminServicesPage() {
     deletingServiceId,
     error,
     isEditorOpen,
+    showCreatedAlert,
+    pendingDeleteServiceId,
     form,
     loadServices,
+    setShowCreatedAlert,
+    setPendingDeleteServiceId,
     openCreateEditor,
     openEditEditor,
     closeEditor,
@@ -57,10 +58,10 @@ export default function AdminServicesPage() {
 
     const timer = setTimeout(() => {
       setShowCreatedAlert(false);
-    }, CREATED_ALERT_DURATION);
+    }, createdAlertDuration);
 
     return () => clearTimeout(timer);
-  }, [showCreatedAlert]);
+  }, [showCreatedAlert, setShowCreatedAlert]);
 
   const handleSave = async () => {
     if (isSaving) return;
@@ -114,7 +115,7 @@ export default function AdminServicesPage() {
   const pendingDeleteService =
     pendingDeleteServiceId === null
       ? null
-      : services.find((service) => service.id === pendingDeleteServiceId) ?? null;
+      : (services.find((service) => service.id === pendingDeleteServiceId) ?? null);
 
   const isDeletingPendingService = deletingServiceId === pendingDeleteServiceId;
 
@@ -162,11 +163,12 @@ export default function AdminServicesPage() {
           <div className="flex flex-wrap items-center gap-4">
             {services.map((service) => (
               <DsServiceManageCard
+                editLabel="Editar"
                 key={service.id}
-                icon={getServiceIcon(service.icon)}
+                icon={IconMap.getServiceIcon(service.icon)}
                 title={service.name}
                 description={service.description ?? ""}
-                price={formatPrice(service.basePrice)}
+                price={Formatters.formatPrice(service.basePrice)}
                 className="w-125.25"
                 onEdit={() => {
                   if (isSaving) return;
@@ -208,9 +210,16 @@ export default function AdminServicesPage() {
 
           <div className="absolute inset-y-0 right-0 w-full max-w-166 overflow-y-auto bg-white">
             <DsServiceEditPopup
+              pricePrefix="A partir de R$"
+              paymentOptionsTitle="Opções de pagamento"
+              paymentOptionsDescription="Configure quais tipos de pagamento para o serviço."
+              changeIconLabel="Alterar ícone"
+              nameLabel="Nome"
+              descriptionLabel="Descrição"
+              priceLabel="Preço"
               className="min-h-full"
               onClose={closeEditor}
-              icon={getServiceIcon(form.icon)}
+              icon={IconMap.getServiceIcon(form.icon)}
               onChangeIcon={cycleFormIcon}
               name={form.name}
               onNameChange={(value) => updateFormField("name", value)}

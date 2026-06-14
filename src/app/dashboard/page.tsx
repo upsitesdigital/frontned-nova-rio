@@ -2,16 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
-import { DsDiscountCard, DsHighlightCard } from "@/design-system";
-import { getCurrentMonthLabel } from "@/lib/date-helpers";
-import { mapCardsToPanel, mapPaymentsToPanel } from "@/lib/dashboard-payments-mapper";
-import { useDashboardStore } from "@/stores/dashboard-store";
-import { useDashboardPaymentsStore } from "@/stores/dashboard-payments-store";
-import { useAddressStore } from "@/stores/address-store";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
-import { usePaymentStore } from "@/stores/payment-store";
-import { useConfirmationStore } from "@/stores/confirmation-store";
+import { DsButton, DsDiscountCard, DsHighlightCard } from "@/design-system";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
+import { DashboardPaymentsMapper } from "@/lib/mappers/dashboard-payments-mapper";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
+import { useDashboardPaymentsStore } from "@/stores/client/dashboard-payments-store";
+import { useAddressStore } from "@/stores/scheduling/address-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+import { useServicesStore } from "@/stores/client/services-store";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
+import { useConfirmationStore } from "@/stores/scheduling/confirmation-store";
 import { DashboardServiceHistory } from "./_components/dashboard-service-history";
 import { DashboardPaymentsPanel } from "./_components/dashboard-payments-panel";
 import { ServiceDetailModal } from "./servicos/_components/service-detail-modal";
@@ -73,8 +73,7 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <button
-            type="button"
+          <DsButton
             onClick={handleStartScheduling}
             className="flex h-14 items-center justify-center gap-1 rounded-xl bg-nova-primary px-8 py-4"
           >
@@ -82,7 +81,7 @@ export default function DashboardPage() {
             <span className="text-lg leading-normal font-medium tracking-[-0.72px] text-white">
               Agendar servico
             </span>
-          </button>
+          </DsButton>
 
           <div className="pointer-events-none absolute bottom-0 left-0 h-37.5 w-111 overflow-hidden">
             <div className="absolute -bottom-36 -left-64 h-97 w-173.5 rounded-[50%] border-4 border-nova-primary" />
@@ -129,7 +128,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex w-125.25 shrink-0 flex-col gap-6">
-        <DsDiscountCard className="h-33">
+        <DsDiscountCard title="Descontos exclusivos" className="h-33">
           <span>
             Agende agora serviços recorrentes semanais e ganhe{" "}
             <span className="font-semibold">10% de desconto</span>
@@ -137,9 +136,9 @@ export default function DashboardPage() {
         </DsDiscountCard>
 
         <DashboardPaymentsPanel
-          cards={mapCardsToPanel(cards)}
-          payments={mapPaymentsToPanel(recentPayments)}
-          paymentsMonthLabel={getCurrentMonthLabel()}
+          cards={DashboardPaymentsMapper.mapCardsToPanel(cards)}
+          payments={DashboardPaymentsMapper.mapPaymentsToPanel(recentPayments)}
+          paymentsMonthLabel={DateHelpers.getCurrentMonthLabel()}
         />
       </div>
       <ServiceDetailModal

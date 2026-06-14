@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { PlusIcon, X } from "@phosphor-icons/react/dist/ssr";
+import { useEffect } from "react";
+import { PlusIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
   DsButton,
   DsDeleteConfirmPopup,
   DsFormField,
   DsIcon,
+  DsIconButton,
   DsInput,
   DsLoadingState,
   DsPageHeader,
@@ -15,12 +16,10 @@ import {
   DsUserTable,
   type DsUserTableUser,
 } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import {
-  useAdminUsersStore,
-} from "@/stores/admin-users-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminUsersStore } from "@/stores/admin/admin-users-store";
 
-const CREATED_ALERT_DURATION = 4000;
+const createdAlertDuration = 4000;
 
 function formatDate(iso: string): string {
   const date = new Date(iso);
@@ -35,8 +34,6 @@ function formatRole(role: "ADMIN_MASTER" | "ADMIN_BASIC"): string {
 }
 
 export default function AdminUsersPage() {
-  const [showCreatedAlert, setShowCreatedAlert] = useState(false);
-
   const {
     users,
     isLoading,
@@ -50,12 +47,14 @@ export default function AdminUsersPage() {
     isCreateModalOpen,
     isDetailModalOpen,
     isPasswordVisible,
+    showCreatedAlert,
     selectedUser,
     selectedDeleteUser,
     form,
     loadUsers,
     setFilter,
     setSearchQuery,
+    setShowCreatedAlert,
     openCreateModal,
     closeCreateModal,
     setPasswordVisible,
@@ -84,10 +83,10 @@ export default function AdminUsersPage() {
 
     const timer = setTimeout(() => {
       setShowCreatedAlert(false);
-    }, CREATED_ALERT_DURATION);
+    }, createdAlertDuration);
 
     return () => clearTimeout(timer);
-  }, [showCreatedAlert]);
+  }, [showCreatedAlert, setShowCreatedAlert]);
 
   const tableUsers: DsUserTableUser[] = users.map((user) => ({
     id: String(user.id),
@@ -154,6 +153,10 @@ export default function AdminUsersPage() {
         {error && <DsAlert variant="error" title={error} className="max-w-132" />}
 
         <DsUserTable
+          headerTitle="Usuários"
+          searchPlaceholder="Pesquisar"
+          allLabel="Todos"
+          activeLabel="Ativos"
           users={tableUsers}
           filter={filter}
           onFilterChange={setFilter}
@@ -182,6 +185,17 @@ export default function AdminUsersPage() {
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
             <DsUserFormPopup
+              rolePlaceholder="Selecionar role"
+              statusPlaceholder="Selecionar status"
+              activeLabel="Ativo"
+              namePlaceholder="Nome do usuário"
+              emailPlaceholder="email@exemplo.com"
+              passwordPlaceholder="••••••••••••"
+              nameLabel="Nome"
+              emailLabel="Email"
+              passwordLabel="Senha"
+              roleLabel="Role"
+              title="Criar novo usuario"
               values={form}
               passwordVisible={isPasswordVisible}
               onPasswordVisibilityChange={setPasswordVisible}
@@ -214,13 +228,14 @@ export default function AdminUsersPage() {
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
             <div className="relative flex w-full max-w-170 flex-col gap-8 rounded-2xl bg-white p-8">
-              <button
-                type="button"
+              <DsIconButton
+                icon={XIcon}
+                iconSize="lg"
+                ariaLabel="Fechar"
+                variant="ghost"
                 onClick={closeUserDetails}
-                className="cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
-              >
-                <DsIcon icon={X} size="lg" />
-              </button>
+                className="size-auto cursor-pointer p-0 text-nova-gray-700 transition-colors hover:text-black"
+              />
 
               <div className="flex flex-col gap-2 text-center">
                 <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">

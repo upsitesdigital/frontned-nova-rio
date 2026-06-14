@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { DsAlert, DsPageHeader } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminReportsStore } from "@/stores/admin-reports-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminReportsStore } from "@/stores/admin/admin-reports-store";
 import { ReportsChartPanel } from "./_components/reports-chart-panel";
 import { ReportsSummaryCards } from "./_components/reports-summary-cards";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { PencilSimpleIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
@@ -14,16 +14,14 @@ import {
   DsSelect,
   DsTextarea,
 } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminPackagesStore } from "@/stores/admin-packages-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminPackagesStore } from "@/stores/admin/admin-packages-store";
 
 function formatCurrency(value: number): string {
   return `R$ ${value.toFixed(2).replace(".", ",")}`;
 }
 
 export default function AdminPackagesPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
   const {
     packages,
     totalPackages,
@@ -38,9 +36,11 @@ export default function AdminPackagesPage() {
     error,
     isEditorOpen,
     editingPackageId,
+    isMounted,
     form,
     loadPackages,
     loadServiceOptions,
+    setMounted,
     setCurrentPage,
     setStatusFilter,
     setServiceFilter,
@@ -57,13 +57,13 @@ export default function AdminPackagesPage() {
     waitForAuthHydration().then(async () => {
       await loadServiceOptions();
       await loadPackages(1);
-      setIsMounted(true);
+      setMounted(true);
     });
 
     return () => {
       reset();
     };
-  }, [loadPackages, loadServiceOptions, reset]);
+  }, [loadPackages, loadServiceOptions, setMounted, reset]);
 
   const serviceNameById = useMemo(() => {
     return new Map(serviceOptions.map((service) => [service.id, service.name]));
@@ -158,8 +158,12 @@ export default function AdminPackagesPage() {
                       <td className="px-6 py-4 text-sm text-nova-gray-700">
                         {serviceNameById.get(item.serviceId) ?? `Serviço #${item.serviceId}`}
                       </td>
-                      <td className="px-6 py-4 text-sm text-nova-gray-700">{item.totalHours ?? "-"}</td>
-                      <td className="px-6 py-4 text-sm text-nova-gray-700">{formatCurrency(item.price)}</td>
+                      <td className="px-6 py-4 text-sm text-nova-gray-700">
+                        {item.totalHours ?? "-"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-nova-gray-700">
+                        {formatCurrency(item.price)}
+                      </td>
                       <td className="px-6 py-4 text-sm">
                         <span
                           className={
@@ -179,7 +183,11 @@ export default function AdminPackagesPage() {
                             onClick={() => openEditEditor(item.id)}
                             disabled={isSaving || isToggling}
                           >
-                            <DsIcon icon={PencilSimpleIcon} size="sm" className="text-nova-gray-700" />
+                            <DsIcon
+                              icon={PencilSimpleIcon}
+                              size="sm"
+                              className="text-nova-gray-700"
+                            />
                             Editar
                           </DsButton>
                           <DsButton
@@ -190,11 +198,7 @@ export default function AdminPackagesPage() {
                             }}
                             disabled={isSaving || isToggling}
                           >
-                            {isToggling
-                              ? "Salvando..."
-                              : item.isActive
-                                ? "Inativar"
-                                : "Reativar"}
+                            {isToggling ? "Salvando..." : item.isActive ? "Inativar" : "Reativar"}
                           </DsButton>
                         </div>
                       </td>
@@ -238,7 +242,9 @@ export default function AdminPackagesPage() {
                 <h2 className="text-3xl font-medium text-black">
                   {editingPackageId ? "Editar pacote" : "Novo pacote"}
                 </h2>
-                <p className="text-sm text-nova-gray-700">Defina o serviço, preço e carga horária do pacote.</p>
+                <p className="text-sm text-nova-gray-700">
+                  Defina o serviço, preço e carga horária do pacote.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -289,7 +295,12 @@ export default function AdminPackagesPage() {
               </DsFormField>
 
               <div className="flex items-center justify-end gap-3">
-                <DsButton variant="outline" className="h-12 px-6" onClick={closeEditor} disabled={isSaving}>
+                <DsButton
+                  variant="outline"
+                  className="h-12 px-6"
+                  onClick={closeEditor}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </DsButton>
                 <DsButton

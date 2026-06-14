@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { DsDialog, DsFormField, DsInput, DsButton } from "@/design-system";
-import { useDeleteAccountStore } from "@/stores/delete-account-store";
+import { useDeleteAccountStore } from "@/stores/client/delete-account-store";
 
-const CONFIRM_PHRASE = "Apagar minha conta";
+const confirmPhrase = "Apagar minha conta";
 
 function DeleteAccountDialog() {
   const router = useRouter();
@@ -18,14 +18,14 @@ function DeleteAccountDialog() {
     submitDeleteAccount,
   } = useDeleteAccountStore();
 
-  const canConfirm = deletePhrase === CONFIRM_PHRASE;
+  const canConfirm = deletePhrase === confirmPhrase;
 
   return (
     <DsDialog
       open={deleteDialogOpen}
       onOpenChange={closeDeleteDialog}
       title="Excluir conta"
-      description={`Esta ação é irreversível. Para confirmar, digite "${CONFIRM_PHRASE}" no campo abaixo.`}
+      description={`Esta ação é irreversível. Para confirmar, digite "${confirmPhrase}" no campo abaixo.`}
       footer={
         <div className="flex items-center gap-3">
           <DsButton variant="outline" onClick={closeDeleteDialog} disabled={isSaving}>
@@ -48,7 +48,7 @@ function DeleteAccountDialog() {
         <DsInput
           value={deletePhrase}
           onChange={(e) => setDeletePhrase(e.target.value)}
-          placeholder={CONFIRM_PHRASE}
+          placeholder={confirmPhrase}
         />
       </DsFormField>
     </DsDialog>

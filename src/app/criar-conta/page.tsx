@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatPhone } from "@/lib/formatters";
-import { useCreateAccountStore } from "@/stores/create-account-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useCreateAccountStore } from "@/stores/auth/create-account-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 
 export default function CriarContaPage() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function CriarContaPage() {
 
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPhone(formatPhone(e.target.value));
+      setPhone(Formatters.formatPhone(e.target.value));
     },
     [setPhone],
   );
@@ -76,7 +76,7 @@ export default function CriarContaPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 aria-invalid={!!errors.name}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -87,7 +87,7 @@ export default function CriarContaPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={!!errors.email}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -98,7 +98,7 @@ export default function CriarContaPage() {
                 value={phone}
                 onChange={handlePhoneChange}
                 aria-invalid={!!errors.phone}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -110,7 +110,7 @@ export default function CriarContaPage() {
                 visible={pwdVisible}
                 onVisibilityChange={(v) => setPwdVisibility("register-password", v)}
                 aria-invalid={!!errors.password}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -122,7 +122,7 @@ export default function CriarContaPage() {
                 visible={confirmPwdVisible}
                 onVisibilityChange={(v) => setPwdVisibility("register-confirm", v)}
                 aria-invalid={!!errors.confirmPassword}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
           </div>

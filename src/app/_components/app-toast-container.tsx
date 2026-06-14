@@ -1,7 +1,7 @@
 "use client";
 
 import { DsToastContainer } from "@/design-system";
-import { useToastStore } from "@/stores/toast-store";
+import { useToastStore } from "@/stores/ui/toast-store";
 
 function AppToastContainer() {
   const toasts = useToastStore((s) => s.toasts);

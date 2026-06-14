@@ -2,34 +2,34 @@
 
 import Link from "next/link";
 import {
-  ArrowRight,
-  Broom,
-  DeviceMobileCamera,
-  UsersThree,
-  CurrencyDollar,
+  ArrowRightIcon,
+  BroomIcon,
+  DeviceMobileCameraIcon,
+  UsersThreeIcon,
+  CurrencyDollarIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton, DsIcon } from "@/design-system";
 import { LandingNavbar } from "./landing-navbar";
 
-const HOW_IT_WORKS_STEPS = [
+const howItWorksSteps = [
   {
-    icon: Broom,
+    icon: BroomIcon,
     title: "Escolha o serviço",
     description: "Selecione faxina regular ou limpeza recorrente.",
   },
   {
-    icon: DeviceMobileCamera,
+    icon: DeviceMobileCameraIcon,
     title: "Agende online",
     description: "Escolha data e horário com antecedência mínima de 1h.",
   },
   {
-    icon: UsersThree,
+    icon: UsersThreeIcon,
     title: "Equipe especializada",
     description: "Profissionais uniformizados e treinados chegam até você.",
   },
   {
-    icon: CurrencyDollar,
+    icon: CurrencyDollarIcon,
     title: "Pagamento facilitado",
     description: "Cobrança automática, sem burocracia e sem inadimplência.",
   },
@@ -69,8 +69,8 @@ function LandingHero() {
             </h1>
             <p className="max-w-225.75 text-lg leading-normal tracking-[-0.8px] text-white md:text-[20px]">
               Serviços de limpeza <span className="font-semibold">pay per use</span> para
-              escritórios e consultórios de alto padrão, com agendamento rápido,
-              pagamento simplificado e profissionais qualificados.
+              escritórios e consultórios de alto padrão, com agendamento rápido, pagamento
+              simplificado e profissionais qualificados.
             </p>
           </div>
 
@@ -82,7 +82,7 @@ function LandingHero() {
             >
               <Link href="/agendamento" className="group flex items-center gap-4">
                 Agende sua limpeza agora
-                <ArrowRight
+                <ArrowRightIcon
                   size={20}
                   weight="bold"
                   className="transition-transform duration-200 group-hover:translate-x-1"
@@ -118,7 +118,7 @@ function LandingHowItWorks() {
         </motion.div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {HOW_IT_WORKS_STEPS.map((step, index) => (
+          {howItWorksSteps.map((step, index) => (
             <motion.article
               key={step.title}
               className="flex h-63.75 flex-col items-center bg-white px-2 pt-8 text-center transition-shadow duration-300 hover:shadow-[0_18px_30px_-18px_rgba(0,0,0,0.35)]"

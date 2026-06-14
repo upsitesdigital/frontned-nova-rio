@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { PencilSimpleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
@@ -13,8 +13,8 @@ import {
   DsLoadingState,
   DsPageHeader,
 } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminHolidaysStore } from "@/stores/admin-holidays-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminHolidaysStore } from "@/stores/admin/admin-holidays-store";
 
 function formatDate(iso: string): string {
   const date = new Date(iso);
@@ -25,8 +25,6 @@ function formatDate(iso: string): string {
 }
 
 export default function AdminHolidaysPage() {
-  const [pendingDeleteHolidayId, setPendingDeleteHolidayId] = useState<number | null>(null);
-
   const {
     holidays,
     yearFilter,
@@ -37,9 +35,11 @@ export default function AdminHolidaysPage() {
     error,
     isEditorOpen,
     editingHolidayId,
+    pendingDeleteHolidayId,
     form,
     loadHolidays,
     setYearFilter,
+    setPendingDeleteHolidayId,
     openCreateEditor,
     openEditEditor,
     closeEditor,
@@ -121,7 +121,12 @@ export default function AdminHolidaysPage() {
             </DsFormField>
           </div>
 
-          <DsButton variant="outline" className="h-12 px-6" onClick={handleSync} disabled={isSyncing}>
+          <DsButton
+            variant="outline"
+            className="h-12 px-6"
+            onClick={handleSync}
+            disabled={isSyncing}
+          >
             {isSyncing ? "Sincronizando..." : "Sincronizar feriados do ano"}
           </DsButton>
         </div>
@@ -134,7 +139,9 @@ export default function AdminHolidaysPage() {
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Data</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Nome</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Tipo</th>
-                  <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Bloqueia agenda</th>
+                  <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">
+                    Bloqueia agenda
+                  </th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Ações</th>
                 </tr>
               </thead>
@@ -163,7 +170,11 @@ export default function AdminHolidaysPage() {
                           onClick={() => openEditEditor(holiday.id)}
                           disabled={isSaving || deletingHolidayId === holiday.id}
                         >
-                          <DsIcon icon={PencilSimpleIcon} size="sm" className="text-nova-gray-700" />
+                          <DsIcon
+                            icon={PencilSimpleIcon}
+                            size="sm"
+                            className="text-nova-gray-700"
+                          />
                           Editar
                         </DsButton>
                         <DsButton
@@ -204,7 +215,9 @@ export default function AdminHolidaysPage() {
                 <h2 className="text-3xl font-medium text-black">
                   {editingHolidayId ? "Editar feriado" : "Novo feriado"}
                 </h2>
-                <p className="text-sm text-nova-gray-700">Defina a data e o comportamento do feriado.</p>
+                <p className="text-sm text-nova-gray-700">
+                  Defina a data e o comportamento do feriado.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -234,7 +247,12 @@ export default function AdminHolidaysPage() {
               </label>
 
               <div className="flex items-center justify-end gap-3">
-                <DsButton variant="outline" className="h-12 px-6" onClick={closeEditor} disabled={isSaving}>
+                <DsButton
+                  variant="outline"
+                  className="h-12 px-6"
+                  onClick={closeEditor}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </DsButton>
                 <DsButton
