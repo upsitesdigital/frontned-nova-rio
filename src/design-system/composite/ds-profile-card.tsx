@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsProfileCardAction {
@@ -16,17 +16,11 @@ interface DsProfileCardProps {
   className?: string;
 }
 
-function DsProfileCard({
-  initials,
-  name,
-  email,
-  actions,
-  className,
-}: DsProfileCardProps) {
+function DsProfileCard({ initials, name, email, actions, className }: DsProfileCardProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-8 rounded-[20px] border border-nova-gray-100 bg-white p-6",
+        "flex flex-col gap-8 rounded-4xl border border-nova-gray-100 bg-white p-6",
         className,
       )}
     >
@@ -37,9 +31,7 @@ function DsProfileCard({
           </span>
         </div>
         <div className="flex flex-col text-black">
-          <p className="text-[24px] font-medium leading-[1.3] tracking-[-0.96px]">
-            {name}
-          </p>
+          <p className="text-[24px] font-medium leading-[1.3] tracking-[-0.96px]">{name}</p>
           <p className="text-base leading-normal">{email}</p>
         </div>
       </div>
@@ -68,8 +60,4 @@ function DsProfileCard({
   );
 }
 
-export {
-  DsProfileCard,
-  type DsProfileCardProps,
-  type DsProfileCardAction,
-};
+export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction };

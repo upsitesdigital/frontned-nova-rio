@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 interface DsLineChartDataPoint {
   label: string;
@@ -29,8 +29,8 @@ interface DsLineChartProps {
   className?: string;
 }
 
-const GRADIENT_ID = "ds-line-chart-area-gradient";
-const DOT_SHADOW_ID = "ds-line-chart-dot-shadow";
+const gradientId = "ds-line-chart-area-gradient";
+const dotShadowId = "ds-line-chart-dot-shadow";
 
 function ChartDot({ cx, cy, fill }: DotProps & { fill: string }) {
   if (cx == null || cy == null) return null;
@@ -42,7 +42,7 @@ function ChartDot({ cx, cy, fill }: DotProps & { fill: string }) {
       fill={fill}
       stroke="white"
       strokeWidth={2}
-      filter={`url(#${DOT_SHADOW_ID})`}
+      filter={`url(#${dotShadowId})`}
     />
   );
 }
@@ -57,7 +57,7 @@ function ChartActiveDot({ cx, cy, fill }: DotProps & { fill: string }) {
       fill={fill}
       stroke="white"
       strokeWidth={2}
-      filter={`url(#${DOT_SHADOW_ID})`}
+      filter={`url(#${dotShadowId})`}
     />
   );
 }
@@ -77,18 +77,16 @@ function DsLineChart({
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
           <defs>
-            <linearGradient id={GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.15} />
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
-            <filter id={DOT_SHADOW_ID} x="-100%" y="-100%" width="300%" height="300%">
+            <filter id={dotShadowId} x="-100%" y="-100%" width="300%" height="300%">
               <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor={color} floodOpacity="0.2" />
             </filter>
           </defs>
 
-          {showGrid && (
-            <CartesianGrid stroke="#efefef" strokeDasharray="0" />
-          )}
+          {showGrid && <CartesianGrid stroke="#efefef" strokeDasharray="0" />}
 
           <XAxis
             dataKey="label"
@@ -115,11 +113,7 @@ function DsLineChart({
             ticks={yAxisTicks}
             dx={-8}
             width={72}
-            domain={
-              yAxisTicks
-                ? [yAxisTicks[0]!, yAxisTicks[yAxisTicks.length - 1]!]
-                : undefined
-            }
+            domain={yAxisTicks ? [yAxisTicks[0]!, yAxisTicks[yAxisTicks.length - 1]!] : undefined}
           />
 
           <Tooltip
@@ -144,12 +138,7 @@ function DsLineChart({
             cursor={{ stroke: "#efefef", strokeWidth: 1 }}
           />
 
-          <Area
-            type="monotone"
-            dataKey="value"
-            stroke="none"
-            fill={`url(#${GRADIENT_ID})`}
-          />
+          <Area type="monotone" dataKey="value" stroke="none" fill={`url(#${gradientId})`} />
 
           <Line
             type="monotone"

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import {
   Table,
   TableHeader,
@@ -17,16 +17,11 @@ interface DsDataTableColumn {
 interface DsDataTableProps {
   columns: DsDataTableColumn[];
   data: Record<string, React.ReactNode>[];
-  emptyMessage?: string;
+  emptyMessage: string;
   className?: string;
 }
 
-function DsDataTable({
-  columns,
-  data,
-  emptyMessage = "No data available.",
-  className,
-}: DsDataTableProps) {
+function DsDataTable({ columns, data, emptyMessage, className }: DsDataTableProps) {
   return (
     <Table className={cn(className)}>
       <TableHeader>

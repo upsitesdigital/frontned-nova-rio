@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import {
   Dialog,
   DialogContent,
@@ -20,8 +20,8 @@ interface DsConfirmDialogProps {
   description: string;
   onConfirm: () => void;
   onCancel?: () => void;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  confirmLabel: string;
+  cancelLabel: string;
   variant?: DsConfirmDialogVariant;
   className?: string;
 }
@@ -33,8 +33,8 @@ function DsConfirmDialog({
   description,
   onConfirm,
   onCancel,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   variant = "default",
   className,
 }: DsConfirmDialogProps) {

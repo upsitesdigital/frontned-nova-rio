@@ -157,8 +157,8 @@ export {
 } from "./composite";
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composite";
 export { DsUserActions, type DsUserActionsProps } from "./composite";
-export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
-export { DsClientSidebar, type DsClientSidebarProps } from "./composite";
+export { DsAdminSidebar, type DsAdminSidebarProps, type DsAdminNavItem } from "./composite";
+export { DsClientSidebar, type DsClientSidebarProps, type DsClientNavItem } from "./composite";
 export { DsClientDashboardShell, type DsClientDashboardShellProps } from "./composite";
 export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction } from "./composite";
 export {

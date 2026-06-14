@@ -1,16 +1,12 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 interface DsDiscountCardProps {
-  title?: string;
+  title: string;
   children: React.ReactNode;
   className?: string;
 }
 
-function DsDiscountCard({
-  title = "Descontos exclusivos",
-  children,
-  className,
-}: DsDiscountCardProps) {
+function DsDiscountCard({ title, children, className }: DsDiscountCardProps) {
   return (
     <div
       className={cn("relative overflow-clip rounded-2xl bg-nova-success", className)}

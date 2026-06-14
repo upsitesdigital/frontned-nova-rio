@@ -1,7 +1,7 @@
 import * as React from "react";
 import { type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Badge, badgeVariants } from "@/design-system/ui/badge";
 
 type DsBadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>;

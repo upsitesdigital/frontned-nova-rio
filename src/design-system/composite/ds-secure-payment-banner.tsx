@@ -1,19 +1,15 @@
 import { LockIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { DsImage } from "@/design-system/media";
 
 interface DsSecurePaymentBannerProps {
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
   className?: string;
 }
 
-function DsSecurePaymentBanner({
-  title = "Pagamento Seguro",
-  description = "Seus dados são protegidos com criptografia SSL",
-  className,
-}: DsSecurePaymentBannerProps) {
+function DsSecurePaymentBanner({ title, description, className }: DsSecurePaymentBannerProps) {
   return (
     <div
       className={cn(

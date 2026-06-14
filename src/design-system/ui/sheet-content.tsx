@@ -4,7 +4,7 @@ import * as React from "react";
 import { XIcon } from "lucide-react";
 import { Dialog as SheetPrimitive, VisuallyHidden } from "radix-ui";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { SheetPortal } from "./sheet-portal";
 import { SheetOverlay } from "./sheet-overlay";
 

@@ -1,25 +1,23 @@
 "use client";
 
-import {
-  HouseIcon,
-  BroomIcon,
-  UsersIcon,
-  UsersThreeIcon,
-  MapPinIcon,
-  TimerIcon,
-  CalendarBlankIcon,
-  CurrencyDollarSimpleIcon,
-  NoteIcon,
-  SignOutIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { SignOutIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/core/utils";
 import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
 import type { DsIconComponent } from "@/design-system/media";
 
+type DsAdminNavItem = {
+  path: string;
+  label: string;
+  icon: DsIconComponent;
+  disabled?: boolean;
+};
+
 interface DsAdminSidebarProps {
+  items: DsAdminNavItem[];
+  signOutLabel: string;
+  expandLabel: string;
+  collapseLabel: string;
   activePath?: string;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
@@ -28,32 +26,11 @@ interface DsAdminSidebarProps {
   className?: string;
 }
 
-type AdminNavItem = {
-  path: string;
-  label: string;
-  icon: DsIconComponent;
-  disabled?: boolean;
-};
-
-const adminNavItems: AdminNavItem[] = [
-  { path: "/admin", label: "Minha Área", icon: HouseIcon },
-  { path: "/admin/agendamentos", label: "Agendamentos", icon: BroomIcon },
-  { path: "/admin/funcionarios", label: "Funcionários", icon: UsersIcon },
-  { path: "/admin/clientes", label: "Clientes", icon: UsersThreeIcon },
-  {
-    path: "/admin/pagamentos",
-    label: "Pagamentos",
-    icon: CurrencyDollarSimpleIcon,
-  },
-  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon },
-  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon },
-  { path: "/admin/unidades", label: "Unidades", icon: MapPinIcon },
-  { path: "/admin/pacotes", label: "Pacotes", icon: TimerIcon },
-  { path: "/admin/feriados", label: "Feriados", icon: CalendarBlankIcon },
-  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon },
-];
-
 function DsAdminSidebar({
+  items,
+  signOutLabel,
+  expandLabel,
+  collapseLabel,
   activePath,
   collapsed,
   onCollapsedChange,
@@ -73,7 +50,7 @@ function DsAdminSidebar({
             {!collapsed && <DsLogo />}
             <DsIconButton
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
-              ariaLabel={collapsed ? "Expandir menu" : "Recolher menu"}
+              ariaLabel={collapsed ? expandLabel : collapseLabel}
               variant="outline"
               size="icon-sm"
               className={cn(
@@ -85,7 +62,7 @@ function DsAdminSidebar({
           </div>
         </div>
         <nav className="flex flex-col gap-2">
-          {adminNavItems.map((item) => (
+          {items.map((item) => (
             <DsSidebarItem
               key={item.path}
               icon={item.icon}
@@ -103,9 +80,14 @@ function DsAdminSidebar({
           ))}
         </nav>
       </div>
-      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
+      <DsSidebarItem
+        icon={SignOutIcon}
+        label={signOutLabel}
+        collapsed={collapsed}
+        onClick={onSignOut}
+      />
     </DsSidebar>
   );
 }
 
-export { DsAdminSidebar, type DsAdminSidebarProps };
+export { DsAdminSidebar, type DsAdminSidebarProps, type DsAdminNavItem };

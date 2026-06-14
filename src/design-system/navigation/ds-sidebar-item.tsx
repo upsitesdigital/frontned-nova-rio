@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsSidebarItemProps {
