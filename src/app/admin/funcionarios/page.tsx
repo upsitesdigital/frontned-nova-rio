@@ -10,13 +10,18 @@ import { EmployeesList } from "./_components/employees-list";
 import { EmployeeSchedulePopup } from "./_components/employee-schedule-popup";
 
 export default function AdminEmployeesPage() {
-  const { error, loadEmployees } = useAdminEmployeesStore();
+  const { error, loadEmployees, reset } = useAdminEmployeesStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadEmployees();
     });
-  }, [loadEmployees]);
+
+    return () => {
+      reset();
+    };
+  }, [loadEmployees, reset]);
 
   if (error) {
     return (

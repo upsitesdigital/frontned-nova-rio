@@ -9,13 +9,18 @@ import { AdminPaymentsFilterBar } from "./_components/admin-payments-filter-bar"
 import { AdminPaymentsTable } from "./_components/admin-payments-table";
 
 export default function AdminPaymentsPage() {
-  const { error, loadPayments } = useAdminPaymentsStore();
+  const { error, loadPayments, reset } = useAdminPaymentsStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadPayments();
     });
-  }, [loadPayments]);
+
+    return () => {
+      reset();
+    };
+  }, [loadPayments, reset]);
 
   if (error) {
     return (

@@ -17,6 +17,7 @@ export default function AdminClientsPage() {
     isApproving,
     isRejecting,
     loadClients,
+    reset,
     setStatusFilter,
     setSearchQuery,
     openApprovalPopup,
@@ -26,10 +27,15 @@ export default function AdminClientsPage() {
   } = useAdminClientsStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadClients();
     });
-  }, [loadClients]);
+
+    return () => {
+      reset();
+    };
+  }, [loadClients, reset]);
 
   const handleViewClient = (client: DsClientTableClient) => {
     if (client.status === "pending") {

@@ -45,13 +45,19 @@ export default function AdminServicesPage() {
     toggleRecurrenceFrequency,
     saveService,
     removeService,
+    reset,
   } = useAdminServicesStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       void loadServices();
     });
-  }, [loadServices]);
+
+    return () => {
+      reset();
+    };
+  }, [loadServices, reset]);
 
   useEffect(() => {
     if (!showCreatedAlert) return;

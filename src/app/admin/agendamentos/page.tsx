@@ -11,14 +11,19 @@ import { AppointmentsTable } from "./_components/appointments-table";
 
 export default function AdminAppointmentsPage() {
   const router = useRouter();
-  const { error, loadAppointments, loadFilterOptions } = useAdminAppointmentsStore();
+  const { error, loadAppointments, loadFilterOptions, reset } = useAdminAppointmentsStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadAppointments();
       loadFilterOptions();
     });
-  }, [loadAppointments, loadFilterOptions]);
+
+    return () => {
+      reset();
+    };
+  }, [loadAppointments, loadFilterOptions, reset]);
 
   if (error) {
     return (

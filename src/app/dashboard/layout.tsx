@@ -15,7 +15,7 @@ import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 import { useServicesStore } from "@/stores/client/services-store";
 import { usePaymentStore } from "@/stores/scheduling/payment-store";
 import { useConfirmationStore } from "@/stores/scheduling/confirmation-store";
-import { signOutClient } from "@/stores/auth/sign-out-client";
+import { SignOutClient } from "@/use-cases/auth/sign-out-client";
 
 const clientNavItems: DsClientNavItem[] = [
   { path: "/dashboard", label: "Minha Área", icon: HouseIcon },
@@ -53,7 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [isAuthError, summary, router]);
 
   const handleSignOut = () => {
-    signOutClient();
+    SignOutClient.execute();
     router.push("/login");
   };
 

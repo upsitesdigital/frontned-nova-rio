@@ -20,7 +20,7 @@ import { useAuthStore, waitForAuthHydration } from "@/stores/auth/auth-store";
 import { useAdminProfileStore } from "@/stores/admin/admin-profile-store";
 import { useAdminAgendaStore } from "@/stores/admin/admin-agenda-store";
 import { useSidebarStore } from "@/stores/ui/sidebar-store";
-import { signOutAdmin } from "@/stores/auth/sign-out-admin";
+import { SignOutAdmin } from "@/use-cases/auth/sign-out-admin";
 
 const adminNavItems: DsAdminNavItem[] = [
   { path: "/admin", label: "Minha Área", icon: HouseIcon },
@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [isAuthError, profile, userType, router]);
 
   const handleSignOut = () => {
-    signOutAdmin();
+    SignOutAdmin.execute();
     router.push("/login");
   };
 
