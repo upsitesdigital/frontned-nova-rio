@@ -208,12 +208,14 @@ Data: 2026-03-30
 Recomendacao: Agendamentos Admin - acoes de ciclo de vida.
 
 Motivo:
+
 - Ja existe base no front (lista e criacao).
 - Backend esta completo para todas as acoes.
 - Alto impacto operacional para o time admin.
 - Menor tempo para entregar valor real comparado a construir modulo novo do zero.
 
 Escopo inicial sugerido:
+
 - Adicionar no front os endpoints:
   - PATCH /admin/appointments/:id
   - POST /admin/appointments/:id/reschedule
