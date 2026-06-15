@@ -3,14 +3,9 @@
 import { useRouter } from "next/navigation";
 import { UsersIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsEmployeeInfoCard, DsEmptyState, DsSkeleton } from "@/design-system";
-import { useAdminEmployeesStore } from "@/stores/admin-employees-store";
-import { useAdminEmployeeScheduleStore } from "@/stores/admin-employee-schedule-store";
-import {
-  buildEmployeeContacts,
-  buildEmployeeStatus,
-  buildEmployeeDetails,
-  buildEmployeeActions,
-} from "@/lib/employee-card-mappers";
+import { useAdminEmployeesStore } from "@/stores/admin/admin-employees-store";
+import { useAdminEmployeeScheduleStore } from "@/stores/admin/admin-employee-schedule-store";
+import { EmployeeCardMappers } from "@/lib/mappers/employee-card-mappers";
 
 function EmployeesList() {
   const employees = useAdminEmployeesStore((s) => s.employees);
@@ -50,10 +45,17 @@ function EmployeesList() {
           key={employee.id}
           name={employee.name}
           icon={UsersIcon}
-          contacts={buildEmployeeContacts(employee.cpf, employee.phone, employee.email)}
-          status={buildEmployeeStatus(employee.status)}
-          details={buildEmployeeDetails(employee.availabilityFrom, employee.availabilityTo)}
-          actions={buildEmployeeActions(
+          contacts={EmployeeCardMappers.buildEmployeeContacts(
+            employee.cpf,
+            employee.phone,
+            employee.email,
+          )}
+          status={EmployeeCardMappers.buildEmployeeStatus(employee.status)}
+          details={EmployeeCardMappers.buildEmployeeDetails(
+            employee.availabilityFrom,
+            employee.availabilityTo,
+          )}
+          actions={EmployeeCardMappers.buildEmployeeActions(
             () => openSchedule(employee.id, employee.name),
             () => router.push(`/admin/funcionarios/${employee.id}`),
           )}

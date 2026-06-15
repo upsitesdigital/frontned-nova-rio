@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { WarningCircle, CheckCircle, Warning, Info } from "@phosphor-icons/react/dist/ssr";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 type DsAlertVariant = "error" | "warning" | "success" | "info";
@@ -49,13 +49,16 @@ function DsAlert({ title, description, variant = "error", className }: DsAlertPr
     <div className={cn(alertVariants({ variant }), className)}>
       <div className="flex items-center gap-2">
         <DsIcon icon={iconMap[variant]} size="lg" className={titleColorMap[variant]} />
-        <p className={cn("text-base font-medium leading-[1.3] tracking-[-0.04em]", titleColorMap[variant])}>
+        <p
+          className={cn(
+            "text-base font-medium leading-[1.3] tracking-[-0.04em]",
+            titleColorMap[variant],
+          )}
+        >
           {title}
         </p>
       </div>
-      {description && (
-        <p className="text-sm leading-normal text-nova-gray-700">{description}</p>
-      )}
+      {description && <p className="text-sm leading-normal text-nova-gray-700">{description}</p>}
     </div>
   );
 }

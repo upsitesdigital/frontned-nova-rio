@@ -7,7 +7,7 @@ import {
   CheckIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIconButton, DsToggleButton } from "@/design-system/primitives";
 import { DsSearchInput } from "@/design-system/forms";
 import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
@@ -28,6 +28,10 @@ interface DsUserTableUser {
 }
 
 interface DsUserTableProps {
+  headerTitle: string;
+  searchPlaceholder: string;
+  allLabel: string;
+  activeLabel: string;
   users: readonly DsUserTableUser[];
   filter?: DsUserTableFilter;
   onFilterChange?: (filter: DsUserTableFilter) => void;
@@ -50,6 +54,10 @@ const statusConfig: Record<
 const columns = ["Nome", "Role", "E-mail", "Status", "Cadastro", "Ações"];
 
 function DsUserTable({
+  headerTitle,
+  searchPlaceholder,
+  allLabel,
+  activeLabel,
   users,
   filter = "all",
   onFilterChange,
@@ -69,22 +77,24 @@ function DsUserTable({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">Usuários</p>
+          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">
+            {headerTitle}
+          </p>
           <div className="flex items-start gap-4">
             <DsToggleButton
-              label="Todos"
+              label={allLabel}
               active={filter === "all"}
               onClick={() => onFilterChange?.("all")}
             />
             <DsToggleButton
-              label="Ativos"
+              label={activeLabel}
               active={filter === "active"}
               onClick={() => onFilterChange?.("active")}
             />
           </div>
         </div>
         <DsSearchInput
-          placeholder="Pesquisar"
+          placeholder={searchPlaceholder}
           value={searchValue}
           onChange={(e) => onSearchChange?.(e.target.value)}
           className="w-86.5"

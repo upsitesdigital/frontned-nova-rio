@@ -2,13 +2,10 @@
 
 import { type ReactNode } from "react";
 import { DotsThreeVerticalIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { DsToggleButton } from "@/design-system/primitives";
-import {
-  DsFilterDropdown,
-  type DsFilterDropdownOption,
-} from "@/design-system/forms";
+import { DsFilterDropdown, type DsFilterDropdownOption } from "@/design-system/forms";
 
 interface DsChartSectionTab {
   label: string;
@@ -48,15 +45,13 @@ function DsChartSection({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8",
+        "flex flex-col gap-6 overflow-clip rounded-4xl border border-nova-gray-100 bg-white px-6 py-8",
         className,
       )}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <p className="text-[20px] font-medium leading-[1.3] text-black">
-            {title}
-          </p>
+          <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
           {tabs.length > 0 && (
             <div className="flex gap-4">
               {tabs.map((tab) => (
@@ -98,9 +93,7 @@ function DsChartSection({
         </div>
       </div>
 
-      <div className="rounded-[10px] border border-nova-gray-100">
-        {children}
-      </div>
+      <div className="rounded-[10px] border border-nova-gray-100">{children}</div>
     </div>
   );
 }

@@ -1,0 +1,150 @@
+"use client";
+
+import Image from "next/image";
+import { StarIcon, ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
+import { motion } from "motion/react";
+import { useLandingTestimonialsStore } from "@/stores/ui/landing-testimonials-store";
+
+const testimonials = [
+  {
+    stars: 5,
+    quote:
+      "Finalmente encontrei uma solução de limpeza que combina flexibilidade e qualidade. Nossos clientes percebem a diferença.",
+    author: "Escritório de advocacia no Le Monde.",
+  },
+  {
+    stars: 5,
+    quote:
+      "A pontualidade e o profissionalismo da equipe são impecáveis. Recomendo para qualquer empresa que valoriza um ambiente impecável.",
+    author: "Clínica de estética no Leblon.",
+  },
+  {
+    stars: 5,
+    quote:
+      "O sistema de pagamento simplificado e o agendamento rápido tornaram a gestão da limpeza muito mais fácil para nós.",
+    author: "Startup em condomínio corporativo.",
+  },
+  {
+    stars: 5,
+    quote:
+      "A limpeza recorrente trouxe padronização e tranquilidade para nossa operação. O time entrega excelência em cada visita.",
+    author: "Escritório de consultoria na Barra.",
+  },
+  {
+    stars: 5,
+    quote:
+      "A experiência é premium do início ao fim: agendamento simples, equipe cuidadosa e atendimento sempre muito eficiente.",
+    author: "Consultório médico em Ipanema.",
+  },
+];
+
+function LandingTestimonials() {
+  const { current, setCurrent, prev, next } = useLandingTestimonialsStore();
+
+  const testimonial = testimonials[current];
+  const dotsCount = 5;
+
+  return (
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-304 px-6">
+        <motion.div
+          className="mx-auto mb-12 flex max-w-200 flex-col items-center gap-6 text-center"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.45 }}
+        >
+          <p className="text-base leading-[1.2] font-semibold tracking-[1.6px] text-nova-primary-dark uppercase">
+            Depoimentos
+          </p>
+          <h2 className="text-[36px] leading-[1.3] font-medium tracking-[-1.44px] text-black">
+            Empresas que confiam na Nova Rio
+          </h2>
+        </motion.div>
+
+        <div className="grid gap-8 lg:grid-cols-[488px_1fr]">
+          <motion.div
+            className="relative h-115 overflow-hidden bg-nova-gray-700"
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.45 }}
+            whileHover={{ scale: 1.01 }}
+          >
+            <Image
+              src="/images/landing/handshake.jpg"
+              alt="Parceiros em reunião corporativa"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-nova-gray-700/15" />
+            <div className="absolute bottom-14 left-9 h-15.25 w-4.5 bg-nova-primary" />
+          </motion.div>
+
+          <motion.div
+            className="flex h-115 flex-col border border-nova-gray-300 px-10.5 py-14"
+            initial={{ opacity: 0, x: 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.45 }}
+          >
+            <div className="flex flex-1 flex-col gap-10">
+              <div className="flex items-center gap-1">
+                {Array.from({ length: testimonial.stars }).map((_, i) => (
+                  <StarIcon key={i} size={20} weight="fill" className="text-[#f5d025]" />
+                ))}
+              </div>
+
+              <blockquote className="text-2xl leading-normal font-normal tracking-[-0.96px] text-black">
+                &ldquo;{testimonial.quote}&rdquo;
+              </blockquote>
+
+              <div className="flex h-14 items-center gap-4">
+                <div className="flex size-14 items-center justify-center rounded-full bg-nova-primary-light">
+                  <span className="text-lg font-semibold text-nova-primary-dark">
+                    {testimonial.author[0]}
+                  </span>
+                </div>
+                <p className="text-base leading-normal font-medium text-black">
+                  {testimonial.author}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-9 flex items-center justify-between">
+              <div className="flex items-center gap-2.25 px-2.5 py-2.5">
+                {Array.from({ length: dotsCount }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrent(i % testimonials.length)}
+                    className={`size-2 rounded-full transition-transform duration-200 hover:scale-125 ${i === current ? "bg-nova-primary" : "bg-[#cccccc]"}`}
+                    aria-label={`Depoimento ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center gap-8">
+                <button
+                  onClick={() => prev(testimonials.length)}
+                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white opacity-30 transition-all duration-200 hover:-translate-y-0.5 hover:opacity-70"
+                  aria-label="Depoimento anterior"
+                >
+                  <ArrowLeftIcon size={20} className="text-nova-primary-dark" />
+                </button>
+                <button
+                  onClick={() => next(testimonials.length)}
+                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-12px_rgba(0,0,0,0.45)]"
+                  aria-label="Próximo depoimento"
+                >
+                  <ArrowRightIcon size={20} className="text-nova-primary-dark" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export { LandingTestimonials };

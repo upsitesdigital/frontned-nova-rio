@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 import { DsButton, DsSeparator } from "@/design-system";
-import { SERVICE_FEE } from "@/config/payment";
-import { formatCurrency } from "@/lib/formatters";
-import { usePaymentStore } from "@/stores/payment-store";
-import { useServicesStore } from "@/stores/services-store";
+import { PaymentConfig } from "@/config/payment";
+import { Formatters } from "@/lib/formatting/formatters";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
+import { useServicesStore } from "@/stores/client/services-store";
 
 function OrderSummary() {
   const router = useRouter();
@@ -31,7 +31,7 @@ function OrderSummary() {
   );
 
   const subtotal = selectedService?.basePrice ?? 0;
-  const total = subtotal + SERVICE_FEE;
+  const total = subtotal + PaymentConfig.serviceFee;
 
   const handlePay = useCallback(async () => {
     const success = await pay();
@@ -41,7 +41,7 @@ function OrderSummary() {
   }, [pay, router]);
 
   return (
-    <div className="w-[502px] shrink-0 rounded-2xl border border-nova-gray-300 px-10 py-12">
+    <div className="w-125.5 shrink-0 rounded-2xl border border-nova-gray-300 px-10 py-12">
       <div className="flex flex-col gap-8">
         <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
           Resumo do pedido
@@ -54,11 +54,13 @@ function OrderSummary() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-nova-gray-700">Subtotal</span>
-            <span className="font-medium text-black">{formatCurrency(subtotal)}</span>
+            <span className="font-medium text-black">{Formatters.formatCurrency(subtotal)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-nova-gray-700">Taxa de serviço</span>
-            <span className="font-medium text-black">{formatCurrency(SERVICE_FEE)}</span>
+            <span className="font-medium text-black">
+              {Formatters.formatCurrency(PaymentConfig.serviceFee)}
+            </span>
           </div>
         </div>
 
@@ -66,7 +68,7 @@ function OrderSummary() {
 
         <div className="flex items-center justify-between text-xl font-medium leading-[1.3] tracking-[-0.8px] text-black">
           <span>Total</span>
-          <span>{formatCurrency(total)}</span>
+          <span>{Formatters.formatCurrency(total)}</span>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -76,7 +78,7 @@ function OrderSummary() {
             disabled={paymentMethod === null || isSubmitting}
             onClick={handlePay}
           >
-            {isSubmitting ? "Processando..." : `Pagar ${formatCurrency(total)}`}
+            {isSubmitting ? "Processando..." : `Pagar ${Formatters.formatCurrency(total)}`}
           </DsButton>
           {submitError && (
             <p className="text-center text-sm leading-[1.3] text-nova-error">{submitError}</p>

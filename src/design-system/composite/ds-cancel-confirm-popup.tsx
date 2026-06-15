@@ -1,15 +1,17 @@
 "use client";
 
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsCancelConfirmPopupProps {
+  closeLabel: string;
   open: boolean;
-  title?: string;
-  description?: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  title: string;
+  description: string;
+  confirmLabel: string;
+  confirmDisabled?: boolean;
+  cancelLabel: string;
   onConfirm?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
@@ -17,11 +19,13 @@ interface DsCancelConfirmPopupProps {
 }
 
 function DsCancelConfirmPopup({
+  closeLabel,
   open,
-  title = "Deseja cancelar o serviço?",
-  description = "Cancelamento com 1h de antecedência",
-  confirmLabel = "Sim, cancelar",
-  cancelLabel = "Manter agendamento",
+  title,
+  description,
+  confirmLabel,
+  confirmDisabled = false,
+  cancelLabel,
   onConfirm,
   onCancel,
   onClose,
@@ -39,7 +43,7 @@ function DsCancelConfirmPopup({
         }}
         role="button"
         tabIndex={-1}
-        aria-label="Fechar"
+        aria-label={closeLabel}
       />
 
       <div
@@ -74,7 +78,8 @@ function DsCancelConfirmPopup({
           <button
             type="button"
             onClick={onConfirm}
-            className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
+            disabled={confirmDisabled}
+            className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {confirmLabel}
           </button>

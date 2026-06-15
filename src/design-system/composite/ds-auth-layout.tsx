@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsLogo } from "@/design-system/navigation";
 
 interface DsAuthLayoutProps {

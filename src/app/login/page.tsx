@@ -6,9 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { useLoginStore } from "@/stores/login-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { Constants } from "@/lib/core/constants";
+import { useLoginStore } from "@/stores/auth/login-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 
 import { PendingApprovalDialog } from "./_components/pending-approval-dialog";
 
@@ -63,7 +63,7 @@ export default function LoginPage() {
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 visible={pwdVisible}
                 onVisibilityChange={(v) => setPwdVisible("login-password", v)}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
           </div>

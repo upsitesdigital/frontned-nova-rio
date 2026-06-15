@@ -3,7 +3,7 @@
 import * as React from "react";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react/dist/ssr";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Input } from "@/design-system/ui/input";
 import { DsIcon } from "@/design-system/media";
 

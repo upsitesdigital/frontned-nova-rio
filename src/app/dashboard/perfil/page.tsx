@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 import { ProfileInfoPanel } from "./_components/profile-info-panel";
 import { EmailChangeDialog } from "./_components/email-change-dialog";
 import { PasswordChangeDialog } from "./_components/password-change-dialog";

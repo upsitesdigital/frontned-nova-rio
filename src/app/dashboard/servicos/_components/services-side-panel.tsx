@@ -8,10 +8,10 @@ import {
   DsSchedulePopup,
   DsCancelConfirmPopup,
 } from "@/design-system";
-import { isCancelBlocked } from "@/lib/appointment-rules";
-import { useDashboardStore } from "@/stores/dashboard-store";
-import { useSidePanelRescheduleStore } from "@/stores/side-panel-reschedule-store";
-import { useToastStore } from "@/stores/toast-store";
+import { AppointmentRules } from "@/lib/core/appointment-rules";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
+import { useSidePanelRescheduleStore } from "@/stores/client/side-panel-reschedule-store";
+import { useToastStore } from "@/stores/ui/toast-store";
 
 interface ServicesSidePanelProps {
   nextServiceDate: string;
@@ -48,6 +48,7 @@ function ServicesSidePanel({
     rescheduleDate,
     rescheduleTime,
     cancelOpen,
+    isSaving,
     openReschedule,
     closeReschedule,
     setRescheduleDate,
@@ -62,6 +63,7 @@ function ServicesSidePanel({
   return (
     <div className="flex w-125 shrink-0 flex-col gap-4">
       <DsUpcomingServiceCard
+        title="Próximo serviço"
         date={nextServiceDate}
         subtitle={nextServiceSubtitle}
         onReceipt={onReceipt}
@@ -79,7 +81,7 @@ function ServicesSidePanel({
           {
             label: "Cancelar",
             variant: "outlined",
-            disabled: isCancelBlocked(nextAppointmentDateTime),
+            disabled: AppointmentRules.isCancelBlocked(nextAppointmentDateTime),
             onClick: openCancel,
           },
         ]}
@@ -114,6 +116,10 @@ function ServicesSidePanel({
       </DsRecurrenceCard>
 
       <DsSchedulePopup
+        closeLabel="Fechar"
+        title="Escolher data e horário"
+        cancelLabel="Cancelar"
+        confirmLabel="Ok"
         open={rescheduleOpen}
         date={rescheduleDate}
         time={rescheduleTime}
@@ -129,9 +135,15 @@ function ServicesSidePanel({
             onChanged?.();
           }
         }}
+        confirmDisabled={isSaving}
       />
 
       <DsCancelConfirmPopup
+        closeLabel="Fechar"
+        description="Cancelamento com 1h de antecedência"
+        title="Deseja cancelar o serviço?"
+        confirmLabel="Sim, cancelar"
+        cancelLabel="Manter agendamento"
         open={cancelOpen}
         onCancel={closeCancel}
         onClose={closeCancel}
@@ -143,6 +155,7 @@ function ServicesSidePanel({
             onChanged?.();
           }
         }}
+        confirmDisabled={isSaving}
       />
     </div>
   );

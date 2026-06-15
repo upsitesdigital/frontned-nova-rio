@@ -1,7 +1,7 @@
 "use client";
 
 import { UsersIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { DsSeparator } from "@/design-system/primitives";
 import { DsAgendaCard } from "@/design-system/data-display";
@@ -40,9 +40,7 @@ function DsEmployeeScheduleCard({
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-nova-info/10">
           <DsIcon icon={IconComponent} size="lg" className="text-nova-info" />
         </div>
-        <p className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
-          {name}
-        </p>
+        <p className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">{name}</p>
       </div>
 
       {onClose && (

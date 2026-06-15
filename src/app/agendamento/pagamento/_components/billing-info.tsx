@@ -3,9 +3,9 @@
 import { useCallback } from "react";
 
 import { DsFormField, DsInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatCpfCnpj } from "@/lib/formatters";
-import { usePaymentStore } from "@/stores/payment-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
 
 function BillingInfo() {
   const billingName = usePaymentStore((s) => s.billingName);
@@ -20,7 +20,8 @@ function BillingInfo() {
   const setBillingComplement = usePaymentStore((s) => s.setBillingComplement);
 
   const handleDocumentChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setBillingDocument(formatCpfCnpj(e.target.value)),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setBillingDocument(Formatters.formatCpfCnpj(e.target.value)),
     [setBillingDocument],
   );
 
@@ -35,7 +36,7 @@ function BillingInfo() {
             value={billingName}
             onChange={(e) => setBillingName(e.target.value)}
             aria-invalid={!!errors.billingName}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
         <DsFormField label="CPF/ CNPJ" error={errors.billingDocument}>
@@ -43,7 +44,7 @@ function BillingInfo() {
             value={billingDocument}
             onChange={handleDocumentChange}
             aria-invalid={!!errors.billingDocument}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
         <DsFormField label="Endereço de cobrança" error={errors.billingAddress}>
@@ -51,14 +52,14 @@ function BillingInfo() {
             value={billingAddress}
             onChange={(e) => setBillingAddress(e.target.value)}
             aria-invalid={!!errors.billingAddress}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
         <DsFormField label="Complemento (opcional)">
           <DsInput
             value={billingComplement}
             onChange={(e) => setBillingComplement(e.target.value)}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
       </div>

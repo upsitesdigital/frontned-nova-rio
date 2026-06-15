@@ -10,7 +10,7 @@ import {
   DsIcon,
   DsSelect,
 } from "@/design-system";
-import { useAdminEmployeeEditStore } from "@/stores/admin-employee-edit-store";
+import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
 function ServicesSection() {
   const form = useAdminEmployeeEditStore((s) => s.form);

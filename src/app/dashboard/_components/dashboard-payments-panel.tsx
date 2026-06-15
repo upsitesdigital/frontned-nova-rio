@@ -78,7 +78,4 @@ function DashboardPaymentsPanel({
   );
 }
 
-export {
-  DashboardPaymentsPanel,
-  type DashboardPaymentsPanelProps,
-};
+export { DashboardPaymentsPanel, type DashboardPaymentsPanelProps };

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsSelect, type DsSelectOption } from "@/design-system/primitives";
 
 interface DsServiceInfoField {
@@ -13,16 +13,12 @@ interface DsServiceInfoField {
 }
 
 interface DsServiceInfoCardProps {
-  title?: string;
+  title: string;
   fields: DsServiceInfoField[];
   className?: string;
 }
 
-function DsServiceInfoCard({
-  title = "Informações do serviço",
-  fields,
-  className,
-}: DsServiceInfoCardProps) {
+function DsServiceInfoCard({ title, fields, className }: DsServiceInfoCardProps) {
   return (
     <div
       className={cn(
@@ -34,9 +30,7 @@ function DsServiceInfoCard({
       <div className="flex flex-col gap-6">
         {fields.map((field) => (
           <div key={field.label} className="flex flex-col gap-3">
-            <p className="text-base font-medium leading-[1.3] text-nova-gray-700">
-              {field.label}
-            </p>
+            <p className="text-base font-medium leading-[1.3] text-nova-gray-700">{field.label}</p>
             <DsSelect
               options={field.options}
               value={field.value}

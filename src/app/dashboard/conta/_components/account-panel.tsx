@@ -2,10 +2,10 @@
 
 import { EnvelopeSimpleIcon, LockKeyIcon, TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsProfileCard, type DsProfileCardAction } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
-import { useEmailChangeStore } from "@/stores/email-change-store";
-import { usePasswordChangeStore } from "@/stores/password-change-store";
-import { useDeleteAccountStore } from "@/stores/delete-account-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
+import { useEmailChangeStore } from "@/stores/client/email-change-store";
+import { usePasswordChangeStore } from "@/stores/client/password-change-store";
+import { useDeleteAccountStore } from "@/stores/client/delete-account-store";
 import { EmailChangeDialog } from "../../perfil/_components/email-change-dialog";
 import { PasswordChangeDialog } from "../../perfil/_components/password-change-dialog";
 import { DeleteAccountDialog } from "../../perfil/_components/delete-account-dialog";
