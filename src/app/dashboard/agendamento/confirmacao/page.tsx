@@ -6,7 +6,7 @@ import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
 import { format } from "date-fns";
 
 import { DsButton, DsIcon } from "@/design-system";
-import { useConfirmationStore } from "@/stores/confirmation-store";
+import { useConfirmationStore } from "@/stores/scheduling/confirmation-store";
 
 export default function DashboardConfirmacaoPage() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 
 import { DsEmployeeScheduleCard } from "@/design-system";
-import { useAdminEmployeeScheduleStore } from "@/stores/admin-employee-schedule-store";
+import { useAdminEmployeeScheduleStore } from "@/stores/admin/admin-employee-schedule-store";
 
 function EmployeeSchedulePopup() {
   const open = useAdminEmployeeScheduleStore((s) => s.open);

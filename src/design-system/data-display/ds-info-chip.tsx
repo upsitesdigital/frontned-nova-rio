@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsInfoChipProps {
@@ -17,9 +17,7 @@ function DsInfoChip({ icon, label, value, className }: DsInfoChipProps) {
       )}
     >
       <DsIcon icon={icon} size="lg" className="text-nova-gray-700" />
-      <span className="whitespace-nowrap text-sm leading-normal text-nova-gray-700">
-        {label}
-      </span>
+      <span className="whitespace-nowrap text-sm leading-normal text-nova-gray-700">{label}</span>
       <span className="whitespace-nowrap text-base leading-normal tracking-[-0.64px] text-black">
         {value}
       </span>

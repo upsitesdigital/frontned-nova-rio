@@ -1,7 +1,7 @@
 "use client";
 
 import { EyeIcon, PencilSimpleLineIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { DsStatusPill, type DsStatusPillVariant } from "@/design-system/composite/ds-status-pill";
 

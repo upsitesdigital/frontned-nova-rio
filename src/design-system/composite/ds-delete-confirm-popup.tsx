@@ -1,15 +1,15 @@
 "use client";
 
-import { Trash, X } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { Trash, XIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsDeleteConfirmPopupProps {
   title: string;
   description?: string;
-  confirmLabel?: string;
+  confirmLabel: string;
   confirmIcon?: DsIconComponent;
-  cancelLabel?: string;
+  cancelLabel: string;
   onConfirm?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
@@ -19,9 +19,9 @@ interface DsDeleteConfirmPopupProps {
 function DsDeleteConfirmPopup({
   title,
   description,
-  confirmLabel = "Sim, quero excluir",
+  confirmLabel,
   confirmIcon = Trash,
-  cancelLabel = "Manter o usuário",
+  cancelLabel,
   onConfirm,
   onCancel,
   onClose,
@@ -40,18 +40,14 @@ function DsDeleteConfirmPopup({
           onClick={onClose}
           className="absolute right-6 top-6 cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
         >
-          <DsIcon icon={X} size="lg" />
+          <DsIcon icon={XIcon} size="lg" />
         </button>
       )}
 
       <div className="flex w-full max-w-md flex-col items-center gap-2 text-center">
-        <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
-          {title}
-        </p>
+        <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">{title}</p>
         {description && (
-          <p className="text-base leading-normal text-nova-primary-dark">
-            {description}
-          </p>
+          <p className="text-base leading-normal text-nova-primary-dark">{description}</p>
         )}
       </div>
 

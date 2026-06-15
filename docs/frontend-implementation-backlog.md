@@ -10,6 +10,7 @@ Consolidar tudo que ainda precisa ser implementado no frontend para cobrir 100% 
 ## Como usar este backlog com Figma
 
 Para cada item abaixo:
+
 1. Voce me envia o link do Figma (node) da tela.
 2. Eu implemento no frontend com MCP (layout + integracao).
 3. Marcamos o item como concluido.
@@ -249,6 +250,7 @@ Para cada item abaixo:
 ## Observacao
 
 Existe um arquivo de apoio com mapeamento de lacunas admin ja criado em:
+
 - `docs/admin-frontend-gap-map.md`
 
 Este backlog atual e a versao consolidada para implementacao por telas via Figma MCP.

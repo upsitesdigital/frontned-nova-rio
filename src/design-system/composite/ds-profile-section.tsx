@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsInput } from "@/design-system/primitives";
 
 interface DsProfileField {
@@ -11,30 +11,30 @@ interface DsProfileField {
 }
 
 interface DsProfileSectionProps {
-  title?: string;
+  title: string;
   initials: string;
   fields: DsProfileField[];
   onEdit?: () => void;
   onCancel?: () => void;
   onChangeImage?: () => void;
-  editLabel?: string;
-  cancelLabel?: string;
+  editLabel: string;
+  cancelLabel: string;
   editDisabled?: boolean;
-  changeImageLabel?: string;
+  changeImageLabel: string;
   className?: string;
 }
 
 function DsProfileSection({
-  title = "Informações pessoais",
+  title,
   initials,
   fields,
   onEdit,
   onCancel,
   onChangeImage,
-  editLabel = "Editar",
-  cancelLabel = "Cancelar",
+  editLabel,
+  cancelLabel,
   editDisabled = false,
-  changeImageLabel = "Alterar imagem",
+  changeImageLabel,
   className,
 }: DsProfileSectionProps) {
   return (

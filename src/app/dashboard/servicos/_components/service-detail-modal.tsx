@@ -3,9 +3,9 @@
 import { CreditCardIcon, MapPinIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsIcon } from "@/design-system/media";
 import { DsPopup, DsServiceDetailPopup, DsServiceDetailRow } from "@/design-system";
-import { getServiceIcon } from "@/lib/icon-map";
-import { resolvePaymentStatus } from "@/lib/payment-status-map";
-import { resolveRecurrenceLabel } from "@/lib/recurrence-labels";
+import { IconMap } from "@/lib/display/icon-map";
+import { PaymentStatus } from "@/lib/display/payment-status-map";
+import { RecurrenceLabels } from "@/lib/display/recurrence-labels";
 
 interface ServiceDetailModalEntry {
   label: string;
@@ -28,8 +28,8 @@ interface ServiceDetailModalProps {
 function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
   if (!entry) return null;
 
-  const serviceIcon = getServiceIcon(entry.icon);
-  const recurrenceLabel = resolveRecurrenceLabel(entry.recurrenceType);
+  const serviceIcon = IconMap.getServiceIcon(entry.icon);
+  const recurrenceLabel = RecurrenceLabels.resolveRecurrenceLabel(entry.recurrenceType);
 
   return (
     <DsPopup open>
@@ -55,7 +55,7 @@ function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
                 {entry.payment.amount}
               </span>
               <span className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-primary">
-                {resolvePaymentStatus(entry.payment.status).label}
+                {PaymentStatus.resolvePaymentStatus(entry.payment.status).label}
               </span>
             </div>
           </DsServiceDetailRow>

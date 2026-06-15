@@ -5,13 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DsLogo } from "@/design-system";
-import { useForgotPasswordStore } from "@/stores/forgot-password-store";
+import { useForgotPasswordStore } from "@/stores/auth/forgot-password-store";
 
 import { EmailStep } from "./_components/email-step";
 import { CodeStep } from "./_components/code-step";
 import { SuccessStep } from "./_components/success-step";
 
-const STEP_CONFIG = {
+const stepConfig = {
   email: {
     title: "Esqueceu sua senha?",
     subtitle: "Informe seu e-mail e enviaremos um código para redefinir sua senha.",
@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
     reset();
   }, [reset]);
 
-  const { title, subtitle } = STEP_CONFIG[step];
+  const { title, subtitle } = stepConfig[step];
 
   return (
     <div className="flex h-screen">

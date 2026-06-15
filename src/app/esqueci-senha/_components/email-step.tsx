@@ -3,8 +3,8 @@
 import { useCallback } from "react";
 
 import { DsButton, DsFormField, DsInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { useForgotPasswordStore } from "@/stores/forgot-password-store";
+import { Constants } from "@/lib/core/constants";
+import { useForgotPasswordStore } from "@/stores/auth/forgot-password-store";
 
 function EmailStep() {
   const email = useForgotPasswordStore((s) => s.email);
@@ -27,17 +27,12 @@ function EmailStep() {
             placeholder="Digite seu e-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
       </div>
 
-      <DsButton
-        size="flow"
-        disabled={!canSubmit}
-        onClick={handleSubmit}
-        className="w-64.25"
-      >
+      <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
         {isSubmitting ? "Enviando..." : "Enviar código de verificação"}
       </DsButton>
     </>

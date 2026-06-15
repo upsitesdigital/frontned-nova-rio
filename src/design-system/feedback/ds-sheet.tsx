@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/design-system/ui";
 
 type DsSheetSide = "left" | "right" | "top" | "bottom";

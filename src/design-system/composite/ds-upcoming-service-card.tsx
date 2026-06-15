@@ -1,5 +1,5 @@
 import { ScrollIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsUpcomingServiceCardAction {
@@ -10,7 +10,7 @@ interface DsUpcomingServiceCardAction {
 }
 
 interface DsUpcomingServiceCardProps {
-  title?: string;
+  title: string;
   date: string;
   subtitle: string;
   actions?: DsUpcomingServiceCardAction[];
@@ -20,7 +20,7 @@ interface DsUpcomingServiceCardProps {
 }
 
 function DsUpcomingServiceCard({
-  title = "Próximo serviço",
+  title,
   date,
   subtitle,
   actions,

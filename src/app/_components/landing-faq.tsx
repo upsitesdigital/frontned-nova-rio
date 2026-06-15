@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { CaretDown, CaretUp } from "@phosphor-icons/react/dist/ssr";
+import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
+import { useLandingFaqStore } from "@/stores/ui/landing-faq-store";
 
-const FAQ_ITEMS = [
+const faqItems = [
   {
     question: "Qual o valor da hora de limpeza?",
     answer:
@@ -33,15 +33,10 @@ const FAQ_ITEMS = [
 ];
 
 function LandingFAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const toggle = (index: number) =>
-    setOpenIndex((prev) => (prev === index ? null : index));
+  const { openIndex, toggle } = useLandingFaqStore();
 
   return (
-    <section
-      className="bg-nova-gray-100 pb-24 pt-6 text-black"
-    >
+    <section className="bg-nova-gray-100 pb-24 pt-6 text-black">
       <div className="mx-auto max-w-304 px-6">
         <div className="mx-auto max-w-200">
           <motion.div
@@ -60,7 +55,7 @@ function LandingFAQ() {
           </motion.div>
 
           <div className="flex flex-col border-t border-nova-gray-300">
-            {FAQ_ITEMS.map((item, index) => (
+            {faqItems.map((item, index) => (
               <motion.div
                 key={item.question}
                 className="border-b border-nova-gray-300"
@@ -78,12 +73,9 @@ function LandingFAQ() {
                     {item.question}
                   </span>
                   {openIndex === index ? (
-                    <CaretUp size={22} className="shrink-0 text-nova-primary" />
+                    <CaretUpIcon size={22} className="shrink-0 text-nova-primary" />
                   ) : (
-                    <CaretDown
-                      size={22}
-                      className="shrink-0 text-nova-primary"
-                    />
+                    <CaretDownIcon size={22} className="shrink-0 text-nova-primary" />
                   )}
                 </button>
 

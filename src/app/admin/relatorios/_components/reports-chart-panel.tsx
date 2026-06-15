@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { FileCsvIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
@@ -14,9 +14,9 @@ import {
   useAdminReportsStore,
   type ReportsChartMode,
   type ReportsPeriodFilter,
-} from "@/stores/admin-reports-store";
+} from "@/stores/admin/admin-reports-store";
 
-const PERIOD_OPTIONS: DsFilterDropdownOption[] = [
+const periodOptions: DsFilterDropdownOption[] = [
   { value: "30d", label: "Mês" },
   { value: "90d", label: "Trimestre" },
   { value: "180d", label: "Semestre" },
@@ -70,7 +70,6 @@ function formatHoursAxis(value: number): string {
 }
 
 function ReportsChartPanel() {
-  const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
   const optionsMenuRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -83,9 +82,12 @@ function ReportsChartPanel() {
     isOptionsLoading,
     isExporting,
     chartError,
+    isOptionsMenuOpen,
     setChartMode,
     setPeriodFilter,
     setUnitFilter,
+    setOptionsMenuOpen,
+    toggleOptionsMenu,
     exportCsv,
   } = useAdminReportsStore();
 
@@ -95,7 +97,7 @@ function ReportsChartPanel() {
 
       const eventTarget = event.target;
       if (eventTarget instanceof Node && !optionsMenuRef.current.contains(eventTarget)) {
-        setIsOptionsMenuOpen(false);
+        setOptionsMenuOpen(false);
       }
     };
 
@@ -106,7 +108,7 @@ function ReportsChartPanel() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOptionsMenuOpen]);
+  }, [isOptionsMenuOpen, setOptionsMenuOpen]);
 
   const unitFilterOptions = useMemo<DsFilterDropdownOption[]>(() => {
     const options = unitOptions.map((unit) => ({
@@ -137,7 +139,7 @@ function ReportsChartPanel() {
         filters={[
           {
             label: "Período",
-            options: PERIOD_OPTIONS,
+            options: periodOptions,
             value: periodFilter,
             onValueChange: (value) => setPeriodFilter(value as ReportsPeriodFilter),
           },
@@ -149,7 +151,7 @@ function ReportsChartPanel() {
             placeholder: isOptionsLoading ? "Carregando..." : "Todas",
           },
         ]}
-        onOptionsClick={() => setIsOptionsMenuOpen((current) => !current)}
+        onOptionsClick={toggleOptionsMenu}
       >
         {isChartLoading ? (
           <DsLoadingState message="Carregando gráfico..." className="py-16" />
@@ -188,7 +190,7 @@ function ReportsChartPanel() {
                 label: isExporting ? "Exportando..." : "Exportar",
                 onClick: () => {
                   if (isExporting) return;
-                  setIsOptionsMenuOpen(false);
+                  setOptionsMenuOpen(false);
                   void exportCsv();
                 },
               },

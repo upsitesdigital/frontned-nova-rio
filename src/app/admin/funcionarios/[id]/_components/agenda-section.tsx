@@ -1,7 +1,7 @@
 "use client";
 
 import { DsAgendaCard } from "@/design-system";
-import { useAdminEmployeeEditStore } from "@/stores/admin-employee-edit-store";
+import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
 function AgendaSection() {
   const currentMonth = useAdminEmployeeEditStore((s) => s.currentMonth);

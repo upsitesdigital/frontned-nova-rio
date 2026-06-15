@@ -1,7 +1,7 @@
 "use client";
 
 import { DsProfileSection, type DsProfileField } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 
 function ProfileInfoPanel() {
   const {
@@ -45,6 +45,9 @@ function ProfileInfoPanel() {
 
   return (
     <DsProfileSection
+      changeImageLabel="Alterar imagem"
+      title="Informações pessoais"
+      cancelLabel="Cancelar"
       initials={profile.name.charAt(0)}
       fields={fields}
       onEdit={isEditing ? saveProfile : startEditing}

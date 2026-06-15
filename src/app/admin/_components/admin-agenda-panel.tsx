@@ -6,9 +6,9 @@ import {
   DsEmptyState,
   DsPagination,
 } from "@/design-system";
-import { appConfig } from "@/config/app";
-import { formatShortDate } from "@/lib/date-helpers";
-import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
+import { AppConfig } from "@/config/app";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
+import { useAdminAgendaStore } from "@/stores/admin/admin-agenda-store";
 
 function AdminAgendaPanel() {
   const {
@@ -47,8 +47,10 @@ function AdminAgendaPanel() {
           <div className="flex flex-col">
             {agendaItems.map((entry) => (
               <DsServiceHistoryItem
+                viewLabel="Visualizar"
+                editLabel="Editar"
                 key={entry.appointmentId}
-                date={formatShortDate(entry.date)}
+                date={DateHelpers.formatShortDate(entry.date)}
                 clientName={entry.clientName}
                 label={entry.serviceName}
               />
@@ -58,7 +60,7 @@ function AdminAgendaPanel() {
             currentPage={agendaPage}
             totalPages={totalPages()}
             totalItems={agendaTotal}
-            pageSize={appConfig.agendaPageSize}
+            pageSize={AppConfig.agendaPageSize}
             onPageChange={setAgendaPage}
           />
         </div>

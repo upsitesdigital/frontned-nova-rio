@@ -1,9 +1,9 @@
 "use client";
 
 import { DsSearchInput, DsToggleButton } from "@/design-system";
-import { useAdminEmployeesStore, type StatusFilter } from "@/stores/admin-employees-store";
+import { useAdminEmployeesStore, type StatusFilter } from "@/stores/admin/admin-employees-store";
 
-const STATUS_BUTTONS: { value: StatusFilter; label: string }[] = [
+const statusButtons: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "Todos" },
   { value: "ACTIVE", label: "Ativos" },
   { value: "INACTIVE", label: "Inativos" },
@@ -20,7 +20,7 @@ function EmployeesFilterBar() {
       <div className="flex items-center gap-12">
         <p className="text-xl font-medium leading-[1.3] text-black">Funcionários</p>
         <div className="flex items-start gap-4">
-          {STATUS_BUTTONS.map((btn) => (
+          {statusButtons.map((btn) => (
             <DsToggleButton
               key={btn.value}
               label={btn.label}

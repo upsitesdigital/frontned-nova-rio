@@ -1,9 +1,9 @@
 "use client";
 
 import { DsAvatar, DsButton, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
-import { useAdminEmployeeEditStore } from "@/stores/admin-employee-edit-store";
+import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
-const STATUS_OPTIONS = [
+const statusOptions = [
   { value: "ACTIVE", label: "Ativo" },
   { value: "INACTIVE", label: "Inativo" },
 ];
@@ -24,7 +24,7 @@ function PersonalInfoSection() {
         <div className="flex items-center gap-4">
           <span className="text-base font-medium leading-[1.3] text-nova-gray-700">Status</span>
           <DsSelect
-            options={STATUS_OPTIONS}
+            options={statusOptions}
             value={form.status}
             onValueChange={(v) => updateField("status", v)}
             className="w-30"

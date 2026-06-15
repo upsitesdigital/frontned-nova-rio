@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 import { AccountPanel } from "./_components/account-panel";
 import { CardsPanel } from "./_components/cards-panel";
 

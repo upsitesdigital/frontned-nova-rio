@@ -1,10 +1,12 @@
 "use client";
 
 import { EyeIcon, PencilSimpleLineIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsServiceHistoryItemProps {
+  viewLabel: string;
+  editLabel: string;
   date: string;
   label: string;
   clientName?: string;
@@ -14,6 +16,8 @@ interface DsServiceHistoryItemProps {
 }
 
 function DsServiceHistoryItem({
+  viewLabel,
+  editLabel,
   date,
   label,
   clientName,
@@ -46,7 +50,7 @@ function DsServiceHistoryItem({
         <button
           type="button"
           onClick={onView}
-          aria-label="Visualizar"
+          aria-label={viewLabel}
           className="shrink-0 cursor-pointer text-nova-gray-400 transition-colors hover:text-nova-gray-700 focus-visible:ring-2 focus-visible:ring-nova-primary focus-visible:outline-none"
         >
           <DsIcon icon={EyeIcon} size="md" />
@@ -56,7 +60,7 @@ function DsServiceHistoryItem({
         <button
           type="button"
           onClick={onEdit}
-          aria-label="Editar"
+          aria-label={editLabel}
           className="shrink-0 cursor-pointer text-nova-gray-400 transition-colors hover:text-nova-gray-700 focus-visible:ring-2 focus-visible:ring-nova-primary focus-visible:outline-none"
         >
           <DsIcon icon={PencilSimpleLineIcon} size="md" />

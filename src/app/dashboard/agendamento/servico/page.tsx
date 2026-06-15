@@ -12,11 +12,11 @@ import {
   DsServiceOptionCard,
   DsSkeleton,
 } from "@/design-system";
-import { FREQUENCY_OPTIONS, RECURRENCE_OPTIONS } from "@/config/scheduling";
-import { formatPrice } from "@/lib/formatters";
-import { getServiceIcon } from "@/lib/icon-map";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
+import { SchedulingConfig } from "@/config/scheduling";
+import { Formatters } from "@/lib/formatting/formatters";
+import { IconMap } from "@/lib/display/icon-map";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+import { useServicesStore } from "@/stores/client/services-store";
 import type { RecurrenceFrequency } from "@/types/scheduling";
 
 export default function DashboardServicoPage() {
@@ -42,8 +42,8 @@ export default function DashboardServicoPage() {
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
 
   const availableRecurrenceOptions = selectedService
-    ? RECURRENCE_OPTIONS.filter((opt) => selectedService[opt.field])
-    : RECURRENCE_OPTIONS;
+    ? SchedulingConfig.recurrenceOptions.filter((opt) => selectedService[opt.field])
+    : SchedulingConfig.recurrenceOptions;
 
   const canProceed =
     selectedServiceId !== null &&
@@ -68,10 +68,10 @@ export default function DashboardServicoPage() {
           {services.map((service) => (
             <DsServiceOptionCard
               key={service.id}
-              icon={getServiceIcon(service.icon)}
+              icon={IconMap.getServiceIcon(service.icon)}
               title={service.name}
               description={service.description ?? ""}
-              price={formatPrice(service.basePrice)}
+              price={Formatters.formatPrice(service.basePrice)}
               selected={selectedServiceId === service.id}
               onClick={() => setSelectedServiceId(service.id)}
             />
@@ -108,7 +108,7 @@ export default function DashboardServicoPage() {
                 Selecione o tipo de recorrência
               </p>
               <DsSelect
-                options={FREQUENCY_OPTIONS}
+                options={SchedulingConfig.frequencyOptions}
                 value={recurrenceFrequency ?? "mensal"}
                 onValueChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
                 placeholder="Selecione..."

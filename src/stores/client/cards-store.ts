@@ -1,0 +1,153 @@
+import { create } from "zustand";
+
+import type { Card } from "@/api/client/cards-api";
+import { Messages } from "@/lib/core/messages";
+import { useToastStore } from "@/stores/ui/toast-store";
+import { AddClientCard } from "@/use-cases/client-cards/add-client-card";
+import { LoadClientCards } from "@/use-cases/client-cards/load-client-cards";
+import { RemoveClientCard } from "@/use-cases/client-cards/remove-client-card";
+import { validateAddCardForm, type AddCardFormErrors } from "@/validation/add-card-schema";
+
+interface AddCardForm {
+  cardNumber: string;
+  holderName: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+  isDefault: boolean;
+}
+
+const emptyForm: AddCardForm = {
+  cardNumber: "",
+  holderName: "",
+  expiryMonth: "",
+  expiryYear: "",
+  cvv: "",
+  isDefault: false,
+};
+
+interface CardsState {
+  cards: Card[];
+  isLoading: boolean;
+  error: string | null;
+  addDialogOpen: boolean;
+  isAdding: boolean;
+  addForm: AddCardForm;
+  addFormErrors: AddCardFormErrors;
+  confirmRemoveCardId: number | null;
+  removingCardIds: number[];
+}
+
+interface CardsActions {
+  loadCards: () => Promise<void>;
+  addCard: () => Promise<void>;
+  removeCard: (cardId: number) => Promise<void>;
+  openAddDialog: () => void;
+  closeAddDialog: () => void;
+  setAddFormField: <K extends keyof AddCardForm>(field: K, value: AddCardForm[K]) => void;
+  validateAddForm: () => boolean;
+  setConfirmRemoveCardId: (cardId: number | null) => void;
+  reset: () => void;
+}
+
+const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
+  cards: [],
+  isLoading: false,
+  error: null,
+  addDialogOpen: false,
+  isAdding: false,
+  addForm: { ...emptyForm },
+  addFormErrors: {},
+  confirmRemoveCardId: null,
+  removingCardIds: [],
+
+  loadCards: async () => {
+    set({ isLoading: true, error: null });
+
+    const result = await LoadClientCards.loadClientCards();
+    set({
+      cards: result.data ?? [],
+      isLoading: false,
+      error: result.error,
+    });
+  },
+
+  addCard: async () => {
+    if (get().isAdding) return;
+    if (!get().validateAddForm()) return;
+    const form = get().addForm;
+
+    set({ isAdding: true });
+
+    const result = await AddClientCard.addClientCard({
+      cardNumber: form.cardNumber,
+      holderName: form.holderName,
+      expiryMonth: form.expiryMonth,
+      expiryYear: form.expiryYear,
+      cvv: form.cvv,
+      isDefault: form.isDefault,
+    });
+
+    if (result.success && result.card) {
+      set((state) => ({
+        cards: form.isDefault
+          ? [result.card!, ...state.cards.map((c) => ({ ...c, isDefault: false }))]
+          : [...state.cards, result.card!],
+        addDialogOpen: false,
+        isAdding: false,
+        addForm: { ...emptyForm },
+        addFormErrors: {},
+      }));
+      useToastStore.getState().showToast(Messages.cards.addSuccess, "success");
+    } else {
+      useToastStore.getState().showToast(result.error ?? Messages.cards.addError, "error");
+      set({ isAdding: false });
+    }
+  },
+
+  removeCard: async (cardId: number) => {
+    if (get().removingCardIds.includes(cardId)) return;
+    set((state) => ({ removingCardIds: [...state.removingCardIds, cardId] }));
+    const result = await RemoveClientCard.removeClientCard(cardId);
+
+    if (result.success) {
+      set((state) => ({ cards: state.cards.filter((c) => c.id !== cardId) }));
+      useToastStore.getState().showToast(Messages.cards.removeSuccess, "success");
+    } else {
+      useToastStore.getState().showToast(result.error ?? Messages.cards.removeError, "error");
+    }
+    set((state) => ({ removingCardIds: state.removingCardIds.filter((id) => id !== cardId) }));
+  },
+
+  openAddDialog: () => set({ addDialogOpen: true, addForm: { ...emptyForm }, addFormErrors: {} }),
+  closeAddDialog: () => set({ addDialogOpen: false, addForm: { ...emptyForm }, addFormErrors: {} }),
+
+  setAddFormField: (field, value) =>
+    set((state) => ({
+      addForm: { ...state.addForm, [field]: value },
+      addFormErrors: { ...state.addFormErrors, [field]: undefined },
+    })),
+
+  setConfirmRemoveCardId: (cardId) => set({ confirmRemoveCardId: cardId }),
+
+  validateAddForm: () => {
+    const errors = validateAddCardForm(get().addForm);
+    set({ addFormErrors: errors });
+    return Object.keys(errors).length === 0;
+  },
+
+  reset: () =>
+    set({
+      cards: [],
+      isLoading: false,
+      error: null,
+      addDialogOpen: false,
+      isAdding: false,
+      addForm: { ...emptyForm },
+      addFormErrors: {},
+      confirmRemoveCardId: null,
+      removingCardIds: [],
+    }),
+}));
+
+export { useCardsStore };

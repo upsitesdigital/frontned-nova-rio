@@ -57,8 +57,12 @@ export {
   type DsPaymentInfoCardStatus,
 } from "./ds-payment-info-card";
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./ds-collapsible-section";
-export { DsAdminSidebar, type DsAdminSidebarProps } from "./ds-admin-sidebar";
-export { DsClientSidebar, type DsClientSidebarProps } from "./ds-client-sidebar";
+export { DsAdminSidebar, type DsAdminSidebarProps, type DsAdminNavItem } from "./ds-admin-sidebar";
+export {
+  DsClientSidebar,
+  type DsClientSidebarProps,
+  type DsClientNavItem,
+} from "./ds-client-sidebar";
 export {
   DsClientDashboardShell,
   type DsClientDashboardShellProps,

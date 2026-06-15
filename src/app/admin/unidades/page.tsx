@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { PencilSimpleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   DsAlert,
@@ -13,8 +13,8 @@ import {
   DsPageHeader,
   DsPagination,
 } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminUnitsStore } from "@/stores/admin-units-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminUnitsStore } from "@/stores/admin/admin-units-store";
 
 function formatDate(iso: string): string {
   const date = new Date(iso);
@@ -25,8 +25,6 @@ function formatDate(iso: string): string {
 }
 
 export default function AdminUnitsPage() {
-  const [pendingDeleteUnitId, setPendingDeleteUnitId] = useState<number | null>(null);
-
   const {
     units,
     totalUnits,
@@ -37,9 +35,11 @@ export default function AdminUnitsPage() {
     deletingUnitId,
     error,
     isEditorOpen,
+    pendingDeleteUnitId,
     form,
     loadUnits,
     setCurrentPage,
+    setPendingDeleteUnitId,
     openCreateEditor,
     openEditEditor,
     closeEditor,
@@ -142,7 +142,9 @@ export default function AdminUnitsPage() {
                         ? `${unit.latitude.toFixed(4)}, ${unit.longitude.toFixed(4)}`
                         : "Não informado"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-nova-gray-700">{formatDate(unit.updatedAt)}</td>
+                    <td className="px-6 py-4 text-sm text-nova-gray-700">
+                      {formatDate(unit.updatedAt)}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <DsButton
@@ -151,7 +153,11 @@ export default function AdminUnitsPage() {
                           onClick={() => openEditEditor(unit.id)}
                           disabled={isSaving || deletingUnitId === unit.id}
                         >
-                          <DsIcon icon={PencilSimpleIcon} size="sm" className="text-nova-gray-700" />
+                          <DsIcon
+                            icon={PencilSimpleIcon}
+                            size="sm"
+                            className="text-nova-gray-700"
+                          />
                           Editar
                         </DsButton>
                         <DsButton
@@ -204,7 +210,9 @@ export default function AdminUnitsPage() {
                 <h2 className="text-3xl font-medium text-black">
                   {form.name ? "Editar unidade" : "Nova unidade"}
                 </h2>
-                <p className="text-sm text-nova-gray-700">Configure os dados da unidade de atendimento.</p>
+                <p className="text-sm text-nova-gray-700">
+                  Configure os dados da unidade de atendimento.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -219,7 +227,9 @@ export default function AdminUnitsPage() {
                 <DsFormField label="Raio de cobertura (km)">
                   <DsInput
                     value={form.serviceRadiusKmInput}
-                    onChange={(event) => updateFormField("serviceRadiusKmInput", event.target.value)}
+                    onChange={(event) =>
+                      updateFormField("serviceRadiusKmInput", event.target.value)
+                    }
                     placeholder="5"
                   />
                 </DsFormField>
@@ -250,7 +260,12 @@ export default function AdminUnitsPage() {
               </DsFormField>
 
               <div className="flex items-center justify-end gap-3">
-                <DsButton variant="outline" className="h-12 px-6" onClick={closeEditor} disabled={isSaving}>
+                <DsButton
+                  variant="outline"
+                  className="h-12 px-6"
+                  onClick={closeEditor}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </DsButton>
                 <DsButton

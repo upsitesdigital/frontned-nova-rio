@@ -2,60 +2,58 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import {
-  CalendarCheck,
-  Medal,
-  SealPercent,
-  ShieldCheck,
-  CalendarX,
+  CalendarCheckIcon,
+  MedalIcon,
+  SealPercentIcon,
+  ShieldCheckIcon,
+  CalendarXIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton, DsIcon } from "@/design-system";
 
-const BENEFITS_ROWS = [
+const benefitsRows = [
   [
     {
-      icon: CalendarCheck,
+      icon: CalendarCheckIcon,
       title: "Flexibilidade real",
       description: "Agende quando precisar, sem contratos fixos.",
     },
     {
-      icon: Medal,
+      icon: MedalIcon,
       title: "Exclusividade",
-      description:
-        "Atendimento voltado a escritórios, consultórios e empresas de alto padrão.",
+      description: "Atendimento voltado a escritórios, consultórios e empresas de alto padrão.",
     },
   ],
   [
     {
-      icon: SealPercent,
+      icon: SealPercentIcon,
       title: "Transparência",
-      description:
-        "Valor por hora a partir de R$50, com desconto para clientes recorrentes.",
+      description: "Valor por hora a partir de R$50, com desconto para clientes recorrentes.",
     },
     {
-      icon: ShieldCheck,
+      icon: ShieldCheckIcon,
       title: "Segurança",
       description: "Profissionais selecionados, confiáveis e supervisionados.",
     },
   ],
 ] as const;
 
-const LAST_BENEFIT = {
-  icon: CalendarX,
+const lastBenefit = {
+  icon: CalendarXIcon,
   title: "Praticidade",
   description: "Cancelamento sem multa até 1h antes do agendamento.",
 } as const;
 
-const CERTIFICATIONS = [
+const certifications = [
   { src: "/images/landing/iso-9001.png", alt: "Selo ISO 9001" },
   { src: "/images/landing/iso-45001.png", alt: "Selo ISO 45001" },
   { src: "/images/landing/iso-14001.png", alt: "Selo ISO 14001" },
 ] as const;
 
 interface BenefitItem {
-  icon: typeof CalendarCheck;
+  icon: typeof CalendarCheckIcon;
   title: string;
   description: string;
 }
@@ -93,8 +91,9 @@ function LandingBenefits() {
                 Benefícios
               </p>
               <h2 className="text-[36px] leading-[1.3] font-medium tracking-[-1.44px] text-black">
-                Por que escolher a <span className="text-nova-primary-dark">Nova Rio Pay Per Use</span>{" "}
-                para sua empresa
+                Por que escolher a{" "}
+                <span className="text-nova-primary-dark">Nova Rio Pay Per Use</span> para sua
+                empresa
               </h2>
             </motion.div>
 
@@ -106,7 +105,7 @@ function LandingBenefits() {
               >
                 <Link href="/agendamento" className="group flex items-center gap-4">
                   Agende sua limpeza agora
-                  <ArrowRight
+                  <ArrowRightIcon
                     size={20}
                     weight="bold"
                     className="transition-transform duration-200 group-hover:translate-x-1"
@@ -116,9 +115,11 @@ function LandingBenefits() {
             </motion.div>
 
             <div className="mt-37.5 flex flex-col gap-8 lg:pb-16">
-              <p className="text-base leading-normal text-nova-gray-600">Nossos selos e certificações:</p>
+              <p className="text-base leading-normal text-nova-gray-600">
+                Nossos selos e certificações:
+              </p>
               <div className="flex items-center gap-11">
-                {CERTIFICATIONS.map((cert) => (
+                {certifications.map((cert) => (
                   <Image
                     key={cert.src}
                     src={cert.src}
@@ -134,7 +135,7 @@ function LandingBenefits() {
 
           <div className="w-full lg:w-148 lg:pt-10.75 lg:pb-16">
             <div className="flex flex-col gap-6">
-              {BENEFITS_ROWS.map((row, index) => (
+              {benefitsRows.map((row, index) => (
                 <div key={row[0].title}>
                   <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8.5">
                     {row.map((benefit) => (
@@ -146,7 +147,7 @@ function LandingBenefits() {
                       />
                     ))}
                   </div>
-                  {index < BENEFITS_ROWS.length - 1 && (
+                  {index < benefitsRows.length - 1 && (
                     <div className="mt-6 h-px w-full bg-nova-gray-300" />
                   )}
                 </div>
@@ -156,9 +157,9 @@ function LandingBenefits() {
 
               <div className="max-w-70">
                 <BenefitColumn
-                  icon={LAST_BENEFIT.icon}
-                  title={LAST_BENEFIT.title}
-                  description={LAST_BENEFIT.description}
+                  icon={lastBenefit.icon}
+                  title={lastBenefit.title}
+                  description={lastBenefit.description}
                 />
               </div>
             </div>

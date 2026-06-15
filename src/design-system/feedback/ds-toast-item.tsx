@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 import { DsAlert, type DsAlertVariant } from "./ds-alert";
 
-const DISPLAY_DURATION = 5000;
-const ANIMATION_DURATION = 400;
+const displayDuration = 5000;
+const animationDuration = 400;
 
 interface DsToastItemProps {
   id: number;
@@ -22,8 +22,8 @@ function DsToastItem({ id, variant, title, onRemove }: DsToastItemProps) {
       elRef.current?.classList.remove("animate-[slideInRight_0.4s_ease-out_forwards]");
       elRef.current?.classList.add("animate-[slideOutRight_0.4s_ease-in_forwards]");
 
-      setTimeout(() => onRemove(id), ANIMATION_DURATION);
-    }, DISPLAY_DURATION);
+      setTimeout(() => onRemove(id), animationDuration);
+    }, displayDuration);
 
     return () => clearTimeout(timer);
   }, [id, onRemove]);

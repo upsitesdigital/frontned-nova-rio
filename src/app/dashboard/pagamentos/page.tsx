@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { usePaymentsPageStore } from "@/stores/payments-page-store";
+import { usePaymentsPageStore } from "@/stores/client/payments-page-store";
 import { PaymentsHistoryPanel } from "./_components/payments-history-panel";
 
 export default function PagamentosPage() {

@@ -1,5 +1,5 @@
 import Image, { type ImageProps } from "next/image";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 type DsImageProps = Omit<ImageProps, "alt"> & {
   alt: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { DsDialog, DsFormField, DsInput, DsButton } from "@/design-system";
-import { useEmailChangeStore } from "@/stores/email-change-store";
+import { useEmailChangeStore } from "@/stores/client/email-change-store";
 
 function EmailChangeDialog() {
   const {
