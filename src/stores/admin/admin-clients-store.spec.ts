@@ -2,17 +2,23 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import { useAdminClientsStore } from "./admin-clients-store";
 import type { DsClientTableClient } from "@/design-system";
 
-vi.mock("@/use-cases/admin-clients/load-admin-clients", () => ({ LoadAdminClients: {
-  loadAdminClients: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-clients/load-admin-clients", () => ({
+  LoadAdminClients: {
+    loadAdminClients: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-clients/approve-admin-client", () => ({ ApproveAdminClient: {
-  approveAdminClient: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-clients/approve-admin-client", () => ({
+  ApproveAdminClient: {
+    approveAdminClient: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-clients/reject-admin-client", () => ({ RejectAdminClient: {
-  rejectAdminClient: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-clients/reject-admin-client", () => ({
+  RejectAdminClient: {
+    rejectAdminClient: vi.fn(),
+  },
+}));
 
 const { LoadAdminClients } = await import("@/use-cases/admin-clients/load-admin-clients");
 const { ApproveAdminClient } = await import("@/use-cases/admin-clients/approve-admin-client");
@@ -78,7 +84,9 @@ describe("AdminClientsStore", () => {
       useAdminClientsStore.setState({ statusFilter: "pending" });
       await useAdminClientsStore.getState().loadClients();
 
-      expect(LoadAdminClients.loadAdminClients).toHaveBeenCalledWith(expect.objectContaining({ status: "pending" }));
+      expect(LoadAdminClients.loadAdminClients).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "pending" }),
+      );
     });
 
     it("should not pass status when filter is 'all'", async () => {
@@ -90,7 +98,9 @@ describe("AdminClientsStore", () => {
 
       await useAdminClientsStore.getState().loadClients();
 
-      expect(LoadAdminClients.loadAdminClients).toHaveBeenCalledWith(expect.objectContaining({ status: undefined }));
+      expect(LoadAdminClients.loadAdminClients).toHaveBeenCalledWith(
+        expect.objectContaining({ status: undefined }),
+      );
     });
 
     it("should set error on failure", async () => {

@@ -1,7 +1,4 @@
-import {
-  DashboardApi,
-  type ClientDashboardSummary,
-} from "@/api/client/dashboard-api";
+import { DashboardApi, type ClientDashboardSummary } from "@/api/client/dashboard-api";
 import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 

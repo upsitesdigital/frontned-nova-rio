@@ -1,5 +1,8 @@
 import { create } from "zustand";
-import { LoadAdminClients, type LoadAdminClientsInput } from "@/use-cases/admin-clients/load-admin-clients";
+import {
+  LoadAdminClients,
+  type LoadAdminClientsInput,
+} from "@/use-cases/admin-clients/load-admin-clients";
 import { ApproveAdminClient } from "@/use-cases/admin-clients/approve-admin-client";
 import { RejectAdminClient } from "@/use-cases/admin-clients/reject-admin-client";
 import type { DsClientTableClient, DsClientTableFilter } from "@/design-system";

@@ -58,9 +58,15 @@ describe("loadAdminDashboardData", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(authApi.AuthApi.fetchAdminProfile).mockResolvedValue(mockProfile as never);
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchTodayAppointmentsCount).mockResolvedValue({ count: 5 });
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchActiveClientsCount).mockResolvedValue({ count: 10 });
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchPendingAppointmentsCount).mockResolvedValue({ count: 3 });
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchTodayAppointmentsCount).mockResolvedValue({
+      count: 5,
+    });
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchActiveClientsCount).mockResolvedValue({
+      count: 10,
+    });
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchPendingAppointmentsCount).mockResolvedValue({
+      count: 3,
+    });
     vi.mocked(dashboardApi.AdminDashboardApi.fetchTodayAgenda).mockResolvedValue({
       items: [{ appointmentId: 1 }] as never[],
       total: 1,
@@ -102,9 +108,15 @@ describe("loadAdminDashboardData", () => {
   });
 
   it("should return data with zero counts when metric calls fail", async () => {
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchTodayAppointmentsCount).mockRejectedValue(new Error("fail"));
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchActiveClientsCount).mockRejectedValue(new Error("fail"));
-    vi.mocked(dashboardApi.AdminDashboardApi.fetchPendingAppointmentsCount).mockRejectedValue(new Error("fail"));
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchTodayAppointmentsCount).mockRejectedValue(
+      new Error("fail"),
+    );
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchActiveClientsCount).mockRejectedValue(
+      new Error("fail"),
+    );
+    vi.mocked(dashboardApi.AdminDashboardApi.fetchPendingAppointmentsCount).mockRejectedValue(
+      new Error("fail"),
+    );
 
     const result = await LoadAdminDashboard.loadAdminDashboardData(6);
 

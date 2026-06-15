@@ -1,21 +1,29 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { useAdminCreateAppointmentStore } from "./admin-create-appointment-store";
 
-vi.mock("@/use-cases/admin-appointments/create-admin-appointment", () => ({ CreateAdminAppointment: {
-  submitAdminAppointment: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-appointments/create-admin-appointment", () => ({
+  CreateAdminAppointment: {
+    submitAdminAppointment: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-clients/get-approved-client-options", () => ({ GetApprovedClientOptions: {
-  getApprovedClientOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-clients/get-approved-client-options", () => ({
+  GetApprovedClientOptions: {
+    getApprovedClientOptions: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-services/get-admin-service-options", () => ({ GetAdminServiceOptions: {
-  getAdminServiceOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-services/get-admin-service-options", () => ({
+  GetAdminServiceOptions: {
+    getAdminServiceOptions: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-employees/get-active-employee-options", () => ({ GetActiveEmployeeOptions: {
-  getActiveEmployeeOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-employees/get-active-employee-options", () => ({
+  GetActiveEmployeeOptions: {
+    getActiveEmployeeOptions: vi.fn(),
+  },
+}));
 
 const createUseCase = await import("@/use-cases/admin-appointments/create-admin-appointment");
 const clientOptionsUseCase = await import("@/use-cases/admin-clients/get-approved-client-options");
@@ -35,11 +43,15 @@ describe("AdminCreateAppointmentStore", () => {
 
   describe("loadOptions", () => {
     it("should load all options successfully", async () => {
-      vi.mocked(clientOptionsUseCase.GetApprovedClientOptions.getApprovedClientOptions).mockResolvedValue({
+      vi.mocked(
+        clientOptionsUseCase.GetApprovedClientOptions.getApprovedClientOptions,
+      ).mockResolvedValue({
         data: [{ id: 1, name: "Maria" }],
         error: null,
       });
-      vi.mocked(serviceOptionsUseCase.GetAdminServiceOptions.getAdminServiceOptions).mockResolvedValue({
+      vi.mocked(
+        serviceOptionsUseCase.GetAdminServiceOptions.getAdminServiceOptions,
+      ).mockResolvedValue({
         data: [
           {
             id: 1,
@@ -51,7 +63,9 @@ describe("AdminCreateAppointmentStore", () => {
         ],
         error: null,
       });
-      vi.mocked(employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions).mockResolvedValue({
+      vi.mocked(
+        employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions,
+      ).mockResolvedValue({
         data: [{ id: 1, name: "Carlos" }],
         error: null,
       });
@@ -66,12 +80,18 @@ describe("AdminCreateAppointmentStore", () => {
     });
 
     it("should handle partial failures gracefully", async () => {
-      vi.mocked(clientOptionsUseCase.GetApprovedClientOptions.getApprovedClientOptions).mockRejectedValue(new Error("fail"));
-      vi.mocked(serviceOptionsUseCase.GetAdminServiceOptions.getAdminServiceOptions).mockResolvedValue({
+      vi.mocked(
+        clientOptionsUseCase.GetApprovedClientOptions.getApprovedClientOptions,
+      ).mockRejectedValue(new Error("fail"));
+      vi.mocked(
+        serviceOptionsUseCase.GetAdminServiceOptions.getAdminServiceOptions,
+      ).mockResolvedValue({
         data: [],
         error: null,
       });
-      vi.mocked(employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions).mockResolvedValue({
+      vi.mocked(
+        employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions,
+      ).mockResolvedValue({
         data: [{ id: 1, name: "Carlos" }],
         error: null,
       });
@@ -98,7 +118,9 @@ describe("AdminCreateAppointmentStore", () => {
     });
 
     it("should return true on success", async () => {
-      vi.mocked(createUseCase.CreateAdminAppointment.submitAdminAppointment).mockResolvedValue({ type: "success" });
+      vi.mocked(createUseCase.CreateAdminAppointment.submitAdminAppointment).mockResolvedValue({
+        type: "success",
+      });
 
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",
@@ -114,7 +136,9 @@ describe("AdminCreateAppointmentStore", () => {
     });
 
     it("should pass form state to use case", async () => {
-      vi.mocked(createUseCase.CreateAdminAppointment.submitAdminAppointment).mockResolvedValue({ type: "success" });
+      vi.mocked(createUseCase.CreateAdminAppointment.submitAdminAppointment).mockResolvedValue({
+        type: "success",
+      });
 
       useAdminCreateAppointmentStore.setState({
         serviceId: "1",

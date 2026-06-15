@@ -56,7 +56,9 @@ describe("admin-dashboard-api", () => {
 
       const result = await AdminDashboardApi.fetchPendingAppointmentsCount();
 
-      expect(HttpClient.authGet).toHaveBeenCalledWith("/admin/dashboard/pending-appointments-count");
+      expect(HttpClient.authGet).toHaveBeenCalledWith(
+        "/admin/dashboard/pending-appointments-count",
+      );
       expect(result.count).toBe(3);
     });
   });

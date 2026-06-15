@@ -73,7 +73,11 @@ describe("admin-appointments-api", () => {
     it("should include status param", async () => {
       vi.mocked(HttpClient.authGet).mockResolvedValue({ data: [], total: 0, page: 1, limit: 10 });
 
-      await AdminAppointmentsApi.fetchAdminAppointments({ page: 1, limit: 10, status: "SCHEDULED" });
+      await AdminAppointmentsApi.fetchAdminAppointments({
+        page: 1,
+        limit: 10,
+        status: "SCHEDULED",
+      });
 
       const url = vi.mocked(HttpClient.authGet).mock.calls[0][0] as string;
       expect(url).toContain("status=SCHEDULED");

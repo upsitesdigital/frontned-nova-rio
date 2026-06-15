@@ -89,7 +89,10 @@ class AdminServicesApi {
     id: number,
     payload: SaveAdminServicePayload,
   ): Promise<AdminService> {
-    const response = await HttpClient.authPatchWithBody<RawAdminService>(`/services/${id}`, payload);
+    const response = await HttpClient.authPatchWithBody<RawAdminService>(
+      `/services/${id}`,
+      payload,
+    );
     return AdminServicesApi.normalizeAdminService(response);
   }
 

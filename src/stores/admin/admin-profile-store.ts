@@ -4,7 +4,10 @@ import type { AdminProfile } from "@/api/core/auth-api";
 import { AppConfig } from "@/config/app";
 import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
-import { LoadAdminDashboard, type AdminDashboardData } from "@/use-cases/admin-reports/load-admin-dashboard";
+import {
+  LoadAdminDashboard,
+  type AdminDashboardData,
+} from "@/use-cases/admin-reports/load-admin-dashboard";
 
 interface AdminProfileState {
   profile: AdminProfile | null;

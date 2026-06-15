@@ -78,7 +78,12 @@ describe("PaymentsPageStore", () => {
 
       await usePaymentsPageStore.getState().loadPayments();
 
-      expect(PaymentsApi.fetchClientPayments).toHaveBeenCalledWith(1, 20, "PAID", expect.any(AbortSignal));
+      expect(PaymentsApi.fetchClientPayments).toHaveBeenCalledWith(
+        1,
+        20,
+        "PAID",
+        expect.any(AbortSignal),
+      );
     });
 
     it("should pass undefined status when filter is ALL", async () => {
@@ -91,7 +96,12 @@ describe("PaymentsPageStore", () => {
 
       await usePaymentsPageStore.getState().loadPayments();
 
-      expect(PaymentsApi.fetchClientPayments).toHaveBeenCalledWith(1, 20, undefined, expect.any(AbortSignal));
+      expect(PaymentsApi.fetchClientPayments).toHaveBeenCalledWith(
+        1,
+        20,
+        undefined,
+        expect.any(AbortSignal),
+      );
     });
 
     it("should set error on non-abort failure", async () => {
@@ -116,7 +126,12 @@ describe("PaymentsPageStore", () => {
 
   describe("setFilter", () => {
     it("should update filter, reset page to 1, and trigger load", async () => {
-      vi.mocked(PaymentsApi.fetchClientPayments).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(PaymentsApi.fetchClientPayments).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
       usePaymentsPageStore.setState({ page: 3 });
 
       usePaymentsPageStore.getState().setFilter("PAID" as never);
@@ -130,7 +145,12 @@ describe("PaymentsPageStore", () => {
 
   describe("setPage", () => {
     it("should update page and trigger load", async () => {
-      vi.mocked(PaymentsApi.fetchClientPayments).mockResolvedValue({ data: [], total: 0, page: 5, limit: 20 });
+      vi.mocked(PaymentsApi.fetchClientPayments).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 5,
+        limit: 20,
+      });
 
       usePaymentsPageStore.getState().setPage(5);
 

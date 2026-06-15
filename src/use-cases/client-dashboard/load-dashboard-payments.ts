@@ -11,7 +11,10 @@ interface DashboardPaymentsResult {
 class LoadDashboardPayments {
   static async loadDashboardPayments(): Promise<DashboardPaymentsResult> {
     try {
-      const [cards, paymentsResult] = await Promise.all([CardsApi.listCards(), PaymentsApi.fetchClientPayments(1, 5)]);
+      const [cards, paymentsResult] = await Promise.all([
+        CardsApi.listCards(),
+        PaymentsApi.fetchClientPayments(1, 5),
+      ]);
       return { cards, payments: paymentsResult.data, error: null };
     } catch {
       return {

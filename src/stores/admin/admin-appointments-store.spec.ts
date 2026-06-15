@@ -21,21 +21,29 @@ const mockAppointment = {
   unit: null,
 };
 
-vi.mock("@/use-cases/admin-appointments/load-admin-appointments", () => ({ LoadAdminAppointments: {
-  loadAdminAppointments: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-appointments/load-admin-appointments", () => ({
+  LoadAdminAppointments: {
+    loadAdminAppointments: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-employees/get-active-employee-options", () => ({ GetActiveEmployeeOptions: {
-  getActiveEmployeeOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-employees/get-active-employee-options", () => ({
+  GetActiveEmployeeOptions: {
+    getActiveEmployeeOptions: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-units/get-active-unit-options", () => ({ GetActiveUnitOptions: {
-  getActiveUnitOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-units/get-active-unit-options", () => ({
+  GetActiveUnitOptions: {
+    getActiveUnitOptions: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/admin-services/get-active-service-options", () => ({ GetActiveServiceOptions: {
-  getActiveServiceOptions: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-services/get-active-service-options", () => ({
+  GetActiveServiceOptions: {
+    getActiveServiceOptions: vi.fn(),
+  },
+}));
 
 const loadAppointmentsUseCase =
   await import("@/use-cases/admin-appointments/load-admin-appointments");
@@ -56,7 +64,9 @@ describe("AdminAppointmentsStore", () => {
 
   describe("loadAppointments", () => {
     it("should load appointments successfully", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [mockAppointment], total: 1, page: 1 },
         error: null,
         isAuthError: false,
@@ -72,7 +82,9 @@ describe("AdminAppointmentsStore", () => {
     });
 
     it("should pass correct input to use case with today viewMode", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -80,14 +92,17 @@ describe("AdminAppointmentsStore", () => {
 
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mock.calls[0][0];
+      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments)
+        .mock.calls[0][0];
       expect(input.viewMode).toBe("today");
       expect(input.page).toBe(1);
       expect(input.pageSize).toBe(10);
     });
 
     it("should pass week viewMode to use case", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -96,12 +111,15 @@ describe("AdminAppointmentsStore", () => {
       useAdminAppointmentsStore.setState({ viewMode: "week" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mock.calls[0][0];
+      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments)
+        .mock.calls[0][0];
       expect(input.viewMode).toBe("week");
     });
 
     it("should pass employee filter to use case", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -110,12 +128,15 @@ describe("AdminAppointmentsStore", () => {
       useAdminAppointmentsStore.setState({ viewMode: "employee", employeeFilter: "5" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mock.calls[0][0];
+      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments)
+        .mock.calls[0][0];
       expect(input.employeeFilter).toBe("5");
     });
 
     it("should pass unit filter to use case", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -124,12 +145,15 @@ describe("AdminAppointmentsStore", () => {
       useAdminAppointmentsStore.setState({ viewMode: "unit", unitFilter: "3" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mock.calls[0][0];
+      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments)
+        .mock.calls[0][0];
       expect(input.unitFilter).toBe("3");
     });
 
     it("should pass status filter to use case", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -138,12 +162,15 @@ describe("AdminAppointmentsStore", () => {
       useAdminAppointmentsStore.setState({ statusFilter: "SCHEDULED" });
       await useAdminAppointmentsStore.getState().loadAppointments();
 
-      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mock.calls[0][0];
+      const input = vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments)
+        .mock.calls[0][0];
       expect(input.statusFilter).toBe("SCHEDULED");
     });
 
     it("should set isAuthError when use case returns auth error", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: null,
         error: "Unauthorized",
         isAuthError: true,
@@ -158,7 +185,9 @@ describe("AdminAppointmentsStore", () => {
     });
 
     it("should set error but not isAuthError on generic error", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: null,
         error: "Failed to load appointments",
         isAuthError: false,
@@ -174,7 +203,9 @@ describe("AdminAppointmentsStore", () => {
 
   describe("loadFilterOptions", () => {
     it("should load all filter options", async () => {
-      vi.mocked(employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions).mockResolvedValue({
+      vi.mocked(
+        employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions,
+      ).mockResolvedValue({
         data: [{ id: 1, name: "Carlos" }],
         error: null,
       });
@@ -182,7 +213,9 @@ describe("AdminAppointmentsStore", () => {
         data: [{ id: 1, name: "Centro" }],
         error: null,
       });
-      vi.mocked(serviceOptionsUseCase.GetActiveServiceOptions.getActiveServiceOptions).mockResolvedValue({
+      vi.mocked(
+        serviceOptionsUseCase.GetActiveServiceOptions.getActiveServiceOptions,
+      ).mockResolvedValue({
         data: [{ id: 1, name: "Limpeza" }],
         error: null,
       });
@@ -197,14 +230,16 @@ describe("AdminAppointmentsStore", () => {
     });
 
     it("should handle partial failures gracefully", async () => {
-      vi.mocked(employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions).mockRejectedValue(
-        new Error("fail"),
-      );
+      vi.mocked(
+        employeeOptionsUseCase.GetActiveEmployeeOptions.getActiveEmployeeOptions,
+      ).mockRejectedValue(new Error("fail"));
       vi.mocked(unitOptionsUseCase.GetActiveUnitOptions.getActiveUnitOptions).mockResolvedValue({
         data: [{ id: 1, name: "Centro" }],
         error: null,
       });
-      vi.mocked(serviceOptionsUseCase.GetActiveServiceOptions.getActiveServiceOptions).mockRejectedValue(new Error("fail"));
+      vi.mocked(
+        serviceOptionsUseCase.GetActiveServiceOptions.getActiveServiceOptions,
+      ).mockRejectedValue(new Error("fail"));
 
       await useAdminAppointmentsStore.getState().loadFilterOptions();
 
@@ -217,7 +252,9 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setViewMode", () => {
     it("should reset page and filters when changing view mode", () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -236,7 +273,9 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setStatusFilter", () => {
     it("should update status filter and reset page", () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 1 },
         error: null,
         isAuthError: false,
@@ -253,7 +292,9 @@ describe("AdminAppointmentsStore", () => {
 
   describe("setPage", () => {
     it("should update page and reload", () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [], total: 0, page: 2 },
         error: null,
         isAuthError: false,
@@ -261,13 +302,17 @@ describe("AdminAppointmentsStore", () => {
 
       useAdminAppointmentsStore.getState().setPage(2);
 
-      expect(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).toHaveBeenCalled();
+      expect(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).toHaveBeenCalled();
     });
   });
 
   describe("reset", () => {
     it("should restore initial state", async () => {
-      vi.mocked(loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments).mockResolvedValue({
+      vi.mocked(
+        loadAppointmentsUseCase.LoadAdminAppointments.loadAdminAppointments,
+      ).mockResolvedValue({
         data: { appointments: [mockAppointment], total: 1, page: 1 },
         error: null,
         isAuthError: false,

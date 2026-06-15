@@ -84,7 +84,10 @@ describe("profile-api", () => {
 
       await ProfileApi.requestPasswordChange();
 
-      expect(HttpClient.authPost).toHaveBeenCalledWith("/clients/profile/password/request-change", {});
+      expect(HttpClient.authPost).toHaveBeenCalledWith(
+        "/clients/profile/password/request-change",
+        {},
+      );
     });
   });
 

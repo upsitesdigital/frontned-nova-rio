@@ -60,9 +60,4 @@ class AdminDashboardApi {
   }
 }
 
-export {
-  AdminDashboardApi,
-  type AgendaItem,
-  type TodayAgendaResponse,
-  type RawServiceItem,
-};
+export { AdminDashboardApi, type AgendaItem, type TodayAgendaResponse, type RawServiceItem };

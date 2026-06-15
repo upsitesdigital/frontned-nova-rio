@@ -163,10 +163,7 @@ class AdminAppointmentsApi {
     id: number,
     payload: UpdateAppointmentPayload,
   ): Promise<AdminAppointmentItem> {
-    return HttpClient.authPatchWithBody<AdminAppointmentItem>(
-      `/admin/appointments/${id}`,
-      payload,
-    );
+    return HttpClient.authPatchWithBody<AdminAppointmentItem>(`/admin/appointments/${id}`, payload);
   }
 
   static async rescheduleAdminAppointment(

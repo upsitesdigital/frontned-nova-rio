@@ -1,12 +1,16 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/client-appointments/reschedule-client-appointment", () => ({ RescheduleClientAppointment: {
-  rescheduleClientAppointment: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-appointments/reschedule-client-appointment", () => ({
+  RescheduleClientAppointment: {
+    rescheduleClientAppointment: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/client-appointments/cancel-client-appointment", () => ({ CancelClientAppointment: {
-  cancelClientAppointment: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-appointments/cancel-client-appointment", () => ({
+  CancelClientAppointment: {
+    cancelClientAppointment: vi.fn(),
+  },
+}));
 
 vi.mock("@/api/client/receipts-api", () => ({
   ReceiptsApi: { fetchReceiptBlob: vi.fn() },
@@ -28,8 +32,10 @@ vi.mock("@/lib/core/messages", () => ({
   },
 }));
 
-const { RescheduleClientAppointment } = await import("@/use-cases/client-appointments/reschedule-client-appointment");
-const { CancelClientAppointment } = await import("@/use-cases/client-appointments/cancel-client-appointment");
+const { RescheduleClientAppointment } =
+  await import("@/use-cases/client-appointments/reschedule-client-appointment");
+const { CancelClientAppointment } =
+  await import("@/use-cases/client-appointments/cancel-client-appointment");
 const { ReceiptsApi } = await import("@/api/client/receipts-api");
 const { DownloadHelpers } = await import("@/lib/core/download-helpers");
 

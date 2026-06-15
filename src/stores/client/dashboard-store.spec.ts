@@ -1,8 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/client-dashboard/load-client-dashboard", () => ({ LoadClientDashboard: {
-  loadClientDashboard: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-dashboard/load-client-dashboard", () => ({
+  LoadClientDashboard: {
+    loadClientDashboard: vi.fn(),
+  },
+}));
 
 const { LoadClientDashboard } = await import("@/use-cases/client-dashboard/load-client-dashboard");
 

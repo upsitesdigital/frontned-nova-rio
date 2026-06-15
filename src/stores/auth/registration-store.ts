@@ -46,7 +46,12 @@ const useRegistrationStore = create<RegistrationStore>()((set, get) => ({
     if (get().isRegistering) return false;
     const { name, email, phone, password } = useRegistrationStore.getState();
 
-    const validationErrors = SubmitRegistration.validateRegistrationInput({ name, email, phone, password });
+    const validationErrors = SubmitRegistration.validateRegistrationInput({
+      name,
+      email,
+      phone,
+      password,
+    });
     if (Object.keys(validationErrors).length > 0) {
       set({ errors: validationErrors });
       return false;

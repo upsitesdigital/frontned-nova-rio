@@ -1,9 +1,11 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/auth/submit-registration", () => ({ SubmitRegistration: {
-  validateRegistrationInput: vi.fn(),
-  submitRegistration: vi.fn(),
-} }));
+vi.mock("@/use-cases/auth/submit-registration", () => ({
+  SubmitRegistration: {
+    validateRegistrationInput: vi.fn(),
+    submitRegistration: vi.fn(),
+  },
+}));
 
 const { SubmitRegistration } = await import("@/use-cases/auth/submit-registration");
 const { useRegistrationStore } = await import("./registration-store");

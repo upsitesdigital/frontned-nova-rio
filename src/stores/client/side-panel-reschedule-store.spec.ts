@@ -1,12 +1,16 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/client-appointments/reschedule-client-appointment", () => ({ RescheduleClientAppointment: {
-  rescheduleClientAppointment: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-appointments/reschedule-client-appointment", () => ({
+  RescheduleClientAppointment: {
+    rescheduleClientAppointment: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/client-appointments/cancel-client-appointment", () => ({ CancelClientAppointment: {
-  cancelClientAppointment: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-appointments/cancel-client-appointment", () => ({
+  CancelClientAppointment: {
+    cancelClientAppointment: vi.fn(),
+  },
+}));
 
 vi.mock("@/lib/core/messages", () => ({
   Messages: {
@@ -20,8 +24,10 @@ vi.mock("@/lib/core/messages", () => ({
   },
 }));
 
-const { RescheduleClientAppointment } = await import("@/use-cases/client-appointments/reschedule-client-appointment");
-const { CancelClientAppointment } = await import("@/use-cases/client-appointments/cancel-client-appointment");
+const { RescheduleClientAppointment } =
+  await import("@/use-cases/client-appointments/reschedule-client-appointment");
+const { CancelClientAppointment } =
+  await import("@/use-cases/client-appointments/cancel-client-appointment");
 
 import { useSidePanelRescheduleStore } from "./side-panel-reschedule-store";
 

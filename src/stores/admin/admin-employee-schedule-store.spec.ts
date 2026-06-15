@@ -130,7 +130,9 @@ describe("AdminEmployeeScheduleStore", () => {
     });
 
     it("should set error on failure", async () => {
-      vi.mocked(AdminAppointmentsApi.fetchAdminAppointments).mockRejectedValue(new Error("Network error"));
+      vi.mocked(AdminAppointmentsApi.fetchAdminAppointments).mockRejectedValue(
+        new Error("Network error"),
+      );
 
       useAdminEmployeeScheduleStore.setState({ employeeId: 5 });
       await useAdminEmployeeScheduleStore.getState().loadBusyDates();

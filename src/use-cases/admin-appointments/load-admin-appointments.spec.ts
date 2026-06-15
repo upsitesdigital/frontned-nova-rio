@@ -261,7 +261,9 @@ describe("loadAdminAppointments", () => {
     const controller = new AbortController();
     controller.abort();
 
-    vi.mocked(api.AdminAppointmentsApi.fetchAdminAppointments).mockRejectedValue(new DOMException("Aborted"));
+    vi.mocked(api.AdminAppointmentsApi.fetchAdminAppointments).mockRejectedValue(
+      new DOMException("Aborted"),
+    );
 
     const result = await LoadAdminAppointments.loadAdminAppointments(
       {

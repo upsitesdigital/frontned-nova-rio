@@ -1,16 +1,22 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/client-cards/load-client-cards", () => ({ LoadClientCards: {
-  loadClientCards: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-cards/load-client-cards", () => ({
+  LoadClientCards: {
+    loadClientCards: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/client-cards/add-client-card", () => ({ AddClientCard: {
-  addClientCard: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-cards/add-client-card", () => ({
+  AddClientCard: {
+    addClientCard: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/client-cards/remove-client-card", () => ({ RemoveClientCard: {
-  removeClientCard: vi.fn(),
-} }));
+vi.mock("@/use-cases/client-cards/remove-client-card", () => ({
+  RemoveClientCard: {
+    removeClientCard: vi.fn(),
+  },
+}));
 
 vi.mock("@/validation/add-card-schema", () => ({
   validateAddCardForm: vi.fn(),
@@ -246,7 +252,10 @@ describe("CardsStore", () => {
 
   describe("removeCard", () => {
     it("should remove card from list and show toast on success", async () => {
-      vi.mocked(RemoveClientCard.removeClientCard).mockResolvedValue({ success: true, error: null });
+      vi.mocked(RemoveClientCard.removeClientCard).mockResolvedValue({
+        success: true,
+        error: null,
+      });
       useCardsStore.setState({ cards: [mockCard] as never });
 
       await useCardsStore.getState().removeCard(1);

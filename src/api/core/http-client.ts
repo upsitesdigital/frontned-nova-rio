@@ -130,10 +130,12 @@ class HttpClient {
     }
 
     HttpClient.isRefreshing = true;
-    HttpClient.refreshPromise = HttpClient.withRefreshLock(HttpClient.tryRefreshToken).finally(() => {
-      HttpClient.isRefreshing = false;
-      HttpClient.refreshPromise = null;
-    });
+    HttpClient.refreshPromise = HttpClient.withRefreshLock(HttpClient.tryRefreshToken).finally(
+      () => {
+        HttpClient.isRefreshing = false;
+        HttpClient.refreshPromise = null;
+      },
+    );
 
     return HttpClient.refreshPromise;
   }

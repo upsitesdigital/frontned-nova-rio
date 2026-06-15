@@ -1,9 +1,21 @@
 import { create } from "zustand";
 
-import { CreateAdminAppointment, type RecurrenceType } from "@/use-cases/admin-appointments/create-admin-appointment";
-import { GetActiveEmployeeOptions, type EmployeeOption } from "@/use-cases/admin-employees/get-active-employee-options";
-import { GetAdminServiceOptions, type AdminServiceOption } from "@/use-cases/admin-services/get-admin-service-options";
-import { GetApprovedClientOptions, type ClientOption } from "@/use-cases/admin-clients/get-approved-client-options";
+import {
+  CreateAdminAppointment,
+  type RecurrenceType,
+} from "@/use-cases/admin-appointments/create-admin-appointment";
+import {
+  GetActiveEmployeeOptions,
+  type EmployeeOption,
+} from "@/use-cases/admin-employees/get-active-employee-options";
+import {
+  GetAdminServiceOptions,
+  type AdminServiceOption,
+} from "@/use-cases/admin-services/get-admin-service-options";
+import {
+  GetApprovedClientOptions,
+  type ClientOption,
+} from "@/use-cases/admin-clients/get-approved-client-options";
 
 const durationOptions = [
   { value: 30, label: "30 min" },

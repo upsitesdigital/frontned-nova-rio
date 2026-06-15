@@ -43,7 +43,10 @@ class ProfileApi {
   }
 
   static async verifyPasswordChange(code: string, newPassword: string): Promise<void> {
-    await HttpClient.authPost<void>("/clients/profile/password/verify-change", { code, newPassword });
+    await HttpClient.authPost<void>("/clients/profile/password/verify-change", {
+      code,
+      newPassword,
+    });
   }
 
   static async deleteClientAccount(confirmPhrase: string): Promise<void> {

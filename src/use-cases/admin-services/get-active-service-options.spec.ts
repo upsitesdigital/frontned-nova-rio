@@ -31,7 +31,9 @@ describe("getActiveServiceOptions", () => {
   });
 
   it("should return error on API failure", async () => {
-    vi.mocked(api.AdminDashboardApi.fetchAdminDashboardServices).mockRejectedValue(new Error("fail"));
+    vi.mocked(api.AdminDashboardApi.fetchAdminDashboardServices).mockRejectedValue(
+      new Error("fail"),
+    );
 
     const result = await GetActiveServiceOptions.getActiveServiceOptions();
 

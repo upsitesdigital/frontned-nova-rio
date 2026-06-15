@@ -1,8 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/scheduling/validate-address", () => ({ ValidateAddress: {
-  validateAddress: vi.fn(),
-} }));
+vi.mock("@/use-cases/scheduling/validate-address", () => ({
+  ValidateAddress: {
+    validateAddress: vi.fn(),
+  },
+}));
 
 const { ValidateAddress } = await import("@/use-cases/scheduling/validate-address");
 const { useAddressStore } = await import("./address-store");

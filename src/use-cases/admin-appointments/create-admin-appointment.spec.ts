@@ -199,7 +199,9 @@ describe("submitAdminAppointment", () => {
     });
 
     it("should return generic error on network failure", async () => {
-      vi.mocked(api.AdminAppointmentsApi.createAdminAppointment).mockRejectedValue(new Error("Network error"));
+      vi.mocked(api.AdminAppointmentsApi.createAdminAppointment).mockRejectedValue(
+        new Error("Network error"),
+      );
 
       const result = await CreateAdminAppointment.submitAdminAppointment(validInput);
       expect(result).toEqual({ type: "error", message: "Create error" });

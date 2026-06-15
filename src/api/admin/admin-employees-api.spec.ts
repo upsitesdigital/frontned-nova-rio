@@ -86,7 +86,9 @@ describe("admin-employees-api", () => {
 
       const result = await AdminEmployeesApi.updateAdminEmployee(5, { name: "Carlos Magno" });
 
-      expect(HttpClient.authPatchWithBody).toHaveBeenCalledWith("/employees/5", { name: "Carlos Magno" });
+      expect(HttpClient.authPatchWithBody).toHaveBeenCalledWith("/employees/5", {
+        name: "Carlos Magno",
+      });
       expect(result).toEqual(updated);
     });
 

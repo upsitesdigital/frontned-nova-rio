@@ -13,9 +13,11 @@ const mockAgendaItems = [
   },
 ];
 
-vi.mock("@/use-cases/admin-appointments/load-admin-agenda", () => ({ LoadAdminAgenda: {
-  loadTodayAgenda: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-appointments/load-admin-agenda", () => ({
+  LoadAdminAgenda: {
+    loadTodayAgenda: vi.fn(),
+  },
+}));
 
 const { LoadAdminAgenda } = await import("@/use-cases/admin-appointments/load-admin-agenda");
 
@@ -84,7 +86,12 @@ describe("AdminAgendaStore", () => {
 
       await useAdminAgendaStore.getState().loadAgenda(2, 5);
 
-      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(2, 6, 5, expect.any(AbortSignal));
+      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(
+        2,
+        6,
+        5,
+        expect.any(AbortSignal),
+      );
     });
 
     it("should not set auth error on non-auth failure", async () => {
@@ -114,7 +121,12 @@ describe("AdminAgendaStore", () => {
 
       useAdminAgendaStore.getState().setAgendaPage(3);
 
-      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(3, 6, 5, expect.any(AbortSignal));
+      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(
+        3,
+        6,
+        5,
+        expect.any(AbortSignal),
+      );
     });
 
     it("should pass undefined serviceId for 'all' filter", async () => {
@@ -128,7 +140,12 @@ describe("AdminAgendaStore", () => {
 
       useAdminAgendaStore.getState().setAgendaPage(1);
 
-      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(1, 6, undefined, expect.any(AbortSignal));
+      expect(LoadAdminAgenda.loadTodayAgenda).toHaveBeenCalledWith(
+        1,
+        6,
+        undefined,
+        expect.any(AbortSignal),
+      );
     });
   });
 

@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import type { AdminPayment } from "@/api/admin/admin-payments-api";
-import { LoadAdminPayments, type AdminPaymentsFilter, type AdminPaymentsMethodFilter } from "@/use-cases/admin-reports/load-admin-payments";
+import {
+  LoadAdminPayments,
+  type AdminPaymentsFilter,
+  type AdminPaymentsMethodFilter,
+} from "@/use-cases/admin-reports/load-admin-payments";
 import { LoadAdminPaymentDetail } from "@/use-cases/admin-reports/load-admin-payment-detail";
 
 const pageSize = 10;

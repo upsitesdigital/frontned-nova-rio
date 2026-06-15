@@ -1,8 +1,4 @@
-import {
-  PaymentsApi,
-  type PaymentEntry,
-  type PaymentStatus,
-} from "@/api/client/payments-api";
+import { PaymentsApi, type PaymentEntry, type PaymentStatus } from "@/api/client/payments-api";
 import { Messages } from "@/lib/core/messages";
 
 interface LoadClientPaymentsInput {
@@ -22,7 +18,12 @@ class LoadClientPayments {
     input: LoadClientPaymentsInput,
   ): Promise<LoadClientPaymentsResult> {
     try {
-      const result = await PaymentsApi.fetchClientPayments(input.page, input.limit, input.status, input.signal);
+      const result = await PaymentsApi.fetchClientPayments(
+        input.page,
+        input.limit,
+        input.status,
+        input.signal,
+      );
       return { data: { payments: result.data, total: result.total }, error: null };
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {

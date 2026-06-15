@@ -80,7 +80,12 @@ const useAdminAgendaStore = create<AdminAgendaStore>()((set, get) => ({
 
     set({ isAgendaLoading: true });
 
-    const result = await LoadAdminAgenda.loadTodayAgenda(page, AppConfig.agendaPageSize, serviceId, signal);
+    const result = await LoadAdminAgenda.loadTodayAgenda(
+      page,
+      AppConfig.agendaPageSize,
+      serviceId,
+      signal,
+    );
 
     if (signal.aborted || requestId !== loadAgendaRequestId) {
       return;

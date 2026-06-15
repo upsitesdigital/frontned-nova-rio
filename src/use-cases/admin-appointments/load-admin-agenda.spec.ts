@@ -69,7 +69,9 @@ describe("loadTodayAgenda", () => {
   });
 
   it("should return auth error on 401", async () => {
-    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(new HttpClientError(401, "Unauthorized"));
+    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(
+      new HttpClientError(401, "Unauthorized"),
+    );
 
     const result = await LoadAdminAgenda.loadTodayAgenda(1, 6);
 
@@ -79,7 +81,9 @@ describe("loadTodayAgenda", () => {
   });
 
   it("should return generic error on 500", async () => {
-    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(new HttpClientError(500, "Server error"));
+    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(
+      new HttpClientError(500, "Server error"),
+    );
 
     const result = await LoadAdminAgenda.loadTodayAgenda(1, 6);
 
@@ -92,7 +96,9 @@ describe("loadTodayAgenda", () => {
     const controller = new AbortController();
     controller.abort();
 
-    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(new DOMException("Aborted"));
+    vi.mocked(api.AdminDashboardApi.fetchTodayAgenda).mockRejectedValue(
+      new DOMException("Aborted"),
+    );
 
     const result = await LoadAdminAgenda.loadTodayAgenda(1, 6, undefined, controller.signal);
 

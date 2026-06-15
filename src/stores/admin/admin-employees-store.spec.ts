@@ -77,7 +77,12 @@ describe("AdminEmployeesStore", () => {
     });
 
     it("should pass status filter when not 'all'", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       useAdminEmployeesStore.setState({ statusFilter: "ACTIVE" });
       await useAdminEmployeesStore.getState().loadEmployees();
@@ -88,7 +93,12 @@ describe("AdminEmployeesStore", () => {
     });
 
     it("should not pass status when filter is 'all'", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       await useAdminEmployeesStore.getState().loadEmployees();
 
@@ -98,7 +108,12 @@ describe("AdminEmployeesStore", () => {
     });
 
     it("should pass search query when set", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       useAdminEmployeesStore.setState({ searchQuery: "Carlos" });
       await useAdminEmployeesStore.getState().loadEmployees();
@@ -109,7 +124,12 @@ describe("AdminEmployeesStore", () => {
     });
 
     it("should not pass search when query is empty", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       await useAdminEmployeesStore.getState().loadEmployees();
 
@@ -119,7 +139,9 @@ describe("AdminEmployeesStore", () => {
     });
 
     it("should set error on failure", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockRejectedValue(new Error("Network error"));
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockRejectedValue(
+        new Error("Network error"),
+      );
 
       await useAdminEmployeesStore.getState().loadEmployees();
 
@@ -141,7 +163,12 @@ describe("AdminEmployeesStore", () => {
 
   describe("setStatusFilter", () => {
     it("should update filter and reset page", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       useAdminEmployeesStore.setState({ currentPage: 3 });
       useAdminEmployeesStore.getState().setStatusFilter("INACTIVE");
@@ -154,7 +181,12 @@ describe("AdminEmployeesStore", () => {
 
   describe("setSearchQuery", () => {
     it("should update query and reset page", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
 
       useAdminEmployeesStore.setState({ currentPage: 5 });
       useAdminEmployeesStore.getState().setSearchQuery("Ana");
@@ -167,7 +199,12 @@ describe("AdminEmployeesStore", () => {
 
   describe("setCurrentPage", () => {
     it("should update page and trigger load", async () => {
-      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({ data: [], total: 0, page: 2, limit: 20 });
+      vi.mocked(AdminEmployeesApi.fetchAdminEmployees).mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 2,
+        limit: 20,
+      });
 
       useAdminEmployeesStore.getState().setCurrentPage(2);
 

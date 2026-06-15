@@ -92,10 +92,7 @@ const useAdminHolidaysStore = create<AdminHolidaysStore>()((set, get) => ({
 
     set({ isLoading: true, error: null, isAuthError: false });
 
-    const result = await LoadAdminHolidays.loadAdminHolidays(
-      targetYear,
-      signal,
-    );
+    const result = await LoadAdminHolidays.loadAdminHolidays(targetYear, signal);
 
     if (signal.aborted || requestId !== listLoadRequestId) {
       return;

@@ -1,8 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/scheduling/submit-payment", () => ({ SubmitPayment: {
-  submitPayment: vi.fn(),
-} }));
+vi.mock("@/use-cases/scheduling/submit-payment", () => ({
+  SubmitPayment: {
+    submitPayment: vi.fn(),
+  },
+}));
 
 vi.mock("@/validation/payment-schema", () => ({
   validatePayment: vi.fn(),

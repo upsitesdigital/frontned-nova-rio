@@ -60,7 +60,9 @@ describe("AdminEmployeeEditStore", () => {
   describe("loadEmployee", () => {
     it("should load employee and populate form", async () => {
       vi.mocked(AdminEmployeesApi.fetchAdminEmployeeById).mockResolvedValue(mockEmployee);
-      vi.mocked(AdminAppointmentsApi.fetchUnits).mockResolvedValue([{ id: 1, name: "Centro", isActive: true }]);
+      vi.mocked(AdminAppointmentsApi.fetchUnits).mockResolvedValue([
+        { id: 1, name: "Centro", isActive: true },
+      ]);
       vi.mocked(AdminAppointmentsApi.fetchAdminAppointments).mockResolvedValue({
         data: [],
         total: 0,

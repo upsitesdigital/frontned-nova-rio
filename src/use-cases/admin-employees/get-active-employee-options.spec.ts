@@ -31,7 +31,9 @@ describe("getActiveEmployeeOptions", () => {
   });
 
   it("should return empty array when all are inactive", async () => {
-    vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockResolvedValue([{ id: 1, name: "Inativo", isActive: false }]);
+    vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockResolvedValue([
+      { id: 1, name: "Inativo", isActive: false },
+    ]);
 
     const result = await GetActiveEmployeeOptions.getActiveEmployeeOptions();
 
@@ -39,7 +41,9 @@ describe("getActiveEmployeeOptions", () => {
   });
 
   it("should return error on API failure", async () => {
-    vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockRejectedValue(new Error("Network error"));
+    vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockRejectedValue(
+      new Error("Network error"),
+    );
 
     const result = await GetActiveEmployeeOptions.getActiveEmployeeOptions();
 

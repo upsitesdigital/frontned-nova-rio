@@ -1,8 +1,4 @@
-import {
-  ProfileApi,
-  type ClientProfile,
-  type UpdateProfileData,
-} from "@/api/client/profile-api";
+import { ProfileApi, type ClientProfile, type UpdateProfileData } from "@/api/client/profile-api";
 import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 

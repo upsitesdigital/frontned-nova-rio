@@ -30,9 +30,11 @@ const mockDashboardData = {
   serviceOptions: [{ id: 1, name: "Limpeza" }],
 };
 
-vi.mock("@/use-cases/admin-reports/load-admin-dashboard", () => ({ LoadAdminDashboard: {
-  loadAdminDashboardData: vi.fn(),
-} }));
+vi.mock("@/use-cases/admin-reports/load-admin-dashboard", () => ({
+  LoadAdminDashboard: {
+    loadAdminDashboardData: vi.fn(),
+  },
+}));
 
 vi.mock("@/lib/auth/auth-helpers", () => ({
   AuthHelpers: {

@@ -1,5 +1,8 @@
 import { create } from "zustand";
-import { LoadAdminEmployees, type LoadAdminEmployeesInput } from "@/use-cases/admin-employees/load-admin-employees";
+import {
+  LoadAdminEmployees,
+  type LoadAdminEmployeesInput,
+} from "@/use-cases/admin-employees/load-admin-employees";
 import type { AdminEmployee, EmployeeStatus } from "@/api/admin/admin-employees-api";
 
 type StatusFilter = "all" | EmployeeStatus;

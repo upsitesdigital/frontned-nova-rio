@@ -9,13 +9,17 @@ vi.mock("@/lib/core/messages", () => ({
   },
 }));
 
-vi.mock("@/use-cases/auth/request-password-reset", () => ({ RequestPasswordReset: {
-  requestPasswordResetCode: vi.fn(),
-} }));
+vi.mock("@/use-cases/auth/request-password-reset", () => ({
+  RequestPasswordReset: {
+    requestPasswordResetCode: vi.fn(),
+  },
+}));
 
-vi.mock("@/use-cases/auth/reset-user-password", () => ({ ResetUserPassword: {
-  resetUserPassword: vi.fn(),
-} }));
+vi.mock("@/use-cases/auth/reset-user-password", () => ({
+  ResetUserPassword: {
+    resetUserPassword: vi.fn(),
+  },
+}));
 
 vi.mock("@/validation/reset-password-schema", () => ({
   getPasswordHints: vi.fn(),
@@ -237,7 +241,11 @@ describe("ForgotPasswordStore", () => {
 
       expect(result).toBe(true);
       expect(useForgotPasswordStore.getState().step).toBe("success");
-      expect(ResetUserPassword.resetUserPassword).toHaveBeenCalledWith("user@test.com", "123456", "Str0ng@P");
+      expect(ResetUserPassword.resetUserPassword).toHaveBeenCalledWith(
+        "user@test.com",
+        "123456",
+        "Str0ng@P",
+      );
     });
 
     it("should set error on API failure", async () => {

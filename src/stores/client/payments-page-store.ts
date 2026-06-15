@@ -46,7 +46,12 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
 
     set({ isLoading: true, error: null });
 
-    const result = await LoadClientPayments.loadClientPayments({ page, limit, status, signal: controller.signal });
+    const result = await LoadClientPayments.loadClientPayments({
+      page,
+      limit,
+      status,
+      signal: controller.signal,
+    });
 
     if (controller.signal.aborted) return;
 

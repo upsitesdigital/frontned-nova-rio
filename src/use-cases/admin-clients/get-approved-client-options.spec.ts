@@ -31,7 +31,9 @@ describe("getApprovedClientOptions", () => {
   });
 
   it("should return empty array when none approved", async () => {
-    vi.mocked(api.AdminAppointmentsApi.fetchClients).mockResolvedValue([{ id: 1, name: "Pending", status: "PENDING" }]);
+    vi.mocked(api.AdminAppointmentsApi.fetchClients).mockResolvedValue([
+      { id: 1, name: "Pending", status: "PENDING" },
+    ]);
 
     const result = await GetApprovedClientOptions.getApprovedClientOptions();
 

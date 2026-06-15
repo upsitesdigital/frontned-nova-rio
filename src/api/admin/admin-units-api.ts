@@ -61,9 +61,4 @@ class AdminUnitsApi {
   }
 }
 
-export {
-  AdminUnitsApi,
-  type AdminUnit,
-  type ListAdminUnitsParams,
-  type SaveAdminUnitPayload,
-};
+export { AdminUnitsApi, type AdminUnit, type ListAdminUnitsParams, type SaveAdminUnitPayload };

@@ -1,8 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-vi.mock("@/use-cases/scheduling/load-time-slots", () => ({ LoadTimeSlots: {
-  loadTimeSlots: vi.fn(),
-} }));
+vi.mock("@/use-cases/scheduling/load-time-slots", () => ({
+  LoadTimeSlots: {
+    loadTimeSlots: vi.fn(),
+  },
+}));
 
 const { LoadTimeSlots } = await import("@/use-cases/scheduling/load-time-slots");
 const { useSchedulingStore } = await import("./scheduling-store");
