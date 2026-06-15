@@ -1,5 +1,5 @@
 import type { Icon, IconProps } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 type DsIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 

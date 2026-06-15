@@ -1,5 +1,5 @@
 import type { Matcher } from "react-day-picker";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Calendar } from "@/design-system/ui/calendar";
 import { DsTimeSlotPicker } from "./ds-time-slot-picker";
 import { DsSeparator } from "@/design-system/primitives";
@@ -16,14 +16,14 @@ interface DsDateTimePickerProps {
   disabledSlots?: string[];
   disabledDays?: Matcher | Matcher[];
   disabledDayTooltip?: string;
-  cancelLabel?: string;
-  confirmLabel?: string;
+  cancelLabel: string;
+  confirmLabel: string;
   confirmDisabled?: boolean;
   showActions?: boolean;
   className?: string;
 }
 
-const DEFAULT_TIME_SLOTS = [
+const defaultTimeSlots = [
   "07:00",
   "07:30",
   "08:00",
@@ -56,12 +56,12 @@ function DsDateTimePicker({
   onTimeChange,
   onCancel,
   onConfirm,
-  timeSlots = DEFAULT_TIME_SLOTS,
+  timeSlots = defaultTimeSlots,
   disabledSlots,
   disabledDays,
   disabledDayTooltip,
-  cancelLabel = "Cancelar",
-  confirmLabel = "Ok",
+  cancelLabel,
+  confirmLabel,
   confirmDisabled = false,
   showActions = true,
   className,

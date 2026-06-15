@@ -1,0 +1,131 @@
+import { vi, describe, it, expect } from "vitest";
+
+vi.mock("@/lib/formatting/payment-format", () => ({
+  PaymentFormat: {
+    formatPaymentAmount: (amount: number) => `R$ ${(amount / 100).toFixed(2)}`,
+  },
+}));
+
+vi.mock("@/lib/display/payment-status-map", () => ({
+  PaymentStatus: {
+    resolvePaymentStatus: (status: string) => ({
+      status: status === "PAID" ? "success" : "pending",
+      label: status === "PAID" ? "Pago" : "Pendente",
+    }),
+  },
+}));
+
+const { DashboardPaymentsMapper } = await import("./dashboard-payments-mapper");
+
+describe("mapCardsToPanel", () => {
+  it("should map card with known brand to correct icon", () => {
+    const cards = [
+      { id: 1, brand: "VISA", lastFourDigits: "1234", expiryMonth: 3, expiryYear: 2028 },
+    ] as never[];
+
+    const result = DashboardPaymentsMapper.mapCardsToPanel(cards);
+
+    expect(result).toEqual([
+      { id: 1, brandSrc: "/icons/Visa.svg", lastDigits: "1234", expiry: "03/2028" },
+    ]);
+  });
+
+  it("should map each brand to its specific icon", () => {
+    const brands = [
+      { brand: "VISA", expected: "/icons/Visa.svg" },
+      { brand: "MASTERCARD", expected: "/icons/master-card-icon.svg" },
+      { brand: "AMEX", expected: "/icons/Amex.svg" },
+      { brand: "ELO", expected: "/icons/Elo.svg" },
+      { brand: "HIPERCARD", expected: "/icons/Hipercard.svg" },
+    ];
+
+    for (const { brand, expected } of brands) {
+      const cards = [
+        { id: 1, brand, lastFourDigits: "0000", expiryMonth: 1, expiryYear: 2027 },
+      ] as never[];
+      const result = DashboardPaymentsMapper.mapCardsToPanel(cards);
+      expect(result[0].brandSrc).toBe(expected);
+    }
+  });
+
+  it("should use fallback icon for unknown brand", () => {
+    const cards = [
+      { id: 1, brand: "UNKNOWN", lastFourDigits: "9999", expiryMonth: 12, expiryYear: 2027 },
+    ] as never[];
+
+    const result = DashboardPaymentsMapper.mapCardsToPanel(cards);
+
+    expect(result[0].brandSrc).toBe("/icons/master-card-icon.svg");
+  });
+
+  it("should pad single-digit month", () => {
+    const cards = [
+      { id: 1, brand: "VISA", lastFourDigits: "1234", expiryMonth: 1, expiryYear: 2027 },
+    ] as never[];
+
+    const result = DashboardPaymentsMapper.mapCardsToPanel(cards);
+
+    expect(result[0].expiry).toBe("01/2027");
+  });
+
+  it("should return empty array for empty input", () => {
+    expect(DashboardPaymentsMapper.mapCardsToPanel([])).toEqual([]);
+  });
+});
+
+describe("mapPaymentsToPanel", () => {
+  const basePayment = {
+    id: 1,
+    method: "CREDIT_CARD",
+    status: "PAID",
+    amount: 15000,
+    appointment: { service: { name: "Faxina" } },
+  };
+
+  it("should map payment with card method", () => {
+    const result = DashboardPaymentsMapper.mapPaymentsToPanel([basePayment] as never[]);
+
+    expect(result[0]).toEqual({
+      id: 1,
+      method: "card",
+      methodLabel: "Cartão",
+      service: "Faxina",
+      amount: "R$ 150.00",
+      status: "success",
+      statusLabel: "Pago",
+    });
+  });
+
+  it("should map card payment label with last 4 digits", () => {
+    const result = DashboardPaymentsMapper.mapPaymentsToPanel([
+      {
+        ...basePayment,
+        card: { lastFourDigits: "0123" },
+      },
+    ] as never[]);
+
+    expect(result[0].methodLabel).toBe("Terminado em 0123");
+  });
+
+  it("should map PIX payment method", () => {
+    const result = DashboardPaymentsMapper.mapPaymentsToPanel([
+      { ...basePayment, method: "PIX" },
+    ] as never[]);
+
+    expect(result[0].method).toBe("pix");
+    expect(result[0].methodLabel).toBe("PIX");
+  });
+
+  it("should map pending status", () => {
+    const result = DashboardPaymentsMapper.mapPaymentsToPanel([
+      { ...basePayment, status: "PENDING" },
+    ] as never[]);
+
+    expect(result[0].status).toBe("pending");
+    expect(result[0].statusLabel).toBe("Pendente");
+  });
+
+  it("should return empty array for empty input", () => {
+    expect(DashboardPaymentsMapper.mapPaymentsToPanel([])).toEqual([]);
+  });
+});

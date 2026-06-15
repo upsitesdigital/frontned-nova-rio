@@ -1,7 +1,7 @@
 import * as React from "react";
 import { type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Button, buttonVariants } from "@/design-system/ui/button";
 import { DsIcon, type DsIconSize, type DsIconComponent } from "@/design-system/media";
 import type { IconProps } from "@phosphor-icons/react";

@@ -2,20 +2,25 @@
 
 import { useEffect } from "react";
 import { DsAlert, DsPageHeader } from "@/design-system";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useAdminPaymentsStore } from "@/stores/admin-payments-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useAdminPaymentsStore } from "@/stores/admin/admin-payments-store";
 import { AdminPaymentDetailsModal } from "./_components/admin-payment-details-modal";
 import { AdminPaymentsFilterBar } from "./_components/admin-payments-filter-bar";
 import { AdminPaymentsTable } from "./_components/admin-payments-table";
 
 export default function AdminPaymentsPage() {
-  const { error, loadPayments } = useAdminPaymentsStore();
+  const { error, loadPayments, reset } = useAdminPaymentsStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadPayments();
     });
-  }, [loadPayments]);
+
+    return () => {
+      reset();
+    };
+  }, [loadPayments, reset]);
 
   if (error) {
     return (

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { BroomIcon, UsersThreeIcon, HourglassIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsHighlightCard, DsLoadingState, DsAlert } from "@/design-system";
-import { useAdminProfileStore } from "@/stores/admin-profile-store";
+import { useAdminProfileStore } from "@/stores/admin/admin-profile-store";
 import { AdminAgendaPanel } from "./_components/admin-agenda-panel";
 import { AdminQuickActionsPanel } from "./_components/admin-quick-actions-panel";
 

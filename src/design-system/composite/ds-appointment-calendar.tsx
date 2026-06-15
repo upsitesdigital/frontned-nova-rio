@@ -5,7 +5,7 @@ import type { Matcher } from "react-day-picker";
 import { getDefaultClassNames } from "react-day-picker";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Calendar } from "@/design-system/ui/calendar";
 import { DsButton } from "@/design-system/primitives";
 import { DsScrollArea } from "@/design-system/primitives";
@@ -21,12 +21,12 @@ interface DsAppointmentCalendarProps {
   disabledSlots?: string[];
   disabledDays?: Matcher | Matcher[];
   disabledDayTooltip?: string;
-  cancelLabel?: string;
-  confirmLabel?: string;
+  cancelLabel: string;
+  confirmLabel: string;
   className?: string;
 }
 
-const DEFAULT_TIME_SLOTS = [
+const defaultTimeSlots = [
   "07:00",
   "07:30",
   "08:00",
@@ -59,12 +59,12 @@ function DsAppointmentCalendar({
   onTimeChange,
   onCancel,
   onConfirm,
-  timeSlots = DEFAULT_TIME_SLOTS,
+  timeSlots = defaultTimeSlots,
   disabledSlots = [],
   disabledDays,
   disabledDayTooltip,
-  cancelLabel = "Cancelar",
-  confirmLabel = "Ok",
+  cancelLabel,
+  confirmLabel,
   className,
 }: DsAppointmentCalendarProps) {
   const rdp = getDefaultClassNames();

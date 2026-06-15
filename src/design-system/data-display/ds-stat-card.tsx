@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Card, CardContent } from "@/design-system/ui/card";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 

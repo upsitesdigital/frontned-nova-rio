@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { appConfig } from "@/config/app";
+import { AppConfig } from "@/config/app";
 
-const ADMIN_PATH_PREFIX = "/admin";
-const LOGIN_PATH = "/login";
-const DASHBOARD_PATH = "/dashboard";
-const AUTH_COOKIE = appConfig.authCookieName;
+const adminPathPrefix = "/admin";
+const loginPath = "/login";
+const dashboardPath = "/dashboard";
+const authCookie = AppConfig.authCookieName;
 
 function parseAuthCookie(request: NextRequest): {
   userType: string | null;
 } {
-  const raw = request.cookies.get(AUTH_COOKIE)?.value;
+  const raw = request.cookies.get(authCookie)?.value;
   if (!raw) {
     return { userType: null };
   }
@@ -27,7 +27,7 @@ function parseAuthCookie(request: NextRequest): {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (!pathname.startsWith(ADMIN_PATH_PREFIX)) {
+  if (!pathname.startsWith(adminPathPrefix)) {
     return NextResponse.next();
   }
 
@@ -36,13 +36,13 @@ export function proxy(request: NextRequest) {
 
   if (!userType) {
     const url = request.nextUrl.clone();
-    url.pathname = LOGIN_PATH;
+    url.pathname = loginPath;
     return NextResponse.redirect(url);
   }
 
   if (userType !== "admin") {
     const url = request.nextUrl.clone();
-    url.pathname = userType ? DASHBOARD_PATH : LOGIN_PATH;
+    url.pathname = userType ? dashboardPath : loginPath;
     return NextResponse.redirect(url);
   }
 

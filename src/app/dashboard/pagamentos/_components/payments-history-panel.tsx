@@ -10,12 +10,8 @@ import {
   DsReceiptButton,
   type DsTransactionTableColumn,
 } from "@/design-system";
-import {
-  sortPaymentsByStatus,
-  formatPaymentMethod,
-  formatPaymentAmount,
-} from "@/lib/payment-format";
-import { usePaymentsPageStore, type FilterValue } from "@/stores/payments-page-store";
+import { PaymentFormat } from "@/lib/formatting/payment-format";
+import { usePaymentsPageStore, type FilterValue } from "@/stores/client/payments-page-store";
 
 const filterOptions = [
   { value: "ALL", label: "Todos" },
@@ -36,7 +32,7 @@ const columns: DsTransactionTableColumn[] = [
 function PaymentsHistoryPanel() {
   const { payments, filter, setFilter } = usePaymentsPageStore();
 
-  const tableData = sortPaymentsByStatus(payments).map((payment) => ({
+  const tableData = PaymentFormat.sortPaymentsByStatus(payments).map((payment) => ({
     date: (
       <span className="text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
         {format(new Date(payment.appointment.date), "dd/MM/yyyy")}
@@ -49,16 +45,16 @@ function PaymentsHistoryPanel() {
     ),
     method: (
       <span className="text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
-        {formatPaymentMethod(payment)}
+        {PaymentFormat.formatPaymentMethod(payment)}
       </span>
     ),
     status: <DsPaymentStatusPill status={payment.status} />,
     value: (
       <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-600">
-        {formatPaymentAmount(payment.amount)}
+        {PaymentFormat.formatPaymentAmount(payment.amount)}
       </span>
     ),
-    receipt: <DsReceiptButton disabled={payment.status !== "APPROVED"} />,
+    receipt: <DsReceiptButton label="Baixar" disabled={payment.status !== "APPROVED"} />,
   }));
 
   return (

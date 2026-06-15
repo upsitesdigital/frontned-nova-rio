@@ -3,9 +3,9 @@
 import { DsFormField, DsSelect } from "@/design-system";
 import {
   useAdminCreateAppointmentStore,
-  DURATION_OPTIONS,
-} from "@/stores/admin-create-appointment-store";
-import { RECURRENCE_LABELS } from "@/lib/appointment-labels";
+  durationOptions,
+} from "@/stores/admin/admin-create-appointment-store";
+import { AppointmentLabels } from "@/lib/display/appointment-labels";
 
 function ServiceInfoCard() {
   const {
@@ -27,21 +27,21 @@ function ServiceInfoCard() {
 
   const recurrenceOptions = [
     ...(selectedService?.allowSingle !== false
-      ? [{ value: "SINGLE", label: RECURRENCE_LABELS.SINGLE }]
+      ? [{ value: "SINGLE", label: AppointmentLabels.recurrenceLabels.SINGLE }]
       : []),
     ...(selectedService?.allowPackage
-      ? [{ value: "PACKAGE", label: RECURRENCE_LABELS.PACKAGE }]
+      ? [{ value: "PACKAGE", label: AppointmentLabels.recurrenceLabels.PACKAGE }]
       : []),
     ...(selectedService?.allowRecurrence
       ? [
-          { value: "WEEKLY", label: RECURRENCE_LABELS.WEEKLY },
-          { value: "BIWEEKLY", label: RECURRENCE_LABELS.BIWEEKLY },
-          { value: "MONTHLY", label: RECURRENCE_LABELS.MONTHLY },
+          { value: "WEEKLY", label: AppointmentLabels.recurrenceLabels.WEEKLY },
+          { value: "BIWEEKLY", label: AppointmentLabels.recurrenceLabels.BIWEEKLY },
+          { value: "MONTHLY", label: AppointmentLabels.recurrenceLabels.MONTHLY },
         ]
       : []),
   ];
 
-  const durationSelectOptions = DURATION_OPTIONS.map((d) => ({
+  const durationSelectOptions = durationOptions.map((d) => ({
     value: String(d.value),
     label: d.label,
   }));

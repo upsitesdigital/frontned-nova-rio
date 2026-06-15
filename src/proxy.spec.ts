@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { NextRequest } from "next/server";
 import { proxy } from "./proxy";
-import { appConfig } from "@/config/app";
+import { AppConfig } from "@/config/app";
 
-const AUTH_COOKIE = appConfig.authCookieName;
+const authCookie = AppConfig.authCookieName;
 
 function createRequest(path: string, options?: { cookie?: string }): NextRequest {
   const url = `http://localhost:3000${path}`;
@@ -14,7 +14,7 @@ function createRequest(path: string, options?: { cookie?: string }): NextRequest
 
 function buildCookie(userType: string): string {
   const cookieValue = JSON.stringify({ state: { userType } });
-  return `${AUTH_COOKIE}=${encodeURIComponent(cookieValue)}`;
+  return `${authCookie}=${encodeURIComponent(cookieValue)}`;
 }
 
 describe("proxy", () => {
@@ -66,7 +66,7 @@ describe("proxy", () => {
 
   describe("malformed cookie", () => {
     it("should redirect to /login with invalid cookie JSON", () => {
-      const response = proxy(createRequest("/admin", { cookie: `${AUTH_COOKIE}=not-valid-json` }));
+      const response = proxy(createRequest("/admin", { cookie: `${authCookie}=not-valid-json` }));
       expect(response.status).toBe(307);
       expect(new URL(response.headers.get("location")!).pathname).toBe("/login");
     });

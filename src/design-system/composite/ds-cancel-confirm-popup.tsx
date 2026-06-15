@@ -1,16 +1,17 @@
 "use client";
 
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsCancelConfirmPopupProps {
+  closeLabel: string;
   open: boolean;
-  title?: string;
-  description?: string;
-  confirmLabel?: string;
+  title: string;
+  description: string;
+  confirmLabel: string;
   confirmDisabled?: boolean;
-  cancelLabel?: string;
+  cancelLabel: string;
   onConfirm?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
@@ -18,12 +19,13 @@ interface DsCancelConfirmPopupProps {
 }
 
 function DsCancelConfirmPopup({
+  closeLabel,
   open,
-  title = "Deseja cancelar o serviço?",
-  description = "Cancelamento com 1h de antecedência",
-  confirmLabel = "Sim, cancelar",
+  title,
+  description,
+  confirmLabel,
   confirmDisabled = false,
-  cancelLabel = "Manter agendamento",
+  cancelLabel,
   onConfirm,
   onCancel,
   onClose,
@@ -41,7 +43,7 @@ function DsCancelConfirmPopup({
         }}
         role="button"
         tabIndex={-1}
-        aria-label="Fechar"
+        aria-label={closeLabel}
       />
 
       <div

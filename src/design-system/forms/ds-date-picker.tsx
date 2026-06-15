@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarBlankIcon } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/design-system/ui/popover";
 import { Calendar } from "@/design-system/ui/calendar";
@@ -11,7 +11,7 @@ import { DsIcon } from "@/design-system/media";
 interface DsDatePickerProps {
   value?: Date;
   onChange: (date: Date | undefined) => void;
-  placeholder?: string;
+  placeholder: string;
   className?: string;
   disabled?: boolean;
 }
@@ -19,7 +19,7 @@ interface DsDatePickerProps {
 function DsDatePicker({
   value,
   onChange,
-  placeholder = "Pick a date",
+  placeholder,
   className,
   disabled = false,
 }: DsDatePickerProps) {

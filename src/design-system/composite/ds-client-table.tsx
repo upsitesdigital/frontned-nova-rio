@@ -7,7 +7,7 @@ import {
   HourglassIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIconButton, DsToggleButton, DsSkeleton } from "@/design-system/primitives";
 import { DsSearchInput } from "@/design-system/forms";
 import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
@@ -30,6 +30,8 @@ interface DsClientTableClient {
 }
 
 interface DsClientTableProps {
+  headerTitle: string;
+  searchPlaceholder: string;
   clients: readonly DsClientTableClient[];
   filter?: DsClientTableFilter;
   onFilterChange?: (filter: DsClientTableFilter) => void;
@@ -68,6 +70,8 @@ const columns = [
 ];
 
 function DsClientTable({
+  headerTitle,
+  searchPlaceholder,
   clients,
   filter = "all",
   onFilterChange,
@@ -87,7 +91,9 @@ function DsClientTable({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">Clientes</p>
+          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">
+            {headerTitle}
+          </p>
           <div className="flex items-start gap-4">
             {filterButtons.map((btn) => (
               <DsToggleButton
@@ -100,7 +106,7 @@ function DsClientTable({
           </div>
         </div>
         <DsSearchInput
-          placeholder="Pesquisar"
+          placeholder={searchPlaceholder}
           value={searchValue}
           onChange={(e) => onSearchChange?.(e.target.value)}
           className="w-86.5"

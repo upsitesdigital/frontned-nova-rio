@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { useDashboardStore } from "@/stores/dashboard-store";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
 import { ServicesHistoryPanel } from "./_components/services-history-panel";
 import { ServicesSidePanel } from "./_components/services-side-panel";
 import { ServiceDetailModal } from "./_components/service-detail-modal";

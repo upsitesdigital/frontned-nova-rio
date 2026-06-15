@@ -6,7 +6,7 @@ import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
 import { format } from "date-fns";
 
 import { DsButton, DsIcon } from "@/design-system";
-import { useConfirmationStore } from "@/stores/confirmation-store";
+import { useConfirmationStore } from "@/stores/scheduling/confirmation-store";
 
 export default function ConfirmacaoPage() {
   const router = useRouter();
@@ -24,13 +24,13 @@ export default function ConfirmacaoPage() {
   const formattedTime = `${confirmation.startTime}h`;
 
   return (
-    <div className="flex w-[502px] flex-col items-center gap-14">
+    <div className="flex w-125.5 flex-col items-center gap-14">
       <div className="flex flex-col items-center gap-4 text-center">
         <DsIcon icon={CheckIcon} size="lg" className="text-nova-primary" />
         <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
           Agendamento confirmado com sucesso!
         </h1>
-        <p className="max-w-[388px] text-base leading-normal text-nova-gray-700">
+        <p className="max-w-97 text-base leading-normal text-nova-gray-700">
           Obrigado por agendar a limpeza com a Nova Rio. A equipe de limpeza já foi notificada e
           começará o preparo para o atendimento.
         </p>

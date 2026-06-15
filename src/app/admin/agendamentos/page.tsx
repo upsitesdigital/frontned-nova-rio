@@ -4,21 +4,26 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsButton, DsIcon } from "@/design-system";
-import { useAdminAppointmentsStore } from "@/stores/admin-appointments-store";
-import { waitForAuthHydration } from "@/stores/auth-store";
+import { useAdminAppointmentsStore } from "@/stores/admin/admin-appointments-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { AppointmentsFilterBar } from "./_components/appointments-filter-bar";
 import { AppointmentsTable } from "./_components/appointments-table";
 
 export default function AdminAppointmentsPage() {
   const router = useRouter();
-  const { error, loadAppointments, loadFilterOptions } = useAdminAppointmentsStore();
+  const { error, loadAppointments, loadFilterOptions, reset } = useAdminAppointmentsStore();
 
   useEffect(() => {
+    reset();
     waitForAuthHydration().then(() => {
       loadAppointments();
       loadFilterOptions();
     });
-  }, [loadAppointments, loadFilterOptions]);
+
+    return () => {
+      reset();
+    };
+  }, [loadAppointments, loadFilterOptions, reset]);
 
   if (error) {
     return (

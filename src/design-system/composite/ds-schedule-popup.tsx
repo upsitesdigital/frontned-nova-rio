@@ -2,16 +2,17 @@
 
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Matcher } from "react-day-picker";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { DsDateTimePicker } from "./ds-date-time-picker";
 
-const DEFAULT_DISABLED_DAYS: Matcher = { dayOfWeek: [0, 6] };
-const DEFAULT_DISABLED_TOOLTIP = "Não atendemos aos Sáb, Dom e Feriados";
+const defaultDisabledDays: Matcher = { dayOfWeek: [0, 6] };
+const defaultDisabledTooltip = "Não atendemos aos Sáb, Dom e Feriados";
 
 interface DsSchedulePopupProps {
+  closeLabel: string;
   open: boolean;
-  title?: string;
+  title: string;
   date?: Date;
   time?: string;
   onDateChange?: (date: Date | undefined) => void;
@@ -22,15 +23,16 @@ interface DsSchedulePopupProps {
   timeSlots?: string[];
   disabledDays?: Matcher | Matcher[];
   disabledDayTooltip?: string;
-  cancelLabel?: string;
-  confirmLabel?: string;
+  cancelLabel: string;
+  confirmLabel: string;
   confirmDisabled?: boolean;
   className?: string;
 }
 
 function DsSchedulePopup({
+  closeLabel,
   open,
-  title = "Escolher data e horário",
+  title,
   date,
   time,
   onDateChange,
@@ -39,8 +41,8 @@ function DsSchedulePopup({
   onConfirm,
   onClose,
   timeSlots,
-  disabledDays = DEFAULT_DISABLED_DAYS,
-  disabledDayTooltip = DEFAULT_DISABLED_TOOLTIP,
+  disabledDays = defaultDisabledDays,
+  disabledDayTooltip = defaultDisabledTooltip,
   cancelLabel,
   confirmLabel,
   confirmDisabled,
@@ -58,7 +60,7 @@ function DsSchedulePopup({
         }}
         role="button"
         tabIndex={-1}
-        aria-label="Fechar"
+        aria-label={closeLabel}
       />
 
       <div

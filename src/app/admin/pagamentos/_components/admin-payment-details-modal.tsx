@@ -7,13 +7,10 @@ import {
   type DsApprovalPopupDetail,
   type DsApprovalPopupStatus,
 } from "@/design-system";
-import type { AdminPayment } from "@/api/admin-payments-api";
-import { useAdminPaymentsStore } from "@/stores/admin-payments-store";
+import type { AdminPayment } from "@/api/admin/admin-payments-api";
+import { useAdminPaymentsStore } from "@/stores/admin/admin-payments-store";
 
-const PAYMENT_STATUS_CONFIG: Record<
-  AdminPayment["status"],
-  DsApprovalPopupStatus
-> = {
+const paymentStatusConfig: Record<AdminPayment["status"], DsApprovalPopupStatus> = {
   APPROVED: {
     icon: CheckIcon,
     label: "Aprovado",
@@ -94,11 +91,13 @@ function AdminPaymentDetailsModal() {
 
         {!isDetailLoading && !detailError && selectedPayment && (
           <DsApprovalPopup
+            rejectLabel="Reprovar cadastro"
+            approveLabel="Aprovar cadastro"
             title="Pagamento"
             subtitle="Detalhes da cobrança"
             entityName={selectedPayment.client.name}
             description={getPaymentDescription(selectedPayment)}
-            status={PAYMENT_STATUS_CONFIG[selectedPayment.status]}
+            status={paymentStatusConfig[selectedPayment.status]}
             details={buildDetails(selectedPayment)}
             onClose={closeDetails}
             className="shadow-lg shadow-nova-gray-300/10"

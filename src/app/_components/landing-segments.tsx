@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton } from "@/design-system";
 
-const SEGMENTS = [
+const segments = [
   {
     label: "Escritórios de advocacia, contabilidade e consultoria.",
     image: "/images/landing/boardroom.jpg",
@@ -71,7 +71,7 @@ function LandingSegments() {
             >
               <Link href="/agendamento" className="group flex items-center gap-4">
                 Agende sua limpeza agora
-                <ArrowRight
+                <ArrowRightIcon
                   size={20}
                   weight="bold"
                   className="transition-transform duration-200 group-hover:translate-x-1"
@@ -82,7 +82,7 @@ function LandingSegments() {
         </div>
 
         <div className="mt-20 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {SEGMENTS.map((segment, index) => (
+          {segments.map((segment, index) => (
             <motion.article
               key={segment.label}
               className="group flex flex-col gap-6"

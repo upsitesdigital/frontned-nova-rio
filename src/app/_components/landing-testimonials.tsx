@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
-import { Star, ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { StarIcon, ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
+import { useLandingTestimonialsStore } from "@/stores/ui/landing-testimonials-store";
 
-const TESTIMONIALS = [
+const testimonials = [
   {
     stars: 5,
     quote:
@@ -39,14 +39,9 @@ const TESTIMONIALS = [
 ];
 
 function LandingTestimonials() {
-  const [current, setCurrent] = useState(0);
+  const { current, setCurrent, prev, next } = useLandingTestimonialsStore();
 
-  const prev = () =>
-    setCurrent((c) => (c === 0 ? TESTIMONIALS.length - 1 : c - 1));
-  const next = () =>
-    setCurrent((c) => (c === TESTIMONIALS.length - 1 ? 0 : c + 1));
-
-  const testimonial = TESTIMONIALS[current];
+  const testimonial = testimonials[current];
   const dotsCount = 5;
 
   return (
@@ -96,7 +91,7 @@ function LandingTestimonials() {
             <div className="flex flex-1 flex-col gap-10">
               <div className="flex items-center gap-1">
                 {Array.from({ length: testimonial.stars }).map((_, i) => (
-                  <Star key={i} size={20} weight="fill" className="text-[#f5d025]" />
+                  <StarIcon key={i} size={20} weight="fill" className="text-[#f5d025]" />
                 ))}
               </div>
 
@@ -110,7 +105,9 @@ function LandingTestimonials() {
                     {testimonial.author[0]}
                   </span>
                 </div>
-                <p className="text-base leading-normal font-medium text-black">{testimonial.author}</p>
+                <p className="text-base leading-normal font-medium text-black">
+                  {testimonial.author}
+                </p>
               </div>
             </div>
 
@@ -119,7 +116,7 @@ function LandingTestimonials() {
                 {Array.from({ length: dotsCount }).map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setCurrent(i % TESTIMONIALS.length)}
+                    onClick={() => setCurrent(i % testimonials.length)}
                     className={`size-2 rounded-full transition-transform duration-200 hover:scale-125 ${i === current ? "bg-nova-primary" : "bg-[#cccccc]"}`}
                     aria-label={`Depoimento ${i + 1}`}
                   />
@@ -128,18 +125,18 @@ function LandingTestimonials() {
 
               <div className="flex items-center gap-8">
                 <button
-                  onClick={prev}
+                  onClick={() => prev(testimonials.length)}
                   className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white opacity-30 transition-all duration-200 hover:-translate-y-0.5 hover:opacity-70"
                   aria-label="Depoimento anterior"
                 >
-                  <ArrowLeft size={20} className="text-nova-primary-dark" />
+                  <ArrowLeftIcon size={20} className="text-nova-primary-dark" />
                 </button>
                 <button
-                  onClick={next}
+                  onClick={() => next(testimonials.length)}
                   className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-12px_rgba(0,0,0,0.45)]"
                   aria-label="Próximo depoimento"
                 >
-                  <ArrowRight size={20} className="text-nova-primary-dark" />
+                  <ArrowRightIcon size={20} className="text-nova-primary-dark" />
                 </button>
               </div>
             </div>

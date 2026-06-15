@@ -12,11 +12,11 @@ import {
   DsServiceOptionCard,
   DsSkeleton,
 } from "@/design-system";
-import { FREQUENCY_OPTIONS, RECURRENCE_OPTIONS } from "@/config/scheduling";
-import { formatPrice } from "@/lib/formatters";
-import { getServiceIcon } from "@/lib/icon-map";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
+import { SchedulingConfig } from "@/config/scheduling";
+import { Formatters } from "@/lib/formatting/formatters";
+import { IconMap } from "@/lib/display/icon-map";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+import { useServicesStore } from "@/stores/client/services-store";
 import type { RecurrenceFrequency } from "@/types/scheduling";
 
 export default function ServicoPage() {
@@ -42,8 +42,8 @@ export default function ServicoPage() {
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
 
   const availableRecurrenceOptions = selectedService
-    ? RECURRENCE_OPTIONS.filter((opt) => selectedService[opt.field])
-    : RECURRENCE_OPTIONS;
+    ? SchedulingConfig.recurrenceOptions.filter((opt) => selectedService[opt.field])
+    : SchedulingConfig.recurrenceOptions;
 
   const canProceed =
     selectedServiceId !== null &&
@@ -51,7 +51,7 @@ export default function ServicoPage() {
     (recurrenceType !== "recorrencia" || recurrenceFrequency !== null);
 
   return (
-    <DsFlowCard className="mx-auto max-w-[1008px]">
+    <DsFlowCard className="mx-auto max-w-252">
       <DsFlowHeader
         title="Agendar serviço"
         subtitle="Selecione o tipo de serviço e a duração desejada."
@@ -59,19 +59,19 @@ export default function ServicoPage() {
 
       {isLoadingServices || services.length === 0 ? (
         <div className="flex w-full gap-4">
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
         </div>
       ) : (
         <div className="flex w-full gap-4">
           {services.map((service) => (
             <DsServiceOptionCard
               key={service.id}
-              icon={getServiceIcon(service.icon)}
+              icon={IconMap.getServiceIcon(service.icon)}
               title={service.name}
               description={service.description ?? ""}
-              price={formatPrice(service.basePrice)}
+              price={Formatters.formatPrice(service.basePrice)}
               selected={selectedServiceId === service.id}
               onClick={() => setSelectedServiceId(service.id)}
             />
@@ -108,7 +108,7 @@ export default function ServicoPage() {
                 Selecione o tipo de recorrência
               </p>
               <DsSelect
-                options={FREQUENCY_OPTIONS}
+                options={SchedulingConfig.frequencyOptions}
                 value={recurrenceFrequency ?? "mensal"}
                 onValueChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
                 placeholder="Selecione..."
@@ -127,7 +127,7 @@ export default function ServicoPage() {
         size="flow"
         disabled={!canProceed}
         onClick={() => router.push("/agendamento/dia-horario")}
-        className="w-[257px]"
+        className="w-64.25"
       >
         Continuar
       </DsButton>

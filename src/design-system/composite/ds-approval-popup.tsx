@@ -1,7 +1,7 @@
 "use client";
 
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
 interface DsApprovalPopupDetail {
@@ -23,10 +23,10 @@ interface DsApprovalPopupProps {
   description?: string;
   status?: DsApprovalPopupStatus;
   details?: DsApprovalPopupDetail[];
-  rejectLabel?: string;
+  rejectLabel: string;
   rejectIcon?: DsIconComponent;
   rejectDestructive?: boolean;
-  approveLabel?: string;
+  approveLabel: string;
   disabled?: boolean;
   onReject?: () => void;
   onApprove?: () => void;
@@ -41,10 +41,10 @@ function DsApprovalPopup({
   description,
   status,
   details = [],
-  rejectLabel = "Reprovar cadastro",
+  rejectLabel,
   rejectIcon,
   rejectDestructive = false,
-  approveLabel = "Aprovar cadastro",
+  approveLabel,
   disabled = false,
   onReject,
   onApprove,
@@ -119,7 +119,7 @@ function DsApprovalPopup({
                 onClick={onReject}
                 disabled={disabled}
                 className={cn(
-                  "flex h-[60px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+                  "flex h-15 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] transition-colors disabled:cursor-not-allowed disabled:opacity-60",
                   rejectDestructive
                     ? "border-nova-error text-nova-error hover:bg-red-50"
                     : "border-nova-gray-400 text-nova-gray-700 hover:bg-nova-gray-50",
@@ -134,7 +134,7 @@ function DsApprovalPopup({
                 type="button"
                 onClick={onApprove}
                 disabled={disabled}
-                className="flex h-[60px] flex-1 cursor-pointer items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex h-15 flex-1 cursor-pointer items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {approveLabel}
               </button>
