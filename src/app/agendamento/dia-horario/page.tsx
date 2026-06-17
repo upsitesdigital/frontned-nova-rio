@@ -100,8 +100,8 @@ export default function DiaHorarioPage() {
     <DsFlowCard className="mx-auto max-w-252">
       <DsFlowHeader title="Dia, horário e local da limpeza" />
 
-      <div className="flex w-full items-start gap-16">
-        <div className="shrink-0">
+      <div className="flex w-full flex-col items-start gap-8 lg:flex-row lg:gap-16">
+        <div className="w-full shrink-0 lg:w-auto">
           <DsDateTimePicker
             cancelLabel="Cancelar"
             confirmLabel="Ok"
@@ -148,12 +148,12 @@ export default function DiaHorarioPage() {
         </div>
       </div>
 
-      <div className="flex w-full justify-between">
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:justify-between">
         <DsButton
           variant="outline"
           size="flow"
           onClick={() => router.push("/agendamento/servico")}
-          className="w-64.25 border-nova-gray-500 text-nova-gray-700"
+          className="w-full border-nova-gray-500 text-nova-gray-700 sm:w-64.25"
         >
           Voltar
         </DsButton>
@@ -161,7 +161,7 @@ export default function DiaHorarioPage() {
           size="flow"
           disabled={!canProceed}
           onClick={() => router.push("/agendamento/cadastro")}
-          className="w-64.25"
+          className="w-full sm:w-64.25"
         >
           Continuar
         </DsButton>

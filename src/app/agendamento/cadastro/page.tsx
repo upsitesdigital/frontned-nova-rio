@@ -129,7 +129,7 @@ export default function CadastroPage() {
 
       <DsPopup open={success}>
         <div className="flex flex-col items-center gap-4 text-center">
-          <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+          <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
             E-mail cadastrado com sucesso!
           </h2>
           <p className="text-base leading-normal text-nova-gray-700">

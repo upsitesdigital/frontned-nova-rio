@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import { Messages } from "@/lib/core/messages";
+import { PaymentErrorMessage } from "@/lib/display/payment-error-message";
 import type { PaymentMethod } from "@/types/scheduling";
 import { SubmitPayment } from "@/use-cases/scheduling/submit-payment";
 import { validatePayment, type PaymentFieldErrors } from "@/validation/payment-schema";
@@ -100,7 +101,10 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
   pay: async () => {
     if (get().isSubmitting) return false;
     const isValid = usePaymentStore.getState().validate();
-    if (!isValid) return false;
+    if (!isValid) {
+      set({ submitError: Messages.payment.invalidFields });
+      return false;
+    }
 
     const email = useRegistrationStore.getState().email;
     if (!email) {
@@ -140,7 +144,7 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
       return true;
     }
 
-    set({ isSubmitting: false, submitError: result.error });
+    set({ isSubmitting: false, submitError: PaymentErrorMessage.translate(result.error) });
     return false;
   },
 

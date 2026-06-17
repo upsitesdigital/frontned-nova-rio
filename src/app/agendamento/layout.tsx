@@ -18,7 +18,7 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
   if (isConfirmation) {
     return (
       <div className="relative min-h-screen bg-nova-gray-50">
-        <DsLogo className="fixed left-20 top-15 h-21! w-39!" />
+        <DsLogo className="mx-auto mt-6 block h-14! w-auto! md:fixed md:left-20 md:top-15 md:mx-0 md:mt-0 md:h-21! md:w-39!" />
         <main className="flex min-h-screen items-center justify-center px-(--page-padding)">
           {children}
         </main>
@@ -28,9 +28,9 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
 
   return (
     <div className="relative min-h-screen bg-white">
-      <DsLogo className="fixed left-20 top-15 h-21! w-39!" />
+      <DsLogo className="mx-auto mt-6 block h-14! w-auto! md:fixed md:left-20 md:top-15 md:mx-0 md:mt-0 md:h-21! md:w-39!" />
 
-      <header className="flex justify-center px-(--page-padding) pb-8 pt-23.5">
+      <header className="flex justify-center px-(--page-padding) pb-8 pt-8 md:pt-23.5">
         <DsStepper
           steps={SchedulingConfig.schedulingSteps}
           currentStep={currentStep}
