@@ -12,7 +12,7 @@ function DsMetricCard({ label, value, className }: DsMetricCardProps) {
       <span className="text-base font-medium leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
         {label}
       </span>
-      <span className="text-[36px] font-medium leading-[1.3] tracking-[-1.44px] text-nova-gray-700">
+      <span className="text-[28px] font-medium leading-[1.3] tracking-[-1.44px] text-nova-gray-700 sm:text-[36px]">
         {value}
       </span>
     </div>

@@ -4,7 +4,7 @@ import { EyeIcon, PencilSimpleLineIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
-interface DsServiceHistoryItemProps {
+interface DsAgendaListItemProps {
   viewLabel: string;
   editLabel: string;
   date: string;
@@ -15,7 +15,7 @@ interface DsServiceHistoryItemProps {
   className?: string;
 }
 
-function DsServiceHistoryItem({
+function DsAgendaListItem({
   viewLabel,
   editLabel,
   date,
@@ -24,11 +24,11 @@ function DsServiceHistoryItem({
   onView,
   onEdit,
   className,
-}: DsServiceHistoryItemProps) {
+}: DsAgendaListItemProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 border border-nova-gray-100 bg-white px-4 py-3 sm:flex-row sm:items-center sm:gap-3",
+        "flex flex-col gap-2 rounded-md border border-nova-gray-100 bg-white px-4 py-3 sm:flex-row sm:items-center sm:gap-3",
         className,
       )}
     >
@@ -45,9 +45,11 @@ function DsServiceHistoryItem({
           </>
         )}
       </div>
+
       <span className="min-w-0 flex-1 text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
         {label}
       </span>
+
       <div className="flex shrink-0 items-center gap-3 self-end sm:self-auto">
         {onView && (
           <button
@@ -74,4 +76,4 @@ function DsServiceHistoryItem({
   );
 }
 
-export { DsServiceHistoryItem, type DsServiceHistoryItemProps };
+export { DsAgendaListItem, type DsAgendaListItemProps };

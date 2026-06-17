@@ -69,7 +69,9 @@ function DsApprovalPopup({
       )}
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">{title}</p>
+        <p className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
+          {title}
+        </p>
         {subtitle && <p className="text-base leading-normal text-nova-primary-dark">{subtitle}</p>}
       </div>
 

@@ -41,7 +41,7 @@ function DsHighlightCard({
       )}
     >
       <div className="flex items-center justify-between">
-        <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
+        <p className="text-base font-medium leading-[1.3] text-black sm:text-[20px]">{title}</p>
         {showReceipt && (
           <button
             type="button"
@@ -84,7 +84,7 @@ function DsHighlightCard({
           )}
           <p
             className={cn(
-              "text-[48px] font-medium leading-none tracking-[-1.92px]",
+              "text-[28px] font-medium leading-none tracking-[-1.92px] sm:text-[48px]",
               valueColor ?? "text-primary",
             )}
           >

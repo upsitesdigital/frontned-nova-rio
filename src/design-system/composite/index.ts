@@ -29,6 +29,7 @@ export { DsTransactionCard, type DsTransactionCardProps } from "./ds-transaction
 export { DsReceiptButton, type DsReceiptButtonProps } from "./ds-receipt-button";
 export { DsHighlightCard, type DsHighlightCardProps } from "./ds-highlight-card";
 export { DsServiceHistoryItem, type DsServiceHistoryItemProps } from "./ds-service-history-item";
+export { DsAgendaListItem, type DsAgendaListItemProps } from "./ds-agenda-list-item";
 export { DsRegisteredCardItem, type DsRegisteredCardItemProps } from "./ds-registered-card-item";
 export { DsRegisteredCardList, type DsRegisteredCardListProps } from "./ds-registered-card-list";
 export {
@@ -133,11 +134,18 @@ export {
 export { DsQuickActionCard, type DsQuickActionCardProps } from "./ds-quick-action-card";
 export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./ds-admin-dashboard-shell";
 export { DsAppointmentRow, type DsAppointmentRowProps } from "./ds-appointment-row";
+export { DsAppointmentCard, type DsAppointmentCardProps } from "./ds-appointment-card";
+export {
+  DsAppointmentTabletCard,
+  type DsAppointmentTabletCardProps,
+} from "./ds-appointment-tablet-card";
 export {
   DsAppointmentTableHeader,
   type DsAppointmentTableHeaderProps,
 } from "./ds-appointment-table-header";
 export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./ds-appointment-calendar";
+export { DsClientCard, type DsClientCardProps, type DsClientCardField } from "./ds-client-card";
+export { DsRecordCard, type DsRecordCardProps, type DsRecordCardField } from "./ds-record-card";
 export {
   DsClientTable,
   type DsClientTableProps,

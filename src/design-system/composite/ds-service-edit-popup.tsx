@@ -74,7 +74,12 @@ function DsServiceEditPopup({
   className,
 }: DsServiceEditPopupProps) {
   return (
-    <div className={cn("relative flex flex-col gap-12 bg-white px-15 py-30", className)}>
+    <div
+      className={cn(
+        "relative flex max-h-[90vh] flex-col gap-8 overflow-y-auto bg-white px-6 py-10 sm:gap-12 sm:px-15 sm:py-30",
+        className,
+      )}
+    >
       {/* Close button */}
       {onClose && (
         <button
