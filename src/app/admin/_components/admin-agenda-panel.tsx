@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  DsFilterDropdown,
-  DsServiceHistoryItem,
-  DsEmptyState,
-  DsPagination,
-} from "@/design-system";
+import { DsFilterDropdown, DsAgendaListItem, DsEmptyState, DsPagination } from "@/design-system";
 import { AppConfig } from "@/config/app";
 import { DateHelpers } from "@/lib/formatting/date-helpers";
 import { useAdminAgendaStore } from "@/stores/admin/admin-agenda-store";
 
-function AdminAgendaPanel() {
+export function AdminAgendaPanel() {
   const {
     agendaItems,
     agendaTotal,
@@ -44,9 +39,9 @@ function AdminAgendaPanel() {
         <DsEmptyState message="Nenhum agendamento para hoje." />
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             {agendaItems.map((entry) => (
-              <DsServiceHistoryItem
+              <DsAgendaListItem
                 viewLabel="Visualizar"
                 editLabel="Editar"
                 key={entry.appointmentId}
@@ -68,5 +63,3 @@ function AdminAgendaPanel() {
     </div>
   );
 }
-
-export { AdminAgendaPanel };

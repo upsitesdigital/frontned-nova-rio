@@ -7,7 +7,7 @@ import {
 } from "@/stores/admin/admin-create-appointment-store";
 import { AppointmentLabels } from "@/lib/display/appointment-labels";
 
-function ServiceInfoCard() {
+export function ServiceInfoCard() {
   const {
     serviceId,
     recurrenceType,
@@ -80,5 +80,3 @@ function ServiceInfoCard() {
     </div>
   );
 }
-
-export { ServiceInfoCard };

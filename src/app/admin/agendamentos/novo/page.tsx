@@ -72,7 +72,7 @@ export default function AdminCreateAppointmentPage() {
         />
       )}
 
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col items-start gap-4 xl:flex-row">
         <ServiceInfoCard />
         <AppointmentDetailsCard />
         <DateTimeCard />

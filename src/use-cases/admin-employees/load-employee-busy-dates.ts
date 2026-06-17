@@ -1,6 +1,7 @@
 import { startOfMonth, endOfMonth, format } from "date-fns";
 
 import { AdminAppointmentsApi } from "@/api/admin/admin-appointments-api";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
 
 interface LoadBusyDatesInput {
   employeeId: number;
@@ -21,7 +22,9 @@ class LoadEmployeeBusyDates {
       status: "SCHEDULED",
     });
 
-    return response.data.map((item) => new Date(item.date));
+    return response.data
+      .map((item) => DateHelpers.parseDate(item.date))
+      .filter((date): date is Date => date !== null);
   }
 }
 

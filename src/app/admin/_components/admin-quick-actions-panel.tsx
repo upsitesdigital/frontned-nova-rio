@@ -3,11 +3,11 @@
 import { UsersThreeIcon, UsersIcon, BroomIcon, NoteIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsQuickActionCard } from "@/design-system";
 
-interface AdminQuickActionsPanelProps {
+export interface AdminQuickActionsPanelProps {
   onNavigate?: (path: string) => void;
 }
 
-function AdminQuickActionsPanel({ onNavigate }: AdminQuickActionsPanelProps) {
+export function AdminQuickActionsPanel({ onNavigate }: AdminQuickActionsPanelProps) {
   return (
     <div className="flex flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
       <p className="text-xl font-medium leading-[1.3] text-black">Ações rápidas</p>
@@ -48,5 +48,3 @@ function AdminQuickActionsPanel({ onNavigate }: AdminQuickActionsPanelProps) {
     </div>
   );
 }
-
-export { AdminQuickActionsPanel, type AdminQuickActionsPanelProps };

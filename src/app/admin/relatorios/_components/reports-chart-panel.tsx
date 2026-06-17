@@ -69,7 +69,7 @@ function formatHoursAxis(value: number): string {
   return `${decimalFormatter.format(value)}h`;
 }
 
-function ReportsChartPanel() {
+export function ReportsChartPanel() {
   const optionsMenuRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -167,7 +167,7 @@ function ReportsChartPanel() {
           <div className="px-4 py-6">
             <DsLineChart
               data={chartData}
-              color="#00A77E"
+              color="var(--nova-primary)"
               height={420}
               yAxisTicks={yAxisTicks.length > 1 ? yAxisTicks : undefined}
               yAxisFormatter={chartMode === "revenue" ? formatRevenueAxis : formatHoursAxis}
@@ -201,5 +201,3 @@ function ReportsChartPanel() {
     </div>
   );
 }
-
-export { ReportsChartPanel };

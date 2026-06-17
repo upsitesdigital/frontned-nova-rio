@@ -227,7 +227,7 @@ export default function AdminUsersPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="relative flex w-full max-w-170 flex-col gap-8 rounded-2xl bg-white p-8">
+            <div className="relative flex max-h-[90vh] w-full max-w-170 flex-col gap-8 overflow-y-auto rounded-2xl bg-white p-8">
               <DsIconButton
                 icon={XIcon}
                 iconSize="lg"
@@ -238,7 +238,7 @@ export default function AdminUsersPage() {
               />
 
               <div className="flex flex-col gap-2 text-center">
-                <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+                <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
                   Detalhes do usuário
                 </h2>
               </div>

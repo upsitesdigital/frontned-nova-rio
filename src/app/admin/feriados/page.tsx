@@ -12,17 +12,13 @@ import {
   DsInput,
   DsLoadingState,
   DsPageHeader,
+  DsRecordCard,
+  DsEmptyState,
 } from "@/design-system";
 import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { useAdminHolidaysStore } from "@/stores/admin/admin-holidays-store";
-
-function formatDate(iso: string): string {
-  const date = new Date(iso);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
+import { HolidayTypeLabel } from "@/lib/display/holiday-type-label";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
 
 export default function AdminHolidaysPage() {
   const {
@@ -132,7 +128,7 @@ export default function AdminHolidaysPage() {
         </div>
 
         <div className="overflow-hidden rounded-[10px] border border-nova-gray-100 bg-white">
-          <div className="overflow-x-auto">
+          <div className="hidden overflow-x-auto lg:block">
             <table className="min-w-full text-left">
               <thead className="border-b border-nova-gray-100">
                 <tr>
@@ -156,9 +152,11 @@ export default function AdminHolidaysPage() {
 
                 {holidays.map((holiday) => (
                   <tr key={holiday.id} className="border-b border-nova-gray-50">
-                    <td className="px-6 py-4 text-sm text-black">{formatDate(holiday.date)}</td>
+                    <td className="px-6 py-4 text-sm text-black">{DateHelpers.formatDate(holiday.date)}</td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">{holiday.name}</td>
-                    <td className="px-6 py-4 text-sm text-nova-gray-700">{holiday.type}</td>
+                    <td className="px-6 py-4 text-sm text-nova-gray-700">
+                      {HolidayTypeLabel.format(holiday.type)}
+                    </td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">
                       {holiday.isBlocked ? "Sim" : "Não"}
                     </td>
@@ -193,6 +191,50 @@ export default function AdminHolidaysPage() {
               </tbody>
             </table>
           </div>
+
+          <div className="flex flex-col gap-3 p-4 lg:hidden">
+            {holidays.length === 0 ? (
+              <DsEmptyState message="Nenhum feriado cadastrado." className="bg-white p-4" />
+            ) : (
+              holidays.map((holiday) => (
+                <DsRecordCard
+                  key={holiday.id}
+                  title={holiday.name}
+                  status={
+                    <span className="rounded-full bg-nova-gray-100 px-3 py-1 text-sm text-nova-gray-600">
+                      {DateHelpers.formatDate(holiday.date)}
+                    </span>
+                  }
+                  fields={[
+                    { label: "Tipo", value: HolidayTypeLabel.format(holiday.type) },
+                    { label: "Bloqueado", value: holiday.isBlocked ? "Sim" : "Não" },
+                  ]}
+                  actions={
+                    <>
+                      <DsButton
+                        variant="outline"
+                        className="h-9 border-nova-gray-200 px-3 text-sm"
+                        onClick={() => openEditEditor(holiday.id)}
+                        disabled={isSaving || deletingHolidayId === holiday.id}
+                      >
+                        <DsIcon icon={PencilSimpleIcon} size="sm" className="text-nova-gray-700" />
+                        Editar
+                      </DsButton>
+                      <DsButton
+                        variant="outline"
+                        className="h-9 border-nova-error/40 px-3 text-sm text-nova-error hover:bg-nova-error/5"
+                        onClick={() => setPendingDeleteHolidayId(holiday.id)}
+                        disabled={isSaving || deletingHolidayId === holiday.id}
+                      >
+                        <DsIcon icon={TrashIcon} size="sm" className="text-nova-error" />
+                        Excluir
+                      </DsButton>
+                    </>
+                  }
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
 
@@ -210,9 +252,9 @@ export default function AdminHolidaysPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="flex w-full max-w-140 flex-col gap-6 rounded-2xl bg-white p-8">
+            <div className="flex max-h-[90vh] w-full max-w-140 flex-col gap-6 overflow-y-auto rounded-2xl bg-white p-8">
               <div className="flex flex-col gap-1">
-                <h2 className="text-3xl font-medium text-black">
+                <h2 className="text-2xl font-medium text-black sm:text-3xl">
                   {editingHolidayId ? "Editar feriado" : "Novo feriado"}
                 </h2>
                 <p className="text-sm text-nova-gray-700">

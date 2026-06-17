@@ -41,7 +41,7 @@ interface ListAdminAppointmentsParams {
 interface RawEmployee {
   id: number;
   name: string;
-  isActive: boolean;
+  status: "ACTIVE" | "INACTIVE";
 }
 
 interface RawUnit {

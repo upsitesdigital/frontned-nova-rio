@@ -5,6 +5,12 @@ interface AdminUnit {
   uuid: string;
   name: string;
   address: string | null;
+  street: string | null;
+  number: string | null;
+  neighborhood: string | null;
+  city: string | null;
+  state: string | null;
+  cep: string | null;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -26,9 +32,12 @@ interface ListAdminUnitsParams {
 
 interface SaveAdminUnitPayload {
   name: string;
-  address?: string;
-  latitude?: number;
-  longitude?: number;
+  street?: string;
+  number?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  cep?: string;
   serviceRadiusKm?: number;
 }
 

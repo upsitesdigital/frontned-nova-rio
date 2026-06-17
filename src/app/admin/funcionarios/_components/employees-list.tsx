@@ -7,7 +7,7 @@ import { useAdminEmployeesStore } from "@/stores/admin/admin-employees-store";
 import { useAdminEmployeeScheduleStore } from "@/stores/admin/admin-employee-schedule-store";
 import { EmployeeCardMappers } from "@/lib/mappers/employee-card-mappers";
 
-function EmployeesList() {
+export function EmployeesList() {
   const employees = useAdminEmployeesStore((s) => s.employees);
   const isLoading = useAdminEmployeesStore((s) => s.isLoading);
   const searchQuery = useAdminEmployeesStore((s) => s.searchQuery);
@@ -64,5 +64,3 @@ function EmployeesList() {
     </div>
   );
 }
-
-export { EmployeesList };
