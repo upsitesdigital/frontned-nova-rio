@@ -6,10 +6,10 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton } from "@/design-system";
 
-function LandingCTABanner() {
+export function LandingCTABanner() {
   return (
-    <section className="relative min-h-135 overflow-hidden bg-[#049765]">
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-90 opacity-70">
+    <section className="relative min-h-135 overflow-hidden bg-nova-primary">
+      <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-90 opacity-70 md:block">
         <Image
           src="/images/landing/left-rigth-footer.png"
           alt=""
@@ -19,7 +19,7 @@ function LandingCTABanner() {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-90 opacity-70">
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-90 opacity-70 md:block">
         <Image
           src="/images/landing/left-rigth-footer.png"
           alt=""
@@ -37,7 +37,7 @@ function LandingCTABanner() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="mb-2 text-[52px] font-medium leading-none tracking-[-1.04px] text-white">
+          <h2 className="mb-2 text-3xl font-medium leading-tight tracking-[-1.04px] text-white sm:text-[42px] sm:leading-none md:text-[52px]">
             Fale com a Nova Rio Pay Per Use
           </h2>
           <p className="mx-auto mb-8 max-w-122.75 text-base font-normal leading-normal text-white/90">
@@ -47,7 +47,7 @@ function LandingCTABanner() {
             <DsButton
               asChild
               size="flow"
-              className="h-14.75 w-76.5 rounded-xl bg-black px-8 text-base hover:bg-black/90"
+              className="h-14.75 w-full max-w-76.5 rounded-xl bg-black px-8 text-base hover:bg-black/90"
             >
               <Link
                 href="/agendamento"
@@ -67,5 +67,3 @@ function LandingCTABanner() {
     </section>
   );
 }
-
-export { LandingCTABanner };

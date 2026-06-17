@@ -1,4 +1,5 @@
-import { LandingHero, LandingHowItWorks } from "./_components/landing-hero";
+import { LandingHero } from "./_components/landing-hero";
+import { LandingHowItWorks } from "./_components/landing-how-it-works";
 import { LandingBenefits } from "./_components/landing-benefits";
 import { LandingTestimonials } from "./_components/landing-testimonials";
 import { LandingSegments } from "./_components/landing-segments";

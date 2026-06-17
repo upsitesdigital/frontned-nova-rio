@@ -32,7 +32,7 @@ const faqItems = [
   },
 ];
 
-function LandingFAQ() {
+export function LandingFAQ() {
   const { openIndex, toggle } = useLandingFaqStore();
 
   return (
@@ -94,5 +94,3 @@ function LandingFAQ() {
     </section>
   );
 }
-
-export { LandingFAQ };
