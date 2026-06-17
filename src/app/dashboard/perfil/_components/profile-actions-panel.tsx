@@ -15,7 +15,7 @@ import { EmailChangeDialog } from "./email-change-dialog";
 import { PasswordChangeDialog } from "./password-change-dialog";
 import { DeleteAccountDialog } from "./delete-account-dialog";
 
-function ProfileActionsPanel() {
+export function ProfileActionsPanel() {
   const profile = useProfileInfoStore((s) => s.profile);
   const startEditing = useProfileInfoStore((s) => s.startEditing);
   const openEmailDialog = useEmailChangeStore((s) => s.openEmailDialog);
@@ -62,5 +62,3 @@ function ProfileActionsPanel() {
     </>
   );
 }
-
-export { ProfileActionsPanel };

@@ -7,7 +7,7 @@ import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-st
 import { PasswordRequirements } from "@/app/esqueci-senha/_components/password-requirements";
 import { getPasswordHints } from "@/validation/reset-password-schema";
 
-function PasswordChangeDialog() {
+export function PasswordChangeDialog() {
   const {
     passwordDialogOpen,
     passwordChangeStep,
@@ -110,5 +110,3 @@ function PasswordChangeDialog() {
     </DsDialog>
   );
 }
-
-export { PasswordChangeDialog };

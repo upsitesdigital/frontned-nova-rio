@@ -10,7 +10,7 @@ import { EmailChangeDialog } from "../../perfil/_components/email-change-dialog"
 import { PasswordChangeDialog } from "../../perfil/_components/password-change-dialog";
 import { DeleteAccountDialog } from "../../perfil/_components/delete-account-dialog";
 
-function AccountPanel() {
+export function AccountPanel() {
   const profile = useProfileInfoStore((s) => s.profile);
   const openEmailDialog = useEmailChangeStore((s) => s.openEmailDialog);
   const openPasswordDialog = usePasswordChangeStore((s) => s.openPasswordDialog);
@@ -51,5 +51,3 @@ function AccountPanel() {
     </>
   );
 }
-
-export { AccountPanel };

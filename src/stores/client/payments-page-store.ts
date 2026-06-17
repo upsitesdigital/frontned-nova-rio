@@ -2,6 +2,8 @@ import { create } from "zustand";
 
 import type { PaymentEntry, PaymentStatus } from "@/api/client/payments-api";
 import { LoadClientPayments } from "@/use-cases/client-dashboard/load-client-payments";
+import { DownloadReceipt } from "@/use-cases/client-cards/download-receipt";
+import { useToastStore } from "@/stores/ui/toast-store";
 
 type FilterValue = "ALL" | PaymentStatus;
 
@@ -19,6 +21,7 @@ interface PaymentsPageActions {
   loadPayments: () => Promise<void>;
   setFilter: (filter: FilterValue) => void;
   setPage: (page: number) => void;
+  downloadReceipt: (paymentId: number) => Promise<void>;
 }
 
 type PaymentsPageStore = PaymentsPageState & PaymentsPageActions;
@@ -76,6 +79,14 @@ const usePaymentsPageStore = create<PaymentsPageStore>()((set, get) => ({
   setPage: (page) => {
     set({ page });
     get().loadPayments();
+  },
+
+  downloadReceipt: async (paymentId) => {
+    try {
+      await DownloadReceipt.downloadReceipt(paymentId);
+    } catch {
+      useToastStore.getState().showToast("Recibo não disponível para este pagamento.", "error");
+    }
   },
 }));
 

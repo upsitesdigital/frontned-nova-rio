@@ -55,7 +55,7 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-full flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+          <h1 className="text-3xl font-semibold leading-[1.3] tracking-[-1.92px] text-black sm:text-4xl md:text-5xl">
             Olá, {summary?.clientName ?? ""}
           </h1>
           <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -65,7 +65,7 @@ export default function DashboardPage() {
 
         <section className="relative flex h-123.5 w-full flex-col items-center justify-center gap-10 overflow-hidden rounded-[10px] bg-white px-6 text-center">
           <div className="flex max-w-383.75 flex-col items-center gap-4">
-            <h2 className="max-w-116.75 text-[36px] leading-[1.3] font-medium tracking-[-1.44px] text-black">
+            <h2 className="max-w-116.75 text-[26px] leading-[1.3] font-medium tracking-[-1.44px] sm:text-[36px] text-black">
               Voce ainda nao possui nenhuma limpeza agendada
             </h2>
             <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -93,10 +93,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex items-start gap-8">
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
+    <div className="flex flex-col items-start gap-6 xl:flex-row xl:gap-8">
+      <div className="flex w-full min-w-0 flex-1 flex-col gap-4">
         <div>
-          <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+          <h1 className="text-3xl font-semibold leading-[1.3] tracking-[-1.92px] text-black sm:text-4xl md:text-5xl">
             Olá, {summary?.clientName ?? ""}
           </h1>
           <p className="mt-2 text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -104,7 +104,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row">
           <DsHighlightCard
             title="Próximo serviço"
             value={summary?.nextAppointment?.date ?? "—"}
@@ -127,7 +127,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="flex w-125.25 shrink-0 flex-col gap-6">
+      <div className="flex w-full shrink-0 flex-col gap-6 xl:w-125.25">
         <DsDiscountCard title="Descontos exclusivos" className="h-33">
           <span>
             Agende agora serviços recorrentes semanais e ganhe{" "}

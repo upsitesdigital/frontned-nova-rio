@@ -7,7 +7,7 @@ import { useCardsStore } from "@/stores/client/cards-store";
 import { CardFormat } from "@/lib/formatting/card-format";
 import { AddCardDialog } from "./add-card-dialog";
 
-function CardsPanel() {
+export function CardsPanel() {
   const {
     cards,
     isLoading,
@@ -76,5 +76,3 @@ function CardsPanel() {
     </div>
   );
 }
-
-export { CardsPanel };

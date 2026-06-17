@@ -7,7 +7,7 @@ import { IconMap } from "@/lib/display/icon-map";
 import { PaymentStatus } from "@/lib/display/payment-status-map";
 import { RecurrenceLabels } from "@/lib/display/recurrence-labels";
 
-interface ServiceDetailModalEntry {
+export interface ServiceDetailModalEntry {
   label: string;
   icon: string | null;
   date: string;
@@ -20,19 +20,19 @@ interface ServiceDetailModalEntry {
   } | null;
 }
 
-interface ServiceDetailModalProps {
+export interface ServiceDetailModalProps {
   entry: ServiceDetailModalEntry | null;
   onClose: () => void;
 }
 
-function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
+export function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
   if (!entry) return null;
 
   const serviceIcon = IconMap.getServiceIcon(entry.icon);
   const recurrenceLabel = RecurrenceLabels.resolveRecurrenceLabel(entry.recurrenceType);
 
   return (
-    <DsPopup open>
+    <DsPopup open bare>
       <DsServiceDetailPopup
         icon={serviceIcon}
         serviceName={entry.label}
@@ -86,5 +86,3 @@ function ServiceDetailModal({ entry, onClose }: ServiceDetailModalProps) {
     </DsPopup>
   );
 }
-
-export { ServiceDetailModal, type ServiceDetailModalProps, type ServiceDetailModalEntry };
