@@ -66,10 +66,12 @@ const useCreateAccountStore = create<CreateAccountStore>()((set, get) => ({
 
     set({ isSubmitting: true, errors: {} });
 
+    const normalizedPhone = phone.replace(/\D/g, "");
+
     const errors = await RegisterNewAccount.registerNewAccount({
       name,
       email,
-      phone: phone || undefined,
+      phone: normalizedPhone || undefined,
       password,
     });
 

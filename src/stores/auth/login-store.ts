@@ -53,31 +53,38 @@ const useLoginStore = create<LoginStore>()((set) => ({
 
     set({ isSubmitting: true, error: null });
 
-    const result = await AuthenticateUser.authenticateUser(email, password);
+    try {
+      const result = await AuthenticateUser.authenticateUser(email, password);
 
-    switch (result.type) {
-      case "success": {
-        if (result.userType === "admin") {
-          SignOutAdmin.execute();
-        } else {
-          SignOutClient.execute();
+      switch (result.type) {
+        case "success": {
+          if (result.userType === "admin") {
+            SignOutAdmin.execute();
+          } else {
+            SignOutClient.execute();
+          }
+          useAuthStore
+            .getState()
+            .setTokens(result.accessToken, result.refreshToken, result.userType);
+          set({ isSubmitting: false });
+          return result.userType;
         }
-        useAuthStore.getState().setTokens(result.accessToken, result.refreshToken, result.userType);
-        set({ isSubmitting: false });
-        return result.userType;
+        case "pending": {
+          set({ isSubmitting: false, pendingApproval: true });
+          return null;
+        }
+        case "invalidCredentials": {
+          set({ isSubmitting: false, error: Messages.auth.wrongCredentials });
+          return null;
+        }
+        case "error": {
+          set({ isSubmitting: false, error: result.message });
+          return null;
+        }
       }
-      case "pending": {
-        set({ isSubmitting: false, pendingApproval: true });
-        return null;
-      }
-      case "invalidCredentials": {
-        set({ isSubmitting: false, error: Messages.auth.wrongCredentials });
-        return null;
-      }
-      case "error": {
-        set({ isSubmitting: false, error: result.message });
-        return null;
-      }
+    } catch {
+      set({ isSubmitting: false, error: Messages.auth.loginError });
+      return null;
     }
   },
 

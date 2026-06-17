@@ -2,12 +2,12 @@
 
 import { DsButton, DsDialog } from "@/design-system";
 
-interface PendingApprovalDialogProps {
+export interface PendingApprovalDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
-function PendingApprovalDialog({ open, onClose }: PendingApprovalDialogProps) {
+export function PendingApprovalDialog({ open, onClose }: PendingApprovalDialogProps) {
   return (
     <DsDialog
       open={open}
@@ -26,5 +26,3 @@ function PendingApprovalDialog({ open, onClose }: PendingApprovalDialogProps) {
     </DsDialog>
   );
 }
-
-export { PendingApprovalDialog, type PendingApprovalDialogProps };

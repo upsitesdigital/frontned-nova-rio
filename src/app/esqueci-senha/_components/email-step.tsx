@@ -6,7 +6,7 @@ import { DsButton, DsFormField, DsInput } from "@/design-system";
 import { Constants } from "@/lib/core/constants";
 import { useForgotPasswordStore } from "@/stores/auth/forgot-password-store";
 
-function EmailStep() {
+export function EmailStep() {
   const email = useForgotPasswordStore((s) => s.email);
   const isSubmitting = useForgotPasswordStore((s) => s.isSubmitting);
   const setEmail = useForgotPasswordStore((s) => s.setEmail);
@@ -38,5 +38,3 @@ function EmailStep() {
     </>
   );
 }
-
-export { EmailStep };
