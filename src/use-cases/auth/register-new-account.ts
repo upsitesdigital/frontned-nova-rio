@@ -1,5 +1,6 @@
 import { AuthApi } from "@/api/core/auth-api";
 import { HttpClientError } from "@/api/core/http-client";
+import { Formatters } from "@/lib/formatting/formatters";
 import { Messages } from "@/lib/core/messages";
 import {
   mapApiErrorToField,
@@ -16,10 +17,12 @@ interface RegisterInput {
 class RegisterNewAccount {
   static async registerNewAccount(input: RegisterInput): Promise<CreateAccountFieldErrors> {
     try {
+      const normalizedPhone = input.phone ? Formatters.stripDdi(input.phone) : undefined;
+
       await AuthApi.registerClient({
         name: input.name,
         email: input.email,
-        phone: input.phone,
+        phone: normalizedPhone || undefined,
         password: input.password,
       });
       return {};
