@@ -305,7 +305,10 @@ export function AppointmentsTable() {
           <p>
             <span className="font-medium text-black">Tipo:</span>{" "}
             {selectedAppointment
-              ? AppointmentLabels.getRecurrenceLabel(selectedAppointment.recurrenceType)
+              ? AppointmentLabels.getRecurrenceLabelWithFrequency(
+                  selectedAppointment.recurrenceType,
+                  selectedAppointment.weeklyFrequency,
+                )
               : "-"}
           </p>
           <p>

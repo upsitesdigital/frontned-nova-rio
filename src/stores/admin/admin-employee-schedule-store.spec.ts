@@ -93,6 +93,7 @@ describe("AdminEmployeeScheduleStore", () => {
         duration: 120,
         status: "SCHEDULED" as const,
         recurrenceType: "SINGLE" as const,
+        weeklyFrequency: 1,
         locationZip: null,
         locationAddress: null,
         notes: null,
