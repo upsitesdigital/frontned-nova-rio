@@ -109,6 +109,13 @@ export { DsConfigSection, type DsConfigSectionProps } from "./composite";
 export { DsInfoPanel, type DsInfoPanelProps } from "./composite";
 export { DsFlowCard, type DsFlowCardProps } from "./composite";
 export { DsFlowHeader, type DsFlowHeaderProps } from "./composite";
+export { DsOrderSummary, type DsOrderSummaryProps, type DsOrderSummaryRow } from "./composite";
+export {
+  DsRecurrenceConfig,
+  type DsRecurrenceConfigProps,
+  type DsRecurrenceConfigOption,
+  type DsRecurrenceConfigSelectOption,
+} from "./composite";
 export { DsPopup, type DsPopupProps } from "./composite";
 export { DsTimeSlotPicker, type DsTimeSlotPickerProps } from "./composite";
 export { DsDateTimePicker, type DsDateTimePickerProps } from "./composite";

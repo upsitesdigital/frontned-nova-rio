@@ -1,6 +1,8 @@
 import { HttpClient } from "@/api/core/http-client";
 
-interface RawAdminService {
+export type AdminServiceFrequency = "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+
+export interface RawAdminService {
   id: number;
   uuid: string;
   name: string;
@@ -10,12 +12,13 @@ interface RawAdminService {
   allowSingle: boolean;
   allowPackage: boolean;
   allowRecurrence: boolean;
+  recurrenceFrequencies: AdminServiceFrequency[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-interface AdminService {
+export interface AdminService {
   id: number;
   uuid: string;
   name: string;
@@ -25,24 +28,25 @@ interface AdminService {
   allowSingle: boolean;
   allowPackage: boolean;
   allowRecurrence: boolean;
+  recurrenceFrequencies: AdminServiceFrequency[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-interface AdminServicesResponse {
+export interface AdminServicesResponse {
   data: RawAdminService[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface ListAdminServicesParams {
+export interface ListAdminServicesParams {
   page: number;
   limit: number;
 }
 
-interface SaveAdminServicePayload {
+export interface SaveAdminServicePayload {
   name: string;
   description?: string;
   icon?: string;
@@ -50,9 +54,10 @@ interface SaveAdminServicePayload {
   allowSingle?: boolean;
   allowPackage?: boolean;
   allowRecurrence?: boolean;
+  recurrenceFrequencies?: AdminServiceFrequency[];
 }
 
-class AdminServicesApi {
+export class AdminServicesApi {
   private static normalizeAdminService(service: RawAdminService): AdminService {
     return {
       ...service,
@@ -100,10 +105,3 @@ class AdminServicesApi {
     await HttpClient.authDelete<void>(`/services/${id}`);
   }
 }
-
-export {
-  AdminServicesApi,
-  type AdminService,
-  type SaveAdminServicePayload,
-  type ListAdminServicesParams,
-};

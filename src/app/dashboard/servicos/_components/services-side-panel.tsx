@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import {
   DsUpcomingServiceCard,
   DsHighlightCard,
@@ -9,7 +11,8 @@ import {
   DsCancelConfirmPopup,
 } from "@/design-system";
 import { AppointmentRules } from "@/lib/core/appointment-rules";
-import { useDashboardStore } from "@/stores/client/dashboard-store";
+import type { RecurrenceFrequencyCode } from "@/api/client/profile-api";
+import { useRecurrencePreferenceStore } from "@/stores/client/recurrence-preference-store";
 import { useSidePanelRescheduleStore } from "@/stores/client/side-panel-reschedule-store";
 import { useToastStore } from "@/stores/ui/toast-store";
 
@@ -26,9 +29,9 @@ export interface ServicesSidePanelProps {
 }
 
 const recurrenceOptions = [
-  { value: "monthly", label: "Mensal" },
-  { value: "biweekly", label: "Quinzenal" },
-  { value: "weekly", label: "Semanal" },
+  { value: "MONTHLY", label: "Mensal" },
+  { value: "BIWEEKLY", label: "Quinzenal" },
+  { value: "WEEKLY", label: "Semanal" },
 ];
 
 export function ServicesSidePanel({
@@ -42,7 +45,13 @@ export function ServicesSidePanel({
   onChanged,
   onReceipt,
 }: ServicesSidePanelProps) {
-  const { sidePanelRecurrenceType, setSidePanelRecurrenceType } = useDashboardStore();
+  const preferredRecurrence = useRecurrencePreferenceStore((s) => s.preferredRecurrence);
+  const loadPreference = useRecurrencePreferenceStore((s) => s.loadPreference);
+  const savePreference = useRecurrencePreferenceStore((s) => s.savePreference);
+
+  useEffect(() => {
+    loadPreference();
+  }, [loadPreference]);
   const {
     rescheduleOpen,
     rescheduleDate,
@@ -104,8 +113,8 @@ export function ServicesSidePanel({
           </p>
           <DsSelect
             options={recurrenceOptions}
-            value={sidePanelRecurrenceType}
-            onValueChange={setSidePanelRecurrenceType}
+            value={preferredRecurrence ?? "MONTHLY"}
+            onValueChange={(value) => savePreference(value as RecurrenceFrequencyCode)}
             className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto"
           />
         </div>

@@ -7,17 +7,18 @@ import {
   DsButton,
   DsFlowCard,
   DsFlowHeader,
-  DsRadioOptionCard,
-  DsSelect,
+  DsRecurrenceConfig,
   DsServiceOptionCard,
   DsSkeleton,
 } from "@/design-system";
 import { SchedulingConfig } from "@/config/scheduling";
 import { Formatters } from "@/lib/formatting/formatters";
 import { IconMap } from "@/lib/display/icon-map";
+import { RecurrenceMapping } from "@/lib/scheduling/recurrence-mapping";
+import { useRecurrencePreferenceStore } from "@/stores/client/recurrence-preference-store";
 import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 import { useServicesStore } from "@/stores/client/services-store";
-import type { RecurrenceFrequency } from "@/types/scheduling";
+import type { RecurrenceFrequency, RecurrenceType } from "@/types/scheduling";
 
 export default function DashboardServicoPage() {
   const router = useRouter();
@@ -35,11 +36,25 @@ export default function DashboardServicoPage() {
   const setRecurrenceFrequency = useSchedulingStore((s) => s.setRecurrenceFrequency);
   const setWeeklyFrequency = useSchedulingStore((s) => s.setWeeklyFrequency);
 
+  const preferredRecurrence = useRecurrencePreferenceStore((s) => s.preferredRecurrence);
+  const loadPreference = useRecurrencePreferenceStore((s) => s.loadPreference);
+
   useEffect(() => {
     if (services.length === 0) {
       loadServices();
     }
   }, [services.length, loadServices]);
+
+  useEffect(() => {
+    loadPreference();
+  }, [loadPreference]);
+
+  useEffect(() => {
+    if (preferredRecurrence && recurrenceType === null) {
+      setRecurrenceType("recorrencia");
+      setRecurrenceFrequency(RecurrenceMapping.toFrequency(preferredRecurrence));
+    }
+  }, [preferredRecurrence, recurrenceType, setRecurrenceType, setRecurrenceFrequency]);
 
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
 
@@ -81,63 +96,30 @@ export default function DashboardServicoPage() {
         </div>
       )}
 
-      <div className="flex w-full flex-col gap-8 rounded-2xl border border-nova-gray-300 px-6 py-8 sm:px-10 sm:py-12">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
-            Configurar Recorrência
-          </h3>
-          <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
-            Escolha como deseja agendar seus serviços de limpeza
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          {availableRecurrenceOptions.map((option) => (
-            <DsRadioOptionCard
-              key={option.type}
-              label={option.label}
-              badge={option.badge}
-              selected={recurrenceType === option.type}
-              onClick={() => setRecurrenceType(option.type)}
-            />
-          ))}
-        </div>
-
-        {recurrenceType === "recorrencia" && (
-          <div className="flex w-full flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
-            <div className="flex flex-col gap-1.5">
-              <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
-                Selecione o tipo de recorrência
-              </p>
-              <DsSelect
-                options={SchedulingConfig.frequencyOptions}
-                value={recurrenceFrequency ?? "mensal"}
-                onValueChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
-                placeholder="Selecione..."
-                className="w-full rounded-[6px] border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
-              />
-            </div>
-            {recurrenceFrequency === "semanal" && (
-              <div className="flex flex-col gap-1.5">
-                <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
-                  Quantas vezes por semana?
-                </p>
-                <DsSelect
-                  options={SchedulingConfig.weeklyTimesOptions}
-                  value={String(weeklyFrequency)}
-                  onValueChange={(value) => setWeeklyFrequency(Number(value))}
-                  placeholder="Selecione..."
-                  className="w-full rounded-[6px] border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
-                />
-              </div>
-            )}
-            <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
-              <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
-              <span className="font-bold">10%</span> para semanais e quinzenais.
-            </p>
-          </div>
-        )}
-      </div>
+      <DsRecurrenceConfig
+        title="Configurar Recorrência"
+        subtitle="Escolha como deseja agendar seus serviços de limpeza"
+        options={availableRecurrenceOptions}
+        selectedType={recurrenceType}
+        onSelectType={(type) => setRecurrenceType(type as RecurrenceType)}
+        selectPlaceholder="Selecione..."
+        showFrequency={recurrenceType === "recorrencia"}
+        frequencyLabel="Selecione o tipo de recorrência"
+        frequencyOptions={SchedulingConfig.frequencyOptions}
+        frequencyValue={recurrenceFrequency ?? "mensal"}
+        onFrequencyChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
+        showWeeklyTimes={recurrenceFrequency === "semanal"}
+        weeklyTimesLabel="Quantas vezes por semana?"
+        weeklyTimesOptions={SchedulingConfig.weeklyTimesOptions}
+        weeklyTimesValue={String(weeklyFrequency)}
+        onWeeklyTimesChange={(value) => setWeeklyFrequency(Number(value))}
+        discountNote={
+          <>
+            <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
+            <span className="font-bold">10%</span> para semanais e quinzenais.
+          </>
+        }
+      />
 
       <DsButton
         size="flow"
