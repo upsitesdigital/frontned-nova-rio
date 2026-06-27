@@ -2,6 +2,26 @@ import { describe, it, expect } from "vitest";
 import { AppointmentLabels } from "./appointment-labels";
 
 describe("appointment-labels", () => {
+  describe("AppointmentLabels.getRecurrenceLabelWithFrequency", () => {
+    it("appends times-per-week for WEEKLY with frequency > 1", () => {
+      expect(AppointmentLabels.getRecurrenceLabelWithFrequency("WEEKLY", 3)).toBe(
+        "Recorrência Semanal (3x por semana)",
+      );
+    });
+
+    it("omits the suffix for WEEKLY with frequency 1", () => {
+      expect(AppointmentLabels.getRecurrenceLabelWithFrequency("WEEKLY", 1)).toBe(
+        "Recorrência Semanal",
+      );
+    });
+
+    it("ignores frequency for non-weekly recurrence", () => {
+      expect(AppointmentLabels.getRecurrenceLabelWithFrequency("MONTHLY", 3)).toBe(
+        "Recorrência Mensal",
+      );
+    });
+  });
+
   describe("AppointmentLabels.getStatusLabel", () => {
     it("should return 'Agendado' for SCHEDULED", () => {
       expect(AppointmentLabels.getStatusLabel("SCHEDULED")).toBe("Agendado");

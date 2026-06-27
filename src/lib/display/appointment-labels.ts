@@ -49,6 +49,14 @@ class AppointmentLabels {
     return AppointmentLabels.recurrenceLabels[recurrenceType as RecurrenceType] ?? recurrenceType;
   }
 
+  static getRecurrenceLabelWithFrequency(recurrenceType: string, weeklyFrequency: number): string {
+    const label = AppointmentLabels.getRecurrenceLabel(recurrenceType);
+    if (recurrenceType === "WEEKLY" && weeklyFrequency > 1) {
+      return `${label} (${weeklyFrequency}x por semana)`;
+    }
+    return label;
+  }
+
   static formatAppointmentDate(dateStr: string): string {
     const parsed = parseISO(dateStr);
     return isValid(parsed) ? format(parsed, "dd/MM/yyyy") : "--/--/----";

@@ -1,5 +1,6 @@
 import { AuthApi } from "@/api/core/auth-api";
 import { Messages } from "@/lib/core/messages";
+import { Formatters } from "@/lib/formatting/formatters";
 import { HttpClientError } from "@/api/core/http-client";
 import {
   validateRegister,
@@ -25,10 +26,12 @@ class SubmitRegistration {
 
   static async submitRegistration(input: RegistrationInput): Promise<RegisterFieldErrors> {
     try {
+      const normalizedPhone = input.phone ? Formatters.stripDdi(input.phone) : "";
+
       await AuthApi.registerClient({
         name: input.name,
         email: input.email,
-        phone: input.phone || undefined,
+        phone: normalizedPhone || undefined,
         password: input.password,
       });
 

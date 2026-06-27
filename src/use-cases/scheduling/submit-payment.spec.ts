@@ -25,6 +25,8 @@ const baseParams = {
   selectedDate: new Date(2026, 2, 15),
   selectedTime: "10:00",
   recurrenceType: null,
+  recurrenceFrequency: null,
+  weeklyFrequency: 1,
   cep: "",
   address: null,
 };
@@ -73,6 +75,7 @@ describe("submitPayment", () => {
         duration: 120,
         serviceId: 1,
         recurrenceType: undefined,
+        weeklyFrequency: undefined,
         locationZip: undefined,
         locationAddress: undefined,
       });
@@ -96,13 +99,47 @@ describe("submitPayment", () => {
       expect(payload.recurrenceType).toBe("PACKAGE");
     });
 
-    it("should map recurrenceType 'recorrencia' to 'RECURRING'", async () => {
+    it("should map 'recorrencia' + 'mensal' to 'MONTHLY' without weeklyFrequency", async () => {
       vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
 
-      await SubmitPayment.submitPayment({ ...baseParams, recurrenceType: "recorrencia" });
+      await SubmitPayment.submitPayment({
+        ...baseParams,
+        recurrenceType: "recorrencia",
+        recurrenceFrequency: "mensal",
+      });
 
       const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBe("RECURRING");
+      expect(payload.recurrenceType).toBe("MONTHLY");
+      expect(payload.weeklyFrequency).toBeUndefined();
+    });
+
+    it("should map 'recorrencia' + 'quinzenal' to 'BIWEEKLY' without weeklyFrequency", async () => {
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+
+      await SubmitPayment.submitPayment({
+        ...baseParams,
+        recurrenceType: "recorrencia",
+        recurrenceFrequency: "quinzenal",
+      });
+
+      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
+      expect(payload.recurrenceType).toBe("BIWEEKLY");
+      expect(payload.weeklyFrequency).toBeUndefined();
+    });
+
+    it("should map 'recorrencia' + 'semanal' to 'WEEKLY' and send weeklyFrequency", async () => {
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+
+      await SubmitPayment.submitPayment({
+        ...baseParams,
+        recurrenceType: "recorrencia",
+        recurrenceFrequency: "semanal",
+        weeklyFrequency: 3,
+      });
+
+      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
+      expect(payload.recurrenceType).toBe("WEEKLY");
+      expect(payload.weeklyFrequency).toBe(3);
     });
 
     it("should format address as a single string when provided", async () => {

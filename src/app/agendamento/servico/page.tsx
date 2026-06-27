@@ -30,8 +30,10 @@ export default function ServicoPage() {
 
   const recurrenceType = useSchedulingStore((s) => s.recurrenceType);
   const recurrenceFrequency = useSchedulingStore((s) => s.recurrenceFrequency);
+  const weeklyFrequency = useSchedulingStore((s) => s.weeklyFrequency);
   const setRecurrenceType = useSchedulingStore((s) => s.setRecurrenceType);
   const setRecurrenceFrequency = useSchedulingStore((s) => s.setRecurrenceFrequency);
+  const setWeeklyFrequency = useSchedulingStore((s) => s.setWeeklyFrequency);
 
   useEffect(() => {
     if (services.length === 0) {
@@ -115,6 +117,20 @@ export default function ServicoPage() {
                 className="w-full rounded-[6px] border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
               />
             </div>
+            {recurrenceFrequency === "semanal" && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
+                  Quantas vezes por semana?
+                </p>
+                <DsSelect
+                  options={SchedulingConfig.weeklyTimesOptions}
+                  value={String(weeklyFrequency)}
+                  onValueChange={(value) => setWeeklyFrequency(Number(value))}
+                  placeholder="Selecione..."
+                  className="w-full rounded-[6px] border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
+                />
+              </div>
+            )}
             <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
               <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
               <span className="font-bold">10%</span> para semanais e quinzenais.

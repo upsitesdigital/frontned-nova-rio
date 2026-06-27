@@ -7,6 +7,7 @@ interface CreatePublicAppointmentRequest {
   duration: number;
   serviceId: number;
   recurrenceType?: string;
+  weeklyFrequency?: number;
   locationZip?: string;
   locationAddress?: string;
 }
