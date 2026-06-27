@@ -38,13 +38,13 @@ export default function ForgotPasswordPage() {
   const { title, subtitle } = stepConfig[step];
 
   return (
-    <div className="flex h-screen">
-      <div className="flex w-1/2 flex-col items-center overflow-y-auto">
-        <DsLogo className="mt-38.75" />
+    <div className="flex min-h-screen flex-col md:h-screen md:flex-row">
+      <div className="flex w-full flex-col items-center overflow-y-auto px-6 md:w-1/2 md:px-0">
+        <DsLogo className="mt-16 md:mt-38.75" />
 
         <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+            <h1 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
               {title}
             </h1>
             {subtitle && (
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
         </p>
       </div>
 
-      <div className="relative w-1/2 bg-nova-gray-700">
+      <div className="relative hidden w-1/2 bg-nova-gray-700 md:block">
         <Image
           src="/images/woman-cleaner.png"
           alt="Profissional de limpeza"

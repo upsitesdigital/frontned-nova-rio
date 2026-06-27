@@ -38,7 +38,7 @@ const testimonials = [
   },
 ];
 
-function LandingTestimonials() {
+export function LandingTestimonials() {
   const { current, setCurrent, prev, next } = useLandingTestimonialsStore();
 
   const testimonial = testimonials[current];
@@ -91,7 +91,7 @@ function LandingTestimonials() {
             <div className="flex flex-1 flex-col gap-10">
               <div className="flex items-center gap-1">
                 {Array.from({ length: testimonial.stars }).map((_, i) => (
-                  <StarIcon key={i} size={20} weight="fill" className="text-[#f5d025]" />
+                  <StarIcon key={i} size={20} weight="fill" className="text-nova-warning" />
                 ))}
               </div>
 
@@ -117,7 +117,7 @@ function LandingTestimonials() {
                   <button
                     key={i}
                     onClick={() => setCurrent(i % testimonials.length)}
-                    className={`size-2 rounded-full transition-transform duration-200 hover:scale-125 ${i === current ? "bg-nova-primary" : "bg-[#cccccc]"}`}
+                    className={`size-2 rounded-full transition-transform duration-200 hover:scale-125 ${i === current ? "bg-nova-primary" : "bg-nova-gray-300"}`}
                     aria-label={`Depoimento ${i + 1}`}
                   />
                 ))}
@@ -133,7 +133,7 @@ function LandingTestimonials() {
                 </button>
                 <button
                   onClick={() => next(testimonials.length)}
-                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-12px_rgba(0,0,0,0.45)]"
+                  className="flex size-12 items-center justify-center rounded-full border border-nova-primary bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-(--nova-shadow-strong)"
                   aria-label="Próximo depoimento"
                 >
                   <ArrowRightIcon size={20} className="text-nova-primary-dark" />
@@ -146,5 +146,3 @@ function LandingTestimonials() {
     </section>
   );
 }
-
-export { LandingTestimonials };

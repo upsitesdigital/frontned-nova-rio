@@ -1,16 +1,17 @@
 "use client";
 
-import { format } from "date-fns";
-
 import {
   DsFilterDropdown,
   DsTransactionCard,
   DsTransactionTable,
   DsPaymentStatusPill,
   DsReceiptButton,
+  DsRecordCard,
+  DsEmptyState,
   type DsTransactionTableColumn,
 } from "@/design-system";
 import { PaymentFormat } from "@/lib/formatting/payment-format";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
 import { usePaymentsPageStore, type FilterValue } from "@/stores/client/payments-page-store";
 
 const filterOptions = [
@@ -29,13 +30,15 @@ const columns: DsTransactionTableColumn[] = [
   { key: "receipt", header: "Recibo" },
 ];
 
-function PaymentsHistoryPanel() {
-  const { payments, filter, setFilter } = usePaymentsPageStore();
+export function PaymentsHistoryPanel() {
+  const { payments, filter, setFilter, downloadReceipt } = usePaymentsPageStore();
 
-  const tableData = PaymentFormat.sortPaymentsByStatus(payments).map((payment) => ({
+  const sortedPayments = PaymentFormat.sortPaymentsByStatus(payments);
+
+  const tableData = sortedPayments.map((payment) => ({
     date: (
       <span className="text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
-        {format(new Date(payment.appointment.date), "dd/MM/yyyy")}
+        {DateHelpers.formatDate(payment.appointment.date)}
       </span>
     ),
     service: (
@@ -54,7 +57,13 @@ function PaymentsHistoryPanel() {
         {PaymentFormat.formatPaymentAmount(payment.amount)}
       </span>
     ),
-    receipt: <DsReceiptButton label="Baixar" disabled={payment.status !== "APPROVED"} />,
+    receipt: (
+      <DsReceiptButton
+        label="Baixar"
+        disabled={payment.status !== "APPROVED"}
+        onClick={() => downloadReceipt(payment.id)}
+      />
+    ),
   }));
 
   return (
@@ -70,13 +79,42 @@ function PaymentsHistoryPanel() {
         />
       }
     >
-      <DsTransactionTable
-        columns={columns}
-        data={tableData}
-        emptyMessage="Nenhuma transação encontrada."
-      />
+      <div className="hidden lg:block">
+        <DsTransactionTable
+          columns={columns}
+          data={tableData}
+          emptyMessage="Nenhuma transação encontrada."
+        />
+      </div>
+
+      <div className="flex flex-col gap-3 lg:hidden">
+        {sortedPayments.length === 0 ? (
+          <DsEmptyState
+            message="Nenhuma transação encontrada."
+            className="rounded-md bg-white p-4"
+          />
+        ) : (
+          sortedPayments.map((payment) => (
+            <DsRecordCard
+              key={payment.id}
+              title={payment.appointment.service.name}
+              status={<DsPaymentStatusPill status={payment.status} />}
+              fields={[
+                { label: "Data", value: DateHelpers.formatDate(payment.appointment.date) },
+                { label: "Método", value: PaymentFormat.formatPaymentMethod(payment) },
+                { label: "Valor", value: PaymentFormat.formatPaymentAmount(payment.amount) },
+              ]}
+              actions={
+                <DsReceiptButton
+                  label="Baixar"
+                  disabled={payment.status !== "APPROVED"}
+                  onClick={() => downloadReceipt(payment.id)}
+                />
+              }
+            />
+          ))
+        )}
+      </div>
     </DsTransactionCard>
   );
 }
-
-export { PaymentsHistoryPanel };

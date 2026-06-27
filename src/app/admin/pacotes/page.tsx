@@ -11,6 +11,8 @@ import {
   DsLoadingState,
   DsPageHeader,
   DsPagination,
+  DsRecordCard,
+  DsEmptyState,
   DsSelect,
   DsTextarea,
 } from "@/design-system";
@@ -128,7 +130,7 @@ export default function AdminPackagesPage() {
         </div>
 
         <div className="overflow-hidden rounded-[10px] border border-nova-gray-100 bg-white">
-          <div className="overflow-x-auto">
+          <div className="hidden overflow-x-auto lg:block">
             <table className="min-w-full text-left">
               <thead className="border-b border-nova-gray-100">
                 <tr>
@@ -209,6 +211,68 @@ export default function AdminPackagesPage() {
             </table>
           </div>
 
+          <div className="flex flex-col gap-3 p-4 lg:hidden">
+            {packages.length === 0 ? (
+              <DsEmptyState message="Nenhum pacote cadastrado." className="bg-white p-4" />
+            ) : (
+              packages.map((item) => {
+                const isToggling = togglingPackageId === item.id;
+                return (
+                  <DsRecordCard
+                    key={item.id}
+                    title={item.name}
+                    status={
+                      <span
+                        className={
+                          item.isActive
+                            ? "rounded-full bg-green-50 px-3 py-1 text-sm text-green-700"
+                            : "rounded-full bg-nova-gray-100 px-3 py-1 text-sm text-nova-gray-600"
+                        }
+                      >
+                        {item.isActive ? "Ativo" : "Inativo"}
+                      </span>
+                    }
+                    fields={[
+                      {
+                        label: "Serviço",
+                        value: serviceNameById.get(item.serviceId) ?? `Serviço #${item.serviceId}`,
+                      },
+                      { label: "Horas", value: item.totalHours ?? "-" },
+                      { label: "Preço", value: formatCurrency(item.price) },
+                    ]}
+                    actions={
+                      <>
+                        <DsButton
+                          variant="outline"
+                          className="h-9 border-nova-gray-200 px-3 text-sm"
+                          onClick={() => openEditEditor(item.id)}
+                          disabled={isSaving || isToggling}
+                        >
+                          <DsIcon
+                            icon={PencilSimpleIcon}
+                            size="sm"
+                            className="text-nova-gray-700"
+                          />
+                          Editar
+                        </DsButton>
+                        <DsButton
+                          variant="outline"
+                          className="h-9 border-nova-gray-200 px-3 text-sm"
+                          onClick={() => {
+                            void togglePackageStatus(item.id, !item.isActive);
+                          }}
+                          disabled={isSaving || isToggling}
+                        >
+                          {isToggling ? "Salvando..." : item.isActive ? "Inativar" : "Reativar"}
+                        </DsButton>
+                      </>
+                    }
+                  />
+                );
+              })
+            )}
+          </div>
+
           {packages.length > 0 && (
             <div className="border-t border-nova-gray-100 px-6">
               <DsPagination
@@ -237,9 +301,9 @@ export default function AdminPackagesPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="flex w-full max-w-170 flex-col gap-6 rounded-2xl bg-white p-8">
+            <div className="flex max-h-[90vh] w-full max-w-170 flex-col gap-6 overflow-y-auto rounded-2xl bg-white p-8">
               <div className="flex flex-col gap-1">
-                <h2 className="text-3xl font-medium text-black">
+                <h2 className="text-2xl font-medium text-black sm:text-3xl">
                   {editingPackageId ? "Editar pacote" : "Novo pacote"}
                 </h2>
                 <p className="text-sm text-nova-gray-700">

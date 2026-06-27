@@ -7,6 +7,18 @@ class DateHelpers {
     return isValid(parsed) ? format(parsed, "dd/MM") : "--/--";
   }
 
+  // Parses with parseISO so date-only strings ("yyyy-MM-dd") are read as LOCAL midnight,
+  // avoiding the UTC off-by-one that `new Date("yyyy-MM-dd")` introduces.
+  static formatDate(dateString: string, pattern = "dd/MM/yyyy"): string {
+    const parsed = parseISO(dateString);
+    return isValid(parsed) ? format(parsed, pattern) : "--/--";
+  }
+
+  static parseDate(dateString: string): Date | null {
+    const parsed = parseISO(dateString);
+    return isValid(parsed) ? parsed : null;
+  }
+
   static getCurrentMonthLabel(): string {
     return format(new Date(), "MMMM", { locale: ptBR });
   }

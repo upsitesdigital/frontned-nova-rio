@@ -3,7 +3,7 @@
 import { DsProfileSection, type DsProfileField } from "@/design-system";
 import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 
-function ProfileInfoPanel() {
+export function ProfileInfoPanel() {
   const {
     profile,
     isEditing,
@@ -58,5 +58,3 @@ function ProfileInfoPanel() {
     />
   );
 }
-
-export { ProfileInfoPanel };

@@ -3,7 +3,7 @@
 import { DsEmployeeScheduleCard } from "@/design-system";
 import { useAdminEmployeeScheduleStore } from "@/stores/admin/admin-employee-schedule-store";
 
-function EmployeeSchedulePopup() {
+export function EmployeeSchedulePopup() {
   const open = useAdminEmployeeScheduleStore((s) => s.open);
   const employeeName = useAdminEmployeeScheduleStore((s) => s.employeeName);
   const currentMonth = useAdminEmployeeScheduleStore((s) => s.currentMonth);
@@ -36,5 +36,3 @@ function EmployeeSchedulePopup() {
     </div>
   );
 }
-
-export { EmployeeSchedulePopup };

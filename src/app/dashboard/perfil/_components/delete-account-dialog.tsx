@@ -6,7 +6,7 @@ import { useDeleteAccountStore } from "@/stores/client/delete-account-store";
 
 const confirmPhrase = "Apagar minha conta";
 
-function DeleteAccountDialog() {
+export function DeleteAccountDialog() {
   const router = useRouter();
   const {
     deleteDialogOpen,
@@ -54,5 +54,3 @@ function DeleteAccountDialog() {
     </DsDialog>
   );
 }
-
-export { DeleteAccountDialog };

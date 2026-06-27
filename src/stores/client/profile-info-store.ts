@@ -91,7 +91,7 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
     const { editName, editPhone, editCompany, editCpfCnpj, editAddress } = get();
     const data: UpdateProfileData = {
       name: editName,
-      phone: editPhone,
+      phone: editPhone.replace(/\D/g, ""),
       company: editCompany,
       cpfCnpj: editCpfCnpj,
       address: editAddress,

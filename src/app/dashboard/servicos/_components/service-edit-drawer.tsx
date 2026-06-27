@@ -25,13 +25,13 @@ import { useServiceEditStore, type RecurrenceType } from "@/stores/client/servic
 import { useToastStore } from "@/stores/ui/toast-store";
 import type { ServiceHistoryEntry } from "@/api/client/dashboard-api";
 
-interface ServiceEditDrawerProps {
+export interface ServiceEditDrawerProps {
   entry: ServiceHistoryEntry | null;
   onClose: () => void;
   onSaved?: () => void;
 }
 
-function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) {
+export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) {
   const {
     recurrence,
     setRecurrence,
@@ -291,5 +291,3 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
     </Sheet>
   );
 }
-
-export { ServiceEditDrawer, type ServiceEditDrawerProps };

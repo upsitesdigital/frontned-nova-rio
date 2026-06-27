@@ -3,11 +3,11 @@ import { Check, XIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsIcon } from "@/design-system";
 import type { PasswordHint } from "@/validation/reset-password-schema";
 
-interface PasswordRequirementsProps {
+export interface PasswordRequirementsProps {
   hints: PasswordHint[];
 }
 
-function PasswordRequirements({ hints }: PasswordRequirementsProps) {
+export function PasswordRequirements({ hints }: PasswordRequirementsProps) {
   if (hints.length === 0) return null;
 
   return (
@@ -26,5 +26,3 @@ function PasswordRequirements({ hints }: PasswordRequirementsProps) {
     </ul>
   );
 }
-
-export { PasswordRequirements, type PasswordRequirementsProps };

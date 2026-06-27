@@ -16,7 +16,7 @@ class GetActiveEmployeeOptions {
     try {
       const employees = await AdminAppointmentsApi.fetchEmployees();
       const activeOptions = employees
-        .filter((e) => e.isActive)
+        .filter((e) => e.status === "ACTIVE")
         .map((e) => ({ id: e.id, name: e.name }));
       return { data: activeOptions, error: null };
     } catch {

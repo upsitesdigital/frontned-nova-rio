@@ -23,7 +23,7 @@ function DsPaymentMethodOption({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-14 w-full cursor-pointer items-center gap-3 overflow-clip rounded-[10px] border p-4 transition-colors",
+        "flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-[10px] border px-4 py-3 text-left transition-colors",
         selected ? "border-primary bg-nova-primary-lighter" : "border-nova-gray-200 bg-white",
         className,
       )}
@@ -37,12 +37,12 @@ function DsPaymentMethodOption({
         {selected && <div className="size-2.5 rounded-full bg-primary" />}
       </div>
       <DsIcon icon={icon} size="md" className="shrink-0" />
-      <span className="whitespace-nowrap text-base font-medium leading-[1.3] text-black">
-        {label}
-      </span>
-      <span className="whitespace-nowrap text-base leading-[1.3] text-nova-gray-700">
-        {description}
-      </span>
+      <div className="flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2">
+        <span className="text-base font-medium leading-[1.3] whitespace-nowrap text-black">
+          {label}
+        </span>
+        <span className="text-sm leading-[1.3] text-nova-gray-700 sm:text-base">{description}</span>
+      </div>
     </button>
   );
 }

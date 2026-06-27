@@ -69,7 +69,7 @@ function DsUpcomingServiceCard({
 
       {/* Date & subtitle */}
       <div className="flex flex-col gap-2">
-        <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-primary">
+        <p className="text-[32px] font-medium leading-none tracking-[-1.92px] text-primary sm:text-[48px]">
           {date}
         </p>
         <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">{subtitle}</p>

@@ -74,7 +74,7 @@ function BenefitColumn({ icon, title, description }: BenefitItem) {
   );
 }
 
-function LandingBenefits() {
+export function LandingBenefits() {
   return (
     <section className="my-12 bg-white lg:my-16">
       <div className="mx-auto max-w-304 border-b border-nova-gray-300 px-6 py-16 lg:min-h-174.25 lg:px-0 lg:py-0">
@@ -169,5 +169,3 @@ function LandingBenefits() {
     </section>
   );
 }
-
-export { LandingBenefits };

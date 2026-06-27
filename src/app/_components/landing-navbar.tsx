@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-function LandingNavbar() {
+export function LandingNavbar() {
   return (
     <header className="absolute top-0 right-0 left-0 z-20">
       <div className="mx-auto flex max-w-304 items-center justify-between px-6 py-6">
@@ -23,5 +23,3 @@ function LandingNavbar() {
     </header>
   );
 }
-
-export { LandingNavbar };

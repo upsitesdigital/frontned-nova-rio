@@ -213,6 +213,7 @@ class Messages {
     missingEmail: "E-mail não cadastrado. Volte ao passo de cadastro.",
     missingService: "Nenhum serviço selecionado.",
     missingDateTime: "Data e horário não selecionados.",
+    invalidFields: "Verifique os dados destacados antes de continuar.",
     createAppointmentError: "Erro ao criar agendamento.",
   };
 }

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { WarningCircle, CheckCircle, Warning, Info } from "@phosphor-icons/react/dist/ssr";
+import { WarningCircleIcon, CheckCircleIcon, WarningIcon, InfoIcon } from "@phosphor-icons/react/dist/ssr";
 
 import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
@@ -7,7 +7,7 @@ import { DsIcon, type DsIconComponent } from "@/design-system/media";
 type DsAlertVariant = "error" | "warning" | "success" | "info";
 
 const alertVariants = cva(
-  "flex flex-col gap-4 rounded-md border p-4 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)]",
+  "flex flex-col gap-4 rounded-md border p-4 shadow-[var(--nova-shadow-card)]",
   {
     variants: {
       variant: {
@@ -31,10 +31,10 @@ const titleColorMap: Record<DsAlertVariant, string> = {
 };
 
 const iconMap: Record<DsAlertVariant, DsIconComponent> = {
-  error: WarningCircle,
-  warning: Warning,
-  success: CheckCircle,
-  info: Info,
+  error: WarningCircleIcon,
+  warning: WarningIcon,
+  success: CheckCircleIcon,
+  info: InfoIcon,
 };
 
 interface DsAlertProps extends VariantProps<typeof alertVariants> {

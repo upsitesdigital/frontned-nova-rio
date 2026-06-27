@@ -7,7 +7,7 @@ import {
 } from "@/design-system";
 import type { RegisteredCard, RecentPayment } from "@/types/payment";
 
-interface DashboardPaymentsPanelProps {
+export interface DashboardPaymentsPanelProps {
   cards: RegisteredCard[];
   payments: RecentPayment[];
   paymentsMonthLabel: string;
@@ -19,7 +19,7 @@ const paymentIcons = {
   pix: CodeIcon,
 } as const;
 
-function DashboardPaymentsPanel({
+export function DashboardPaymentsPanel({
   cards,
   payments,
   paymentsMonthLabel,
@@ -77,5 +77,3 @@ function DashboardPaymentsPanel({
     </div>
   );
 }
-
-export { DashboardPaymentsPanel, type DashboardPaymentsPanelProps };

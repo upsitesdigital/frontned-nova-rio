@@ -45,7 +45,7 @@ function DsFilterDropdown({
             <DsIcon icon={CaretDownIcon} size="md" className="text-black" />
           </span>
         </SelectTrigger>
-        <SelectContent className="rounded-[10px] border-nova-gray-100 p-2 shadow-[0px_12px_44px_0px_rgba(111,124,142,0.05)]">
+        <SelectContent className="rounded-[10px] border-nova-gray-100 p-2 shadow-(--nova-shadow-soft)">
           {options.map((option) => (
             <SelectItem
               key={option.value}

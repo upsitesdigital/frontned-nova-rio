@@ -24,7 +24,7 @@ function DsServiceDetailPopup({
   return (
     <div
       className={cn(
-        "relative overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-[61px] py-16 shadow-[0px_16px_24px_0px_rgba(75,75,75,0.1)]",
+        "relative max-h-[90vh] overflow-y-auto rounded-4xl border border-nova-gray-100 bg-white px-6 py-10 shadow-(--nova-shadow-medium) sm:px-15.25 sm:py-16",
         className,
       )}
     >
@@ -62,7 +62,7 @@ function DsServiceDetailPopup({
           )}
         </div>
 
-        <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-nova-primary-dark">
+        <p className="text-[32px] font-medium leading-none tracking-[-1.92px] sm:text-[48px] text-nova-primary-dark">
           {date}
         </p>
 

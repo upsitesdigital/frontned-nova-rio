@@ -13,7 +13,7 @@ import { useDashboardStore } from "@/stores/client/dashboard-store";
 import { useSidePanelRescheduleStore } from "@/stores/client/side-panel-reschedule-store";
 import { useToastStore } from "@/stores/ui/toast-store";
 
-interface ServicesSidePanelProps {
+export interface ServicesSidePanelProps {
   nextServiceDate: string;
   nextServiceSubtitle: string;
   nextAppointmentId: number | null;
@@ -31,7 +31,7 @@ const recurrenceOptions = [
   { value: "weekly", label: "Semanal" },
 ];
 
-function ServicesSidePanel({
+export function ServicesSidePanel({
   nextServiceDate,
   nextServiceSubtitle,
   nextAppointmentId,
@@ -61,7 +61,7 @@ function ServicesSidePanel({
   const showToast = useToastStore((s) => s.showToast);
 
   return (
-    <div className="flex w-125 shrink-0 flex-col gap-4">
+    <div className="flex w-full shrink-0 flex-col gap-4 xl:w-125">
       <DsUpcomingServiceCard
         title="Próximo serviço"
         date={nextServiceDate}
@@ -106,7 +106,7 @@ function ServicesSidePanel({
             options={recurrenceOptions}
             value={sidePanelRecurrenceType}
             onValueChange={setSidePanelRecurrenceType}
-            className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f] shadow-none data-[size=default]:h-auto"
+            className="w-full gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto"
           />
         </div>
         <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
@@ -160,5 +160,3 @@ function ServicesSidePanel({
     </div>
   );
 }
-
-export { ServicesSidePanel, type ServicesSidePanelProps };

@@ -19,6 +19,8 @@ import {
   DsLoadingState,
   DsPagination,
   DsAppointmentRow,
+  DsAppointmentCard,
+  DsAppointmentTabletCard,
   DsAppointmentTableHeader,
   DsSchedulePopup,
   DsSelect,
@@ -86,7 +88,7 @@ function formatTimestamp(value: string | null | undefined): string {
   }).format(parsedDate);
 }
 
-function AppointmentsTable() {
+export function AppointmentsTable() {
   const router = useRouter();
   const {
     appointments,
@@ -161,40 +163,85 @@ function AppointmentsTable() {
   }
 
   return (
-    <div className="flex flex-col gap-0 rounded-[10px] bg-nova-gray-50 p-6">
-      <DsAppointmentTableHeader
-        columns={[
-          { label: "Data" },
-          { label: "Serviço" },
-          { label: "Duração/ Horário" },
-          { label: "Funcionário" },
-          { label: "Status" },
-          { label: "Pacote" },
-          { label: "Ações", align: "right" },
-        ]}
-      />
+    <div className="flex flex-col gap-0 rounded-[10px] bg-nova-gray-50 p-4 sm:p-6">
+      <div className="hidden lg:block">
+        <DsAppointmentTableHeader
+          columns={[
+            { label: "Data" },
+            { label: "Serviço" },
+            { label: "Duração/ Horário" },
+            { label: "Funcionário" },
+            { label: "Status" },
+            { label: "Pacote" },
+            { label: "Ações", align: "right" },
+          ]}
+        />
+      </div>
 
       <div className="flex flex-col gap-2">
-        {appointments.map((appointment) => (
-          <DsAppointmentRow
-            key={appointment.id}
-            date={AppointmentLabels.formatAppointmentDate(appointment.date)}
-            serviceName={appointment.service.name}
-            durationTime={AppointmentLabels.formatDurationTime(
-              appointment.duration,
-              appointment.startTime,
-            )}
-            employeeName={appointment.employee?.name ?? "—"}
-            statusLabel={AppointmentLabels.getStatusLabel(appointment.status)}
-            statusVariant={AppointmentLabels.getStatusVariant(appointment.status)}
-            statusIcon={AppointmentLabels.getStatusIcon(appointment.status)}
-            packageLabel={AppointmentLabels.getRecurrenceLabel(appointment.recurrenceType)}
-            onView={() => openViewDialog(appointment)}
-            onEdit={
-              appointment.status === "SCHEDULED" ? () => openEditDialog(appointment) : undefined
-            }
-          />
-        ))}
+        {appointments.map((appointment) => {
+          const view = () => openViewDialog(appointment);
+          const edit =
+            appointment.status === "SCHEDULED" ? () => openEditDialog(appointment) : undefined;
+          const date = AppointmentLabels.formatAppointmentDate(appointment.date);
+          const durationTime = AppointmentLabels.formatDurationTime(
+            appointment.duration,
+            appointment.startTime,
+          );
+          const employeeName = appointment.employee?.name ?? "—";
+          const statusLabel = AppointmentLabels.getStatusLabel(appointment.status);
+          const statusVariant = AppointmentLabels.getStatusVariant(appointment.status);
+          const statusIcon = AppointmentLabels.getStatusIcon(appointment.status);
+          const packageLabel = AppointmentLabels.getRecurrenceLabel(appointment.recurrenceType);
+
+          return (
+            <div key={appointment.id}>
+              <DsAppointmentRow
+                className="hidden lg:flex"
+                date={date}
+                serviceName={appointment.service.name}
+                durationTime={durationTime}
+                employeeName={employeeName}
+                statusLabel={statusLabel}
+                statusVariant={statusVariant}
+                statusIcon={statusIcon}
+                packageLabel={packageLabel}
+                onView={view}
+                onEdit={edit}
+              />
+              <DsAppointmentTabletCard
+                className="hidden sm:flex lg:hidden"
+                viewLabel="Visualizar"
+                editLabel="Editar"
+                date={date}
+                serviceName={appointment.service.name}
+                durationTime={durationTime}
+                employeeName={employeeName}
+                statusLabel={statusLabel}
+                statusVariant={statusVariant}
+                statusIcon={statusIcon}
+                packageLabel={packageLabel}
+                onView={view}
+                onEdit={edit}
+              />
+              <DsAppointmentCard
+                className="sm:hidden"
+                viewLabel="Visualizar"
+                editLabel="Editar"
+                date={date}
+                serviceName={appointment.service.name}
+                durationTime={durationTime}
+                employeeName={employeeName}
+                statusLabel={statusLabel}
+                statusVariant={statusVariant}
+                statusIcon={statusIcon}
+                packageLabel={packageLabel}
+                onView={view}
+                onEdit={edit}
+              />
+            </div>
+          );
+        })}
       </div>
 
       <DsPagination
@@ -284,9 +331,6 @@ function AppointmentsTable() {
           <p>
             <span className="font-medium text-black">Atualizado em:</span>{" "}
             {formatTimestamp(selectedAppointment?.updatedAt)}
-          </p>
-          <p className="col-span-2">
-            <span className="font-medium text-black">ID:</span> {selectedAppointment?.uuid ?? "-"}
           </p>
         </div>
       </DsDialog>
@@ -500,5 +544,3 @@ function AppointmentsTable() {
     </div>
   );
 }
-
-export { AppointmentsTable };

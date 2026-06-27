@@ -31,7 +31,7 @@ export default function PagamentosPage() {
 
   return (
     <div>
-      <h1 className="mb-16 text-[48px] font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+      <h1 className="mb-16 text-3xl font-semibold leading-[1.3] tracking-[-1.92px] sm:text-[48px] text-black">
         Pagamentos
       </h1>
       <PaymentsHistoryPanel />

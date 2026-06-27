@@ -23,36 +23,38 @@ interface DsDataTableProps {
 
 function DsDataTable({ columns, data, emptyMessage, className }: DsDataTableProps) {
   return (
-    <Table className={cn(className)}>
-      <TableHeader>
-        <TableRow>
-          {columns.map((column) => (
-            <TableHead key={column.key} className={cn(column.className)}>
-              {column.header}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.length === 0 ? (
+    <div className="w-full overflow-x-auto">
+      <Table className={cn(className)}>
+        <TableHeader>
           <TableRow>
-            <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
-              {emptyMessage}
-            </TableCell>
+            {columns.map((column) => (
+              <TableHead key={column.key} className={cn(column.className)}>
+                {column.header}
+              </TableHead>
+            ))}
           </TableRow>
-        ) : (
-          data.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {columns.map((column) => (
-                <TableCell key={column.key} className={cn(column.className)}>
-                  {row[column.key]}
-                </TableCell>
-              ))}
+        </TableHeader>
+        <TableBody>
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
+                {emptyMessage}
+              </TableCell>
             </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+          ) : (
+            data.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((column) => (
+                  <TableCell key={column.key} className={cn(column.className)}>
+                    {row[column.key]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 

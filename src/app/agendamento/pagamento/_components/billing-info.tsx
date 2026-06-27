@@ -7,7 +7,7 @@ import { Constants } from "@/lib/core/constants";
 import { Formatters } from "@/lib/formatting/formatters";
 import { usePaymentStore } from "@/stores/scheduling/payment-store";
 
-function BillingInfo() {
+export function BillingInfo() {
   const billingName = usePaymentStore((s) => s.billingName);
   const billingDocument = usePaymentStore((s) => s.billingDocument);
   const billingAddress = usePaymentStore((s) => s.billingAddress);
@@ -66,5 +66,3 @@ function BillingInfo() {
     </div>
   );
 }
-
-export { BillingInfo };

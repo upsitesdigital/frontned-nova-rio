@@ -53,6 +53,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const userType = useAuthStore((s) => s.userType);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
+  const sidebarMobileOpen = useSidebarStore((s) => s.mobileOpen);
+  const setSidebarMobileOpen = useSidebarStore((s) => s.setMobileOpen);
 
   useEffect(() => {
     waitForAuthHydration().then(async () => {
@@ -96,11 +98,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         notificationsLabel="Notificações"
         settingsLabel="Configurações"
         menuLabel="Menu do usuário"
+        openMenuLabel="Abrir menu"
+        profileHref="/admin/perfil"
+        accountHref="/admin/conta"
         profileLabel="Perfil"
         accountLabel="Minha conta"
         activePath={pathname}
         sidebarCollapsed={sidebarCollapsed}
         onSidebarCollapsedChange={setSidebarCollapsed}
+        sidebarMobileOpen={sidebarMobileOpen}
+        onSidebarMobileOpenChange={setSidebarMobileOpen}
         userInitials={profile?.name?.charAt(0) ?? "A"}
         notificationCount={0}
         onNavigate={(path) => router.push(path)}

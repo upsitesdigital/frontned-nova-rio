@@ -10,9 +10,12 @@ import { UpdateAdminUnit } from "@/use-cases/admin-units/update-admin-unit";
 
 interface AdminUnitFormData {
   name: string;
-  address: string;
-  latitudeInput: string;
-  longitudeInput: string;
+  street: string;
+  number: string;
+  neighborhood: string;
+  cep: string;
+  city: string;
+  state: string;
   serviceRadiusKmInput: string;
 }
 
@@ -54,9 +57,12 @@ const defaultPageSize = 10;
 
 const defaultForm: AdminUnitFormData = {
   name: "",
-  address: "",
-  latitudeInput: "",
-  longitudeInput: "",
+  street: "",
+  number: "",
+  neighborhood: "",
+  cep: "",
+  city: "",
+  state: "",
   serviceRadiusKmInput: "5",
 };
 
@@ -86,11 +92,6 @@ function toNumber(value: string): number | null {
   const parsed = Number(trimmed.replace(",", "."));
   if (!Number.isFinite(parsed)) return null;
   return parsed;
-}
-
-function formatNumber(value: number | null): string {
-  if (value === null) return "";
-  return String(value);
 }
 
 const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
@@ -158,9 +159,12 @@ const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
       editingUnitId: unit.id,
       form: {
         name: unit.name,
-        address: unit.address ?? "",
-        latitudeInput: formatNumber(unit.latitude),
-        longitudeInput: formatNumber(unit.longitude),
+        street: unit.street ?? unit.address ?? "",
+        number: unit.number ?? "",
+        neighborhood: unit.neighborhood ?? "",
+        cep: unit.cep ?? "",
+        city: unit.city ?? "",
+        state: unit.state ?? "",
         serviceRadiusKmInput: String(unit.serviceRadiusKm),
       },
     });
@@ -187,19 +191,7 @@ const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
       return false;
     }
 
-    const latitude = toNumber(form.latitudeInput);
-    const longitude = toNumber(form.longitudeInput);
     const radius = toNumber(form.serviceRadiusKmInput);
-
-    if (form.latitudeInput.trim() && latitude === null) {
-      useToastStore.getState().showToast(Messages.adminUnits.invalidLatitude, "error");
-      return false;
-    }
-
-    if (form.longitudeInput.trim() && longitude === null) {
-      useToastStore.getState().showToast(Messages.adminUnits.invalidLongitude, "error");
-      return false;
-    }
 
     if (form.serviceRadiusKmInput.trim() && (radius === null || radius <= 0)) {
       useToastStore.getState().showToast(Messages.adminUnits.invalidRadius, "error");
@@ -208,9 +200,12 @@ const useAdminUnitsStore = create<AdminUnitsStore>()((set, get) => ({
 
     const payload = {
       name,
-      address: form.address.trim() || undefined,
-      latitude: latitude ?? undefined,
-      longitude: longitude ?? undefined,
+      street: form.street.trim() || undefined,
+      number: form.number.trim() || undefined,
+      neighborhood: form.neighborhood.trim() || undefined,
+      cep: form.cep.trim() || undefined,
+      city: form.city.trim() || undefined,
+      state: form.state.trim() || undefined,
       serviceRadiusKm: radius ?? undefined,
     };
 

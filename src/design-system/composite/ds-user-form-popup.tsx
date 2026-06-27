@@ -1,6 +1,6 @@
 "use client";
 
-import { XIcon, FloppyDisk } from "@phosphor-icons/react/dist/ssr";
+import { XIcon, FloppyDiskIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { DsInput } from "@/design-system/primitives";
@@ -76,7 +76,7 @@ function DsUserFormPopup({
   return (
     <div
       className={cn(
-        "relative flex w-full max-w-150 flex-col gap-8 rounded-2xl bg-white p-8",
+        "relative flex max-h-[90vh] w-full max-w-150 flex-col gap-8 overflow-y-auto rounded-2xl bg-white p-8",
         className,
       )}
     >
@@ -91,7 +91,7 @@ function DsUserFormPopup({
       )}
 
       <div className="flex w-full flex-col items-center justify-center">
-        <p className="w-full text-center text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+        <p className="w-full text-center text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
           {title}
         </p>
       </div>
@@ -123,8 +123,8 @@ function DsUserFormPopup({
         />
       </DsFormField>
 
-      <div className="flex items-center justify-between gap-8">
-        <DsFormField label={roleLabel} className="w-62">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <DsFormField label={roleLabel} className="w-full sm:w-62">
           <DsSelect
             options={[...roleOptions]}
             value={values.role}
@@ -132,7 +132,7 @@ function DsUserFormPopup({
             placeholder={rolePlaceholder}
           />
         </DsFormField>
-        <DsFormField label={activeLabel} className="w-62">
+        <DsFormField label={activeLabel} className="w-full sm:w-62">
           <DsSelect
             options={[...activeOptions]}
             value={values.active}
@@ -148,7 +148,7 @@ function DsUserFormPopup({
           onClick={onSave}
           className="flex h-15 w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
         >
-          <DsIcon icon={FloppyDisk} size="lg" />
+          <DsIcon icon={FloppyDiskIcon} size="lg" />
           {saveLabel}
         </button>
       )}

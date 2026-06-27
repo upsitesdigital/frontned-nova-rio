@@ -16,7 +16,7 @@ function formatHours(value: number): string {
   return `${numberFormatter.format(rounded)}h`;
 }
 
-function ReportsSummaryCards() {
+export function ReportsSummaryCards() {
   const { summary, activeClientsTotal, totalHoursSold, isLoading } = useAdminReportsStore();
 
   const cards = [
@@ -51,7 +51,7 @@ function ReportsSummaryCards() {
   ];
 
   return (
-    <div className="grid gap-4 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {cards.map((card) => (
         <DsCard key={card.label} className="rounded-[10px] border-nova-gray-100 bg-white p-10">
           <div className="flex w-full items-center">
@@ -65,7 +65,7 @@ function ReportsSummaryCards() {
               <DsIcon icon={card.icon} size="lg" className={card.iconClassName} />
             </div>
             <strong
-              className={`text-[48px] font-medium leading-none tracking-[-1.92px] ${card.valueClassName}`}
+              className={`text-[32px] font-medium leading-none tracking-[-1.92px] sm:text-[48px] ${card.valueClassName}`}
             >
               {isLoading && !summary ? "..." : card.value}
             </strong>
@@ -80,5 +80,3 @@ function ReportsSummaryCards() {
     </div>
   );
 }
-
-export { ReportsSummaryCards };

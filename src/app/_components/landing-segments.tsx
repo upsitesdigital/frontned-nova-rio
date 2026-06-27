@@ -29,7 +29,7 @@ const segments = [
   },
 ];
 
-function LandingSegments() {
+export function LandingSegments() {
   return (
     <section className="relative h-180 overflow-hidden bg-black pt-20">
       <div className="pointer-events-none absolute inset-0 bg-black" />
@@ -37,12 +37,12 @@ function LandingSegments() {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(255, 255, 255, 0.28) 1px, transparent 1px)",
+            "radial-gradient(circle, var(--nova-overlay-white-28) 1px, transparent 1px)",
           backgroundSize: "16px 16px",
           maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 38%, rgba(0,0,0,0.3) 62%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to bottom, var(--nova-overlay-black-full) 0%, var(--nova-overlay-black-75) 38%, var(--nova-overlay-black-30) 62%, var(--nova-overlay-black-transparent) 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 38%, rgba(0,0,0,0.3) 62%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to bottom, var(--nova-overlay-black-full) 0%, var(--nova-overlay-black-75) 38%, var(--nova-overlay-black-30) 62%, var(--nova-overlay-black-transparent) 100%)",
         }}
       />
 
@@ -110,5 +110,3 @@ function LandingSegments() {
     </section>
   );
 }
-
-export { LandingSegments };

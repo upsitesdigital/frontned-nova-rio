@@ -6,7 +6,9 @@ import {
   DsIconButton,
   DsLoadingState,
   DsPaymentStatusPill,
+  DsRecordCard,
   DsTransactionTable,
+  DsEmptyState,
   type DsTransactionTableColumn,
 } from "@/design-system";
 import { PaymentFormat } from "@/lib/formatting/payment-format";
@@ -51,7 +53,7 @@ function formatTransactionDate(dateIso: string) {
   return format(parsed, "dd/MM/yyyy");
 }
 
-function AdminPaymentsTable() {
+export function AdminPaymentsTable() {
   const { payments, isLoading, openDetails } = useAdminPaymentsStore();
 
   if (isLoading) {
@@ -115,12 +117,55 @@ function AdminPaymentsTable() {
   }));
 
   return (
-    <DsTransactionTable
-      columns={columns}
-      data={rows}
-      emptyMessage="Nenhuma transação encontrada."
-    />
+    <>
+      <div className="hidden lg:block">
+        <DsTransactionTable
+          columns={columns}
+          data={rows}
+          emptyMessage="Nenhuma transação encontrada."
+        />
+      </div>
+
+      <div className="flex flex-col gap-3 lg:hidden">
+        {payments.length === 0 ? (
+          <DsEmptyState
+            message="Nenhuma transação encontrada."
+            className="rounded-md bg-white p-4"
+          />
+        ) : (
+          payments.map((payment) => (
+            <DsRecordCard
+              key={payment.id}
+              title={payment.client.name}
+              status={<DsPaymentStatusPill status={payment.status} />}
+              fields={[
+                { label: "Serviço", value: payment.appointment.service.name },
+                {
+                  label: "Data",
+                  value: formatTransactionDate(payment.paidAt ?? payment.createdAt),
+                },
+                {
+                  label: "Método",
+                  value: getMethodLabel(payment.method, payment.card?.lastFourDigits),
+                },
+                { label: "Valor", value: PaymentFormat.formatPaymentAmount(payment.amount) },
+                { label: "Pacote", value: getRecurrenceLabel(payment.appointment.recurrenceType) },
+              ]}
+              actions={
+                <DsIconButton
+                  icon={EyeIcon}
+                  iconSize="md"
+                  variant="ghost"
+                  size="icon-sm"
+                  ariaLabel={`Visualizar pagamento ${payment.id}`}
+                  onClick={() => openDetails(payment.id)}
+                  className="text-nova-gray-700 hover:bg-transparent hover:text-black"
+                />
+              }
+            />
+          ))
+        )}
+      </div>
+    </>
   );
 }
-
-export { AdminPaymentsTable };

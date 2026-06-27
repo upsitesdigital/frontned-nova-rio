@@ -64,7 +64,7 @@ function ChartActiveDot({ cx, cy, fill }: DotProps & { fill: string }) {
 
 function DsLineChart({
   data,
-  color = "#00a77e",
+  color = "var(--nova-primary)",
   yAxisFormatter,
   yAxisTicks,
   tooltipFormatter,
@@ -86,7 +86,7 @@ function DsLineChart({
             </filter>
           </defs>
 
-          {showGrid && <CartesianGrid stroke="#efefef" strokeDasharray="0" />}
+          {showGrid && <CartesianGrid stroke="var(--nova-gray-100)" strokeDasharray="0" />}
 
           <XAxis
             dataKey="label"
@@ -94,7 +94,7 @@ function DsLineChart({
             tickLine={false}
             tick={{
               fontSize: 14,
-              fill: "#4b4b4b",
+              fill: "var(--nova-gray-700)",
               fontFamily: "var(--font-work-sans), sans-serif",
             }}
             dy={10}
@@ -105,7 +105,7 @@ function DsLineChart({
             tickLine={false}
             tick={{
               fontSize: 16,
-              fill: "#4b4b4b",
+              fill: "var(--nova-gray-700)",
               fontFamily: "var(--font-work-sans), sans-serif",
               letterSpacing: "-0.64px",
             }}
@@ -119,11 +119,11 @@ function DsLineChart({
           <Tooltip
             contentStyle={{
               backgroundColor: "white",
-              border: "1px solid #efefef",
+              border: "1px solid var(--nova-gray-100)",
               borderRadius: "8px",
               fontSize: "14px",
               fontFamily: "var(--font-work-sans), sans-serif",
-              boxShadow: "0px 12px 44px rgba(111, 124, 142, 0.1)",
+              boxShadow: "var(--nova-shadow-soft-strong)",
               padding: "8px 12px",
             }}
             formatter={(value) => [
@@ -134,8 +134,8 @@ function DsLineChart({
                 : String(value ?? ""),
               "",
             ]}
-            labelStyle={{ color: "#4b4b4b", fontWeight: 500, marginBottom: 2 }}
-            cursor={{ stroke: "#efefef", strokeWidth: 1 }}
+            labelStyle={{ color: "var(--nova-gray-700)", fontWeight: 500, marginBottom: 2 }}
+            cursor={{ stroke: "var(--nova-gray-100)", strokeWidth: 1 }}
           />
 
           <Area type="monotone" dataKey="value" stroke="none" fill={`url(#${gradientId})`} />

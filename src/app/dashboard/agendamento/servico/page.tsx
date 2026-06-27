@@ -58,13 +58,13 @@ export default function DashboardServicoPage() {
       />
 
       {isLoadingServices || services.length === 0 ? (
-        <div className="flex w-full gap-4">
-          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
+        <div className="flex w-full flex-col gap-4 sm:flex-row">
+          <DsSkeleton className="h-24 flex-1 rounded-[10px] sm:h-55" />
+          <DsSkeleton className="h-24 flex-1 rounded-[10px] sm:h-55" />
+          <DsSkeleton className="h-24 flex-1 rounded-[10px] sm:h-55" />
         </div>
       ) : (
-        <div className="flex w-full gap-4">
+        <div className="flex w-full flex-col gap-4 sm:flex-row">
           {services.map((service) => (
             <DsServiceOptionCard
               key={service.id}
@@ -79,7 +79,7 @@ export default function DashboardServicoPage() {
         </div>
       )}
 
-      <div className="flex w-full flex-col gap-8 rounded-2xl border border-nova-gray-300 px-10 py-12">
+      <div className="flex w-full flex-col gap-8 rounded-2xl border border-nova-gray-300 px-6 py-8 sm:px-10 sm:py-12">
         <div className="flex flex-col gap-2">
           <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
             Configurar Recorrência
@@ -89,7 +89,7 @@ export default function DashboardServicoPage() {
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           {availableRecurrenceOptions.map((option) => (
             <DsRadioOptionCard
               key={option.type}
@@ -112,7 +112,7 @@ export default function DashboardServicoPage() {
                 value={recurrenceFrequency ?? "mensal"}
                 onValueChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
                 placeholder="Selecione..."
-                className="w-full rounded-[6px] border-[#efefef] bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f] shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
+                className="w-full rounded-[6px] border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-nova-gray-600 shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
               />
             </div>
             <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">

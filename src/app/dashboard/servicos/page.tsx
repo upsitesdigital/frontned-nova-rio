@@ -36,8 +36,8 @@ export default function ServicesPage() {
   }
 
   return (
-    <div className="flex items-start gap-8">
-      <div className="min-w-0 flex-1">
+    <div className="flex flex-col items-start gap-6 xl:flex-row xl:gap-8">
+      <div className="w-full min-w-0 flex-1">
         <ServicesHistoryPanel
           months={summary?.serviceHistory ?? []}
           onViewEntry={(entry) => setSelectedDetailEntry(entry)}

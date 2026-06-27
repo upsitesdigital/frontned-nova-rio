@@ -9,7 +9,7 @@ import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-st
 
 import { PasswordRequirements } from "./password-requirements";
 
-function CodeStep() {
+export function CodeStep() {
   const code = useForgotPasswordStore((s) => s.code);
   const newPassword = useForgotPasswordStore((s) => s.newPassword);
   const confirmPassword = useForgotPasswordStore((s) => s.confirmPassword);
@@ -83,5 +83,3 @@ function CodeStep() {
     </>
   );
 }
-
-export { CodeStep };
