@@ -37,6 +37,8 @@ vi.mock("@/stores/scheduling/scheduling-store", () => ({
       selectedDate: null,
       selectedTime: null,
       recurrenceType: null,
+      recurrenceFrequency: null,
+      weeklyFrequency: 1,
     }),
   },
 }));

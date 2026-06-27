@@ -8,6 +8,7 @@ interface AdminAppointmentItem {
   duration: number;
   status: "SCHEDULED" | "COMPLETED" | "CANCELLED";
   recurrenceType: "SINGLE" | "PACKAGE" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+  weeklyFrequency: number;
   locationZip: string | null;
   locationAddress: string | null;
   notes: string | null;

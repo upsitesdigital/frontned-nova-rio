@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { DsButton, DsSeparator } from "@/design-system";
 import { PaymentConfig } from "@/config/payment";
 import { Formatters } from "@/lib/formatting/formatters";
+import { SchedulingPricing } from "@/lib/pricing/scheduling-pricing";
 import { usePaymentStore } from "@/stores/scheduling/payment-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 import { useServicesStore } from "@/stores/client/services-store";
 
 export function OrderSummary() {
@@ -25,13 +27,26 @@ export function OrderSummary() {
   const submitError = usePaymentStore((s) => s.submitError);
   const pay = usePaymentStore((s) => s.pay);
 
+  const recurrenceType = useSchedulingStore((s) => s.recurrenceType);
+  const recurrenceFrequency = useSchedulingStore((s) => s.recurrenceFrequency);
+  const weeklyFrequency = useSchedulingStore((s) => s.weeklyFrequency);
+
   const selectedService = useMemo(
     () => services.find((s) => s.id === selectedServiceId) ?? null,
     [services, selectedServiceId],
   );
 
-  const subtotal = selectedService?.basePrice ?? 0;
-  const total = subtotal + PaymentConfig.serviceFee;
+  const { subtotal, discount, total } = useMemo(
+    () =>
+      SchedulingPricing.calculate({
+        basePrice: selectedService?.basePrice ?? 0,
+        recurrenceType,
+        recurrenceFrequency,
+        weeklyFrequency,
+        serviceFee: PaymentConfig.serviceFee,
+      }),
+    [selectedService, recurrenceType, recurrenceFrequency, weeklyFrequency],
+  );
 
   const handlePay = useCallback(async () => {
     const success = await pay();
@@ -56,6 +71,14 @@ export function OrderSummary() {
             <span className="text-nova-gray-700">Subtotal</span>
             <span className="font-medium text-black">{Formatters.formatCurrency(subtotal)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex items-center justify-between">
+              <span className="text-nova-gray-700">Desconto</span>
+              <span className="font-medium text-nova-success">
+                -{Formatters.formatCurrency(discount)}
+              </span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <span className="text-nova-gray-700">Taxa de serviço</span>
             <span className="font-medium text-black">

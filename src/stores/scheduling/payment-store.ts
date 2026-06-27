@@ -118,7 +118,8 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
       return false;
     }
 
-    const { selectedDate, selectedTime, recurrenceType } = useSchedulingStore.getState();
+    const { selectedDate, selectedTime, recurrenceType, recurrenceFrequency, weeklyFrequency } =
+      useSchedulingStore.getState();
     if (!selectedDate || !selectedTime) {
       set({ submitError: Messages.payment.missingDateTime });
       return false;
@@ -134,6 +135,8 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
       selectedDate,
       selectedTime,
       recurrenceType,
+      recurrenceFrequency,
+      weeklyFrequency,
       cep,
       address,
     });

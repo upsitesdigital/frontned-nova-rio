@@ -111,6 +111,20 @@ describe("submitRegistration", () => {
     });
   });
 
+  it("should strip mask from phone before sending (digits only)", async () => {
+    vi.mocked(api.AuthApi.registerClient).mockResolvedValue({ message: "ok" });
+
+    await SubmitRegistration.submitRegistration({
+      name: "John",
+      email: "john@mail.com",
+      phone: "(21) 98888-1234",
+      password: "Pass@1234",
+    });
+
+    const payload = vi.mocked(api.AuthApi.registerClient).mock.calls[0][0];
+    expect(payload.phone).toBe("21988881234");
+  });
+
   it("should pass undefined phone when phone is empty string", async () => {
     vi.mocked(api.AuthApi.registerClient).mockResolvedValue({ message: "ok" });
 
