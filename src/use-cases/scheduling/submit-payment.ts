@@ -11,6 +11,8 @@ interface SubmitPaymentParams {
   selectedDate: Date;
   selectedTime: string;
   recurrenceType: string | null;
+  recurrenceFrequency: string | null;
+  weeklyFrequency: number;
   cep: string;
   address: Address | null;
 }
@@ -19,22 +21,40 @@ type SubmitPaymentResult =
   | { success: true; confirmation: AppointmentConfirmation }
   | { success: false; error: string };
 
-const recurrenceMap: Record<string, string> = {
-  avulso: "SINGLE",
-  pacote: "PACKAGE",
-  recorrencia: "RECURRING",
-};
-
 class SubmitPayment {
+  private static readonly frequencyToRecurrence: Record<string, string> = {
+    semanal: "WEEKLY",
+    quinzenal: "BIWEEKLY",
+    mensal: "MONTHLY",
+  };
+
+  static resolveRecurrenceType(
+    recurrenceType: string | null,
+    recurrenceFrequency: string | null,
+  ): string | undefined {
+    if (recurrenceType === "avulso") return "SINGLE";
+    if (recurrenceType === "pacote") return "PACKAGE";
+    if (recurrenceType === "recorrencia" && recurrenceFrequency) {
+      return SubmitPayment.frequencyToRecurrence[recurrenceFrequency];
+    }
+    return undefined;
+  }
+
   static async submitPayment(params: SubmitPaymentParams): Promise<SubmitPaymentResult> {
     try {
+      const recurrenceType = SubmitPayment.resolveRecurrenceType(
+        params.recurrenceType,
+        params.recurrenceFrequency,
+      );
+
       const response = await AppointmentsApi.createPublicAppointment({
         email: params.email,
         date: format(params.selectedDate, "yyyy-MM-dd"),
         startTime: params.selectedTime,
         duration: 120,
         serviceId: params.selectedServiceId,
-        recurrenceType: params.recurrenceType ? recurrenceMap[params.recurrenceType] : undefined,
+        recurrenceType,
+        weeklyFrequency: recurrenceType === "WEEKLY" ? params.weeklyFrequency : undefined,
         locationZip: params.cep || undefined,
         locationAddress: params.address
           ? `${params.address.street}, ${params.address.neighborhood}, ${params.address.city} - ${params.address.state}`
