@@ -15,7 +15,6 @@ interface DashboardState {
   selectedDetailEntry: ServiceDetailModalEntry | null;
   editEntry: ServiceHistoryEntry | null;
   serviceHistoryFilter: string;
-  sidePanelRecurrenceType: string;
 }
 
 interface DashboardActions {
@@ -23,7 +22,6 @@ interface DashboardActions {
   setSelectedDetailEntry: (entry: ServiceDetailModalEntry | null) => void;
   setEditEntry: (entry: ServiceHistoryEntry | null) => void;
   setServiceHistoryFilter: (filter: string) => void;
-  setSidePanelRecurrenceType: (type: string) => void;
   reset: () => void;
 }
 
@@ -38,7 +36,6 @@ const initialState: DashboardState = {
   selectedDetailEntry: null,
   editEntry: null,
   serviceHistoryFilter: "recent",
-  sidePanelRecurrenceType: "monthly",
 };
 
 const useDashboardStore = create<DashboardStore>()((set) => ({
@@ -63,8 +60,6 @@ const useDashboardStore = create<DashboardStore>()((set) => ({
   setEditEntry: (entry) => set({ editEntry: entry }),
 
   setServiceHistoryFilter: (filter) => set({ serviceHistoryFilter: filter }),
-
-  setSidePanelRecurrenceType: (type) => set({ sidePanelRecurrenceType: type }),
 
   reset: () => {
     dashboardLoadSeq++;

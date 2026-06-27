@@ -14,6 +14,8 @@ import {
 import { SchedulingConfig } from "@/config/scheduling";
 import { Formatters } from "@/lib/formatting/formatters";
 import { IconMap } from "@/lib/display/icon-map";
+import { RecurrenceMapping } from "@/lib/scheduling/recurrence-mapping";
+import { useRecurrencePreferenceStore } from "@/stores/client/recurrence-preference-store";
 import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 import { useServicesStore } from "@/stores/client/services-store";
 import type { RecurrenceFrequency, RecurrenceType } from "@/types/scheduling";
@@ -34,11 +36,25 @@ export default function DashboardServicoPage() {
   const setRecurrenceFrequency = useSchedulingStore((s) => s.setRecurrenceFrequency);
   const setWeeklyFrequency = useSchedulingStore((s) => s.setWeeklyFrequency);
 
+  const preferredRecurrence = useRecurrencePreferenceStore((s) => s.preferredRecurrence);
+  const loadPreference = useRecurrencePreferenceStore((s) => s.loadPreference);
+
   useEffect(() => {
     if (services.length === 0) {
       loadServices();
     }
   }, [services.length, loadServices]);
+
+  useEffect(() => {
+    loadPreference();
+  }, [loadPreference]);
+
+  useEffect(() => {
+    if (preferredRecurrence && recurrenceType === null) {
+      setRecurrenceType("recorrencia");
+      setRecurrenceFrequency(RecurrenceMapping.toFrequency(preferredRecurrence));
+    }
+  }, [preferredRecurrence, recurrenceType, setRecurrenceType, setRecurrenceFrequency]);
 
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
 
