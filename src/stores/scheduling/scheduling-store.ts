@@ -6,6 +6,7 @@ import { LoadTimeSlots } from "@/use-cases/scheduling/load-time-slots";
 interface SchedulingState {
   recurrenceType: RecurrenceType | null;
   recurrenceFrequency: RecurrenceFrequency | null;
+  weeklyFrequency: number;
   selectedDate: Date | null;
   selectedTime: string | null;
   timeSlots: TimeSlot[];
@@ -16,6 +17,7 @@ interface SchedulingState {
 interface SchedulingActions {
   setRecurrenceType: (type: RecurrenceType) => void;
   setRecurrenceFrequency: (frequency: RecurrenceFrequency) => void;
+  setWeeklyFrequency: (times: number) => void;
   setSelectedDate: (date: Date | null) => void;
   setSelectedTime: (time: string | null) => void;
   loadTimeSlots: (date: string) => Promise<void>;
@@ -28,6 +30,7 @@ let timeSlotsLoadSeq = 0;
 const initialState: SchedulingState = {
   recurrenceType: null,
   recurrenceFrequency: null,
+  weeklyFrequency: 1,
   selectedDate: null,
   selectedTime: null,
   timeSlots: [],
@@ -39,9 +42,16 @@ const useSchedulingStore = create<SchedulingStore>()((set) => ({
   ...initialState,
 
   setRecurrenceType: (type) =>
-    set({ recurrenceType: type, recurrenceFrequency: type === "recorrencia" ? "mensal" : null }),
+    set({
+      recurrenceType: type,
+      recurrenceFrequency: type === "recorrencia" ? "mensal" : null,
+      weeklyFrequency: 1,
+    }),
 
-  setRecurrenceFrequency: (frequency) => set({ recurrenceFrequency: frequency }),
+  setRecurrenceFrequency: (frequency) =>
+    set({ recurrenceFrequency: frequency, weeklyFrequency: 1 }),
+
+  setWeeklyFrequency: (times) => set({ weeklyFrequency: times }),
 
   setSelectedDate: (date) => set({ selectedDate: date }),
 

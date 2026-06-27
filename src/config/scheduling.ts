@@ -30,6 +30,16 @@ class SchedulingConfig {
     { value: "mensal", label: "Mensal" },
   ];
 
+  static readonly weeklyTimesOptions: FrequencyOption[] = [
+    { value: "1", label: "1x por semana" },
+    { value: "2", label: "2x por semana" },
+    { value: "3", label: "3x por semana" },
+    { value: "4", label: "4x por semana" },
+    { value: "5", label: "5x por semana" },
+    { value: "6", label: "6x por semana" },
+    { value: "7", label: "7x por semana" },
+  ];
+
   static readonly schedulingSteps: SchedulingStep[] = [
     { label: "Agendar serviço" },
     { label: "Dia e horário" },
