@@ -16,27 +16,16 @@ vi.mock("@/api/core/http-client", () => ({
   },
 }));
 
-vi.mock("@/lib/core/messages", () => ({
-  Messages: {
-    auth: {
-      fillAllFields: "Preencha todos os campos.",
-      invalidEmail: "Formato de e-mail inválido.",
-      wrongCredentials: "E-mail ou senha incorretos.",
-      loginError: "Erro ao entrar. Tente novamente.",
-      pendingApproval: "Seu cadastro está em análise.",
-    },
-  },
-}));
-
 vi.mock("@/validation/login-schema", () => ({
   validateLoginInput: vi.fn(),
 }));
 
 vi.mock("@/stores/auth/auth-store", () => {
   const setTokens = vi.fn();
+  const reset = vi.fn();
   return {
     useAuthStore: {
-      getState: () => ({ setTokens }),
+      getState: () => ({ setTokens, reset }),
     },
   };
 });
