@@ -153,3 +153,14 @@ export {
   type DsClientTableFilter,
   type DsClientTableStatus,
 } from "./ds-client-table";
+export {
+  DsOrderSummary,
+  type DsOrderSummaryProps,
+  type DsOrderSummaryRow,
+} from "./ds-order-summary";
+export {
+  DsRecurrenceConfig,
+  type DsRecurrenceConfigProps,
+  type DsRecurrenceConfigOption,
+  type DsRecurrenceConfigSelectOption,
+} from "./ds-recurrence-config";

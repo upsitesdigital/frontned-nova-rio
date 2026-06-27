@@ -33,7 +33,6 @@ describe("DashboardStore", () => {
       expect(state.selectedDetailEntry).toBeNull();
       expect(state.editEntry).toBeNull();
       expect(state.serviceHistoryFilter).toBe("recent");
-      expect(state.sidePanelRecurrenceType).toBe("monthly");
     });
   });
 
@@ -137,14 +136,6 @@ describe("DashboardStore", () => {
     });
   });
 
-  describe("setSidePanelRecurrenceType", () => {
-    it("should update recurrence type", () => {
-      useDashboardStore.getState().setSidePanelRecurrenceType("weekly");
-
-      expect(useDashboardStore.getState().sidePanelRecurrenceType).toBe("weekly");
-    });
-  });
-
   describe("reset", () => {
     it("should restore initial state", () => {
       useDashboardStore.setState({
@@ -155,7 +146,6 @@ describe("DashboardStore", () => {
         selectedDetailEntry: { id: 1 } as never,
         editEntry: { id: 2 } as never,
         serviceHistoryFilter: "all",
-        sidePanelRecurrenceType: "weekly",
       });
 
       useDashboardStore.getState().reset();
@@ -168,7 +158,6 @@ describe("DashboardStore", () => {
       expect(state.selectedDetailEntry).toBeNull();
       expect(state.editEntry).toBeNull();
       expect(state.serviceHistoryFilter).toBe("recent");
-      expect(state.sidePanelRecurrenceType).toBe("monthly");
     });
   });
 });

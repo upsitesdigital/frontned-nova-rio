@@ -1,5 +1,7 @@
 import { HttpClient } from "@/api/core/http-client";
 
+type RecurrenceFrequencyCode = "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+
 interface ClientProfile {
   id: number;
   name: string;
@@ -9,6 +11,7 @@ interface ClientProfile {
   company: string | null;
   cpfCnpj: string | null;
   address: string | null;
+  preferredRecurrence: RecurrenceFrequencyCode | null;
   status: string;
   createdAt: string;
 }
@@ -19,6 +22,7 @@ interface UpdateProfileData {
   company?: string;
   cpfCnpj?: string;
   address?: string;
+  preferredRecurrence?: RecurrenceFrequencyCode;
 }
 
 class ProfileApi {
@@ -54,4 +58,4 @@ class ProfileApi {
   }
 }
 
-export { ProfileApi, type ClientProfile, type UpdateProfileData };
+export { ProfileApi, type ClientProfile, type UpdateProfileData, type RecurrenceFrequencyCode };
