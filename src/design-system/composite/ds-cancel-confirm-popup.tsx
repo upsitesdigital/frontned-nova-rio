@@ -66,7 +66,7 @@ function DsCancelConfirmPopup({
         )}
 
         <div className="flex w-full max-w-md flex-col items-center gap-2 text-center">
-          <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-nova-gray-900">
+          <p className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-nova-gray-900">
             {title}
           </p>
           {description && (

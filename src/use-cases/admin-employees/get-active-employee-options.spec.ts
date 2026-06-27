@@ -16,9 +16,9 @@ describe("getActiveEmployeeOptions", () => {
 
   it("should return only active employees", async () => {
     vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockResolvedValue([
-      { id: 1, name: "Carlos", isActive: true },
-      { id: 2, name: "Inativo", isActive: false },
-      { id: 3, name: "Ana", isActive: true },
+      { id: 1, name: "Carlos", status: "ACTIVE" },
+      { id: 2, name: "Inativo", status: "INACTIVE" },
+      { id: 3, name: "Ana", status: "ACTIVE" },
     ]);
 
     const result = await GetActiveEmployeeOptions.getActiveEmployeeOptions();
@@ -32,7 +32,7 @@ describe("getActiveEmployeeOptions", () => {
 
   it("should return empty array when all are inactive", async () => {
     vi.mocked(api.AdminAppointmentsApi.fetchEmployees).mockResolvedValue([
-      { id: 1, name: "Inativo", isActive: false },
+      { id: 1, name: "Inativo", status: "INACTIVE" },
     ]);
 
     const result = await GetActiveEmployeeOptions.getActiveEmployeeOptions();

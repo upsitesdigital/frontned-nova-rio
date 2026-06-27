@@ -33,7 +33,7 @@ function DsEmptyState({
         <div className="flex flex-col items-center gap-10">
           <div className="flex flex-col items-center gap-4 text-center">
             {title && (
-              <p className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+              <p className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] text-black sm:text-4xl">
                 {title}
               </p>
             )}

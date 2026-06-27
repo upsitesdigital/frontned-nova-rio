@@ -8,7 +8,7 @@ const statusOptions = [
   { value: "INACTIVE", label: "Inativo" },
 ];
 
-function PersonalInfoSection() {
+export function PersonalInfoSection() {
   const form = useAdminEmployeeEditStore((s) => s.form);
   const updateField = useAdminEmployeeEditStore((s) => s.updateField);
 
@@ -64,5 +64,3 @@ function PersonalInfoSection() {
     </DsFormCard>
   );
 }
-
-export { PersonalInfoSection };

@@ -1247,7 +1247,7 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsAuthLayout — Create Account Page">
           <div className="w-full max-w-4xl rounded-lg border">
             <DsAuthLayout className="min-h-0 py-8">
-              <h2 className="text-center text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+              <h2 className="text-center text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
                 Crie sua conta
               </h2>
               <div className="flex w-full flex-col gap-4">
@@ -1709,7 +1709,7 @@ export default function DesignSystemPage() {
           <DsButton onClick={() => setPopupOpen(true)}>Open Popup</DsButton>
           <DsPopup open={popupOpen}>
             <div className="flex w-82.75 flex-col items-center gap-4 text-center">
-              <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+              <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
                 E-mail cadastrado com sucesso!
               </h2>
               <p className="text-base leading-normal text-nova-gray-600">

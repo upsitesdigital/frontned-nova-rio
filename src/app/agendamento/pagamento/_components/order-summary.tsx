@@ -9,7 +9,7 @@ import { Formatters } from "@/lib/formatting/formatters";
 import { usePaymentStore } from "@/stores/scheduling/payment-store";
 import { useServicesStore } from "@/stores/client/services-store";
 
-function OrderSummary() {
+export function OrderSummary() {
   const router = useRouter();
   const services = useServicesStore((s) => s.services);
   const selectedServiceId = useServicesStore((s) => s.selectedServiceId);
@@ -41,7 +41,7 @@ function OrderSummary() {
   }, [pay, router]);
 
   return (
-    <div className="w-125.5 shrink-0 rounded-2xl border border-nova-gray-300 px-10 py-12">
+    <div className="w-full shrink-0 rounded-2xl border border-nova-gray-300 px-6 py-10 sm:px-10 sm:py-12 lg:w-125.5">
       <div className="flex flex-col gap-8">
         <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
           Resumo do pedido
@@ -91,5 +91,3 @@ function OrderSummary() {
     </div>
   );
 }
-
-export { OrderSummary };

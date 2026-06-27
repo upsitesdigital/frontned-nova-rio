@@ -11,7 +11,7 @@ const viewModeButtons: { value: ViewMode; label: string }[] = [
   { value: "unit", label: "Unidade" },
 ];
 
-function AppointmentsFilterBar() {
+export function AppointmentsFilterBar() {
   const {
     viewMode,
     statusFilter,
@@ -41,10 +41,10 @@ function AppointmentsFilterBar() {
   ];
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-12">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-12">
         <p className="text-xl font-medium leading-[1.3] text-black">Agenda de serviços</p>
-        <div className="flex items-start gap-4">
+        <div className="flex flex-wrap items-start gap-4">
           {viewModeButtons.map((btn) => (
             <DsToggleButton
               key={btn.value}
@@ -87,5 +87,3 @@ function AppointmentsFilterBar() {
     </div>
   );
 }
-
-export { AppointmentsFilterBar };

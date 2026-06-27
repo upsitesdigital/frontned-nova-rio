@@ -19,7 +19,7 @@ const monthOptions = Array.from({ length: 12 }, (_, i) => {
   return { value: String(i + 1), label: month };
 });
 
-function AddCardDialog() {
+export function AddCardDialog() {
   const {
     addDialogOpen,
     isAdding,
@@ -138,5 +138,3 @@ function AddCardDialog() {
     </DsDialog>
   );
 }
-
-export { AddCardDialog };

@@ -10,7 +10,7 @@ const statusOptions: DsFilterDropdownOption[] = [
   { value: "CANCELLED", label: "Cancelado" },
 ];
 
-function AdminPaymentsFilterBar() {
+export function AdminPaymentsFilterBar() {
   const { statusFilter, setStatusFilter } = useAdminPaymentsStore();
 
   return (
@@ -31,5 +31,3 @@ function AdminPaymentsFilterBar() {
     </div>
   );
 }
-
-export { AdminPaymentsFilterBar };

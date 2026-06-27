@@ -38,6 +38,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const loadPaymentsData = useDashboardPaymentsStore((s) => s.loadPaymentsData);
   const sidebarCollapsed = useSidebarStore((s) => s.collapsed);
   const setSidebarCollapsed = useSidebarStore((s) => s.setCollapsed);
+  const sidebarMobileOpen = useSidebarStore((s) => s.mobileOpen);
+  const setSidebarMobileOpen = useSidebarStore((s) => s.setMobileOpen);
 
   useEffect(() => {
     waitForAuthHydration().then(() => {
@@ -77,18 +79,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         notificationsLabel="Notificações"
         settingsLabel="Configurações"
         menuLabel="Menu do usuário"
+        openMenuLabel="Abrir menu"
         profileLabel="Perfil"
         accountLabel="Minha conta"
         activePath={pathname}
         sidebarCollapsed={sidebarCollapsed}
         onSidebarCollapsedChange={setSidebarCollapsed}
+        sidebarMobileOpen={sidebarMobileOpen}
+        onSidebarMobileOpenChange={setSidebarMobileOpen}
         userInitials={summary?.clientName?.charAt(0) ?? ""}
         notificationCount={0}
         onNavigate={(path) => router.push(path)}
         onScheduleService={handleScheduleService}
         onSignOut={handleSignOut}
-        onProfileClick={() => router.push("/dashboard/perfil")}
-        onAccountClick={() => router.push("/dashboard/conta")}
+        profileHref="/dashboard/perfil"
+        accountHref="/dashboard/conta"
       >
         {children}
       </DsClientDashboardShell>

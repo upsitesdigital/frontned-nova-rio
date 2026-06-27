@@ -8,7 +8,7 @@ import { Constants } from "@/lib/core/constants";
 import { Formatters } from "@/lib/formatting/formatters";
 import { usePaymentStore } from "@/stores/scheduling/payment-store";
 
-function CardDetails() {
+export function CardDetails() {
   const cardNumber = usePaymentStore((s) => s.cardNumber);
   const cardExpiry = usePaymentStore((s) => s.cardExpiry);
   const cardCvv = usePaymentStore((s) => s.cardCvv);
@@ -93,5 +93,3 @@ function CardDetails() {
     </div>
   );
 }
-
-export { CardDetails };

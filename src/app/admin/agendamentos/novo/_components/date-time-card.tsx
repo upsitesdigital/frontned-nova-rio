@@ -6,7 +6,7 @@ import { useAdminCreateAppointmentStore } from "@/stores/admin/admin-create-appo
 const disabledDays = [{ dayOfWeek: [0, 6] }];
 const disabledDayTooltip = "Não atendemos aos Sáb, Dom e Feriados";
 
-function DateTimeCard() {
+export function DateTimeCard() {
   const { selectedDate, selectedTime, setSelectedDate, setSelectedTime } =
     useAdminCreateAppointmentStore();
 
@@ -30,5 +30,3 @@ function DateTimeCard() {
     </div>
   );
 }
-
-export { DateTimeCard };

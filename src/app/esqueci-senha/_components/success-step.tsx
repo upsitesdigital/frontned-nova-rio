@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { DsButton } from "@/design-system";
 
-function SuccessStep() {
+export function SuccessStep() {
   return (
     <div className="flex w-full flex-col items-center gap-8">
       <p className="text-center text-base leading-normal tracking-[-0.64px] text-nova-primary-dark">
@@ -14,5 +14,3 @@ function SuccessStep() {
     </div>
   );
 }
-
-export { SuccessStep };

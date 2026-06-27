@@ -3,7 +3,7 @@
 import { DsAgendaCard } from "@/design-system";
 import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
-function AgendaSection() {
+export function AgendaSection() {
   const currentMonth = useAdminEmployeeEditStore((s) => s.currentMonth);
   const busyDates = useAdminEmployeeEditStore((s) => s.busyDates);
   const setCurrentMonth = useAdminEmployeeEditStore((s) => s.setCurrentMonth);
@@ -17,5 +17,3 @@ function AgendaSection() {
     />
   );
 }
-
-export { AgendaSection };

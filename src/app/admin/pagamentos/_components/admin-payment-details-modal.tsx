@@ -54,7 +54,7 @@ function buildDetails(payment: AdminPayment): DsApprovalPopupDetail[] {
   ];
 }
 
-function AdminPaymentDetailsModal() {
+export function AdminPaymentDetailsModal() {
   const { selectedPaymentId, selectedPayment, isDetailLoading, detailError, closeDetails } =
     useAdminPaymentsStore();
 
@@ -107,5 +107,3 @@ function AdminPaymentDetailsModal() {
     </div>
   );
 }
-
-export { AdminPaymentDetailsModal };

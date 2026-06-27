@@ -12,7 +12,7 @@ interface DsAppointmentTableHeaderProps {
 
 function DsAppointmentTableHeader({ columns, className }: DsAppointmentTableHeaderProps) {
   return (
-    <div className={cn("flex items-center p-4", className)}>
+    <div className={cn("flex items-center gap-4 p-4", className)}>
       {columns.map((col) => (
         <p
           key={col.label}

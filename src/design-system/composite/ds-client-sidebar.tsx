@@ -5,6 +5,7 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
   PlusIcon,
+  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsSidebar } from "@/design-system/navigation";
@@ -29,6 +30,8 @@ interface DsClientSidebarProps {
   activePath?: string;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
+  onMobileClose?: () => void;
+  closeLabel?: string;
   onNavigate?: (path: string) => void;
   onScheduleService?: () => void;
   onSignOut?: () => void;
@@ -44,6 +47,8 @@ function DsClientSidebar({
   activePath,
   collapsed,
   onCollapsedChange,
+  onMobileClose,
+  closeLabel = "Fechar menu",
   onNavigate,
   onScheduleService,
   onSignOut,
@@ -67,11 +72,20 @@ function DsClientSidebar({
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary max-md:hidden",
                 collapsed && "px-0",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
               onClick={handleToggle}
+            />
+            <DsIconButton
+              icon={XIcon}
+              iconSize="lg"
+              ariaLabel={closeLabel}
+              variant="outline"
+              size="icon-sm"
+              className="absolute right-0 top-5.5 size-9 rounded-[10px] border-nova-gray-300 text-nova-primary md:hidden"
+              onClick={onMobileClose}
             />
           </div>
           <button

@@ -145,7 +145,7 @@ export default function AdminServicesPage() {
       <div className="relative flex flex-col gap-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
-            <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+            <h1 className="text-3xl font-semibold leading-[1.3] tracking-[-1.92px] sm:text-5xl text-black">
               Serviços
             </h1>
             <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">

@@ -1,43 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRightIcon,
-  BroomIcon,
-  DeviceMobileCameraIcon,
-  UsersThreeIcon,
-  CurrencyDollarIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
-import { DsButton, DsIcon } from "@/design-system";
+import { DsButton } from "@/design-system";
 import { LandingNavbar } from "./landing-navbar";
 
-const howItWorksSteps = [
-  {
-    icon: BroomIcon,
-    title: "Escolha o serviço",
-    description: "Selecione faxina regular ou limpeza recorrente.",
-  },
-  {
-    icon: DeviceMobileCameraIcon,
-    title: "Agende online",
-    description: "Escolha data e horário com antecedência mínima de 1h.",
-  },
-  {
-    icon: UsersThreeIcon,
-    title: "Equipe especializada",
-    description: "Profissionais uniformizados e treinados chegam até você.",
-  },
-  {
-    icon: CurrencyDollarIcon,
-    title: "Pagamento facilitado",
-    description: "Cobrança automática, sem burocracia e sem inadimplência.",
-  },
-] as const;
-
-function LandingHero() {
+export function LandingHero() {
   return (
-    <section className="relative min-h-214 overflow-hidden bg-black">
+    <section className="relative min-h-150 overflow-hidden bg-black md:min-h-214">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/landing/bg-hero.png')" }}
@@ -45,7 +16,7 @@ function LandingHero() {
 
       <LandingNavbar />
 
-      <div className="relative z-10 mx-auto flex max-w-304 flex-col items-center px-6 pb-24 pt-49 text-center">
+      <div className="relative z-10 mx-auto flex max-w-304 flex-col items-center px-6 pb-24 pt-32 text-center md:pt-49">
         <motion.div
           className="flex max-w-225.75 flex-col items-center gap-12"
           initial={{ opacity: 0, y: 24 }}
@@ -64,7 +35,7 @@ function LandingHero() {
           </motion.div>
 
           <div className="flex flex-col items-center gap-4 text-white">
-            <h1 className="max-w-177.75 text-[42px] leading-[1.05] font-normal tracking-[-2.24px] md:text-[56px]">
+            <h1 className="max-w-177.75 text-[32px] leading-[1.05] font-normal tracking-[-2.24px] sm:text-[42px] md:text-[56px]">
               Limpeza empresarial sob demanda no padrão que sua empresa merece
             </h1>
             <p className="max-w-225.75 text-lg leading-normal tracking-[-0.8px] text-white md:text-[20px]">
@@ -97,59 +68,3 @@ function LandingHero() {
     </section>
   );
 }
-
-function LandingHowItWorks() {
-  return (
-    <section className="bg-nova-gray-100 py-30">
-      <div className="mx-auto max-w-304 px-6">
-        <motion.div
-          className="mx-auto mb-16 flex max-w-200 flex-col items-center gap-6 text-center"
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.45 }}
-        >
-          <p className="text-base leading-[1.2] font-semibold tracking-[3.2px] text-nova-primary-dark uppercase">
-            Como Funciona
-          </p>
-          <h2 className="text-[36px] leading-[1.3] font-medium tracking-[-1.44px] text-black">
-            Agendamento em minutos, serviço impecável sempre que precisar.
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {howItWorksSteps.map((step, index) => (
-            <motion.article
-              key={step.title}
-              className="flex h-63.75 flex-col items-center bg-white px-2 pt-8 text-center transition-shadow duration-300 hover:shadow-[0_18px_30px_-18px_rgba(0,0,0,0.35)]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.35, delay: index * 0.06 }}
-              whileHover={{ y: -6 }}
-            >
-              <motion.div
-                className="flex size-16 items-center justify-center rounded-full bg-nova-primary-light"
-                whileHover={{ rotate: -6, scale: 1.06 }}
-                transition={{ type: "spring", stiffness: 280, damping: 18 }}
-              >
-                <DsIcon icon={step.icon} size="xl" className="text-nova-primary-dark" />
-              </motion.div>
-
-              <div className="mt-6 flex w-full max-w-69 flex-col items-center gap-2">
-                <h3 className="text-2xl leading-[1.3] font-medium tracking-[-0.96px] text-black">
-                  {step.title}
-                </h3>
-                <p className="text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
-                  {step.description}
-                </p>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export { LandingHero, LandingHowItWorks };

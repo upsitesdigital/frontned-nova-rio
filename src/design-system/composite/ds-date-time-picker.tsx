@@ -69,11 +69,11 @@ function DsDateTimePicker({
   return (
     <div
       className={cn(
-        "inline-flex flex-col overflow-hidden rounded-xl border border-nova-gray-300 bg-white",
+        "flex w-full flex-col overflow-hidden rounded-xl border border-nova-gray-300 bg-white md:inline-flex md:w-auto",
         className,
       )}
     >
-      <div className="flex">
+      <div className="flex flex-col sm:flex-row">
         <Calendar
           mode="single"
           selected={date}
@@ -82,7 +82,7 @@ function DsDateTimePicker({
           disabledDayTooltip={disabledDayTooltip}
           className="p-4"
         />
-        <DsSeparator orientation="vertical" className="h-auto" />
+        <DsSeparator orientation="vertical" className="h-auto max-sm:hidden" />
         <div className="flex items-start px-3 py-4">
           <DsTimeSlotPicker
             slots={timeSlots}

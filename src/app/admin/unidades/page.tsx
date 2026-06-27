@@ -12,7 +12,11 @@ import {
   DsLoadingState,
   DsPageHeader,
   DsPagination,
+  DsRecordCard,
+  DsEmptyState,
+  DsSelect,
 } from "@/design-system";
+import { BrazilStates } from "@/lib/display/brazil-states";
 import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { useAdminUnitsStore } from "@/stores/admin/admin-units-store";
 
@@ -107,14 +111,13 @@ export default function AdminUnitsPage() {
         {error && <DsAlert variant="error" title={error} className="max-w-132" />}
 
         <div className="overflow-hidden rounded-[10px] border border-nova-gray-100 bg-white">
-          <div className="overflow-x-auto">
+          <div className="hidden overflow-x-auto lg:block">
             <table className="min-w-full text-left">
               <thead className="border-b border-nova-gray-100">
                 <tr>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Nome</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Endereço</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Raio</th>
-                  <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Coordenadas</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Atualizado</th>
                   <th className="px-6 py-4 text-sm font-medium text-nova-gray-700">Ações</th>
                 </tr>
@@ -122,7 +125,7 @@ export default function AdminUnitsPage() {
               <tbody>
                 {units.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-nova-gray-600">
+                    <td colSpan={5} className="px-6 py-10 text-center text-nova-gray-600">
                       Nenhuma unidade cadastrada.
                     </td>
                   </tr>
@@ -136,11 +139,6 @@ export default function AdminUnitsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">
                       {unit.serviceRadiusKm.toFixed(1).replace(".", ",")} km
-                    </td>
-                    <td className="px-6 py-4 text-sm text-nova-gray-700">
-                      {unit.latitude !== null && unit.longitude !== null
-                        ? `${unit.latitude.toFixed(4)}, ${unit.longitude.toFixed(4)}`
-                        : "Não informado"}
                     </td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">
                       {formatDate(unit.updatedAt)}
@@ -177,6 +175,49 @@ export default function AdminUnitsPage() {
             </table>
           </div>
 
+          <div className="flex flex-col gap-3 p-4 lg:hidden">
+            {units.length === 0 ? (
+              <DsEmptyState message="Nenhuma unidade cadastrada." className="bg-white p-4" />
+            ) : (
+              units.map((unit) => (
+                <DsRecordCard
+                  key={unit.id}
+                  title={unit.name}
+                  fields={[
+                    { label: "Endereço", value: unit.address ?? "Não informado" },
+                    {
+                      label: "Raio",
+                      value: `${unit.serviceRadiusKm.toFixed(1).replace(".", ",")} km`,
+                    },
+                    { label: "Atualizado", value: formatDate(unit.updatedAt) },
+                  ]}
+                  actions={
+                    <>
+                      <DsButton
+                        variant="outline"
+                        className="h-9 border-nova-gray-200 px-3 text-sm"
+                        onClick={() => openEditEditor(unit.id)}
+                        disabled={isSaving || deletingUnitId === unit.id}
+                      >
+                        <DsIcon icon={PencilSimpleIcon} size="sm" className="text-nova-gray-700" />
+                        Editar
+                      </DsButton>
+                      <DsButton
+                        variant="outline"
+                        className="h-9 border-nova-error/40 px-3 text-sm text-nova-error hover:bg-nova-error/5"
+                        onClick={() => setPendingDeleteUnitId(unit.id)}
+                        disabled={isSaving || deletingUnitId === unit.id}
+                      >
+                        <DsIcon icon={TrashIcon} size="sm" className="text-nova-error" />
+                        Excluir
+                      </DsButton>
+                    </>
+                  }
+                />
+              ))
+            )}
+          </div>
+
           {units.length > 0 && (
             <div className="border-t border-nova-gray-100 px-6">
               <DsPagination
@@ -205,9 +246,9 @@ export default function AdminUnitsPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="flex w-full max-w-170 flex-col gap-6 rounded-2xl bg-white p-8">
+            <div className="flex max-h-[90vh] w-full max-w-170 flex-col gap-6 overflow-y-auto rounded-2xl bg-white p-8">
               <div className="flex flex-col gap-1">
-                <h2 className="text-3xl font-medium text-black">
+                <h2 className="text-2xl font-medium text-black sm:text-3xl">
                   {form.name ? "Editar unidade" : "Nova unidade"}
                 </h2>
                 <p className="text-sm text-nova-gray-700">
@@ -233,31 +274,58 @@ export default function AdminUnitsPage() {
                     placeholder="5"
                   />
                 </DsFormField>
+              </div>
 
-                <DsFormField label="Latitude">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <DsFormField label="Endereço" className="md:col-span-2">
                   <DsInput
-                    value={form.latitudeInput}
-                    onChange={(event) => updateFormField("latitudeInput", event.target.value)}
-                    placeholder="-22.9068"
+                    value={form.street}
+                    onChange={(event) => updateFormField("street", event.target.value)}
+                    placeholder="Ex.: Rua das Flores"
                   />
                 </DsFormField>
 
-                <DsFormField label="Longitude">
+                <DsFormField label="Número">
                   <DsInput
-                    value={form.longitudeInput}
-                    onChange={(event) => updateFormField("longitudeInput", event.target.value)}
-                    placeholder="-43.1729"
+                    value={form.number}
+                    onChange={(event) => updateFormField("number", event.target.value)}
+                    placeholder="123"
+                  />
+                </DsFormField>
+
+                <DsFormField label="Bairro">
+                  <DsInput
+                    value={form.neighborhood}
+                    onChange={(event) => updateFormField("neighborhood", event.target.value)}
+                    placeholder="Ex.: Centro"
+                  />
+                </DsFormField>
+
+                <DsFormField label="CEP">
+                  <DsInput
+                    value={form.cep}
+                    onChange={(event) => updateFormField("cep", event.target.value)}
+                    placeholder="00000-000"
+                  />
+                </DsFormField>
+
+                <DsFormField label="Cidade">
+                  <DsInput
+                    value={form.city}
+                    onChange={(event) => updateFormField("city", event.target.value)}
+                    placeholder="Ex.: Rio de Janeiro"
+                  />
+                </DsFormField>
+
+                <DsFormField label="Estado" className="md:col-span-3">
+                  <DsSelect
+                    options={BrazilStates.options}
+                    value={form.state}
+                    onValueChange={(value) => updateFormField("state", value)}
+                    placeholder="Selecione o estado"
                   />
                 </DsFormField>
               </div>
-
-              <DsFormField label="Endereço">
-                <DsInput
-                  value={form.address}
-                  onChange={(event) => updateFormField("address", event.target.value)}
-                  placeholder="Ex.: Rua das Flores, 123 - Centro"
-                />
-              </DsFormField>
 
               <div className="flex items-center justify-end gap-3">
                 <DsButton

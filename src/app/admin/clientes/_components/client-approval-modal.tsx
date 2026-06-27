@@ -15,7 +15,7 @@ const pendingStatus: DsApprovalPopupStatus = {
   bgColor: "bg-nova-warning/10",
 };
 
-interface ClientApprovalModalProps {
+export interface ClientApprovalModalProps {
   client: DsClientTableClient | null;
   onApprove: () => void;
   onReject: () => void;
@@ -32,7 +32,7 @@ function buildDetails(client: DsClientTableClient): DsApprovalPopupDetail[] {
   ];
 }
 
-function ClientApprovalModal({
+export function ClientApprovalModal({
   client,
   onApprove,
   onReject,
@@ -70,5 +70,3 @@ function ClientApprovalModal({
     </div>
   );
 }
-
-export { ClientApprovalModal, type ClientApprovalModalProps };

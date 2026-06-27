@@ -67,14 +67,14 @@ export default function AdminEmployeeEditPage() {
         }
       />
 
-      <div className="flex items-start gap-4">
-        <div className="w-157.75 shrink-0">
+      <div className="flex flex-col items-start gap-4 xl:flex-row">
+        <div className="w-full xl:w-157.75 xl:shrink-0">
           <PersonalInfoSection />
         </div>
-        <div className="w-125 shrink-0">
+        <div className="w-full xl:w-125 xl:shrink-0">
           <ServicesSection />
         </div>
-        <div className="w-93 shrink-0">
+        <div className="w-full xl:w-93 xl:shrink-0">
           <AgendaSection />
         </div>
       </div>

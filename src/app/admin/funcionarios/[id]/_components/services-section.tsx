@@ -12,7 +12,7 @@ import {
 } from "@/design-system";
 import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
-function ServicesSection() {
+export function ServicesSection() {
   const form = useAdminEmployeeEditStore((s) => s.form);
   const updateField = useAdminEmployeeEditStore((s) => s.updateField);
   const unitOptions = useAdminEmployeeEditStore((s) => s.unitOptions);
@@ -70,5 +70,3 @@ function ServicesSection() {
     </DsFormCard>
   );
 }
-
-export { ServicesSection };

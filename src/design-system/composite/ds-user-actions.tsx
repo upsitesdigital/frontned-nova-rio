@@ -1,15 +1,17 @@
 "use client";
 
-import { Bell, Gear, CaretDownIcon, User, UserCircleCheck } from "@phosphor-icons/react/dist/ssr";
+import {
+  BellIcon,
+  GearIcon,
+  CaretDownIcon,
+  UserIcon,
+  UserCircleCheckIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/design-system/ui/dropdown-menu";
+import { DsUserMenuItem } from "@/design-system/navigation/ds-user-menu-item";
+import { useUserMenuStore } from "@/stores/ui/user-menu-store";
 
 interface DsUserActionsProps {
   notificationsLabel: string;
@@ -24,6 +26,8 @@ interface DsUserActionsProps {
   onSettingsClick?: () => void;
   onProfileClick?: () => void;
   onAccountClick?: () => void;
+  profileHref?: string;
+  accountHref?: string;
   className?: string;
 }
 
@@ -45,8 +49,13 @@ function DsUserActions({
   onSettingsClick,
   onProfileClick,
   onAccountClick,
+  profileHref,
+  accountHref,
   className,
 }: DsUserActionsProps) {
+  const open = useUserMenuStore((s) => s.open);
+  const setOpen = useUserMenuStore((s) => s.setOpen);
+
   return (
     <div className={cn("flex items-center gap-4", className)}>
       <button
@@ -55,7 +64,7 @@ function DsUserActions({
         className="relative flex size-12 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
         aria-label={notificationsLabel}
       >
-        <DsIcon icon={Bell} size="lg" />
+        <DsIcon icon={BellIcon} size="lg" />
         {notificationCount > 0 && (
           <span className="absolute right-1.5 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-nova-error px-1 text-[10px] font-bold leading-none text-white">
             {formatBadge(notificationCount)}
@@ -69,46 +78,53 @@ function DsUserActions({
         className="flex size-12 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
         aria-label={settingsLabel}
       >
-        <DsIcon icon={Gear} size="lg" />
+        <DsIcon icon={GearIcon} size="lg" />
       </button>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            className="flex shrink-0 cursor-pointer items-center gap-1.5"
-            aria-label={menuLabel}
-          >
-            <Avatar className="size-12 border border-nova-gray-300">
-              {avatarSrc && <AvatarImage src={avatarSrc} alt={initials} />}
-              <AvatarFallback className="bg-nova-primary text-[20px] font-medium leading-[1.3] text-white">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <DsIcon icon={CaretDownIcon} size="md" className="text-nova-gray-400" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          sideOffset={8}
-          className="w-56 rounded-[10px] border-none p-2 shadow-[0px_12px_44px_0px_rgba(111,124,142,0.05)]"
+      <div className="relative shrink-0">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="flex shrink-0 cursor-pointer items-center gap-1.5"
+          aria-label={menuLabel}
+          aria-expanded={open}
         >
-          <DropdownMenuItem
-            onClick={onProfileClick}
-            className="flex h-14 cursor-pointer items-center gap-2 rounded-[10px] bg-nova-gray-50 px-6 py-4 text-base font-medium tracking-[-0.64px] text-nova-gray-700 hover:bg-nova-gray-100 focus:bg-nova-gray-100"
-          >
-            <DsIcon icon={User} size="lg" className="text-nova-gray-700" />
-            {profileLabel}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={onAccountClick}
-            className="flex h-14 cursor-pointer items-center gap-2 rounded-[10px] px-6 py-4 text-base font-medium tracking-[-0.64px] text-nova-gray-700 hover:bg-nova-gray-50 focus:bg-nova-gray-50"
-          >
-            <DsIcon icon={UserCircleCheck} size="lg" className="text-nova-gray-700" />
-            {accountLabel}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <Avatar className="size-12 border border-nova-gray-300">
+            {avatarSrc && <AvatarImage src={avatarSrc} alt={initials} />}
+            <AvatarFallback className="bg-nova-primary text-[20px] font-medium leading-[1.3] text-white">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <DsIcon icon={CaretDownIcon} size="md" className="text-nova-gray-400" />
+        </button>
+
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
+            <div className="absolute right-0 top-full z-50 mt-2 flex w-56 flex-col gap-1 rounded-[10px] bg-white p-2 shadow-(--nova-shadow-soft)">
+              <DsUserMenuItem
+                icon={UserIcon}
+                label={profileLabel}
+                href={profileHref}
+                onClick={() => {
+                  setOpen(false);
+                  onProfileClick?.();
+                }}
+                className="bg-nova-gray-50"
+              />
+              <DsUserMenuItem
+                icon={UserCircleCheckIcon}
+                label={accountLabel}
+                href={accountHref}
+                onClick={() => {
+                  setOpen(false);
+                  onAccountClick?.();
+                }}
+              />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

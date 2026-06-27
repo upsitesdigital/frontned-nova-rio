@@ -3,7 +3,7 @@
 import { DsDialog, DsFormField, DsInput, DsButton } from "@/design-system";
 import { useEmailChangeStore } from "@/stores/client/email-change-store";
 
-function EmailChangeDialog() {
+export function EmailChangeDialog() {
   const {
     emailDialogOpen,
     emailChangeStep,
@@ -66,5 +66,3 @@ function EmailChangeDialog() {
     </DsDialog>
   );
 }
-
-export { EmailChangeDialog };

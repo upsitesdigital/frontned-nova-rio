@@ -26,7 +26,16 @@ function DsSheet({
 }: DsSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side={side} className={cn(className)}>
+      <SheetContent
+        side={side}
+        className={cn(className)}
+        onInteractOutside={(event) => {
+          const target = event.detail.originalEvent.target as HTMLElement | null;
+          if (target?.closest('[data-slot="dialog-content"]')) {
+            event.preventDefault();
+          }
+        }}
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           {description && <SheetDescription>{description}</SheetDescription>}
