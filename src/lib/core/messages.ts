@@ -216,6 +216,19 @@ class Messages {
     invalidFields: "Verifique os dados destacados antes de continuar.",
     createAppointmentError: "Erro ao criar agendamento.",
   };
+
+  static readonly orderSummary = {
+    title: "Resumo do pedido",
+    service: "Serviço",
+    subtotal: "Subtotal",
+    discount: "Desconto",
+    serviceFee: "Taxa de serviço",
+    total: "Total",
+    terms: "Ao confirmar o pagamento, você concorda com nossos termos de serviço",
+    pay: "Pagar",
+    processing: "Processando...",
+    emptyService: "---",
+  };
 }
 
 export { Messages };
