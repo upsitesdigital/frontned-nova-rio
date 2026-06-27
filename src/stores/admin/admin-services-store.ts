@@ -8,11 +8,11 @@ import { UpdateAdminService } from "@/use-cases/admin-services/update-admin-serv
 import { DeleteAdminService } from "@/use-cases/admin-services/delete-admin-service";
 import type { AdminService, SaveAdminServicePayload } from "@/api/admin/admin-services-api";
 
-type ServiceFrequency = "WEEKLY" | "BIWEEKLY" | "MONTHLY";
-type PaymentOption = "single" | "package" | "recurrence";
-type SaveServiceResult = "created" | "updated" | null;
+export type ServiceFrequency = "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+export type PaymentOption = "single" | "package" | "recurrence";
+export type SaveServiceResult = "created" | "updated" | null;
 
-interface AdminServiceFormData {
+export interface AdminServiceFormData {
   name: string;
   description: string;
   basePriceInput: string;
@@ -56,7 +56,7 @@ interface AdminServicesActions {
   reset: () => void;
 }
 
-type AdminServicesStore = AdminServicesState & AdminServicesActions;
+export type AdminServicesStore = AdminServicesState & AdminServicesActions;
 
 const iconOptions = ["broom", "sketch-logo", "star-four"] as const;
 
@@ -132,10 +132,11 @@ function toSavePayload(form: AdminServiceFormData): SaveAdminServicePayload | nu
     allowSingle: form.allowSingle,
     allowPackage: form.allowPackage,
     allowRecurrence: form.allowRecurrence,
+    recurrenceFrequencies: form.allowRecurrence ? form.recurrenceFrequencies : [],
   };
 }
 
-const useAdminServicesStore = create<AdminServicesStore>()((set, get) => ({
+export const useAdminServicesStore = create<AdminServicesStore>()((set, get) => ({
   ...initialState,
 
   loadServices: async () => {
@@ -200,7 +201,7 @@ const useAdminServicesStore = create<AdminServicesStore>()((set, get) => ({
         allowSingle: service.allowSingle,
         allowPackage: service.allowPackage,
         allowRecurrence: service.allowRecurrence,
-        recurrenceFrequencies: service.allowRecurrence ? ["WEEKLY", "MONTHLY"] : [],
+        recurrenceFrequencies: service.recurrenceFrequencies,
       },
     });
   },
@@ -339,12 +340,3 @@ const useAdminServicesStore = create<AdminServicesStore>()((set, get) => ({
     set(initialState);
   },
 }));
-
-export {
-  useAdminServicesStore,
-  type AdminServicesStore,
-  type AdminServiceFormData,
-  type ServiceFrequency,
-  type PaymentOption,
-  type SaveServiceResult,
-};
