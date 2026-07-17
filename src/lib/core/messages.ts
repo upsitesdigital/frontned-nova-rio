@@ -77,7 +77,10 @@ class Messages {
   };
 
   static readonly services = {
-    loadError: "Erro ao carregar serviços.",
+    loadErrorTitle: "Ops, algo deu errado",
+    loadError:
+      "Tivemos um problema técnico ao carregar os serviços. Nossa equipe já está trabalhando nisso. Tente novamente em instantes.",
+    retry: "Tentar novamente",
   };
 
   static readonly registration = {
