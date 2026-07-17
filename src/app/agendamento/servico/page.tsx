@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowClockwise } from "@phosphor-icons/react/dist/ssr";
 
 import {
   DsButton,
+  DsEmptyState,
   DsFlowCard,
   DsFlowHeader,
   DsRecurrenceConfig,
@@ -12,6 +14,7 @@ import {
   DsSkeleton,
 } from "@/design-system";
 import { SchedulingConfig } from "@/config/scheduling";
+import { Messages } from "@/lib/core/messages";
 import { Formatters } from "@/lib/formatting/formatters";
 import { IconMap } from "@/lib/display/icon-map";
 import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
@@ -23,6 +26,7 @@ export default function ServicoPage() {
 
   const services = useServicesStore((s) => s.services);
   const isLoadingServices = useServicesStore((s) => s.isLoadingServices);
+  const servicesError = useServicesStore((s) => s.error);
   const selectedServiceId = useServicesStore((s) => s.selectedServiceId);
   const loadServices = useServicesStore((s) => s.loadServices);
   const setSelectedServiceId = useServicesStore((s) => s.setSelectedServiceId);
@@ -58,12 +62,20 @@ export default function ServicoPage() {
         subtitle="Selecione o tipo de serviço e a duração desejada."
       />
 
-      {isLoadingServices || services.length === 0 ? (
+      {isLoadingServices ? (
         <div className="flex w-full flex-col gap-4 sm:flex-row">
           <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
           <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
           <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
         </div>
+      ) : servicesError ? (
+        <DsEmptyState
+          title={Messages.services.loadErrorTitle}
+          message={servicesError}
+          actionLabel={Messages.services.retry}
+          actionIcon={ArrowClockwise}
+          onAction={loadServices}
+        />
       ) : (
         <div className="flex w-full flex-col gap-4 sm:flex-row">
           {services.map((service) => (
