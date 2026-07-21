@@ -10,6 +10,7 @@ import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { useDashboardStore } from "@/stores/client/dashboard-store";
 import { useDashboardPaymentsStore } from "@/stores/client/dashboard-payments-store";
 import { useSidebarStore } from "@/stores/ui/sidebar-store";
+import { useToastStore } from "@/stores/ui/toast-store";
 import { useAddressStore } from "@/stores/scheduling/address-store";
 import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 import { useServicesStore } from "@/stores/client/services-store";
@@ -54,9 +55,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [isAuthError, summary, router]);
 
+  const showToast = useToastStore((s) => s.showToast);
+
   const handleSignOut = () => {
     SignOutClient.execute();
     router.push("/login");
+  };
+
+  const handleSettingsClick = () => {
+    router.push("/dashboard/perfil");
+  };
+
+  const handleNotificationClick = () => {
+    showToast("Notificações em breve.", "info");
   };
 
   const handleScheduleService = () => {
@@ -92,6 +103,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         onNavigate={(path) => router.push(path)}
         onScheduleService={handleScheduleService}
         onSignOut={handleSignOut}
+        onSettingsClick={handleSettingsClick}
+        onNotificationClick={handleNotificationClick}
         profileHref="/dashboard/perfil"
         accountHref="/dashboard/conta"
       >

@@ -8,7 +8,7 @@ import { DsIconButton } from "@/design-system/primitives";
 import { DsAdminSidebar, type DsAdminNavItem } from "./ds-admin-sidebar";
 import { DsUserActions } from "./ds-user-actions";
 
-interface DsAdminDashboardShellProps {
+export interface DsAdminDashboardShellProps {
   items: DsAdminNavItem[];
   signOutLabel: string;
   expandLabel: string;
@@ -30,12 +30,14 @@ interface DsAdminDashboardShellProps {
   onSignOut?: () => void;
   onProfileClick?: () => void;
   onAccountClick?: () => void;
+  onSettingsClick?: () => void;
+  onNotificationClick?: () => void;
   profileHref?: string;
   accountHref?: string;
   children: React.ReactNode;
 }
 
-function DsAdminDashboardShell({
+export function DsAdminDashboardShell({
   items,
   signOutLabel,
   expandLabel,
@@ -57,6 +59,8 @@ function DsAdminDashboardShell({
   onSignOut,
   onProfileClick,
   onAccountClick,
+  onSettingsClick,
+  onNotificationClick,
   profileHref,
   accountHref,
   children,
@@ -108,6 +112,8 @@ function DsAdminDashboardShell({
             accountHref={accountHref}
             onProfileClick={onProfileClick}
             onAccountClick={onAccountClick}
+            onSettingsClick={onSettingsClick}
+            onNotificationClick={onNotificationClick}
           />
         </DsTopbar>
 
@@ -116,5 +122,3 @@ function DsAdminDashboardShell({
     </DsSidebarLayout>
   );
 }
-
-export { DsAdminDashboardShell, type DsAdminDashboardShellProps };

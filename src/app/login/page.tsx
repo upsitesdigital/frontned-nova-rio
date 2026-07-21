@@ -35,8 +35,6 @@ export default function LoginPage() {
     reset();
   }, [reset]);
 
-  const canSubmit = email.trim().length > 0 && password.trim().length > 0 && !isSubmitting;
-
   const handleSubmit = useCallback(async () => {
     const userType = await submit();
     if (userType === "admin") {
@@ -56,32 +54,40 @@ export default function LoginPage() {
             Entrar
           </h1>
 
-          <div className="flex w-full flex-col gap-4">
-            <DsFormField label="E-mail">
-              <DsInput
-                type="email"
-                placeholder="Digite seu e-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={Constants.flowInputClass}
-              />
-            </DsFormField>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleSubmit();
+            }}
+            className="flex w-full flex-col items-center gap-12"
+          >
+            <div className="flex w-full flex-col gap-4">
+              <DsFormField label="E-mail">
+                <DsInput
+                  type="email"
+                  placeholder="Digite seu e-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={Constants.flowInputClass}
+                />
+              </DsFormField>
 
-            <DsFormField label="Senha">
-              <DsPasswordInput
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                visible={pwdVisible}
-                onVisibilityChange={(v) => setPwdVisible("login-password", v)}
-                className={Constants.flowInputClass}
-              />
-            </DsFormField>
-          </div>
+              <DsFormField label="Senha">
+                <DsPasswordInput
+                  placeholder="Digite sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  visible={pwdVisible}
+                  onVisibilityChange={(v) => setPwdVisible("login-password", v)}
+                  className={Constants.flowInputClass}
+                />
+              </DsFormField>
+            </div>
 
-          <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
-            {isSubmitting ? "Entrando..." : "Entrar"}
-          </DsButton>
+            <DsButton type="submit" size="flow" disabled={isSubmitting} className="w-64.25">
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </DsButton>
+          </form>
         </div>
 
         {error && <p className="mt-4 text-sm leading-normal text-nova-error">{error}</p>}

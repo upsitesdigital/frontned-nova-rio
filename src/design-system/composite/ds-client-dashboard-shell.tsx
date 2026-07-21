@@ -8,7 +8,7 @@ import { DsIconButton } from "@/design-system/primitives";
 import { DsClientSidebar, type DsClientNavItem } from "./ds-client-sidebar";
 import { DsUserActions } from "./ds-user-actions";
 
-interface DsClientDashboardShellProps {
+export interface DsClientDashboardShellProps {
   items: DsClientNavItem[];
   scheduleLabel: string;
   signOutLabel: string;
@@ -32,12 +32,14 @@ interface DsClientDashboardShellProps {
   onSignOut?: () => void;
   onProfileClick?: () => void;
   onAccountClick?: () => void;
+  onSettingsClick?: () => void;
+  onNotificationClick?: () => void;
   profileHref?: string;
   accountHref?: string;
   children: React.ReactNode;
 }
 
-function DsClientDashboardShell({
+export function DsClientDashboardShell({
   items,
   scheduleLabel,
   signOutLabel,
@@ -61,6 +63,8 @@ function DsClientDashboardShell({
   onSignOut,
   onProfileClick,
   onAccountClick,
+  onSettingsClick,
+  onNotificationClick,
   profileHref,
   accountHref,
   children,
@@ -114,6 +118,8 @@ function DsClientDashboardShell({
             accountHref={accountHref}
             onProfileClick={onProfileClick}
             onAccountClick={onAccountClick}
+            onSettingsClick={onSettingsClick}
+            onNotificationClick={onNotificationClick}
           />
         </DsTopbar>
 
@@ -123,4 +129,3 @@ function DsClientDashboardShell({
   );
 }
 
-export { DsClientDashboardShell, type DsClientDashboardShellProps };
