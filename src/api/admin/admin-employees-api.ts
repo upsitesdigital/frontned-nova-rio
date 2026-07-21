@@ -57,6 +57,29 @@ class AdminEmployeesApi {
     return HttpClient.authGet<AdminEmployee>(`/employees/${id}`);
   }
 
+  static async createAdminEmployee(
+    data: Pick<
+      AdminEmployee,
+      "name" | "email" | "cpf" | "phone" | "address" | "availabilityFrom" | "availabilityTo"
+    > & {
+      notes?: string | null;
+      unitId?: number | null;
+    },
+  ): Promise<AdminEmployee> {
+    const body = {
+      name: data.name,
+      email: data.email,
+      cpf: data.cpf,
+      ...(data.phone ? { phone: data.phone } : {}),
+      ...(data.address ? { address: data.address } : {}),
+      ...(data.availabilityFrom ? { availabilityFrom: data.availabilityFrom } : {}),
+      ...(data.availabilityTo ? { availabilityTo: data.availabilityTo } : {}),
+      ...(data.notes ? { notes: data.notes } : {}),
+      ...(data.unitId ? { unitId: data.unitId } : {}),
+    };
+    return HttpClient.authPost<AdminEmployee>("/employees", body);
+  }
+
   static async updateAdminEmployee(
     id: number,
     data: Partial<
@@ -74,7 +97,10 @@ class AdminEmployeesApi {
       >
     > & { unitId?: number },
   ): Promise<AdminEmployee> {
-    return HttpClient.authPatchWithBody<AdminEmployee>(`/employees/${id}`, data);
+    const body = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== null && value !== undefined),
+    );
+    return HttpClient.authPatchWithBody<AdminEmployee>(`/employees/${id}`, body);
   }
 }
 

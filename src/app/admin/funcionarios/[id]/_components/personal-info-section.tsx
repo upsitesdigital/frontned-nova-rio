@@ -1,6 +1,6 @@
 "use client";
 
-import { DsAvatar, DsButton, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
+import { DsAvatar, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
 import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
 const statusOptions = [
@@ -17,9 +17,6 @@ export function PersonalInfoSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <DsAvatar fallback={form.name.charAt(0).toUpperCase() || "?"} size="xl" variant="brand" />
-          <DsButton variant="soft" size="soft-md">
-            Alterar imagem
-          </DsButton>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-base font-medium leading-[1.3] text-nova-gray-700">Status</span>
