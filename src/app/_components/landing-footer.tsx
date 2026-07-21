@@ -8,9 +8,9 @@ export function LandingFooter() {
           ©{new Date().getFullYear()} Nova Rio Pay Per Use. Todos os direitos reservados.
         </p>
         <p className="text-sm leading-normal text-white/70">
-          Criação de Sites por{" "}
+          Criação de sites por{" "}
           <Link
-            href="https://upsites.digital/?origin=nova-rio"
+            href="https://upsites.digital/?origin=novario"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-white underline underline-offset-2 transition-colors hover:text-white/80"
