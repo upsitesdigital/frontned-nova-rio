@@ -121,6 +121,8 @@ class Messages {
     loadDetailError: "Erro ao carregar funcionário.",
     saveSuccess: "Funcionário salvo com sucesso",
     saveError: "Erro ao salvar funcionário.",
+    createError: "Erro ao criar funcionário.",
+    createSuccess: "Funcionário criado com sucesso.",
     scheduleError: "Erro ao carregar agenda.",
   };
 

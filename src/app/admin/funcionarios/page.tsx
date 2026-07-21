@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsAlert, DsButton, DsIcon, DsPageHeader } from "@/design-system";
 import { useAdminEmployeesStore } from "@/stores/admin/admin-employees-store";
@@ -10,6 +11,7 @@ import { EmployeesList } from "./_components/employees-list";
 import { EmployeeSchedulePopup } from "./_components/employee-schedule-popup";
 
 export default function AdminEmployeesPage() {
+  const router = useRouter();
   const { error, loadEmployees, reset } = useAdminEmployeesStore();
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function AdminEmployeesPage() {
             variant="default"
             size="flow-sm"
             className="w-68 bg-nova-primary hover:bg-nova-primary/90"
+            onClick={() => router.push("/admin/funcionarios/novo")}
           >
             <DsIcon icon={PlusIcon} size="lg" className="text-white" />
             Novo funcionário

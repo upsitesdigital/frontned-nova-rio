@@ -126,13 +126,30 @@ describe("ServiceEditStore", () => {
   });
 
   describe("confirmReschedule", () => {
-    it("should return false and set error when date or time is missing", async () => {
-      useServiceEditStore.setState({ rescheduleDate: undefined, rescheduleTime: undefined });
+    it("should save address/recurrence without requiring date or time", async () => {
+      vi.mocked(RescheduleClientAppointment.rescheduleClientAppointment).mockResolvedValue({
+        success: true,
+        error: null,
+      });
+      useServiceEditStore.setState({
+        rescheduleDate: undefined,
+        rescheduleTime: undefined,
+        recurrence: "MONTHLY",
+        locationZip: "22640-102",
+        locationAddress: "Rua Teste, 1",
+      });
 
       const result = await useServiceEditStore.getState().confirmReschedule(1);
 
-      expect(result).toBe(false);
-      expect(useServiceEditStore.getState().saveError).toBe("Selecione a data e o horario.");
+      expect(result).toBe(true);
+      expect(RescheduleClientAppointment.rescheduleClientAppointment).toHaveBeenCalledWith({
+        appointmentId: 1,
+        date: undefined,
+        time: undefined,
+        recurrenceType: "MONTHLY",
+        locationZip: "22640-102",
+        locationAddress: "Rua Teste, 1",
+      });
     });
 
     it("should reschedule and close panel on success", async () => {
@@ -153,6 +170,9 @@ describe("ServiceEditStore", () => {
         appointmentId: 1,
         date,
         time: "10:00",
+        recurrenceType: "SINGLE",
+        locationZip: undefined,
+        locationAddress: undefined,
       });
       const state = useServiceEditStore.getState();
       expect(state.rescheduleOpen).toBe(false);
