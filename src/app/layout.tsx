@@ -13,19 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_TITLE = "Limpeza Empresarial Sob Demanda | Nova Rio Pay Per Use";
+const SITE_DESCRIPTION =
+  "Limpeza empresarial pay per use para escritórios, consultórios e clínicas de alto padrão. Agende online e conte com profissionais qualificados.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: "Nova Rio — Limpeza pay per use para escritórios e consultórios",
-  description:
-    "Serviços de limpeza pay per use para escritórios e consultórios de alto padrão, com agendamento rápido, pagamento simplificado e profissionais qualificados.",
+  title: {
+    default: SITE_TITLE,
+    template: "%s | Nova Rio",
+  },
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Nova Rio — Limpeza pay per use",
-    description:
-      "Agende sua limpeza empresarial sob demanda: escritórios e consultórios de alto padrão.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     type: "website",
     locale: "pt_BR",
     siteName: "Nova Rio",
-    images: [{ url: "/images/woman-cleaner.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
 };
 
