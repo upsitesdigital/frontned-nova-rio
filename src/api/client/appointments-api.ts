@@ -24,8 +24,11 @@ interface AppointmentResponse {
 }
 
 interface RescheduleAppointmentRequest {
-  date: string;
-  startTime: string;
+  date?: string;
+  startTime?: string;
+  recurrenceType?: string;
+  locationZip?: string;
+  locationAddress?: string;
 }
 
 class AppointmentsApi {

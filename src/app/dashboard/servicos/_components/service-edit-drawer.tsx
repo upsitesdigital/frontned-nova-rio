@@ -36,6 +36,13 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
     recurrence,
     setRecurrence,
     initRecurrence,
+    locationZip,
+    locationAddress,
+    locationComplement,
+    setLocationZip,
+    setLocationAddress,
+    setLocationComplement,
+    initAddress,
     rescheduleOpen,
     rescheduleDate,
     rescheduleTime,
@@ -60,11 +67,12 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
   useEffect(() => {
     if (entry) {
       initRecurrence((entry.recurrenceType as RecurrenceType) ?? "SINGLE");
+      initAddress(entry.locationZip ?? "", entry.locationAddress ?? "");
     }
     return () => {
       reset();
     };
-  }, [entry, initRecurrence, reset]);
+  }, [entry, initRecurrence, initAddress, reset]);
 
   if (!entry) return null;
 
@@ -185,18 +193,25 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
                 <DsInput
                   id="edit-cep"
                   placeholder="00000-000"
-                  defaultValue={entry.locationZip ?? ""}
+                  value={locationZip}
+                  onChange={(e) => setLocationZip(e.target.value)}
                 />
               </DsFormField>
               <DsFormField label="Endereço" htmlFor="edit-address">
                 <DsInput
                   id="edit-address"
                   placeholder="Endereço"
-                  defaultValue={entry.locationAddress ?? ""}
+                  value={locationAddress}
+                  onChange={(e) => setLocationAddress(e.target.value)}
                 />
               </DsFormField>
               <DsFormField label="Complemento" htmlFor="edit-complement">
-                <DsInput id="edit-complement" placeholder="Complemento" defaultValue="" />
+                <DsInput
+                  id="edit-complement"
+                  placeholder="Complemento"
+                  value={locationComplement}
+                  onChange={(e) => setLocationComplement(e.target.value)}
+                />
               </DsFormField>
             </DsCollapsibleSection>
           </div>
@@ -237,7 +252,7 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
           <DsButton
             size="flow"
             className="self-start"
-            disabled={!entry.canEdit || isSaving || (!rescheduleDate && !rescheduleTime)}
+            disabled={!entry.canEdit || isSaving}
             onClick={async () => {
               const success = await confirmReschedule(entry.id);
               if (success) {
