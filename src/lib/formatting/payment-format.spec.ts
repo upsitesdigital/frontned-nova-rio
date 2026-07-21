@@ -9,6 +9,8 @@ function makePayment(overrides: Partial<PaymentEntry> = {}): PaymentEntry {
     amount: "100.00",
     method: "CREDIT_CARD",
     status: "APPROVED",
+    pixCode: null,
+    pixQrCodeUrl: null,
     paidAt: null,
     createdAt: "2026-01-01",
     appointment: { id: 1, date: "2026-01-01", service: { id: 1, name: "Corte" } },

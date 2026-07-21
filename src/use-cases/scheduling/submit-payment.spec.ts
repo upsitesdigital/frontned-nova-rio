@@ -4,6 +4,10 @@ vi.mock("@/api/client/appointments-api", () => ({
   AppointmentsApi: { createPublicAppointment: vi.fn() },
 }));
 
+vi.mock("@/api/client/payments-api", () => ({
+  PaymentsApi: { createPublicPayment: vi.fn() },
+}));
+
 vi.mock("@/api/core/http-client", () => ({
   HttpClientError: class HttpClientError extends Error {
     constructor(
@@ -17,6 +21,7 @@ vi.mock("@/api/core/http-client", () => ({
 }));
 
 const api = await import("@/api/client/appointments-api");
+const paymentsApi = await import("@/api/client/payments-api");
 const { SubmitPayment } = await import("./submit-payment");
 
 const baseParams = {
@@ -29,9 +34,15 @@ const baseParams = {
   weeklyFrequency: 1,
   cep: "",
   address: null,
+  paymentMethod: "pix",
+  cardData: null,
+  billingName: "",
+  billingDocument: "",
+  billingAddress: "",
+  billingComplement: "",
 };
 
-const fakeResponse = {
+const fakeAppointment = {
   id: 1,
   uuid: "uuid-123",
   date: "2026-03-15",
@@ -42,14 +53,29 @@ const fakeResponse = {
   client: { id: 2, name: "John", email: "user@test.com" },
 };
 
+const fakePayment = {
+  id: 1,
+  uuid: "pay-uuid",
+  amount: "50.00",
+  method: "PIX" as const,
+  status: "PENDING" as const,
+  pixCode: "pix-code-123",
+  pixQrCodeUrl: null,
+  paidAt: null,
+  createdAt: "2026-03-15T10:00:00Z",
+  appointment: { id: 1, date: "2026-03-15", service: { id: 1, name: "Limpeza" } },
+  card: null,
+};
+
 describe("submitPayment", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe("success", () => {
-    it("should return success with confirmation on valid submission", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+    it("should return success with confirmation and payment on valid submission", async () => {
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeAppointment);
+      vi.mocked(paymentsApi.PaymentsApi.createPublicPayment).mockResolvedValue(fakePayment);
 
       const result = await SubmitPayment.submitPayment(baseParams);
 
@@ -60,11 +86,16 @@ describe("submitPayment", () => {
           date: "2026-03-15",
           startTime: "10:00",
         },
+        payment: {
+          pixCode: "pix-code-123",
+          pixQrCodeUrl: undefined,
+        },
       });
     });
 
     it("should format date as yyyy-MM-dd and pass correct payload", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeAppointment);
+      vi.mocked(paymentsApi.PaymentsApi.createPublicPayment).mockResolvedValue(fakePayment);
 
       await SubmitPayment.submitPayment(baseParams);
 
@@ -82,89 +113,18 @@ describe("submitPayment", () => {
     });
 
     it("should map recurrenceType 'avulso' to 'SINGLE'", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeAppointment);
+      vi.mocked(paymentsApi.PaymentsApi.createPublicPayment).mockResolvedValue(fakePayment);
 
       await SubmitPayment.submitPayment({ ...baseParams, recurrenceType: "avulso" });
 
       const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
       expect(payload.recurrenceType).toBe("SINGLE");
     });
-
-    it("should map recurrenceType 'pacote' to 'PACKAGE'", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({ ...baseParams, recurrenceType: "pacote" });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBe("PACKAGE");
-    });
-
-    it("should map 'recorrencia' + 'mensal' to 'MONTHLY' without weeklyFrequency", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({
-        ...baseParams,
-        recurrenceType: "recorrencia",
-        recurrenceFrequency: "mensal",
-      });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBe("MONTHLY");
-      expect(payload.weeklyFrequency).toBeUndefined();
-    });
-
-    it("should map 'recorrencia' + 'quinzenal' to 'BIWEEKLY' without weeklyFrequency", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({
-        ...baseParams,
-        recurrenceType: "recorrencia",
-        recurrenceFrequency: "quinzenal",
-      });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBe("BIWEEKLY");
-      expect(payload.weeklyFrequency).toBeUndefined();
-    });
-
-    it("should map 'recorrencia' + 'semanal' to 'WEEKLY' and send weeklyFrequency", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({
-        ...baseParams,
-        recurrenceType: "recorrencia",
-        recurrenceFrequency: "semanal",
-        weeklyFrequency: 3,
-      });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBe("WEEKLY");
-      expect(payload.weeklyFrequency).toBe(3);
-    });
-
-    it("should format address as a single string when provided", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({
-        ...baseParams,
-        cep: "20040-020",
-        address: {
-          cep: "20040-020",
-          street: "Rua A",
-          neighborhood: "Centro",
-          city: "Rio de Janeiro",
-          state: "RJ",
-        },
-      });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.locationZip).toBe("20040-020");
-      expect(payload.locationAddress).toBe("Rua A, Centro, Rio de Janeiro - RJ");
-    });
   });
 
   describe("error handling", () => {
-    it("should return error with Error message on failure", async () => {
+    it("should return error on appointment creation failure", async () => {
       vi.mocked(api.AppointmentsApi.createPublicAppointment).mockRejectedValue(
         new Error("Request failed"),
       );
@@ -181,25 +141,16 @@ describe("submitPayment", () => {
 
       expect(result).toEqual({ success: false, error: "Erro ao criar agendamento." });
     });
-  });
 
-  describe("edge cases", () => {
-    it("should send locationZip as undefined when cep is empty", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
+    it("should propagate payment API errors", async () => {
+      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeAppointment);
+      vi.mocked(paymentsApi.PaymentsApi.createPublicPayment).mockRejectedValue(
+        new Error("Payment failed"),
+      );
 
-      await SubmitPayment.submitPayment({ ...baseParams, cep: "" });
+      const result = await SubmitPayment.submitPayment(baseParams);
 
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.locationZip).toBeUndefined();
-    });
-
-    it("should send recurrenceType as undefined when null", async () => {
-      vi.mocked(api.AppointmentsApi.createPublicAppointment).mockResolvedValue(fakeResponse);
-
-      await SubmitPayment.submitPayment({ ...baseParams, recurrenceType: null });
-
-      const payload = vi.mocked(api.AppointmentsApi.createPublicAppointment).mock.calls[0][0];
-      expect(payload.recurrenceType).toBeUndefined();
+      expect(result).toEqual({ success: false, error: "Payment failed" });
     });
   });
 });

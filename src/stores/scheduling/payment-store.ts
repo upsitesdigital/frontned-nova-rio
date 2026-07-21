@@ -127,6 +127,9 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
 
     const { cep, address } = useAddressStore.getState();
 
+    const state = get();
+    const isCardMethod = state.paymentMethod === "credit" || state.paymentMethod === "debit";
+
     set({ isSubmitting: true, submitError: null });
 
     const result = await SubmitPayment.submitPayment({
@@ -139,6 +142,19 @@ const usePaymentStore = create<PaymentStore>()((set, get) => ({
       weeklyFrequency,
       cep,
       address,
+      paymentMethod: state.paymentMethod,
+      cardData: isCardMethod
+        ? {
+            cardNumber: state.cardNumber,
+            cardCvv: state.cardCvv,
+            cardExpiry: state.cardExpiry,
+            cardName: state.cardName,
+          }
+        : null,
+      billingName: state.billingName,
+      billingDocument: state.billingDocument,
+      billingAddress: state.billingAddress,
+      billingComplement: state.billingComplement,
     });
 
     if (result.success) {

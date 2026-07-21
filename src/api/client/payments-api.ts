@@ -1,14 +1,16 @@
 import { HttpClient } from "@/api/core/http-client";
 
-type PaymentStatus = "APPROVED" | "PENDING" | "CANCELLED";
-type PaymentMethod = "CREDIT_CARD" | "DEBIT_CARD" | "PIX";
+export type PaymentStatus = "APPROVED" | "PENDING" | "CANCELLED";
+export type PaymentMethod = "CREDIT_CARD" | "DEBIT_CARD" | "PIX";
 
-interface PaymentEntry {
+export interface PaymentEntry {
   id: number;
   uuid: string;
   amount: string;
   method: PaymentMethod;
   status: PaymentStatus;
+  pixCode: string | null;
+  pixQrCodeUrl: string | null;
   paidAt: string | null;
   createdAt: string;
   appointment: {
@@ -19,14 +21,14 @@ interface PaymentEntry {
   card: { id: number; lastFourDigits: string; brand: string } | null;
 }
 
-interface PaginatedPayments {
+export interface PaginatedPayments {
   data: PaymentEntry[];
   total: number;
   page: number;
   limit: number;
 }
 
-class PaymentsApi {
+export class PaymentsApi {
   static fetchClientPayments(
     page: number,
     limit: number,
@@ -44,12 +46,31 @@ class PaymentsApi {
 
     return HttpClient.authGet<PaginatedPayments>(`/payments?${params.toString()}`, signal);
   }
-}
+  static async createPayment(
+    appointmentId: number,
+    method: string,
+    cardId?: number,
+  ): Promise<PaymentEntry> {
+    return HttpClient.authPost<PaymentEntry>("/payments", {
+      appointmentId,
+      method,
+      ...(cardId ? { cardId } : {}),
+    });
+  }
 
-export {
-  PaymentsApi,
-  type PaginatedPayments,
-  type PaymentEntry,
-  type PaymentStatus,
-  type PaymentMethod,
-};
+  static async createPublicPayment(data: {
+    email: string;
+    appointmentId: number;
+    method: string;
+    cardNumber?: string;
+    cardCvv?: string;
+    cardExpiry?: string;
+    holderName?: string;
+    billingName?: string;
+    billingDocument?: string;
+    billingAddress?: string;
+    billingComplement?: string;
+  }): Promise<PaymentEntry> {
+    return HttpClient.post<PaymentEntry>("/payments/public", data);
+  }
+}
