@@ -59,6 +59,7 @@ export class PaymentsApi {
   }
 
   static async createPublicPayment(data: {
+    paymentToken: string;
     email: string;
     appointmentId: number;
     method: string;

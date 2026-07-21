@@ -51,6 +51,7 @@ const fakeAppointment = {
   status: "SCHEDULED",
   service: { id: 1, name: "Limpeza" },
   client: { id: 2, name: "John", email: "user@test.com" },
+  paymentToken: "payment-token-123",
 };
 
 const fakePayment = {

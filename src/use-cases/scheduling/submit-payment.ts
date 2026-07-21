@@ -103,6 +103,7 @@ export class SubmitPayment {
       const isCardMethod = apiMethod === "CREDIT_CARD" || apiMethod === "DEBIT_CARD";
 
       const paymentResult = await PaymentsApi.createPublicPayment({
+        paymentToken: appointment.paymentToken,
         email: params.email,
         appointmentId: appointment.id,
         method: apiMethod,
