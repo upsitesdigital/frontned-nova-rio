@@ -20,6 +20,7 @@ import { useAuthStore, waitForAuthHydration } from "@/stores/auth/auth-store";
 import { useAdminProfileStore } from "@/stores/admin/admin-profile-store";
 import { useAdminAgendaStore } from "@/stores/admin/admin-agenda-store";
 import { useSidebarStore } from "@/stores/ui/sidebar-store";
+import { useToastStore } from "@/stores/ui/toast-store";
 import { SignOutAdmin } from "@/use-cases/auth/sign-out-admin";
 
 const adminNavItems: DsAdminNavItem[] = [
@@ -73,9 +74,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [isAuthError, profile, userType, router]);
 
+  const showToast = useToastStore((s) => s.showToast);
+
   const handleSignOut = () => {
     SignOutAdmin.execute();
     router.push("/login");
+  };
+
+  const handleSettingsClick = () => {
+    router.push("/admin/perfil");
+  };
+
+  const handleNotificationClick = () => {
+    showToast("Notificações em breve.", "info");
   };
 
   if (isLoading || (!profile && !isAuthError)) {
@@ -112,6 +123,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         notificationCount={0}
         onNavigate={(path) => router.push(path)}
         onSignOut={handleSignOut}
+        onSettingsClick={handleSettingsClick}
+        onNotificationClick={handleNotificationClick}
       >
         {children}
       </DsAdminDashboardShell>

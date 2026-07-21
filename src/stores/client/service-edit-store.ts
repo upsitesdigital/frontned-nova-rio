@@ -14,6 +14,9 @@ interface ServiceEditState {
   rescheduleTime: string | undefined;
   cancelOpen: boolean;
   addressSectionOpen: boolean;
+  locationZip: string;
+  locationAddress: string;
+  locationComplement: string;
   isSaving: boolean;
   saveError: string | null;
   saveSuccess: string | null;
@@ -23,6 +26,10 @@ interface ServiceEditActions {
   setAddressSectionOpen: (open: boolean) => void;
   setRecurrence: (recurrence: RecurrenceType) => void;
   initRecurrence: (recurrence: RecurrenceType) => void;
+  setLocationZip: (zip: string) => void;
+  setLocationAddress: (address: string) => void;
+  setLocationComplement: (complement: string) => void;
+  initAddress: (zip: string, address: string) => void;
   openReschedule: (date?: Date, time?: string) => void;
   closeReschedule: () => void;
   setRescheduleDate: (date: Date | undefined) => void;
@@ -40,6 +47,9 @@ type ServiceEditStore = ServiceEditState & ServiceEditActions;
 const initialState: ServiceEditState = {
   recurrence: "SINGLE",
   addressSectionOpen: true,
+  locationZip: "",
+  locationAddress: "",
+  locationComplement: "",
   rescheduleOpen: false,
   rescheduleDate: undefined,
   rescheduleTime: undefined,
@@ -57,6 +67,12 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
 
   initRecurrence: (recurrence) => set({ recurrence }),
 
+  setLocationZip: (zip) => set({ locationZip: zip }),
+  setLocationAddress: (address) => set({ locationAddress: address }),
+  setLocationComplement: (complement) => set({ locationComplement: complement }),
+
+  initAddress: (zip, address) => set({ locationZip: zip, locationAddress: address }),
+
   openReschedule: (date?: Date, time?: string) =>
     set({ rescheduleOpen: true, rescheduleDate: date ?? new Date(), rescheduleTime: time }),
 
@@ -68,11 +84,7 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
 
   confirmReschedule: async (appointmentId) => {
     if (get().isSaving) return false;
-    const { rescheduleDate, rescheduleTime } = get();
-    if (!rescheduleDate || !rescheduleTime) {
-      set({ saveError: Messages.appointments.selectDateTime });
-      return false;
-    }
+    const { rescheduleDate, rescheduleTime, recurrence, locationZip, locationAddress } = get();
 
     set({ isSaving: true, saveError: null, saveSuccess: null });
 
@@ -80,6 +92,9 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
       appointmentId,
       date: rescheduleDate,
       time: rescheduleTime,
+      recurrenceType: recurrence,
+      locationZip: locationZip || undefined,
+      locationAddress: locationAddress || undefined,
     });
 
     if (result.success) {

@@ -24,15 +24,22 @@ interface AppointmentResponse {
 }
 
 interface RescheduleAppointmentRequest {
-  date: string;
-  startTime: string;
+  date?: string;
+  startTime?: string;
+  recurrenceType?: string;
+  locationZip?: string;
+  locationAddress?: string;
+}
+
+interface PublicAppointmentResponse extends AppointmentResponse {
+  paymentToken: string;
 }
 
 class AppointmentsApi {
   static createPublicAppointment(
     data: CreatePublicAppointmentRequest,
-  ): Promise<AppointmentResponse> {
-    return HttpClient.post<AppointmentResponse>("/appointments/public", data);
+  ): Promise<PublicAppointmentResponse> {
+    return HttpClient.post<PublicAppointmentResponse>("/appointments/public", data);
   }
 
   static rescheduleAppointment(
@@ -55,4 +62,5 @@ export {
   type CreatePublicAppointmentRequest,
   type RescheduleAppointmentRequest,
   type AppointmentResponse,
+  type PublicAppointmentResponse,
 };

@@ -282,6 +282,7 @@ describe("PaymentStore", () => {
       vi.mocked(SubmitPayment.submitPayment).mockResolvedValue({
         success: true,
         confirmation,
+        payment: {},
       });
 
       const result = await usePaymentStore.getState().pay();

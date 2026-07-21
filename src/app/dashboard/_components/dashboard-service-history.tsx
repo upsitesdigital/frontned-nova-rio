@@ -4,7 +4,7 @@ import { DsFilterDropdown, DsServiceHistoryItem, DsEmptyState } from "@/design-s
 import { useDashboardStore } from "@/stores/client/dashboard-store";
 import type { ServiceHistoryEntry, ServiceHistoryMonth } from "@/api/client/dashboard-api";
 
-interface DashboardServiceHistoryProps {
+export interface DashboardServiceHistoryProps {
   months: ServiceHistoryMonth[];
   onViewEntry?: (entry: ServiceHistoryEntry) => void;
   onEditEntry?: (id: number) => void;
@@ -16,12 +16,26 @@ const filterOptions = [
   { value: "one_time", label: "Avulso" },
 ];
 
-function DashboardServiceHistory({
+export function DashboardServiceHistory({
   months,
   onViewEntry,
   onEditEntry,
 }: DashboardServiceHistoryProps) {
   const { serviceHistoryFilter, setServiceHistoryFilter } = useDashboardStore();
+
+  const filteredMonths = months
+    .map((month) => ({
+      ...month,
+      entries:
+        serviceHistoryFilter === "recent"
+          ? month.entries
+          : month.entries.filter(
+              (entry) =>
+                entry.recurrenceType ===
+                (serviceHistoryFilter === "recurrence" ? "RECURRING" : "SINGLE"),
+            ),
+    }))
+    .filter((month) => month.entries.length > 0);
 
   return (
     <div className="flex flex-col gap-6 overflow-clip rounded-[10px] border border-nova-gray-100 bg-white p-6">
@@ -38,8 +52,10 @@ function DashboardServiceHistory({
 
       {months.length === 0 ? (
         <DsEmptyState message="Nenhum serviço registrado ainda." />
+      ) : filteredMonths.length === 0 ? (
+        <DsEmptyState message="Nenhum serviço encontrado para este filtro." />
       ) : (
-        months.map((month) => (
+        filteredMonths.map((month) => (
           <div
             key={month.monthLabel}
             className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6"
@@ -67,9 +83,3 @@ function DashboardServiceHistory({
   );
 }
 
-export {
-  DashboardServiceHistory,
-  type DashboardServiceHistoryProps,
-  type ServiceHistoryEntry,
-  type ServiceHistoryMonth,
-};

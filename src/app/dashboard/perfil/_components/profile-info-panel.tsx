@@ -54,7 +54,6 @@ export function ProfileInfoPanel() {
       onCancel={isEditing ? cancelEditing : undefined}
       editLabel={isEditing ? (isSaving ? "Salvando..." : "Salvar") : "Editar"}
       editDisabled={isSaving}
-      onChangeImage={() => {}}
     />
   );
 }
