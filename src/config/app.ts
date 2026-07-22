@@ -1,5 +1,5 @@
 class AppConfig {
-  static readonly apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
+  static readonly apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://backend-nova-rio-production.up.railway.app";
   static readonly authCookieName = "nova-rio-auth";
   static readonly agendaPageSize = 6;
   // Vindi public (publishable) key + API base for client-side card tokenization.
