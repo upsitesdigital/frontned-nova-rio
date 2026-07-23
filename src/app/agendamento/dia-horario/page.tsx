@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, startOfToday } from "date-fns";
 
 import {
   DsButton,
@@ -43,7 +43,8 @@ export default function DiaHorarioPage() {
     [timeSlots],
   );
 
-  const disabledDays = useMemo(() => ({ dayOfWeek: [0, 6] }), []);
+  // Block weekends and past days (D-1/D-N); the API rejects them too.
+  const disabledDays = useMemo(() => [{ dayOfWeek: [0, 6] }, { before: startOfToday() }], []);
 
   useEffect(() => {
     if (selectedDate) {

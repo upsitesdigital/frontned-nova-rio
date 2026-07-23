@@ -1,18 +1,6 @@
 import { HttpClient } from "@/api/core/http-client";
 
-interface CreatePublicAppointmentRequest {
-  email: string;
-  date: string;
-  startTime: string;
-  duration: number;
-  serviceId: number;
-  recurrenceType?: string;
-  weeklyFrequency?: number;
-  locationZip?: string;
-  locationAddress?: string;
-}
-
-interface AppointmentResponse {
+export interface AppointmentResponse {
   id: number;
   uuid: string;
   date: string;
@@ -23,7 +11,7 @@ interface AppointmentResponse {
   client: { id: number; name: string; email: string };
 }
 
-interface RescheduleAppointmentRequest {
+export interface RescheduleAppointmentRequest {
   date?: string;
   startTime?: string;
   recurrenceType?: string;
@@ -31,17 +19,7 @@ interface RescheduleAppointmentRequest {
   locationAddress?: string;
 }
 
-interface PublicAppointmentResponse extends AppointmentResponse {
-  paymentToken: string;
-}
-
-class AppointmentsApi {
-  static createPublicAppointment(
-    data: CreatePublicAppointmentRequest,
-  ): Promise<PublicAppointmentResponse> {
-    return HttpClient.post<PublicAppointmentResponse>("/appointments/public", data);
-  }
-
+export class AppointmentsApi {
   static rescheduleAppointment(
     appointmentId: number,
     data: RescheduleAppointmentRequest,
@@ -56,11 +34,3 @@ class AppointmentsApi {
     return HttpClient.authPatch(`/appointments/${appointmentId}/cancel`);
   }
 }
-
-export {
-  AppointmentsApi,
-  type CreatePublicAppointmentRequest,
-  type RescheduleAppointmentRequest,
-  type AppointmentResponse,
-  type PublicAppointmentResponse,
-};

@@ -13,7 +13,12 @@ function makePayment(overrides: Partial<PaymentEntry> = {}): PaymentEntry {
     pixQrCodeUrl: null,
     paidAt: null,
     createdAt: "2026-01-01",
-    appointment: { id: 1, date: "2026-01-01", service: { id: 1, name: "Corte" } },
+    appointment: {
+      id: 1,
+      date: "2026-01-01",
+      startTime: "09:00",
+      service: { id: 1, name: "Corte" },
+    },
     card: { id: 1, lastFourDigits: "4242", brand: "visa" },
     ...overrides,
   };

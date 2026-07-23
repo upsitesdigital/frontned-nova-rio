@@ -18,7 +18,7 @@ const SITE_DESCRIPTION =
   "Limpeza empresarial pay per use para escritórios, consultórios e clínicas de alto padrão. Agende online e conte com profissionais qualificados.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
     default: SITE_TITLE,
     template: "%s | Nova Rio",

@@ -202,7 +202,7 @@ export default function AdminServicesPage() {
       {isEditorOpen && (
         <div className="fixed inset-0 z-50">
           <div
-            className="absolute inset-0 bg-black/10"
+            className="absolute inset-0 bg-black/10 duration-300 animate-in fade-in"
             onClick={closeEditor}
             onKeyDown={(event) => {
               if (event.key === "Escape") {
@@ -214,7 +214,7 @@ export default function AdminServicesPage() {
             aria-label="Fechar"
           />
 
-          <div className="absolute inset-y-0 right-0 w-full max-w-166 overflow-y-auto bg-white">
+          <div className="absolute inset-y-0 right-0 w-full max-w-166 overflow-y-auto bg-white duration-300 ease-out animate-in slide-in-from-right">
             <DsServiceEditPopup
               pricePrefix="A partir de R$"
               paymentOptionsTitle="Opções de pagamento"

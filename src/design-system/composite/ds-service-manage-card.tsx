@@ -2,7 +2,7 @@ import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-interface DsServiceManageCardProps {
+export interface DsServiceManageCardProps {
   icon: DsIconComponent;
   iconColor?: string;
   iconBgColor?: string;
@@ -16,7 +16,7 @@ interface DsServiceManageCardProps {
   className?: string;
 }
 
-function DsServiceManageCard({
+export function DsServiceManageCard({
   icon,
   iconColor = "text-nova-success",
   iconBgColor = "bg-nova-success/10",
@@ -62,7 +62,7 @@ function DsServiceManageCard({
             <button
               type="button"
               onClick={onEdit}
-              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-200"
+              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-nova-primary/90"
             >
               {editLabel}
             </button>
@@ -82,5 +82,3 @@ function DsServiceManageCard({
     </div>
   );
 }
-
-export { DsServiceManageCard, type DsServiceManageCardProps };

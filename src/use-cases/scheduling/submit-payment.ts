@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 
-import { AppointmentsApi } from "@/api/client/appointments-api";
-import { PaymentsApi } from "@/api/client/payments-api";
+import { PaymentsApi, type CreatePublicCheckoutPayload } from "@/api/client/payments-api";
+import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 import type { AppointmentConfirmation } from "@/types/appointment";
 import type { Address } from "@/types/scheduling";
@@ -13,7 +13,7 @@ interface PaymentCardData {
   cardName: string;
 }
 
-interface SubmitPaymentParams {
+export interface SubmitPaymentParams {
   email: string;
   selectedServiceId: number;
   serviceDurationMinutes: number;
@@ -37,18 +37,16 @@ interface PaymentConfirmation {
   pixQrCodeUrl?: string;
 }
 
-interface SubmitPaymentSuccess {
+export interface SubmitPaymentSuccess {
   success: true;
   confirmation: AppointmentConfirmation;
   payment: PaymentConfirmation;
 }
 
-interface SubmitPaymentFailure {
+export interface SubmitPaymentFailure {
   success: false;
   error: string;
 }
-
-type SubmitPaymentResult = SubmitPaymentSuccess | SubmitPaymentFailure;
 
 export class SubmitPayment {
   private static readonly frequencyToRecurrence: Record<string, string> = {
@@ -75,7 +73,9 @@ export class SubmitPayment {
     return "PIX";
   }
 
-  static async submitPayment(params: SubmitPaymentParams): Promise<SubmitPaymentResult> {
+  static async submitPayment(
+    params: SubmitPaymentParams,
+  ): Promise<SubmitPaymentSuccess | SubmitPaymentFailure> {
     try {
       const recurrenceType = SubmitPayment.resolveRecurrenceType(
         params.recurrenceType,
@@ -86,7 +86,10 @@ export class SubmitPayment {
         ? `${params.address.street}, ${params.address.neighborhood}, ${params.address.city} - ${params.address.state}`
         : undefined;
 
-      const appointmentPayload = {
+      const apiMethod = SubmitPayment.resolveApiPaymentMethod(params.paymentMethod);
+      const isCardMethod = apiMethod === "CREDIT_CARD" || apiMethod === "DEBIT_CARD";
+
+      const checkoutPayload: CreatePublicCheckoutPayload = {
         email: params.email,
         date: format(params.selectedDate, "yyyy-MM-dd"),
         startTime: params.selectedTime,
@@ -96,17 +99,6 @@ export class SubmitPayment {
         weeklyFrequency: recurrenceType === "WEEKLY" ? params.weeklyFrequency : undefined,
         locationZip: params.cep || undefined,
         locationAddress,
-      };
-
-      const appointment = await AppointmentsApi.createPublicAppointment(appointmentPayload);
-
-      const apiMethod = SubmitPayment.resolveApiPaymentMethod(params.paymentMethod);
-      const isCardMethod = apiMethod === "CREDIT_CARD" || apiMethod === "DEBIT_CARD";
-
-      const paymentResult = await PaymentsApi.createPublicPayment({
-        paymentToken: appointment.paymentToken,
-        email: params.email,
-        appointmentId: appointment.id,
         method: apiMethod,
         ...(isCardMethod && params.cardData
           ? {
@@ -120,26 +112,30 @@ export class SubmitPayment {
         billingDocument: params.billingDocument || undefined,
         billingAddress: params.billingAddress || undefined,
         billingComplement: params.billingComplement || undefined,
-      });
+      };
+
+      const result = await PaymentsApi.createPublicCheckout(checkoutPayload);
 
       return {
         success: true,
         confirmation: {
-          serviceName: appointment.service.name,
-          date: appointment.date,
-          startTime: appointment.startTime,
+          serviceName: result.appointment.service.name,
+          // Backend serializes the date as UTC midnight ("…T00:00:00.000Z"); keep only the
+          // calendar day so the confirmation screen doesn't shift a day in negative offsets.
+          date: result.appointment.date.slice(0, 10),
+          startTime: result.appointment.startTime,
         },
         payment: {
-          pixCode: paymentResult.pixCode ?? undefined,
-          pixQrCodeUrl: paymentResult.pixQrCodeUrl ?? undefined,
+          pixCode: result.pixCode ?? undefined,
+          pixQrCodeUrl: result.pixQrCodeUrl ?? undefined,
         },
       };
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : Messages.payment.createAppointmentError;
+      const message = AuthHelpers.resolveErrorMessage(
+        error,
+        Messages.payment.createAppointmentError,
+      );
       return { success: false, error: message };
     }
   }
 }
-
-export type { SubmitPaymentParams, SubmitPaymentResult };

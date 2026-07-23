@@ -86,15 +86,15 @@ export function DsUpcomingServiceCard({
               onClick={action.onClick}
               className={cn(
                 "flex h-14 items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] transition-colors",
-                action.disabled
-                  ? "cursor-not-allowed text-nova-gray-400 opacity-50"
-                  : "cursor-pointer text-nova-gray-700",
+                action.disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
                 action.variant === "filled" &&
-                  (action.disabled ? "bg-nova-gray-50" : "bg-nova-gray-100 hover:bg-nova-gray-200"),
+                  (action.disabled
+                    ? "bg-nova-primary text-white"
+                    : "bg-nova-primary text-white hover:bg-nova-primary/90"),
                 action.variant === "outlined" &&
                   (action.disabled
-                    ? "border border-nova-gray-200"
-                    : "border border-nova-gray-300 hover:bg-nova-gray-50"),
+                    ? "border border-nova-gray-200 text-nova-gray-400"
+                    : "border border-nova-gray-300 text-nova-gray-700 hover:bg-nova-gray-50"),
               )}
             >
               {action.label}
