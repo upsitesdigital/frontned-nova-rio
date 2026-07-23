@@ -2,13 +2,13 @@
 
 import { DsButton, DsSeparator } from "@/design-system";
 
-interface DsOrderSummaryRow {
+export interface DsOrderSummaryRow {
   label: string;
   value: string;
   emphasis?: "default" | "success";
 }
 
-interface DsOrderSummaryProps {
+export interface DsOrderSummaryProps {
   title: string;
   serviceLabel: string;
   serviceName: string;
@@ -22,7 +22,7 @@ interface DsOrderSummaryProps {
   onPay: () => void;
 }
 
-function DsOrderSummary({
+export function DsOrderSummary({
   title,
   serviceLabel,
   serviceName,
@@ -38,7 +38,9 @@ function DsOrderSummary({
   return (
     <div className="w-full shrink-0 rounded-2xl border border-nova-gray-300 px-6 py-10 sm:px-10 sm:py-12 lg:w-125.5">
       <div className="flex flex-col gap-8">
-        <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">{title}</h3>
+        <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
+          {title}
+        </h3>
 
         <div className="flex flex-col gap-6 text-base leading-[1.3]">
           <div className="flex items-center justify-between">
@@ -81,5 +83,3 @@ function DsOrderSummary({
     </div>
   );
 }
-
-export { DsOrderSummary, type DsOrderSummaryProps, type DsOrderSummaryRow };

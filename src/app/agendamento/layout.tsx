@@ -32,7 +32,7 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
 
       <header className="flex justify-center px-(--page-padding) pb-8 pt-8 md:pt-23.5">
         <DsStepper
-          steps={SchedulingConfig.schedulingSteps}
+          steps={SchedulingConfig.getStepsForUser(false)}
           currentStep={currentStep}
           className="w-full max-w-252"
         />

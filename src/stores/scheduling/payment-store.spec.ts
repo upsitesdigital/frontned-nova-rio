@@ -7,7 +7,7 @@ vi.mock("@/use-cases/scheduling/submit-payment", () => ({
 }));
 
 vi.mock("@/validation/payment-schema", () => ({
-  validatePayment: vi.fn(),
+  PaymentValidation: { validatePayment: vi.fn() },
 }));
 
 vi.mock("@/stores/scheduling/confirmation-store", () => {
@@ -50,7 +50,7 @@ vi.mock("@/stores/scheduling/address-store", () => ({
 }));
 
 const { SubmitPayment } = await import("@/use-cases/scheduling/submit-payment");
-const { validatePayment } = await import("@/validation/payment-schema");
+const { PaymentValidation } = await import("@/validation/payment-schema");
 const { useConfirmationStore } = await import("@/stores/scheduling/confirmation-store");
 const { useRegistrationStore } = await import("@/stores/auth/registration-store");
 const { useServicesStore } = await import("@/stores/client/services-store");
@@ -62,7 +62,7 @@ describe("PaymentStore", () => {
   beforeEach(() => {
     usePaymentStore.getState().reset();
     vi.clearAllMocks();
-    vi.mocked(validatePayment).mockReturnValue({});
+    vi.mocked(PaymentValidation.validatePayment).mockReturnValue({});
   });
 
   describe("initial state", () => {
@@ -164,7 +164,7 @@ describe("PaymentStore", () => {
     it("should return false and set errors on validation failure", () => {
       usePaymentStore.setState({ paymentMethod: "credit" });
       const errors = { cardNumber: "Numero do cartao invalido" };
-      vi.mocked(validatePayment).mockReturnValue(errors);
+      vi.mocked(PaymentValidation.validatePayment).mockReturnValue(errors);
 
       const result = usePaymentStore.getState().validate();
 
@@ -177,7 +177,11 @@ describe("PaymentStore", () => {
 
       usePaymentStore.getState().validate();
 
-      expect(validatePayment).toHaveBeenCalledWith(true, expect.any(Object), expect.any(Object));
+      expect(PaymentValidation.validatePayment).toHaveBeenCalledWith(
+        true,
+        expect.any(Object),
+        expect.any(Object),
+      );
     });
 
     it("should pass isCardMethod=true for debit method", () => {
@@ -185,7 +189,11 @@ describe("PaymentStore", () => {
 
       usePaymentStore.getState().validate();
 
-      expect(validatePayment).toHaveBeenCalledWith(true, expect.any(Object), expect.any(Object));
+      expect(PaymentValidation.validatePayment).toHaveBeenCalledWith(
+        true,
+        expect.any(Object),
+        expect.any(Object),
+      );
     });
 
     it("should pass isCardMethod=false for pix method", () => {
@@ -193,13 +201,17 @@ describe("PaymentStore", () => {
 
       usePaymentStore.getState().validate();
 
-      expect(validatePayment).toHaveBeenCalledWith(false, expect.any(Object), expect.any(Object));
+      expect(PaymentValidation.validatePayment).toHaveBeenCalledWith(
+        false,
+        expect.any(Object),
+        expect.any(Object),
+      );
     });
   });
 
   describe("pay", () => {
     it("should return false when validation fails", async () => {
-      vi.mocked(validatePayment).mockReturnValue({ cardNumber: "required" });
+      vi.mocked(PaymentValidation.validatePayment).mockReturnValue({ cardNumber: "required" });
       usePaymentStore.setState({ paymentMethod: "credit" });
 
       const result = await usePaymentStore.getState().pay();

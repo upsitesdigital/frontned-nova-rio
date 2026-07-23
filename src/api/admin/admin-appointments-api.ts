@@ -1,6 +1,6 @@
 import { HttpClient } from "@/api/core/http-client";
 
-interface AdminAppointmentItem {
+export interface AdminAppointmentItem {
   id: number;
   uuid: string;
   date: string;
@@ -19,16 +19,17 @@ interface AdminAppointmentItem {
   employee: { id: number; name: string } | null;
   package: { id: number; name: string } | null;
   unit: { id: number; name: string } | null;
+  payment: { id: number; status: "APPROVED" | "PENDING" | "CANCELLED" } | null;
 }
 
-interface AdminAppointmentsResponse {
+export interface AdminAppointmentsResponse {
   data: AdminAppointmentItem[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface ListAdminAppointmentsParams {
+export interface ListAdminAppointmentsParams {
   page: number;
   limit: number;
   date?: string;
@@ -39,25 +40,25 @@ interface ListAdminAppointmentsParams {
   status?: string;
 }
 
-interface RawEmployee {
+export interface RawEmployee {
   id: number;
   name: string;
   status: "ACTIVE" | "INACTIVE";
 }
 
-interface RawUnit {
+export interface RawUnit {
   id: number;
   name: string;
   isActive: boolean;
 }
 
-interface RawClient {
+export interface RawClient {
   id: number;
   name: string;
   status: string;
 }
 
-interface RawAdminService {
+export interface RawAdminService {
   id: number;
   name: string;
   isActive: boolean;
@@ -66,7 +67,7 @@ interface RawAdminService {
   allowRecurrence: boolean;
 }
 
-interface CreateAppointmentPayload {
+export interface CreateAppointmentPayload {
   date: string;
   startTime: string;
   duration: number;
@@ -78,7 +79,7 @@ interface CreateAppointmentPayload {
   serviceId: number;
 }
 
-interface UpdateAppointmentPayload {
+export interface UpdateAppointmentPayload {
   date?: string;
   startTime?: string;
   duration?: number;
@@ -92,12 +93,12 @@ interface UpdateAppointmentPayload {
   unitId?: number;
 }
 
-interface RescheduleAppointmentPayload {
+export interface RescheduleAppointmentPayload {
   date: string;
   startTime: string;
 }
 
-class AdminAppointmentsApi {
+export class AdminAppointmentsApi {
   static readonly maxOptionsLimit = 100;
 
   static async fetchAdminAppointments(
@@ -188,17 +189,3 @@ class AdminAppointmentsApi {
     );
   }
 }
-
-export {
-  AdminAppointmentsApi,
-  type AdminAppointmentItem,
-  type AdminAppointmentsResponse,
-  type ListAdminAppointmentsParams,
-  type RawEmployee,
-  type RawUnit,
-  type RawClient,
-  type RawAdminService,
-  type CreateAppointmentPayload,
-  type UpdateAppointmentPayload,
-  type RescheduleAppointmentPayload,
-};

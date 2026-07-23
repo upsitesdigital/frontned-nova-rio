@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { DsStepper } from "@/design-system";
+import { SchedulingConfig } from "@/config/scheduling";
 import { ProfileApi } from "@/api/client/profile-api";
 import { useRegistrationStore } from "@/stores/auth/registration-store";
 
@@ -10,23 +11,11 @@ interface DashboardAgendamentoLayoutProps {
   children: React.ReactNode;
 }
 
-const dashboardSchedulingSteps = [
-  { label: "Agendar serviço" },
-  { label: "Dia e horário" },
-  { label: "Pagamento" },
-];
-
-const dashboardStepPathMap: Record<string, number> = {
-  servico: 0,
-  "dia-horario": 1,
-  pagamento: 2,
-};
-
 export default function DashboardAgendamentoLayout({ children }: DashboardAgendamentoLayoutProps) {
   const pathname = usePathname();
   const segment = pathname.split("/").pop() ?? "servico";
   const isConfirmation = segment === "confirmacao";
-  const currentStep = dashboardStepPathMap[segment] ?? 0;
+  const currentStep = SchedulingConfig.loggedInStepPathMap[segment] ?? 0;
 
   useEffect(() => {
     let active = true;
@@ -57,7 +46,7 @@ export default function DashboardAgendamentoLayout({ children }: DashboardAgenda
   return (
     <div className="flex flex-col gap-12 pb-8">
       <header className="mx-auto w-full max-w-252">
-        <DsStepper steps={dashboardSchedulingSteps} currentStep={currentStep} />
+        <DsStepper steps={SchedulingConfig.getStepsForUser(true)} currentStep={currentStep} />
       </header>
 
       <main className="mx-auto w-full max-w-304">{children}</main>

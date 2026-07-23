@@ -128,4 +128,3 @@ export function DsClientDashboardShell({
     </DsSidebarLayout>
   );
 }
-

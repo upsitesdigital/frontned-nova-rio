@@ -6,7 +6,7 @@ import { useToastStore } from "@/stores/ui/toast-store";
 import { AddClientCard } from "@/use-cases/client-cards/add-client-card";
 import { LoadClientCards } from "@/use-cases/client-cards/load-client-cards";
 import { RemoveClientCard } from "@/use-cases/client-cards/remove-client-card";
-import { validateAddCardForm, type AddCardFormErrors } from "@/validation/add-card-schema";
+import { AddCardValidation, type AddCardFormErrors } from "@/validation/add-card-schema";
 
 interface AddCardForm {
   cardNumber: string;
@@ -50,7 +50,7 @@ interface CardsActions {
   reset: () => void;
 }
 
-const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
+export const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   cards: [],
   isLoading: false,
   error: null,
@@ -131,7 +131,7 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
   setConfirmRemoveCardId: (cardId) => set({ confirmRemoveCardId: cardId }),
 
   validateAddForm: () => {
-    const errors = validateAddCardForm(get().addForm);
+    const errors = AddCardValidation.validateForm(get().addForm);
     set({ addFormErrors: errors });
     return Object.keys(errors).length === 0;
   },
@@ -149,5 +149,3 @@ const useCardsStore = create<CardsState & CardsActions>((set, get) => ({
       removingCardIds: [],
     }),
 }));
-
-export { useCardsStore };

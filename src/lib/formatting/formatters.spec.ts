@@ -47,8 +47,8 @@ describe("formatters", () => {
   });
 
   describe("Formatters.formatPhone", () => {
-    it("should return digits only for 2 or fewer digits", () => {
-      expect(Formatters.formatPhone("11")).toBe("11");
+    it("should show the area-code prefix for 2 or fewer digits", () => {
+      expect(Formatters.formatPhone("11")).toBe("(11");
     });
 
     it("should format with area code for 3-7 digits", () => {

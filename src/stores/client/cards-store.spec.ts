@@ -19,7 +19,7 @@ vi.mock("@/use-cases/client-cards/remove-client-card", () => ({
 }));
 
 vi.mock("@/validation/add-card-schema", () => ({
-  validateAddCardForm: vi.fn(),
+  AddCardValidation: { validateForm: vi.fn() },
 }));
 
 vi.mock("@/lib/core/messages", () => ({
@@ -44,7 +44,7 @@ vi.mock("@/stores/ui/toast-store", () => {
 const { LoadClientCards } = await import("@/use-cases/client-cards/load-client-cards");
 const { AddClientCard } = await import("@/use-cases/client-cards/add-client-card");
 const { RemoveClientCard } = await import("@/use-cases/client-cards/remove-client-card");
-const { validateAddCardForm } = await import("@/validation/add-card-schema");
+const { AddCardValidation } = await import("@/validation/add-card-schema");
 const { useToastStore } = await import("@/stores/ui/toast-store");
 
 import { useCardsStore } from "./cards-store";
@@ -72,7 +72,7 @@ describe("CardsStore", () => {
   beforeEach(() => {
     useCardsStore.getState().reset();
     vi.clearAllMocks();
-    vi.mocked(validateAddCardForm).mockReturnValue({});
+    vi.mocked(AddCardValidation.validateForm).mockReturnValue({});
   });
 
   describe("initial state", () => {
@@ -138,7 +138,7 @@ describe("CardsStore", () => {
 
   describe("addCard", () => {
     it("should not proceed when validation fails", async () => {
-      vi.mocked(validateAddCardForm).mockReturnValue({ cardNumber: "Invalid" });
+      vi.mocked(AddCardValidation.validateForm).mockReturnValue({ cardNumber: "Invalid" });
 
       await useCardsStore.getState().addCard();
 
@@ -351,7 +351,7 @@ describe("CardsStore", () => {
 
   describe("validateAddForm", () => {
     it("should return true when no errors", () => {
-      vi.mocked(validateAddCardForm).mockReturnValue({});
+      vi.mocked(AddCardValidation.validateForm).mockReturnValue({});
 
       const result = useCardsStore.getState().validateAddForm();
 
@@ -360,7 +360,7 @@ describe("CardsStore", () => {
     });
 
     it("should return false and set errors when validation fails", () => {
-      vi.mocked(validateAddCardForm).mockReturnValue({ cardNumber: "Invalid" });
+      vi.mocked(AddCardValidation.validateForm).mockReturnValue({ cardNumber: "Invalid" });
 
       const result = useCardsStore.getState().validateAddForm();
 

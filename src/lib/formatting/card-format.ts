@@ -1,7 +1,8 @@
 import creditCardType from "credit-card-type";
 import type { DsCreditCardBrand } from "@/design-system/data-display";
+import { Formatters } from "@/lib/formatting/formatters";
 
-class CardFormat {
+export class CardFormat {
   static normalizeBrand(brand: string): DsCreditCardBrand {
     const lower = brand.toLowerCase();
     if (lower === "visa") return "visa";
@@ -10,12 +11,10 @@ class CardFormat {
   }
 
   static getDetectedBrandLabel(cardNumber: string): string {
-    const digits = cardNumber.replace(/\s/g, "");
+    const digits = Formatters.onlyDigits(cardNumber);
     if (digits.length < 2) return "";
     const detected = creditCardType(digits);
     if (detected.length === 0) return "";
     return detected[0].niceType;
   }
 }
-
-export { CardFormat };

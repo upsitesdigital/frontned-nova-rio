@@ -27,6 +27,7 @@ const { SubmitPayment } = await import("./submit-payment");
 const baseParams = {
   email: "user@test.com",
   selectedServiceId: 1,
+  serviceDurationMinutes: 120,
   selectedDate: new Date(2026, 2, 15),
   selectedTime: "10:00",
   recurrenceType: null,
