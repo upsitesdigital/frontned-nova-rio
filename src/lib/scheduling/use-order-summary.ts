@@ -15,7 +15,7 @@ import { useServicesStore } from "@/stores/client/services-store";
  * Shared by the public and authenticated booking flows; only the confirmation
  * route differs.
  */
-function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
+export function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
   const router = useRouter();
 
   const services = useServicesStore((s) => s.services);
@@ -94,5 +94,3 @@ function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
     onPay: handlePay,
   };
 }
-
-export { useOrderSummary };
