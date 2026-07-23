@@ -20,6 +20,7 @@ const mockAppointment = {
   employee: { id: 1, name: "Carlos Magno" },
   package: null,
   unit: null,
+  payment: null,
 };
 
 vi.mock("@/use-cases/admin-appointments/load-admin-appointments", () => ({

@@ -104,6 +104,7 @@ describe("AdminEmployeeScheduleStore", () => {
         employee: { id: 5, name: "Carlos" },
         package: null,
         unit: null,
+        payment: null,
       };
       const appointments = [
         { ...baseAppointment, id: 1, date: "2026-03-10T00:00:00.000Z" },
