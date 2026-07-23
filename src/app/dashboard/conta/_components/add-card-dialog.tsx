@@ -38,7 +38,7 @@ export function AddCardDialog() {
     });
   }, []);
 
-  const digits = addForm.cardNumber.replace(/\s/g, "");
+  const digits = Formatters.onlyDigits(addForm.cardNumber);
   const detectedBrand = CardFormat.getDetectedBrandLabel(addForm.cardNumber);
 
   const isValid =
@@ -114,7 +114,7 @@ export function AddCardDialog() {
             <DsInput
               value={addForm.cvv}
               onChange={(e) =>
-                setAddFormField("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))
+                setAddFormField("cvv", Formatters.onlyDigits(e.target.value).slice(0, 4))
               }
               placeholder="000"
               maxLength={4}

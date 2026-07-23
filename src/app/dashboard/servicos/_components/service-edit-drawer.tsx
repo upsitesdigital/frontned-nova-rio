@@ -118,6 +118,7 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
                   }
                 : undefined
             }
+            receiptDisabled={paymentStatus?.status !== "approved"}
             className="rounded-none border-none p-0 shadow-none"
           >
             <></>
@@ -225,7 +226,7 @@ export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawer
                 className="bg-nova-gray-100 text-nova-gray-700 hover:bg-nova-gray-200"
                 disabled={!entry.canEdit || isSaving}
                 onClick={() =>
-                  openReschedule(parse(entry.date, "dd/MM", new Date()), entry.startTime)
+                  openReschedule(parse(entry.isoDate, "yyyy-MM-dd", new Date()), entry.startTime)
                 }
               >
                 Reagendar
