@@ -46,6 +46,7 @@ export default function AdminUsersPage() {
     searchQuery,
     isCreateModalOpen,
     isDetailModalOpen,
+    detailMode,
     isPasswordVisible,
     showCreatedAlert,
     selectedUser,
@@ -61,6 +62,7 @@ export default function AdminUsersPage() {
     updateFormField,
     createUser,
     openUserDetails,
+    updateUser,
     closeUserDetails,
     openDeleteConfirm,
     closeDeleteConfirm,
@@ -108,11 +110,11 @@ export default function AdminUsersPage() {
   };
 
   const handleViewUser = (user: DsUserTableUser) => {
-    void openUserDetails(Number(user.id));
+    void openUserDetails(Number(user.id), "view");
   };
 
   const handleEditUser = (user: DsUserTableUser) => {
-    void openUserDetails(Number(user.id));
+    void openUserDetails(Number(user.id), "edit");
   };
 
   const handleDeleteUser = (user: DsUserTableUser) => {
@@ -227,27 +229,66 @@ export default function AdminUsersPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="relative flex max-h-[90vh] w-full max-w-170 flex-col gap-8 overflow-y-auto rounded-2xl bg-white p-8">
-              <DsIconButton
-                icon={XIcon}
-                iconSize="lg"
-                ariaLabel="Fechar"
-                variant="ghost"
-                onClick={closeUserDetails}
-                className="size-auto cursor-pointer p-0 text-nova-gray-700 transition-colors hover:text-black"
-              />
+            {(isLoadingDetail || detailError) && (
+              <div className="relative flex w-full max-w-170 flex-col gap-8 rounded-2xl bg-white p-8">
+                <DsIconButton
+                  icon={XIcon}
+                  iconSize="lg"
+                  ariaLabel="Fechar"
+                  variant="ghost"
+                  onClick={closeUserDetails}
+                  className="absolute right-6 top-6 size-auto cursor-pointer p-0 text-nova-gray-700 transition-colors hover:text-black"
+                />
 
-              <div className="flex flex-col gap-2 text-center">
-                <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
-                  Detalhes do usuário
-                </h2>
+                {isLoadingDetail && <DsLoadingState className="my-8" />}
+
+                {detailError && <DsAlert variant="error" title={detailError} />}
               </div>
+            )}
 
-              {isLoadingDetail && <DsLoadingState className="my-8" />}
+            {selectedUser && !isLoadingDetail && !detailError && detailMode === "edit" && (
+              <DsUserFormPopup
+                rolePlaceholder="Selecionar role"
+                statusPlaceholder="Selecionar status"
+                activeLabel="Ativo"
+                namePlaceholder="Nome do usuário"
+                emailPlaceholder="email@exemplo.com"
+                passwordPlaceholder="Deixe em branco para manter"
+                nameLabel="Nome"
+                emailLabel="Email"
+                passwordLabel="Senha"
+                roleLabel="Role"
+                title="Editar usuário"
+                values={form}
+                passwordVisible={isPasswordVisible}
+                onPasswordVisibilityChange={setPasswordVisible}
+                onFieldChange={updateFormField}
+                onSave={() => {
+                  void updateUser();
+                }}
+                onClose={closeUserDetails}
+                saveLabel={isSaving ? "Salvando..." : "Salvar alterações"}
+                className="w-full max-w-170"
+              />
+            )}
 
-              {detailError && <DsAlert variant="error" title={detailError} />}
+            {selectedUser && !isLoadingDetail && !detailError && detailMode === "view" && (
+              <div className="relative flex max-h-[90vh] w-full max-w-170 flex-col gap-8 overflow-y-auto rounded-2xl bg-white p-8">
+                <div className="flex flex-col gap-2 text-center">
+                  <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
+                    Detalhes do usuário
+                  </h2>
+                </div>
 
-              {selectedUser && !isLoadingDetail && !detailError && (
+                <DsIconButton
+                  icon={XIcon}
+                  iconSize="lg"
+                  ariaLabel="Fechar"
+                  variant="ghost"
+                  onClick={closeUserDetails}
+                  className="absolute right-6 top-6 size-auto cursor-pointer p-0 text-nova-gray-700 transition-colors hover:text-black"
+                />
+
                 <div className="flex flex-col gap-6">
                   <DsFormField label="Nome">
                     <DsInput value={selectedUser.name} readOnly />
@@ -258,10 +299,10 @@ export default function AdminUsersPage() {
                   </DsFormField>
 
                   <div className="flex items-center justify-between gap-8">
-                    <DsFormField label="Role" className="w-[288px]">
+                    <DsFormField label="Role" className="w-72">
                       <DsInput value={formatRole(selectedUser.role)} readOnly />
                     </DsFormField>
-                    <DsFormField label="Ativo" className="w-[288px]">
+                    <DsFormField label="Ativo" className="w-72">
                       <DsInput
                         value={selectedUser.status === "ACTIVE" ? "Ativo" : "Inativo"}
                         readOnly
@@ -273,8 +314,8 @@ export default function AdminUsersPage() {
                     <DsInput value={formatDate(selectedUser.createdAt)} readOnly />
                   </DsFormField>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -299,7 +340,7 @@ export default function AdminUsersPage() {
 
           <div className="absolute inset-0 flex items-center justify-center p-6">
             <DsDeleteConfirmPopup
-              className="max-w-lg"
+              className="max-w-2xl"
               title="Tem certeza que deseja excluir o usuário"
               description="Ao excluir, o usuário será desativado e perderá acesso ao sistema."
               confirmLabel={isDeletingSelectedUser ? "Excluindo..." : "Sim, quero excluir"}

@@ -195,6 +195,8 @@ class Messages {
     loadError: "Erro ao carregar usuários.",
     detailError: "Erro ao carregar detalhes do usuário.",
     createError: "Erro ao criar usuário.",
+    updateError: "Erro ao atualizar usuário.",
+    updateSuccess: "Usuário atualizado com sucesso!",
     deactivateError: "Erro ao excluir usuário.",
     requiredName: "Informe o nome do usuário.",
     requiredEmail: "Informe o e-mail do usuário.",

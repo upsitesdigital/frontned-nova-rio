@@ -16,9 +16,34 @@ export interface PaymentEntry {
   appointment: {
     id: number;
     date: string;
+    startTime: string;
     service: { id: number; name: string };
   };
   card: { id: number; lastFourDigits: string; brand: string } | null;
+}
+
+export interface CreatePublicCheckoutPayload {
+  email: string;
+  date: string;
+  startTime: string;
+  duration: number;
+  serviceId: number;
+  recurrenceType?: string;
+  weeklyFrequency?: number;
+  packageId?: number;
+  unitId?: number;
+  notes?: string;
+  locationZip?: string;
+  locationAddress?: string;
+  method: string;
+  cardNumber?: string;
+  cardCvv?: string;
+  cardExpiry?: string;
+  holderName?: string;
+  billingName?: string;
+  billingDocument?: string;
+  billingAddress?: string;
+  billingComplement?: string;
 }
 
 export interface PaginatedPayments {
@@ -58,20 +83,7 @@ export class PaymentsApi {
     });
   }
 
-  static async createPublicPayment(data: {
-    paymentToken: string;
-    email: string;
-    appointmentId: number;
-    method: string;
-    cardNumber?: string;
-    cardCvv?: string;
-    cardExpiry?: string;
-    holderName?: string;
-    billingName?: string;
-    billingDocument?: string;
-    billingAddress?: string;
-    billingComplement?: string;
-  }): Promise<PaymentEntry> {
-    return HttpClient.post<PaymentEntry>("/payments/public", data);
+  static async createPublicCheckout(data: CreatePublicCheckoutPayload): Promise<PaymentEntry> {
+    return HttpClient.post<PaymentEntry>("/payments/public/checkout", data);
   }
 }

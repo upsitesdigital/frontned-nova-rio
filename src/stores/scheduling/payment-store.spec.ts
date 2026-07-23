@@ -238,6 +238,7 @@ describe("PaymentStore", () => {
       } as never);
       vi.spyOn(useServicesStore, "getState").mockReturnValue({
         selectedServiceId: null,
+        services: [],
       } as never);
       usePaymentStore.setState({ paymentMethod: "pix" });
 
@@ -253,6 +254,7 @@ describe("PaymentStore", () => {
       } as never);
       vi.spyOn(useServicesStore, "getState").mockReturnValue({
         selectedServiceId: 1,
+        services: [{ id: 1, durationMinutes: 60 }],
       } as never);
       vi.spyOn(useSchedulingStore, "getState").mockReturnValue({
         selectedDate: null,
@@ -274,6 +276,7 @@ describe("PaymentStore", () => {
       } as never);
       vi.spyOn(useServicesStore, "getState").mockReturnValue({
         selectedServiceId: 1,
+        services: [{ id: 1, durationMinutes: 60 }],
       } as never);
       vi.spyOn(useSchedulingStore, "getState").mockReturnValue({
         selectedDate,
@@ -310,6 +313,7 @@ describe("PaymentStore", () => {
       } as never);
       vi.spyOn(useServicesStore, "getState").mockReturnValue({
         selectedServiceId: 1,
+        services: [{ id: 1, durationMinutes: 60 }],
       } as never);
       vi.spyOn(useSchedulingStore, "getState").mockReturnValue({
         selectedDate: new Date(),
