@@ -2,9 +2,10 @@ import { CardsApi, type Card, type AddCardRequest } from "@/api/client/cards-api
 import { VindiApi } from "@/api/core/vindi-api";
 import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { CardBrand } from "@/lib/display/card-brand";
+import { Formatters } from "@/lib/formatting/formatters";
 import { Messages } from "@/lib/core/messages";
 
-interface AddCardInput {
+export interface AddCardInput {
   cardNumber: string;
   holderName: string;
   expiryMonth: string;
@@ -13,15 +14,15 @@ interface AddCardInput {
   isDefault: boolean;
 }
 
-interface AddCardResult {
+export interface AddCardResult {
   success: boolean;
   card?: Card;
   error: string | null;
 }
 
-class AddClientCard {
+export class AddClientCard {
   static async addClientCard(input: AddCardInput): Promise<AddCardResult> {
-    const digits = input.cardNumber.replace(/\s/g, "");
+    const digits = Formatters.onlyDigits(input.cardNumber);
     const lastFourDigits = digits.slice(-4);
     const brand = CardBrand.detectCardBrand(digits);
     const expiryMonth = parseInt(input.expiryMonth, 10);
@@ -57,5 +58,3 @@ class AddClientCard {
     }
   }
 }
-
-export { AddClientCard, type AddCardInput, type AddCardResult };

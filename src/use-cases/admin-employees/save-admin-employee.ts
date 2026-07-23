@@ -17,8 +17,7 @@ interface SaveEmployeeInput {
 }
 
 type SaveEmployeeResult =
-  | { success: true; employee: AdminEmployee }
-  | { success: false; error: string };
+  { success: true; employee: AdminEmployee } | { success: false; error: string };
 
 class SaveAdminEmployee {
   static async saveAdminEmployee(input: SaveEmployeeInput): Promise<SaveEmployeeResult> {

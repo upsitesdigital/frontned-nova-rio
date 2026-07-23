@@ -16,6 +16,7 @@ interface PaymentCardData {
 interface SubmitPaymentParams {
   email: string;
   selectedServiceId: number;
+  serviceDurationMinutes: number;
   selectedDate: Date;
   selectedTime: string;
   recurrenceType: string | null;
@@ -89,7 +90,7 @@ export class SubmitPayment {
         email: params.email,
         date: format(params.selectedDate, "yyyy-MM-dd"),
         startTime: params.selectedTime,
-        duration: 120,
+        duration: params.serviceDurationMinutes,
         serviceId: params.selectedServiceId,
         recurrenceType,
         weeklyFrequency: recurrenceType === "WEEKLY" ? params.weeklyFrequency : undefined,

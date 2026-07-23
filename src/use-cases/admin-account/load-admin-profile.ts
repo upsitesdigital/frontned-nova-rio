@@ -3,8 +3,7 @@ import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 
 type LoadAdminProfileResult =
-  | { success: true; profile: AdminProfile }
-  | { success: false; error: string };
+  { success: true; profile: AdminProfile } | { success: false; error: string };
 
 class LoadAdminProfile {
   static async loadAdminProfile(): Promise<LoadAdminProfileResult> {

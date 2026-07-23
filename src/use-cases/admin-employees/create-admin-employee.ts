@@ -15,8 +15,7 @@ export interface CreateEmployeeInput {
 }
 
 export type CreateEmployeeResult =
-  | { success: true; employee: AdminEmployee }
-  | { success: false; error: string };
+  { success: true; employee: AdminEmployee } | { success: false; error: string };
 
 export class CreateAdminEmployee {
   static async createAdminEmployee(input: CreateEmployeeInput): Promise<CreateEmployeeResult> {
@@ -42,4 +41,3 @@ export class CreateAdminEmployee {
     }
   }
 }
-
