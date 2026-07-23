@@ -2,22 +2,24 @@ import { ScrollIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-interface DsServiceDetailPopupProps {
+export interface DsServiceDetailPopupProps {
   icon: DsIconComponent;
   serviceName: string;
   date: string;
   onClose?: () => void;
   onReceipt?: () => void;
+  receiptDisabled?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 
-function DsServiceDetailPopup({
+export function DsServiceDetailPopup({
   icon,
   serviceName,
   date,
   onClose,
   onReceipt,
+  receiptDisabled,
   children,
   className,
 }: DsServiceDetailPopupProps) {
@@ -52,7 +54,13 @@ function DsServiceDetailPopup({
             <button
               type="button"
               onClick={onReceipt}
-              className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-nova-gray-300 px-3 py-1.5 transition-colors hover:bg-nova-gray-50"
+              disabled={receiptDisabled}
+              className={cn(
+                "flex items-center gap-1 rounded-[6px] border border-nova-gray-300 px-3 py-1.5 transition-colors",
+                receiptDisabled
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer hover:bg-nova-gray-50",
+              )}
             >
               <DsIcon icon={ScrollIcon} size="md" className="text-primary" />
               <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -71,5 +79,3 @@ function DsServiceDetailPopup({
     </div>
   );
 }
-
-export { DsServiceDetailPopup, type DsServiceDetailPopupProps };

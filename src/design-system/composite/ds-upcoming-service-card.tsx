@@ -2,14 +2,14 @@ import { ScrollIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
-interface DsUpcomingServiceCardAction {
+export interface DsUpcomingServiceCardAction {
   label: string;
   variant: "filled" | "outlined";
   disabled?: boolean;
   onClick?: () => void;
 }
 
-interface DsUpcomingServiceCardProps {
+export interface DsUpcomingServiceCardProps {
   title: string;
   date: string;
   subtitle: string;
@@ -19,7 +19,7 @@ interface DsUpcomingServiceCardProps {
   className?: string;
 }
 
-function DsUpcomingServiceCard({
+export function DsUpcomingServiceCard({
   title,
   date,
   subtitle,
@@ -87,7 +87,7 @@ function DsUpcomingServiceCard({
               className={cn(
                 "flex h-14 items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] transition-colors",
                 action.disabled
-                  ? "cursor-not-allowed text-nova-gray-400"
+                  ? "cursor-not-allowed text-nova-gray-400 opacity-50"
                   : "cursor-pointer text-nova-gray-700",
                 action.variant === "filled" &&
                   (action.disabled ? "bg-nova-gray-50" : "bg-nova-gray-100 hover:bg-nova-gray-200"),
@@ -105,5 +105,3 @@ function DsUpcomingServiceCard({
     </div>
   );
 }
-
-export { DsUpcomingServiceCard, type DsUpcomingServiceCardProps, type DsUpcomingServiceCardAction };

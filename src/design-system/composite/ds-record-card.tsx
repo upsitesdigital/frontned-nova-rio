@@ -2,12 +2,12 @@
 
 import { cn } from "@/lib/core/utils";
 
-interface DsRecordCardField {
+export interface DsRecordCardField {
   label: string;
   value: React.ReactNode;
 }
 
-interface DsRecordCardProps {
+export interface DsRecordCardProps {
   title: string;
   status?: React.ReactNode;
   fields: DsRecordCardField[];
@@ -15,7 +15,7 @@ interface DsRecordCardProps {
   className?: string;
 }
 
-function DsRecordCard({ title, status, fields, actions, className }: DsRecordCardProps) {
+export function DsRecordCard({ title, status, fields, actions, className }: DsRecordCardProps) {
   return (
     <div
       className={cn(
@@ -35,7 +35,9 @@ function DsRecordCard({ title, status, fields, actions, className }: DsRecordCar
             className="flex items-center justify-between gap-3 text-sm leading-[1.4] tracking-[-0.56px]"
           >
             <span className="shrink-0 text-nova-gray-500">{field.label}</span>
-            <span className="truncate text-right font-medium text-nova-gray-700">{field.value}</span>
+            <span className="truncate text-right font-medium text-nova-gray-700">
+              {field.value}
+            </span>
           </div>
         ))}
       </div>
@@ -48,5 +50,3 @@ function DsRecordCard({ title, status, fields, actions, className }: DsRecordCar
     </div>
   );
 }
-
-export { DsRecordCard, type DsRecordCardProps, type DsRecordCardField };

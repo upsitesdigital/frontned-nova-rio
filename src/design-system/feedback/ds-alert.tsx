@@ -1,10 +1,15 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { WarningCircleIcon, CheckCircleIcon, WarningIcon, InfoIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  WarningCircleIcon,
+  CheckCircleIcon,
+  WarningIcon,
+  InfoIcon,
+} from "@phosphor-icons/react/dist/ssr";
 
 import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-type DsAlertVariant = "error" | "warning" | "success" | "info";
+export type DsAlertVariant = "error" | "warning" | "success" | "info";
 
 const alertVariants = cva(
   "flex flex-col gap-4 rounded-md border p-4 shadow-[var(--nova-shadow-card)]",
@@ -37,14 +42,14 @@ const iconMap: Record<DsAlertVariant, DsIconComponent> = {
   info: InfoIcon,
 };
 
-interface DsAlertProps extends VariantProps<typeof alertVariants> {
+export interface DsAlertProps extends VariantProps<typeof alertVariants> {
   title: string;
   description?: string;
   variant?: DsAlertVariant;
   className?: string;
 }
 
-function DsAlert({ title, description, variant = "error", className }: DsAlertProps) {
+export function DsAlert({ title, description, variant = "error", className }: DsAlertProps) {
   return (
     <div className={cn(alertVariants({ variant }), className)}>
       <div className="flex items-center gap-2">
@@ -62,5 +67,3 @@ function DsAlert({ title, description, variant = "error", className }: DsAlertPr
     </div>
   );
 }
-
-export { DsAlert, type DsAlertProps, type DsAlertVariant };

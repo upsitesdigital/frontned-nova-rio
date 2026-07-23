@@ -3,14 +3,15 @@
 import { cn } from "@/lib/core/utils";
 import { DsInput } from "@/design-system/primitives";
 
-interface DsProfileField {
+export interface DsProfileField {
   label: string;
   value: string;
   editable?: boolean;
   onChange?: (value: string) => void;
+  format?: (value: string) => string;
 }
 
-interface DsProfileSectionProps {
+export interface DsProfileSectionProps {
   title: string;
   initials: string;
   fields: DsProfileField[];
@@ -24,7 +25,7 @@ interface DsProfileSectionProps {
   className?: string;
 }
 
-function DsProfileSection({
+export function DsProfileSection({
   title,
   initials,
   fields,
@@ -103,7 +104,9 @@ function DsProfileSection({
             {field.editable ? (
               <DsInput
                 value={field.value}
-                onChange={(e) => field.onChange?.(e.target.value)}
+                onChange={(e) =>
+                  field.onChange?.(field.format ? field.format(e.target.value) : e.target.value)
+                }
                 className="border-nova-primary focus-visible:border-nova-primary focus-visible:ring-nova-primary/30"
               />
             ) : (
@@ -124,5 +127,3 @@ function DsProfileSection({
     </div>
   );
 }
-
-export { DsProfileSection, type DsProfileSectionProps, type DsProfileField };
