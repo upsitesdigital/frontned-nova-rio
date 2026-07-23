@@ -152,7 +152,9 @@ export default function AdminHolidaysPage() {
 
                 {holidays.map((holiday) => (
                   <tr key={holiday.id} className="border-b border-nova-gray-50">
-                    <td className="px-6 py-4 text-sm text-black">{DateHelpers.formatDate(holiday.date)}</td>
+                    <td className="px-6 py-4 text-sm text-black">
+                      {DateHelpers.formatDate(holiday.date)}
+                    </td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">{holiday.name}</td>
                     <td className="px-6 py-4 text-sm text-nova-gray-700">
                       {HolidayTypeLabel.format(holiday.type)}

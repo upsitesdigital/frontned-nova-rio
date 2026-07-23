@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  PencilSimpleIcon,
-  EnvelopeSimpleIcon,
-  LockKeyIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { PencilSimpleIcon, EnvelopeSimpleIcon, LockKeyIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsProfileCard, type DsProfileCardAction } from "@/design-system";
 import { useAdminProfileInfoStore } from "@/stores/admin/admin-profile-info-store";
 import { useAdminEmailChangeStore } from "@/stores/admin/admin-email-change-store";

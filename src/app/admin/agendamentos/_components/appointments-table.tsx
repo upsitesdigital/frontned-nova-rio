@@ -30,66 +30,13 @@ import {
 } from "@/design-system";
 import { useAdminAppointmentsStore, pageSize } from "@/stores/admin/admin-appointments-store";
 import { AppointmentLabels } from "@/lib/display/appointment-labels";
-
-function parseDateStringToLocalDate(value: string): Date | undefined {
-  if (!value) return undefined;
-
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return undefined;
-
-  const parsedDate = new Date(year, month - 1, day);
-  if (Number.isNaN(parsedDate.getTime())) return undefined;
-
-  return parsedDate;
-}
-
-function formatDateToApi(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function normalizeTimeValue(value: string): string {
-  return value.length >= 5 ? value.slice(0, 5) : value;
-}
-
-function formatDrawerDateLabel(value: string): string {
-  const date = parseDateStringToLocalDate(value);
-  if (!date) return "-";
-
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-
-  const now = new Date();
-  const isToday =
-    now.getDate() === date.getDate() &&
-    now.getMonth() === date.getMonth() &&
-    now.getFullYear() === date.getFullYear();
-
-  return isToday ? `Hoje, ${day}/${month}` : `${day}/${month}`;
-}
-
-function formatHourLabel(value: string): string {
-  const normalized = normalizeTimeValue(value);
-  const [hour] = normalized.split(":");
-  return hour ? `${hour} Horas` : "-";
-}
-
-function formatTimestamp(value: string | null | undefined): string {
-  if (!value) return "-";
-
-  const parsedDate = new Date(value);
-  if (Number.isNaN(parsedDate.getTime())) return value;
-
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(parsedDate);
-}
+import { AppointmentDateTimeFormat } from "@/lib/display/appointment-datetime-format";
+import { DownloadReceipt } from "@/use-cases/client-cards/download-receipt";
+import { useToastStore } from "@/stores/ui/toast-store";
 
 export function AppointmentsTable() {
   const router = useRouter();
+  const showToast = useToastStore((s) => s.showToast);
   const {
     appointments,
     total,
@@ -329,11 +276,11 @@ export function AppointmentsTable() {
           </p>
           <p>
             <span className="font-medium text-black">Criado em:</span>{" "}
-            {formatTimestamp(selectedAppointment?.createdAt)}
+            {AppointmentDateTimeFormat.formatTimestamp(selectedAppointment?.createdAt)}
           </p>
           <p>
             <span className="font-medium text-black">Atualizado em:</span>{" "}
-            {formatTimestamp(selectedAppointment?.updatedAt)}
+            {AppointmentDateTimeFormat.formatTimestamp(selectedAppointment?.updatedAt)}
           </p>
         </div>
       </DsDialog>
@@ -373,6 +320,14 @@ export function AppointmentsTable() {
 
               <DsButton
                 variant="outline"
+                disabled={selectedAppointment?.payment?.status !== "APPROVED"}
+                onClick={() => {
+                  const paymentId = selectedAppointment?.payment?.id;
+                  if (!paymentId) return;
+                  DownloadReceipt.downloadReceipt(paymentId).catch(() =>
+                    showToast("Erro ao baixar recibo. Tente novamente.", "error"),
+                  );
+                }}
                 className="inline-flex items-center gap-2 rounded-full border border-nova-gray-300 px-3 py-1.5 text-sm leading-[1.3] tracking-[-0.56px] text-nova-gray-700"
               >
                 Recibo
@@ -382,7 +337,9 @@ export function AppointmentsTable() {
 
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
               <p className="text-[28px] font-medium leading-[1.2] tracking-[-1.12px] text-black">
-                {selectedAppointment ? formatDrawerDateLabel(selectedAppointment.date) : "-"}
+                {selectedAppointment
+                  ? AppointmentDateTimeFormat.formatDrawerDateLabel(selectedAppointment.date)
+                  : "-"}
               </p>
               {selectedAppointment && (
                 <DsStatusPill
@@ -402,7 +359,9 @@ export function AppointmentsTable() {
                     Horario
                   </span>
                   <span className="text-sm font-medium leading-[1.3] tracking-[-0.56px] text-black">
-                    {selectedAppointment ? formatHourLabel(selectedAppointment.startTime) : "-"}
+                    {selectedAppointment
+                      ? AppointmentDateTimeFormat.formatHourLabel(selectedAppointment.startTime)
+                      : "-"}
                   </span>
                 </div>
               </div>
@@ -505,9 +464,11 @@ export function AppointmentsTable() {
         closeLabel="Fechar"
         open={rescheduleOpen}
         title="Remarcar agendamento"
-        date={parseDateStringToLocalDate(rescheduleDate)}
+        date={AppointmentDateTimeFormat.parseDateStringToLocalDate(rescheduleDate)}
         time={rescheduleTime}
-        onDateChange={(date) => setRescheduleDate(date ? formatDateToApi(date) : "")}
+        onDateChange={(date) =>
+          setRescheduleDate(date ? AppointmentDateTimeFormat.formatDateToApi(date) : "")
+        }
         onTimeChange={setRescheduleTime}
         onCancel={() => {
           setRescheduleOpen(false);
