@@ -21,7 +21,7 @@ class SchedulingConfig {
   static readonly recurrenceOptions: RecurrenceOption[] = [
     { type: "avulso", label: "Avulso", field: "allowSingle" },
     { type: "pacote", label: "Pacote", field: "allowPackage" },
-    { type: "recorrencia", label: "Recorrência", badge: "5% OFF", field: "allowRecurrence" },
+    { type: "recorrencia", label: "Recorrência", badge: "Até 10% OFF", field: "allowRecurrence" },
   ];
 
   static readonly frequencyOptions: FrequencyOption[] = [
@@ -53,6 +53,19 @@ class SchedulingConfig {
     cadastro: 2,
     pagamento: 3,
   };
+
+  static readonly loggedInStepPathMap: Record<string, number> = {
+    servico: 0,
+    "dia-horario": 1,
+    pagamento: 2,
+  };
+
+  static getStepsForUser(isLoggedIn: boolean): SchedulingStep[] {
+    if (isLoggedIn) {
+      return [{ label: "Agendar serviço" }, { label: "Dia e horário" }, { label: "Pagamento" }];
+    }
+    return SchedulingConfig.schedulingSteps;
+  }
 }
 
 export { SchedulingConfig, type RecurrenceOption, type FrequencyOption, type SchedulingStep };
