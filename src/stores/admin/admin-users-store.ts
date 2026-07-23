@@ -1,6 +1,11 @@
 import { create } from "zustand";
 
-import type { AdminUser, AdminUserRole } from "@/api/admin/admin-users-api";
+import type {
+  AdminUser,
+  AdminUserRole,
+  AdminUserStatus,
+  UpdateAdminUserPayload,
+} from "@/api/admin/admin-users-api";
 import type { DsUserFormPopupValues, DsUserTableFilter } from "@/design-system";
 import { Messages } from "@/lib/core/messages";
 import { useToastStore } from "@/stores/ui/toast-store";
@@ -8,6 +13,7 @@ import { CreateAdminUser } from "@/use-cases/admin-users/create-admin-user";
 import { DeactivateAdminUser } from "@/use-cases/admin-users/deactivate-admin-user";
 import { LoadAdminUserDetail } from "@/use-cases/admin-users/load-admin-user-detail";
 import { LoadAdminUsers } from "@/use-cases/admin-users/load-admin-users";
+import { UpdateAdminUser } from "@/use-cases/admin-users/update-admin-user";
 
 interface AdminUsersState {
   users: AdminUser[];
@@ -23,6 +29,7 @@ interface AdminUsersState {
   searchQuery: string;
   isCreateModalOpen: boolean;
   isDetailModalOpen: boolean;
+  detailMode: "view" | "edit";
   isPasswordVisible: boolean;
   showCreatedAlert: boolean;
   selectedUser: AdminUser | null;
@@ -43,7 +50,8 @@ interface AdminUsersActions {
     value: DsUserFormPopupValues[K],
   ) => void;
   createUser: () => Promise<boolean>;
-  openUserDetails: (userId: number) => Promise<void>;
+  openUserDetails: (userId: number, mode: "view" | "edit") => Promise<void>;
+  updateUser: () => Promise<boolean>;
   closeUserDetails: () => void;
   openDeleteConfirm: (userId: number) => void;
   closeDeleteConfirm: () => void;
@@ -51,7 +59,7 @@ interface AdminUsersActions {
   reset: () => void;
 }
 
-type AdminUsersStore = AdminUsersState & AdminUsersActions;
+export type AdminUsersStore = AdminUsersState & AdminUsersActions;
 
 const defaultForm: DsUserFormPopupValues = {
   name: "",
@@ -75,6 +83,7 @@ const initialState: AdminUsersState = {
   searchQuery: "",
   isCreateModalOpen: false,
   isDetailModalOpen: false,
+  detailMode: "view",
   isPasswordVisible: false,
   showCreatedAlert: false,
   selectedUser: null,
@@ -94,7 +103,21 @@ function mapFormRoleToApiRole(role: string): AdminUserRole {
   return role === "admin_master" ? "ADMIN_MASTER" : "ADMIN_BASIC";
 }
 
-const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
+function mapFormActiveToApiStatus(active: string): AdminUserStatus {
+  return active === "inactive" ? "INACTIVE" : "ACTIVE";
+}
+
+function mapUserToForm(user: AdminUser): DsUserFormPopupValues {
+  return {
+    name: user.name,
+    email: user.email,
+    password: "",
+    role: user.role === "ADMIN_MASTER" ? "admin_master" : "admin_basic",
+    active: user.status === "ACTIVE" ? "active" : "inactive",
+  };
+}
+
+export const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
   ...initialState,
 
   loadUsers: async () => {
@@ -236,11 +259,12 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     return true;
   },
 
-  openUserDetails: async (userId) => {
+  openUserDetails: async (userId, mode) => {
     const requestId = ++detailRequestId;
 
     set({
       isDetailModalOpen: true,
+      detailMode: mode,
       isLoadingDetail: true,
       detailError: null,
       selectedUser: null,
@@ -254,7 +278,12 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     }
 
     if (result.data) {
-      set({ isLoadingDetail: false, selectedUser: result.data });
+      set({
+        isLoadingDetail: false,
+        selectedUser: result.data,
+        isPasswordVisible: false,
+        form: mapUserToForm(result.data),
+      });
       return;
     }
 
@@ -265,12 +294,61 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     });
   },
 
+  updateUser: async () => {
+    const { form, selectedUser, isSaving } = get();
+    if (isSaving || !selectedUser) return false;
+
+    const name = form.name.trim();
+    const email = form.email.trim().toLowerCase();
+    const password = form.password;
+
+    if (!name) {
+      useToastStore.getState().showToast(Messages.adminUsers.requiredName, "error");
+      return false;
+    }
+
+    if (!email) {
+      useToastStore.getState().showToast(Messages.adminUsers.requiredEmail, "error");
+      return false;
+    }
+
+    if (!isValidEmail(email)) {
+      useToastStore.getState().showToast(Messages.adminUsers.invalidEmail, "error");
+      return false;
+    }
+
+    set({ isSaving: true, isAuthError: false });
+
+    const payload: UpdateAdminUserPayload = {
+      name,
+      email,
+      role: mapFormRoleToApiRole(form.role),
+      status: mapFormActiveToApiStatus(form.active),
+      ...(password ? { password } : {}),
+    };
+
+    const result = await UpdateAdminUser.updateAdminUser(selectedUser.id, payload);
+
+    if (!result.data || result.error) {
+      useToastStore.getState().showToast(result.error ?? Messages.adminUsers.updateError, "error");
+      set({ isSaving: false, isAuthError: result.isAuthError });
+      return false;
+    }
+
+    await get().loadUsers();
+    set({ isSaving: false });
+    get().closeUserDetails();
+    useToastStore.getState().showToast(Messages.adminUsers.updateSuccess, "success");
+    return true;
+  },
+
   closeUserDetails: () => {
     set({
       isDetailModalOpen: false,
       isLoadingDetail: false,
       detailError: null,
       selectedUser: null,
+      form: { ...defaultForm },
     });
   },
 
@@ -315,5 +393,3 @@ const useAdminUsersStore = create<AdminUsersStore>()((set, get) => ({
     set(initialState);
   },
 }));
-
-export { useAdminUsersStore, type AdminUsersStore };

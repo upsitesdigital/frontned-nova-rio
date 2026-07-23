@@ -8,7 +8,7 @@ import { DsPasswordInput } from "@/design-system/primitives";
 import { DsSelect, type DsSelectOption } from "@/design-system/primitives";
 import { DsFormField } from "@/design-system/forms";
 
-interface DsUserFormPopupValues {
+export interface DsUserFormPopupValues {
   name: string;
   email: string;
   password: string;
@@ -16,7 +16,7 @@ interface DsUserFormPopupValues {
   active: string;
 }
 
-interface DsUserFormPopupProps {
+export interface DsUserFormPopupProps {
   nameLabel: string;
   emailLabel: string;
   passwordLabel: string;
@@ -50,7 +50,7 @@ const defaultActiveOptions: DsSelectOption[] = [
   { value: "inactive", label: "Inativo" },
 ];
 
-function DsUserFormPopup({
+export function DsUserFormPopup({
   nameLabel,
   emailLabel,
   passwordLabel,
@@ -80,21 +80,21 @@ function DsUserFormPopup({
         className,
       )}
     >
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          className="cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
-        >
-          <DsIcon icon={XIcon} size="lg" />
-        </button>
-      )}
-
       <div className="flex w-full flex-col items-center justify-center">
         <p className="w-full text-center text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
           {title}
         </p>
       </div>
+
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-6 top-6 cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
+        >
+          <DsIcon icon={XIcon} size="lg" />
+        </button>
+      )}
 
       <DsFormField label={nameLabel}>
         <DsInput
@@ -155,5 +155,3 @@ function DsUserFormPopup({
     </div>
   );
 }
-
-export { DsUserFormPopup, type DsUserFormPopupProps, type DsUserFormPopupValues };

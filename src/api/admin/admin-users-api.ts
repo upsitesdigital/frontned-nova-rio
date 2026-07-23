@@ -1,9 +1,9 @@
 import { HttpClient } from "@/api/core/http-client";
 
-type AdminUserRole = "ADMIN_MASTER" | "ADMIN_BASIC";
-type AdminUserStatus = "ACTIVE" | "INACTIVE";
+export type AdminUserRole = "ADMIN_MASTER" | "ADMIN_BASIC";
+export type AdminUserStatus = "ACTIVE" | "INACTIVE";
 
-interface AdminUser {
+export interface AdminUser {
   id: number;
   uuid: string;
   name: string;
@@ -15,28 +15,36 @@ interface AdminUser {
   createdById: number | null;
 }
 
-interface AdminUsersResponse {
+export interface AdminUsersResponse {
   data: AdminUser[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface ListAdminUsersParams {
+export interface ListAdminUsersParams {
   page: number;
   limit: number;
   status?: AdminUserStatus;
   search?: string;
 }
 
-interface CreateAdminUserPayload {
+export interface CreateAdminUserPayload {
   name: string;
   email: string;
   password: string;
   role?: AdminUserRole;
 }
 
-class AdminUsersApi {
+export interface UpdateAdminUserPayload {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: AdminUserRole;
+  status?: AdminUserStatus;
+}
+
+export class AdminUsersApi {
   static async fetchAdminUsers(
     params: ListAdminUsersParams,
     signal?: AbortSignal,
@@ -63,17 +71,11 @@ class AdminUsersApi {
     return HttpClient.authPost<AdminUser>("/admin-users", payload);
   }
 
+  static async updateAdminUser(id: number, payload: UpdateAdminUserPayload): Promise<AdminUser> {
+    return HttpClient.authPatchWithBody<AdminUser>(`/admin-users/${id}`, payload);
+  }
+
   static async deactivateAdminUser(id: number): Promise<void> {
     await HttpClient.authDelete<void>(`/admin-users/${id}`);
   }
 }
-
-export {
-  AdminUsersApi,
-  type AdminUser,
-  type AdminUsersResponse,
-  type ListAdminUsersParams,
-  type CreateAdminUserPayload,
-  type AdminUserRole,
-  type AdminUserStatus,
-};
