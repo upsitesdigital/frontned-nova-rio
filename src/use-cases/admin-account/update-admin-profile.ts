@@ -7,8 +7,7 @@ import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 
 type UpdateAdminProfileResult =
-  | { success: true; profile: AdminProfile }
-  | { success: false; error: string };
+  { success: true; profile: AdminProfile } | { success: false; error: string };
 
 class UpdateAdminProfile {
   static async updateProfile(data: UpdateAdminProfileData): Promise<UpdateAdminProfileResult> {

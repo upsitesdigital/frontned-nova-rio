@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { NumberInput } from "@/lib/formatting/number-input";
+
 import type { AdminPackage } from "@/api/admin/admin-packages-api";
 import type { AdminServiceOption } from "@/use-cases/admin-services/get-admin-service-options";
 import { Messages } from "@/lib/core/messages";
@@ -11,9 +13,9 @@ import { LoadAdminPackages } from "@/use-cases/admin-packages/load-admin-package
 import { ReactivateAdminPackage } from "@/use-cases/admin-packages/reactivate-admin-package";
 import { UpdateAdminPackage } from "@/use-cases/admin-packages/update-admin-package";
 
-type PackageStatusFilter = "all" | "active";
+export type PackageStatusFilter = "all" | "active";
 
-interface AdminPackageFormData {
+export interface AdminPackageFormData {
   name: string;
   description: string;
   totalHoursInput: string;
@@ -59,8 +61,6 @@ interface AdminPackagesActions {
   reset: () => void;
 }
 
-type AdminPackagesStore = AdminPackagesState & AdminPackagesActions;
-
 const defaultPageSize = 10;
 
 const defaultForm: AdminPackageFormData = {
@@ -93,258 +93,229 @@ const initialState: AdminPackagesState = {
 let listAbortController: AbortController | null = null;
 let listLoadRequestId = 0;
 
-function toNumber(value: string): number | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
+export const useAdminPackagesStore = create<AdminPackagesState & AdminPackagesActions>()(
+  (set, get) => ({
+    ...initialState,
 
-  const normalized = trimmed.replace(/\./g, "").replace(",", ".");
-  const parsed = Number(normalized);
+    loadPackages: async (page) => {
+      listAbortController?.abort();
+      listAbortController = new AbortController();
+      const requestId = ++listLoadRequestId;
+      const signal = listAbortController.signal;
 
-  if (!Number.isFinite(parsed)) return null;
-  return parsed;
-}
+      const targetPage = page ?? get().currentPage;
+      const statusFilter = get().statusFilter;
+      const serviceFilter = get().serviceFilter;
 
-function toInteger(value: string): number | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
+      set({ isLoading: true, error: null, isAuthError: false });
 
-  const parsed = Number(trimmed);
-  if (!Number.isInteger(parsed)) return null;
-  return parsed;
-}
+      const result = await LoadAdminPackages.loadAdminPackages(
+        {
+          page: targetPage,
+          limit: get().pageSize,
+          active: statusFilter === "active" ? true : undefined,
+          serviceId: serviceFilter !== "all" ? Number(serviceFilter) : undefined,
+        },
+        signal,
+      );
 
-function formatPriceInput(value: number): string {
-  return value.toFixed(2).replace(".", ",");
-}
+      if (signal.aborted || requestId !== listLoadRequestId) {
+        return;
+      }
 
-const useAdminPackagesStore = create<AdminPackagesStore>()((set, get) => ({
-  ...initialState,
+      if (result.data) {
+        set({
+          packages: result.data.items,
+          totalPackages: result.data.total,
+          currentPage: result.data.page,
+          isLoading: false,
+        });
+        return;
+      }
 
-  loadPackages: async (page) => {
-    listAbortController?.abort();
-    listAbortController = new AbortController();
-    const requestId = ++listLoadRequestId;
-    const signal = listAbortController.signal;
-
-    const targetPage = page ?? get().currentPage;
-    const statusFilter = get().statusFilter;
-    const serviceFilter = get().serviceFilter;
-
-    set({ isLoading: true, error: null, isAuthError: false });
-
-    const result = await LoadAdminPackages.loadAdminPackages(
-      {
-        page: targetPage,
-        limit: get().pageSize,
-        active: statusFilter === "active" ? true : undefined,
-        serviceId: serviceFilter !== "all" ? Number(serviceFilter) : undefined,
-      },
-      signal,
-    );
-
-    if (signal.aborted || requestId !== listLoadRequestId) {
-      return;
-    }
-
-    if (result.data) {
       set({
-        packages: result.data.items,
-        totalPackages: result.data.total,
-        currentPage: result.data.page,
         isLoading: false,
+        error: result.error,
+        isAuthError: result.isAuthError,
       });
-      return;
-    }
+    },
 
-    set({
-      isLoading: false,
-      error: result.error,
-      isAuthError: result.isAuthError,
-    });
-  },
+    loadServiceOptions: async () => {
+      const result = await GetAdminServiceOptions.getAdminServiceOptions();
+      if (!result.data || result.error) {
+        useToastStore
+          .getState()
+          .showToast(result.error ?? Messages.adminPackages.serviceOptionsError, "error");
+        return;
+      }
 
-  loadServiceOptions: async () => {
-    const result = await GetAdminServiceOptions.getAdminServiceOptions();
-    if (!result.data || result.error) {
-      useToastStore
-        .getState()
-        .showToast(result.error ?? Messages.adminPackages.serviceOptionsError, "error");
-      return;
-    }
+      set({ serviceOptions: result.data });
+    },
 
-    set({ serviceOptions: result.data });
-  },
+    setMounted: (mounted) => {
+      set({ isMounted: mounted });
+    },
 
-  setMounted: (mounted) => {
-    set({ isMounted: mounted });
-  },
+    setCurrentPage: (page) => {
+      set({ currentPage: page });
+      void get().loadPackages(page);
+    },
 
-  setCurrentPage: (page) => {
-    set({ currentPage: page });
-    void get().loadPackages(page);
-  },
+    setStatusFilter: (filter) => {
+      set({ statusFilter: filter, currentPage: 1 });
+      void get().loadPackages(1);
+    },
 
-  setStatusFilter: (filter) => {
-    set({ statusFilter: filter, currentPage: 1 });
-    void get().loadPackages(1);
-  },
+    setServiceFilter: (serviceId) => {
+      set({ serviceFilter: serviceId, currentPage: 1 });
+      void get().loadPackages(1);
+    },
 
-  setServiceFilter: (serviceId) => {
-    set({ serviceFilter: serviceId, currentPage: 1 });
-    void get().loadPackages(1);
-  },
+    openCreateEditor: () => {
+      set({
+        isEditorOpen: true,
+        editingPackageId: null,
+        form: { ...defaultForm },
+      });
+    },
 
-  openCreateEditor: () => {
-    set({
-      isEditorOpen: true,
-      editingPackageId: null,
-      form: { ...defaultForm },
-    });
-  },
+    openEditEditor: (packageId) => {
+      const selectedPackage = get().packages.find((item) => item.id === packageId);
+      if (!selectedPackage) return;
 
-  openEditEditor: (packageId) => {
-    const selectedPackage = get().packages.find((item) => item.id === packageId);
-    if (!selectedPackage) return;
+      set({
+        isEditorOpen: true,
+        editingPackageId: selectedPackage.id,
+        form: {
+          name: selectedPackage.name,
+          description: selectedPackage.description ?? "",
+          totalHoursInput: selectedPackage.totalHours ? String(selectedPackage.totalHours) : "",
+          priceInput: NumberInput.formatDecimal(selectedPackage.price),
+          serviceId: String(selectedPackage.serviceId),
+        },
+      });
+    },
 
-    set({
-      isEditorOpen: true,
-      editingPackageId: selectedPackage.id,
-      form: {
-        name: selectedPackage.name,
-        description: selectedPackage.description ?? "",
-        totalHoursInput: selectedPackage.totalHours ? String(selectedPackage.totalHours) : "",
-        priceInput: formatPriceInput(selectedPackage.price),
-        serviceId: String(selectedPackage.serviceId),
-      },
-    });
-  },
+    closeEditor: () => {
+      set({
+        isEditorOpen: false,
+        editingPackageId: null,
+        form: { ...defaultForm },
+      });
+    },
 
-  closeEditor: () => {
-    set({
-      isEditorOpen: false,
-      editingPackageId: null,
-      form: { ...defaultForm },
-    });
-  },
+    updateFormField: (field, value) => {
+      set((state) => ({ form: { ...state.form, [field]: value } }));
+    },
 
-  updateFormField: (field, value) => {
-    set((state) => ({ form: { ...state.form, [field]: value } }));
-  },
+    savePackage: async () => {
+      const { form, editingPackageId } = get();
 
-  savePackage: async () => {
-    const { form, editingPackageId } = get();
+      if (!form.name.trim()) {
+        useToastStore.getState().showToast(Messages.adminPackages.requiredName, "error");
+        return false;
+      }
 
-    if (!form.name.trim()) {
-      useToastStore.getState().showToast(Messages.adminPackages.requiredName, "error");
-      return false;
-    }
+      const price = NumberInput.parseDecimal(form.priceInput);
+      if (price === null || price <= 0) {
+        useToastStore.getState().showToast(Messages.adminPackages.invalidPrice, "error");
+        return false;
+      }
 
-    const price = toNumber(form.priceInput);
-    if (price === null || price <= 0) {
-      useToastStore.getState().showToast(Messages.adminPackages.invalidPrice, "error");
-      return false;
-    }
+      if (!form.serviceId) {
+        useToastStore.getState().showToast(Messages.adminPackages.requiredService, "error");
+        return false;
+      }
 
-    if (!form.serviceId) {
-      useToastStore.getState().showToast(Messages.adminPackages.requiredService, "error");
-      return false;
-    }
+      const totalHours = NumberInput.parseInteger(form.totalHoursInput);
+      if (form.totalHoursInput.trim() && (totalHours === null || totalHours <= 0)) {
+        useToastStore.getState().showToast(Messages.adminPackages.invalidTotalHours, "error");
+        return false;
+      }
 
-    const totalHours = toInteger(form.totalHoursInput);
-    if (form.totalHoursInput.trim() && (totalHours === null || totalHours <= 0)) {
-      useToastStore.getState().showToast(Messages.adminPackages.invalidTotalHours, "error");
-      return false;
-    }
+      const payload = {
+        name: form.name.trim(),
+        description: form.description.trim() || undefined,
+        totalHours: totalHours ?? undefined,
+        price,
+        serviceId: Number(form.serviceId),
+      };
 
-    const payload = {
-      name: form.name.trim(),
-      description: form.description.trim() || undefined,
-      totalHours: totalHours ?? undefined,
-      price,
-      serviceId: Number(form.serviceId),
-    };
+      set({ isSaving: true, isAuthError: false });
 
-    set({ isSaving: true, isAuthError: false });
+      if (editingPackageId) {
+        const result = await UpdateAdminPackage.updateAdminPackage(editingPackageId, payload);
 
-    if (editingPackageId) {
-      const result = await UpdateAdminPackage.updateAdminPackage(editingPackageId, payload);
+        if (!result.data || result.error) {
+          useToastStore
+            .getState()
+            .showToast(result.error ?? Messages.adminPackages.updateError, "error");
+          set({ isSaving: false, isAuthError: result.isAuthError });
+          return false;
+        }
+
+        await get().loadPackages();
+        useToastStore.getState().showToast(Messages.adminPackages.updateSuccess, "success");
+        set({ isSaving: false });
+        get().closeEditor();
+        return true;
+      }
+
+      const result = await CreateAdminPackage.createAdminPackage(payload);
 
       if (!result.data || result.error) {
         useToastStore
           .getState()
-          .showToast(result.error ?? Messages.adminPackages.updateError, "error");
+          .showToast(result.error ?? Messages.adminPackages.createError, "error");
         set({ isSaving: false, isAuthError: result.isAuthError });
         return false;
       }
 
-      await get().loadPackages();
-      useToastStore.getState().showToast(Messages.adminPackages.updateSuccess, "success");
+      await get().loadPackages(1);
+      useToastStore.getState().showToast(Messages.adminPackages.createSuccess, "success");
       set({ isSaving: false });
       get().closeEditor();
       return true;
-    }
+    },
 
-    const result = await CreateAdminPackage.createAdminPackage(payload);
+    togglePackageStatus: async (packageId, nextActive) => {
+      set({ togglingPackageId: packageId, isAuthError: false });
 
-    if (!result.data || result.error) {
-      useToastStore
-        .getState()
-        .showToast(result.error ?? Messages.adminPackages.createError, "error");
-      set({ isSaving: false, isAuthError: result.isAuthError });
-      return false;
-    }
+      const result = nextActive
+        ? await ReactivateAdminPackage.reactivateAdminPackage(packageId)
+        : await DeactivateAdminPackage.deactivateAdminPackage(packageId);
 
-    await get().loadPackages(1);
-    useToastStore.getState().showToast(Messages.adminPackages.createSuccess, "success");
-    set({ isSaving: false });
-    get().closeEditor();
-    return true;
-  },
+      if (!result.success) {
+        useToastStore
+          .getState()
+          .showToast(
+            result.error ??
+              (nextActive
+                ? Messages.adminPackages.reactivateError
+                : Messages.adminPackages.deactivateError),
+            "error",
+          );
+        set({ togglingPackageId: null, isAuthError: result.isAuthError });
+        return false;
+      }
 
-  togglePackageStatus: async (packageId, nextActive) => {
-    set({ togglingPackageId: packageId, isAuthError: false });
-
-    const result = nextActive
-      ? await ReactivateAdminPackage.reactivateAdminPackage(packageId)
-      : await DeactivateAdminPackage.deactivateAdminPackage(packageId);
-
-    if (!result.success) {
+      await get().loadPackages();
       useToastStore
         .getState()
         .showToast(
-          result.error ??
-            (nextActive
-              ? Messages.adminPackages.reactivateError
-              : Messages.adminPackages.deactivateError),
-          "error",
+          nextActive
+            ? Messages.adminPackages.reactivateSuccess
+            : Messages.adminPackages.deactivateSuccess,
+          "success",
         );
-      set({ togglingPackageId: null, isAuthError: result.isAuthError });
-      return false;
-    }
+      set({ togglingPackageId: null });
+      return true;
+    },
 
-    await get().loadPackages();
-    useToastStore
-      .getState()
-      .showToast(
-        nextActive
-          ? Messages.adminPackages.reactivateSuccess
-          : Messages.adminPackages.deactivateSuccess,
-        "success",
-      );
-    set({ togglingPackageId: null });
-    return true;
-  },
-
-  reset: () => {
-    listAbortController?.abort();
-    listAbortController = null;
-    set(initialState);
-  },
-}));
-
-export {
-  useAdminPackagesStore,
-  type AdminPackagesStore,
-  type AdminPackageFormData,
-  type PackageStatusFilter,
-};
+    reset: () => {
+      listAbortController?.abort();
+      listAbortController = null;
+      set(initialState);
+    },
+  }),
+);

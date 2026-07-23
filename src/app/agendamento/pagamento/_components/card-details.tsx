@@ -34,7 +34,7 @@ export function CardDetails() {
 
   const handleCvvChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      setCardCvv(e.target.value.replace(/\D/g, "").slice(0, 4)),
+      setCardCvv(Formatters.onlyDigits(e.target.value).slice(0, 4)),
     [setCardCvv],
   );
 

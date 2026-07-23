@@ -11,6 +11,7 @@ import {
   DsCancelConfirmPopup,
 } from "@/design-system";
 import { AppointmentRules } from "@/lib/core/appointment-rules";
+import { AppointmentDateTimeFormat } from "@/lib/display/appointment-datetime-format";
 import type { RecurrenceFrequencyCode } from "@/api/client/profile-api";
 import { useRecurrencePreferenceStore } from "@/stores/client/recurrence-preference-store";
 import { useSidePanelRescheduleStore } from "@/stores/client/side-panel-reschedule-store";
@@ -76,21 +77,22 @@ export function ServicesSidePanel({
         date={nextServiceDate}
         subtitle={nextServiceSubtitle}
         onReceipt={onReceipt}
-        receiptDisabled={!hasNextService}
+        receiptDisabled={!onReceipt}
         actions={[
           {
             label: "Reagendar",
             variant: "filled",
+            disabled: !hasNextService || AppointmentRules.isCancelBlocked(nextAppointmentDateTime),
             onClick: () =>
               openReschedule(
                 nextAppointmentDateTime ? new Date(nextAppointmentDateTime) : undefined,
-                nextAppointmentDateTime ? nextAppointmentDateTime.slice(11, 16) : undefined,
+                AppointmentDateTimeFormat.extractTimeFromDateTime(nextAppointmentDateTime),
               ),
           },
           {
             label: "Cancelar",
             variant: "outlined",
-            disabled: AppointmentRules.isCancelBlocked(nextAppointmentDateTime),
+            disabled: !hasNextService || AppointmentRules.isCancelBlocked(nextAppointmentDateTime),
             onClick: openCancel,
           },
         ]}

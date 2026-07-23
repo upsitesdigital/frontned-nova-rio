@@ -152,6 +152,21 @@ describe("ServiceEditStore", () => {
       });
     });
 
+    it("should omit date when the prefilled date was not changed by the user", async () => {
+      vi.mocked(RescheduleClientAppointment.rescheduleClientAppointment).mockResolvedValue({
+        success: true,
+        error: null,
+      });
+      useServiceEditStore.getState().openReschedule(new Date(2026, 5, 15), "10:00");
+
+      const result = await useServiceEditStore.getState().confirmReschedule(1);
+
+      expect(result).toBe(true);
+      expect(RescheduleClientAppointment.rescheduleClientAppointment).toHaveBeenCalledWith(
+        expect.objectContaining({ date: undefined, time: "10:00" }),
+      );
+    });
+
     it("should reschedule and close panel on success", async () => {
       const date = new Date(2026, 5, 15);
       vi.mocked(RescheduleClientAppointment.rescheduleClientAppointment).mockResolvedValue({
@@ -160,6 +175,7 @@ describe("ServiceEditStore", () => {
       });
       useServiceEditStore.setState({
         rescheduleDate: date,
+        rescheduleDateChanged: true,
         rescheduleTime: "10:00",
       });
 

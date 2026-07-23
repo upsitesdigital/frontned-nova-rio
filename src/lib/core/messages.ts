@@ -67,6 +67,8 @@ class Messages {
     missingHolder: "Informe o nome impresso no cartão",
     missingMonth: "Selecione o mês",
     missingYear: "Selecione o ano",
+    invalidMonth: "Mês inválido",
+    expired: "Cartão vencido",
     missingCvv: "Informe o CVV",
     invalidCvv: "CVV inválido",
     tokenizeError: "Erro ao processar dados do cartão",

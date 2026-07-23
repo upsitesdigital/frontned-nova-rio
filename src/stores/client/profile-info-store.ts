@@ -1,12 +1,13 @@
 import { create } from "zustand";
 
 import type { ClientProfile, UpdateProfileData } from "@/api/client/profile-api";
+import { Formatters } from "@/lib/formatting/formatters";
 import { Messages } from "@/lib/core/messages";
 import { useToastStore } from "@/stores/ui/toast-store";
 import { LoadClientProfile } from "@/use-cases/client-account/load-client-profile";
 import { UpdateClientProfile } from "@/use-cases/client-account/update-client-profile";
 
-interface ProfileInfoState {
+export interface ProfileInfoState {
   profile: ClientProfile | null;
   isLoading: boolean;
   isSaving: boolean;
@@ -34,8 +35,6 @@ interface ProfileInfoActions {
   reset: () => void;
 }
 
-type ProfileInfoStore = ProfileInfoState & ProfileInfoActions;
-
 const initialState: ProfileInfoState = {
   profile: null,
   isLoading: false,
@@ -50,7 +49,7 @@ const initialState: ProfileInfoState = {
   editAddress: "",
 };
 
-const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
+export const useProfileInfoStore = create<ProfileInfoState & ProfileInfoActions>()((set, get) => ({
   ...initialState,
 
   loadProfile: async () => {
@@ -70,9 +69,9 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
       isEditing: true,
       error: null,
       editName: profile.name,
-      editPhone: profile.phone ?? "",
+      editPhone: profile.phone ? Formatters.formatPhone(profile.phone) : "",
       editCompany: profile.company ?? "",
-      editCpfCnpj: profile.cpfCnpj ?? "",
+      editCpfCnpj: profile.cpfCnpj ? Formatters.formatCpfCnpj(profile.cpfCnpj) : "",
       editAddress: profile.address ?? "",
     });
   },
@@ -91,9 +90,9 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
     const { editName, editPhone, editCompany, editCpfCnpj, editAddress } = get();
     const data: UpdateProfileData = {
       name: editName,
-      phone: editPhone.replace(/\D/g, ""),
+      phone: Formatters.onlyDigits(editPhone),
       company: editCompany,
-      cpfCnpj: editCpfCnpj,
+      cpfCnpj: Formatters.onlyDigits(editCpfCnpj),
       address: editAddress,
     };
 
@@ -111,5 +110,3 @@ const useProfileInfoStore = create<ProfileInfoStore>()((set, get) => ({
 
   reset: () => set(initialState),
 }));
-
-export { useProfileInfoStore, type ProfileInfoStore, type ProfileInfoState };

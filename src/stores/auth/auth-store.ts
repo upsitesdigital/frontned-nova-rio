@@ -46,7 +46,7 @@ function syncAuthCookie(state: AuthState): void {
       },
     });
     const secure = window.location.protocol === "https:" ? ";Secure" : "";
-    document.cookie = `${authCookieName}=${encodeURIComponent(cookieValue)};path=/;SameSite=Lax${secure}`;
+    document.cookie = `${authCookieName}=${encodeURIComponent(cookieValue)};path=/;SameSite=Strict${secure}`;
   } else {
     document.cookie = `${authCookieName}=;path=/;max-age=0`;
   }

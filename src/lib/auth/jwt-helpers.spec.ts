@@ -39,8 +39,8 @@ describe("JwtHelpers.decodeJwtPayload", () => {
   it("should handle URL-safe base64 characters", () => {
     const header = btoa(JSON.stringify({ alg: "HS256" }));
     const payload = btoa(JSON.stringify({ type: "admin" }))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_");
+      .replaceAll("+", "-")
+      .replaceAll("/", "_");
     const token = `${header}.${payload}.sig`;
     const result = JwtHelpers.decodeJwtPayload(token);
     expect(result?.type).toBe("admin");
@@ -48,7 +48,7 @@ describe("JwtHelpers.decodeJwtPayload", () => {
 
   it("should handle base64 payload without padding", () => {
     const header = btoa(JSON.stringify({ alg: "HS256" }));
-    const payload = btoa(JSON.stringify({ type: "admin" })).replace(/=+$/, "");
+    const payload = btoa(JSON.stringify({ type: "admin" })).split("=")[0];
     const token = `${header}.${payload}.sig`;
     const result = JwtHelpers.decodeJwtPayload(token);
     expect(result?.type).toBe("admin");

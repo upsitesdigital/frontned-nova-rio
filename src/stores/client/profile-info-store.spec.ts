@@ -131,9 +131,9 @@ describe("ProfileInfoStore", () => {
       const state = useProfileInfoStore.getState();
       expect(state.isEditing).toBe(true);
       expect(state.editName).toBe("John Doe");
-      expect(state.editPhone).toBe("11999999999");
+      expect(state.editPhone).toBe("(11) 99999-9999");
       expect(state.editCompany).toBe("ACME");
-      expect(state.editCpfCnpj).toBe("12345678900");
+      expect(state.editCpfCnpj).toBe("123.456.789-00");
       expect(state.editAddress).toBe("Rua Test, 123");
       expect(state.error).toBeNull();
     });

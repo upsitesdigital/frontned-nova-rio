@@ -1,6 +1,7 @@
 "use client";
 
 import { DsAvatar, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
+import { Formatters } from "@/lib/formatting/formatters";
 import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
 const statusOptions = [
@@ -43,11 +44,17 @@ export function PersonalInfoSection() {
         </DsFormField>
 
         <DsFormField label="Telefone">
-          <DsInput value={form.phone} onChange={(e) => updateField("phone", e.target.value)} />
+          <DsInput
+            value={form.phone}
+            onChange={(e) => updateField("phone", Formatters.formatPhone(e.target.value))}
+          />
         </DsFormField>
 
         <DsFormField label="CPF">
-          <DsInput value={form.cpf} onChange={(e) => updateField("cpf", e.target.value)} />
+          <DsInput
+            value={form.cpf}
+            onChange={(e) => updateField("cpf", Formatters.formatCpfCnpj(e.target.value))}
+          />
         </DsFormField>
 
         <DsFormField label="Endereço">

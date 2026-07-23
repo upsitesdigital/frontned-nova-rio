@@ -11,6 +11,7 @@ interface ServiceEditState {
   recurrence: RecurrenceType;
   rescheduleOpen: boolean;
   rescheduleDate: Date | undefined;
+  rescheduleDateChanged: boolean;
   rescheduleTime: string | undefined;
   cancelOpen: boolean;
   addressSectionOpen: boolean;
@@ -52,6 +53,7 @@ const initialState: ServiceEditState = {
   locationComplement: "",
   rescheduleOpen: false,
   rescheduleDate: undefined,
+  rescheduleDateChanged: false,
   rescheduleTime: undefined,
   cancelOpen: false,
   isSaving: false,
@@ -74,23 +76,35 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
   initAddress: (zip, address) => set({ locationZip: zip, locationAddress: address }),
 
   openReschedule: (date?: Date, time?: string) =>
-    set({ rescheduleOpen: true, rescheduleDate: date ?? new Date(), rescheduleTime: time }),
+    set({
+      rescheduleOpen: true,
+      rescheduleDate: date ?? new Date(),
+      rescheduleDateChanged: false,
+      rescheduleTime: time,
+    }),
 
   closeReschedule: () => set({ rescheduleOpen: false }),
 
-  setRescheduleDate: (date) => set({ rescheduleDate: date }),
+  setRescheduleDate: (date) => set({ rescheduleDate: date, rescheduleDateChanged: true }),
 
   setRescheduleTime: (time) => set({ rescheduleTime: time }),
 
   confirmReschedule: async (appointmentId) => {
     if (get().isSaving) return false;
-    const { rescheduleDate, rescheduleTime, recurrence, locationZip, locationAddress } = get();
+    const {
+      rescheduleDate,
+      rescheduleDateChanged,
+      rescheduleTime,
+      recurrence,
+      locationZip,
+      locationAddress,
+    } = get();
 
     set({ isSaving: true, saveError: null, saveSuccess: null });
 
     const result = await RescheduleClientAppointment.rescheduleClientAppointment({
       appointmentId,
-      date: rescheduleDate,
+      date: rescheduleDateChanged ? rescheduleDate : undefined,
       time: rescheduleTime,
       recurrenceType: recurrence,
       locationZip: locationZip || undefined,
@@ -102,6 +116,7 @@ const useServiceEditStore = create<ServiceEditStore>()((set, get) => ({
         isSaving: false,
         rescheduleOpen: false,
         rescheduleDate: undefined,
+        rescheduleDateChanged: false,
         rescheduleTime: undefined,
         saveSuccess: Messages.appointments.rescheduleSuccess,
       });

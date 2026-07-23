@@ -3,8 +3,7 @@ import { AuthHelpers } from "@/lib/auth/auth-helpers";
 import { Messages } from "@/lib/core/messages";
 
 type UpdateClientProfileResult =
-  | { success: true; profile: ClientProfile }
-  | { success: false; error: string };
+  { success: true; profile: ClientProfile } | { success: false; error: string };
 
 class UpdateClientProfile {
   static async updateProfile(data: UpdateProfileData): Promise<UpdateClientProfileResult> {

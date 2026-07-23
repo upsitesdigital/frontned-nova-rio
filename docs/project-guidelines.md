@@ -1082,18 +1082,13 @@ useEffect(() => {
 **Auth store — persist BOTH tokens:**
 
 ```tsx
-persist(
-  (set) => ({
-    /* ... */
+persist((set) => ({/* ... */}), {
+  name: "nova-rio-auth",
+  partialize: (state) => ({
+    accessToken: state.accessToken,
+    refreshToken: state.refreshToken, // MUST persist for page reload survival
   }),
-  {
-    name: "nova-rio-auth",
-    partialize: (state) => ({
-      accessToken: state.accessToken,
-      refreshToken: state.refreshToken, // MUST persist for page reload survival
-    }),
-  },
-);
+});
 ```
 
 #### Frameworks & Drivers (`src/app/**/`, `src/design-system/`)

@@ -14,6 +14,7 @@ import {
   DsSelect,
   DsTextarea,
 } from "@/design-system";
+import { Formatters } from "@/lib/formatting/formatters";
 import { useAdminEmployeeCreateStore } from "@/stores/admin/admin-employee-create-store";
 
 export default function AdminEmployeeCreatePage() {
@@ -77,12 +78,15 @@ export default function AdminEmployeeCreatePage() {
               <DsFormField label="Telefone">
                 <DsInput
                   value={form.phone}
-                  onChange={(e) => updateField("phone", e.target.value)}
+                  onChange={(e) => updateField("phone", Formatters.formatPhone(e.target.value))}
                 />
               </DsFormField>
 
               <DsFormField label="CPF">
-                <DsInput value={form.cpf} onChange={(e) => updateField("cpf", e.target.value)} />
+                <DsInput
+                  value={form.cpf}
+                  onChange={(e) => updateField("cpf", Formatters.formatCpfCnpj(e.target.value))}
+                />
               </DsFormField>
 
               <DsFormField label="Endereço">

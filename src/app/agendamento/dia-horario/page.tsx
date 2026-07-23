@@ -79,7 +79,7 @@ export default function DiaHorarioPage() {
       const formatted = Formatters.formatCep(e.target.value);
       setCep(formatted);
 
-      const digits = formatted.replace(/\D/g, "");
+      const digits = Formatters.onlyDigits(formatted);
       if (digits.length === 8) {
         loadAddressByCep(formatted);
       } else {
