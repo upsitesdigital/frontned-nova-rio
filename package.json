@@ -7,7 +7,7 @@
     "dev:turbo": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:prod": "rm -rf .next/standalone/.next/static .next/standalone/public && cp -R .next/static .next/standalone/.next/static && cp -R public .next/standalone/public && PORT=3000 HOSTNAME=0.0.0.0 node .next/standalone/server.js",
+    "start:prod": "rm -rf .next/standalone/.next/static .next/standalone/public && cp -R .next/static .next/standalone/.next/static && cp -R public .next/standalone/public && PORT=${PORT:-4000} HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
