@@ -131,6 +131,8 @@ class Messages {
   static readonly adminPayments = {
     loadError: "Erro ao carregar pagamentos.",
     detailError: "Erro ao carregar detalhes do pagamento.",
+    cancelError: "Erro ao cancelar o pagamento.",
+    cancelNotPending: "Apenas pagamentos pendentes podem ser cancelados.",
   };
 
   static readonly adminServices = {
