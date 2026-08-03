@@ -18,20 +18,19 @@ const columns: DsTransactionTableColumn[] = [
   { key: "date", header: "Data", className: "max-w-28" },
   { key: "service", header: "Serviço" },
   { key: "client", header: "Cliente" },
-  { key: "method", header: "Método", className: "max-w-52" },
+  { key: "method", header: "Método", className: "max-w-32 justify-center" },
   { key: "status", header: "Status", className: "max-w-40" },
   { key: "value", header: "Valor", className: "max-w-32" },
   { key: "package", header: "Pacote", className: "max-w-31.5" },
   { key: "actions", header: "Ações", className: "max-w-20 justify-end" },
 ];
 
-function getMethodLabel(method: "CREDIT_CARD" | "DEBIT_CARD" | "PIX", cardLastDigits?: string) {
+function getMethodLabel(method: "CREDIT_CARD" | "DEBIT_CARD" | "PIX") {
   if (method === "PIX") {
     return "Pix";
   }
 
-  const digits = cardLastDigits ?? "0000";
-  return `Cartão •••• ${digits}`;
+  return "Cartão";
 }
 
 function getRecurrenceLabel(
@@ -78,7 +77,7 @@ export function AdminPaymentsTable() {
     ),
     method: (
       <span className="text-base leading-normal tracking-[-0.64px] text-nova-gray-600">
-        {getMethodLabel(payment.method, payment.card?.lastFourDigits)}
+        {getMethodLabel(payment.method)}
       </span>
     ),
     status: <DsPaymentStatusPill status={payment.status} />,
@@ -146,7 +145,7 @@ export function AdminPaymentsTable() {
                 },
                 {
                   label: "Método",
-                  value: getMethodLabel(payment.method, payment.card?.lastFourDigits),
+                  value: getMethodLabel(payment.method),
                 },
                 { label: "Valor", value: PaymentFormat.formatPaymentAmount(payment.amount) },
                 { label: "Pacote", value: getRecurrenceLabel(payment.appointment.recurrenceType) },
