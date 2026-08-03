@@ -6,6 +6,8 @@ import {
   type AdminPaymentsMethodFilter,
 } from "@/use-cases/admin-reports/load-admin-payments";
 import { LoadAdminPaymentDetail } from "@/use-cases/admin-reports/load-admin-payment-detail";
+import { CancelAdminPayment } from "@/use-cases/admin-reports/cancel-admin-payment";
+import { Messages } from "@/lib/core/messages";
 
 const pageSize = 10;
 
@@ -21,6 +23,8 @@ interface AdminPaymentsState {
   selectedPayment: AdminPayment | null;
   isLoading: boolean;
   isDetailLoading: boolean;
+  isCancelling: boolean;
+  isCancelConfirmOpen: boolean;
   error: string | null;
   detailError: string | null;
   isAuthError: boolean;
@@ -35,6 +39,9 @@ interface AdminPaymentsActions {
   clearFilters: () => void;
   setPage: (page: number) => void;
   openDetails: (paymentId: number) => Promise<void>;
+  openCancelConfirm: () => void;
+  closeCancelConfirm: () => void;
+  cancelSelectedPayment: () => Promise<void>;
   closeDetails: () => void;
   reset: () => void;
 }
@@ -53,6 +60,8 @@ const initialState: AdminPaymentsState = {
   selectedPayment: null,
   isLoading: false,
   isDetailLoading: false,
+  isCancelling: false,
+  isCancelConfirmOpen: false,
   error: null,
   detailError: null,
   isAuthError: false,
@@ -176,11 +185,58 @@ const useAdminPaymentsStore = create<AdminPaymentsStore>()((set, get) => ({
     });
   },
 
+  openCancelConfirm: () => {
+    set({ isCancelConfirmOpen: true, detailError: null });
+  },
+
+  closeCancelConfirm: () => {
+    set({ isCancelConfirmOpen: false });
+  },
+
+  cancelSelectedPayment: async () => {
+    const { selectedPayment, isCancelling } = get();
+    if (!selectedPayment || isCancelling) return;
+
+    if (selectedPayment.status !== "PENDING") {
+      set({
+        isCancelConfirmOpen: false,
+        detailError: Messages.adminPayments.cancelNotPending,
+      });
+      return;
+    }
+
+    set({ isCancelling: true, detailError: null });
+
+    const result = await CancelAdminPayment.cancelAdminPayment(selectedPayment.id);
+
+    if (!result.success) {
+      set({
+        isCancelling: false,
+        isCancelConfirmOpen: false,
+        detailError: result.error,
+        isAuthError: result.isAuthError,
+      });
+      return;
+    }
+
+    detailLoadRequestId++;
+    set({
+      isCancelling: false,
+      isCancelConfirmOpen: false,
+      selectedPaymentId: null,
+      selectedPayment: null,
+      detailError: null,
+    });
+    get().loadPayments();
+  },
+
   closeDetails: () => {
     set({
       selectedPaymentId: null,
       selectedPayment: null,
       isDetailLoading: false,
+      isCancelling: false,
+      isCancelConfirmOpen: false,
       detailError: null,
     });
   },
