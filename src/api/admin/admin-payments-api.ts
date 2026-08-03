@@ -72,6 +72,10 @@ class AdminPaymentsApi {
   static async fetchAdminPaymentById(id: number): Promise<AdminPayment> {
     return HttpClient.authGet<AdminPayment>(`/admin/payments/${id}`);
   }
+
+  static async cancelAdminPayment(id: number): Promise<void> {
+    await HttpClient.authPatch(`/admin/payments/${id}/cancel`);
+  }
 }
 
 export {
