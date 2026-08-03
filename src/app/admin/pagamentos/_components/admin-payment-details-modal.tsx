@@ -9,6 +9,7 @@ import {
 } from "@/design-system";
 import type { AdminPayment } from "@/api/admin/admin-payments-api";
 import { useAdminPaymentsStore } from "@/stores/admin/admin-payments-store";
+import { AdminPaymentCancelConfirm } from "./admin-payment-cancel-confirm";
 
 const paymentStatusConfig: Record<AdminPayment["status"], DsApprovalPopupStatus> = {
   APPROVED: {
@@ -55,8 +56,15 @@ function buildDetails(payment: AdminPayment): DsApprovalPopupDetail[] {
 }
 
 export function AdminPaymentDetailsModal() {
-  const { selectedPaymentId, selectedPayment, isDetailLoading, detailError, closeDetails } =
-    useAdminPaymentsStore();
+  const {
+    selectedPaymentId,
+    selectedPayment,
+    isDetailLoading,
+    isCancelling,
+    detailError,
+    openCancelConfirm,
+    closeDetails,
+  } = useAdminPaymentsStore();
 
   if (!selectedPaymentId) return null;
 
@@ -91,7 +99,9 @@ export function AdminPaymentDetailsModal() {
 
         {!isDetailLoading && !detailError && selectedPayment && (
           <DsApprovalPopup
-            rejectLabel="Reprovar cadastro"
+            rejectLabel="Cancelar cobrança"
+            rejectIcon={XIcon}
+            rejectDestructive
             approveLabel="Aprovar cadastro"
             title="Pagamento"
             subtitle="Detalhes da cobrança"
@@ -99,11 +109,15 @@ export function AdminPaymentDetailsModal() {
             description={getPaymentDescription(selectedPayment)}
             status={paymentStatusConfig[selectedPayment.status]}
             details={buildDetails(selectedPayment)}
+            disabled={isCancelling}
+            onReject={selectedPayment.status === "PENDING" ? openCancelConfirm : undefined}
             onClose={closeDetails}
             className="shadow-lg shadow-nova-gray-300/10"
           />
         )}
       </div>
+
+      <AdminPaymentCancelConfirm />
     </div>
   );
 }

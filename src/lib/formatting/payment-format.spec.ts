@@ -71,12 +71,12 @@ describe("payment-format", () => {
       expect(PaymentFormat.formatPaymentMethod(entry)).toBe("PIX");
     });
 
-    it("should return card info with last four digits when card exists", () => {
+    it("should never expose the card digits", () => {
       const entry = makePayment({
         method: "CREDIT_CARD",
         card: { id: 1, lastFourDigits: "1234", brand: "visa" },
       });
-      expect(PaymentFormat.formatPaymentMethod(entry)).toBe("Cartão •••• 1234");
+      expect(PaymentFormat.formatPaymentMethod(entry)).toBe("Cartão");
     });
 
     it("should return 'Cartão' for card method without card info", () => {

@@ -15,7 +15,6 @@ class PaymentFormat {
 
   static formatPaymentMethod(entry: PaymentEntry): string {
     if (entry.method === "PIX") return "PIX";
-    if (entry.card) return `Cartão •••• ${entry.card.lastFourDigits}`;
     return "Cartão";
   }
 

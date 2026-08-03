@@ -96,7 +96,7 @@ describe("mapPaymentsToPanel", () => {
     });
   });
 
-  it("should map card payment label with last 4 digits", () => {
+  it("should map card payment label without exposing the card digits", () => {
     const result = DashboardPaymentsMapper.mapPaymentsToPanel([
       {
         ...basePayment,
@@ -104,7 +104,7 @@ describe("mapPaymentsToPanel", () => {
       },
     ] as never[]);
 
-    expect(result[0].methodLabel).toBe("Terminado em 0123");
+    expect(result[0].methodLabel).toBe("Cartão");
   });
 
   it("should map PIX payment method", () => {
