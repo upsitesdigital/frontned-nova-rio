@@ -15,9 +15,6 @@ class DashboardPaymentsMapper {
 
   private static mapDashboardPaymentMethodLabel(payment: PaymentEntry): string {
     if (payment.method === "PIX") return "PIX";
-    if (payment.card?.lastFourDigits) {
-      return `Terminado em ${payment.card.lastFourDigits}`;
-    }
     return "Cartão";
   }
 
