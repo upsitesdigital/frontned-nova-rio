@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { format, startOfToday } from "date-fns";
+import { format, isSameDay, startOfToday } from "date-fns";
 
 import {
   DsButton,
@@ -36,12 +36,27 @@ export default function DashboardDiaHorarioPage() {
   const loadAddressByCep = useAddressStore((s) => s.loadAddressByCep);
   const clearAddress = useAddressStore((s) => s.clearAddress);
 
-  const allSlots = useMemo(() => timeSlots.map((slot) => slot.time), [timeSlots]);
-
-  const disabledSlots = useMemo(
-    () => timeSlots.filter((slot) => !slot.available).map((slot) => slot.time),
+  const allSlots = useMemo(
+    () =>
+      timeSlots.length > 0
+        ? timeSlots.map((slot) => slot.time)
+        : Array.from({ length: 23 }, (_, index) => {
+            const minutes = 7 * 60 + index * 30;
+            return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+          }),
     [timeSlots],
   );
+
+  const disabledSlots = useMemo(() => {
+    const now = new Date();
+    return allSlots.filter((time) => {
+      const slot = timeSlots.find((item) => item.time === time);
+      if (slot && !slot.available) return true;
+      if (!selectedDate || !isSameDay(selectedDate, now)) return false;
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes <= now.getHours() * 60 + now.getMinutes();
+    });
+  }, [allSlots, timeSlots, selectedDate]);
 
   // Block weekends and past days (D-1/D-N); the API rejects them too.
   const disabledDays = useMemo(() => [{ dayOfWeek: [0, 6] }, { before: startOfToday() }], []);
@@ -70,9 +85,9 @@ export default function DashboardDiaHorarioPage() {
 
   const handleTimeChange = useCallback(
     (time: string) => {
-      setSelectedTime(time);
+      if (!disabledSlots.includes(time)) setSelectedTime(time);
     },
-    [setSelectedTime],
+    [disabledSlots, setSelectedTime],
   );
 
   const handleCepChange = useCallback(

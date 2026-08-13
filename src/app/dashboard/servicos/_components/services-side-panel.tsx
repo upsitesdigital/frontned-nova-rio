@@ -121,8 +121,16 @@ export function ServicesSidePanel({
           />
         </div>
         <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
-          <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
-          <span className="font-bold">10%</span> para semanais e quinzenais.
+          Quanto mais visitas você agenda no mês, maior o desconto:
+          <ul className="mt-1 list-disc pl-4">
+            <li>1 visita: sem desconto</li>
+            <li>2 visitas: 3% de desconto</li>
+            <li>4 visitas: 5% de desconto</li>
+            <li>8 visitas: 7% de desconto</li>
+            <li>13 visitas: 8% de desconto</li>
+            <li>17 visitas: 9% de desconto</li>
+            <li>21 visitas: até 10% de desconto</li>
+          </ul>
         </p>
       </DsRecurrenceCard>
 
