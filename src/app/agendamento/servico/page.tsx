@@ -55,6 +55,13 @@ export default function ServicoPage() {
     recurrenceType !== null &&
     (recurrenceType !== "recorrencia" || recurrenceFrequency !== null);
 
+  const frequencyOptions =
+    recurrenceFrequency === "quinzenal"
+      ? SchedulingConfig.biweeklyTimesOptions
+      : recurrenceFrequency === "mensal"
+        ? SchedulingConfig.monthlyTimesOptions
+        : SchedulingConfig.weeklyTimesOptions;
+
   return (
     <DsFlowCard className="mx-auto max-w-252">
       <DsFlowHeader
@@ -104,15 +111,29 @@ export default function ServicoPage() {
         frequencyOptions={SchedulingConfig.frequencyOptions}
         frequencyValue={recurrenceFrequency ?? "mensal"}
         onFrequencyChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
-        showWeeklyTimes={recurrenceFrequency === "semanal"}
-        weeklyTimesLabel="Quantas vezes por semana?"
-        weeklyTimesOptions={SchedulingConfig.weeklyTimesOptions}
+        showWeeklyTimes={recurrenceFrequency !== null}
+        weeklyTimesLabel={
+          recurrenceFrequency === "quinzenal"
+            ? "Quantas visitas por quinzena?"
+            : recurrenceFrequency === "mensal"
+              ? "Quantas visitas por mês?"
+              : "Quantas vezes por semana?"
+        }
+        weeklyTimesOptions={frequencyOptions}
         weeklyTimesValue={String(weeklyFrequency)}
         onWeeklyTimesChange={(value) => setWeeklyFrequency(Number(value))}
         discountNote={
           <>
-            <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
-            <span className="font-bold">10%</span> para semanais e quinzenais.
+            Quanto mais visitas você agenda no mês, maior o desconto:
+            <ul className="mt-1 list-disc pl-4">
+              <li>1 visita: sem desconto</li>
+              <li>2 visitas: 3% de desconto</li>
+              <li>4 visitas: 5% de desconto</li>
+              <li>8 visitas: 7% de desconto</li>
+              <li>13 visitas: 8% de desconto</li>
+              <li>17 visitas: 9% de desconto</li>
+              <li>21 visitas: até 10% de desconto</li>
+            </ul>
           </>
         }
       />

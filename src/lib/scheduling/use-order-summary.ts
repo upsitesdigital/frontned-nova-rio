@@ -42,6 +42,16 @@ export function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
     [services, selectedServiceId],
   );
 
+  useEffect(() => {
+    if (services.length > 0 && (!selectedService || recurrenceType === null)) {
+      router.replace(
+        confirmationPath.includes("dashboard")
+          ? "/dashboard/agendamento/servico"
+          : "/agendamento/servico",
+      );
+    }
+  }, [confirmationPath, recurrenceType, router, selectedService, services.length]);
+
   const { subtotal, discount, total } = useMemo(
     () =>
       SchedulingPricing.calculate({
@@ -54,6 +64,17 @@ export function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
     [selectedService, recurrenceType, recurrenceFrequency, weeklyFrequency],
   );
 
+  const recurrenceLabel =
+    recurrenceType === "avulso"
+      ? "Avulso — 1 visita"
+      : recurrenceType === "pacote"
+        ? "Pacote"
+        : recurrenceFrequency === "semanal"
+          ? `${weeklyFrequency}x por semana — ${weeklyFrequency === 1 ? 4 : weeklyFrequency === 2 ? 8 : weeklyFrequency === 3 ? 13 : weeklyFrequency === 4 ? 17 : 21} visitas/mês`
+          : recurrenceFrequency === "quinzenal"
+            ? `${weeklyFrequency} visita${weeklyFrequency === 1 ? "" : "s"} por quinzena — ${weeklyFrequency * 2} visitas/mês`
+            : `${weeklyFrequency} visita${weeklyFrequency === 1 ? "" : "s"} por mês`;
+
   const handlePay = useCallback(async () => {
     const success = await pay();
     if (success) {
@@ -62,6 +83,7 @@ export function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
   }, [pay, router, confirmationPath]);
 
   const rows: DsOrderSummaryRow[] = [
+    { label: "Recorrência", value: recurrenceLabel },
     { label: Messages.orderSummary.subtotal, value: Formatters.formatCurrency(subtotal) },
     ...(discount > 0
       ? [
@@ -89,7 +111,7 @@ export function useOrderSummary(confirmationPath: string): DsOrderSummaryProps {
       ? Messages.orderSummary.processing
       : `${Messages.orderSummary.pay} ${Formatters.formatCurrency(total)}`,
     termsText: Messages.orderSummary.terms,
-    payDisabled: paymentMethod === null || isSubmitting,
+    payDisabled: paymentMethod === null || isSubmitting || selectedService === null,
     errorText: submitError,
     onPay: handlePay,
   };

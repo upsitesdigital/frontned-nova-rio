@@ -96,7 +96,12 @@ export class SubmitPayment {
         duration: params.serviceDurationMinutes,
         serviceId: params.selectedServiceId,
         recurrenceType,
-        weeklyFrequency: recurrenceType === "WEEKLY" ? params.weeklyFrequency : undefined,
+        weeklyFrequency:
+          recurrenceType === "WEEKLY" ||
+          recurrenceType === "BIWEEKLY" ||
+          recurrenceType === "MONTHLY"
+            ? params.weeklyFrequency
+            : undefined,
         locationZip: params.cep || undefined,
         locationAddress,
         method: apiMethod,

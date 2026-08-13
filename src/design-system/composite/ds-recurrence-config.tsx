@@ -106,9 +106,9 @@ export function DsRecurrenceConfig({
               />
             </div>
           )}
-          <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
+          <div className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
             {discountNote}
-          </p>
+          </div>
         </div>
       )}
     </div>

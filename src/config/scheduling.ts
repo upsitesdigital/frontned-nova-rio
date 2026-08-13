@@ -36,9 +36,23 @@ class SchedulingConfig {
     { value: "3", label: "3x por semana" },
     { value: "4", label: "4x por semana" },
     { value: "5", label: "5x por semana" },
-    { value: "6", label: "6x por semana" },
-    { value: "7", label: "7x por semana" },
   ];
+
+  static readonly biweeklyTimesOptions: FrequencyOption[] = Array.from(
+    { length: 10 },
+    (_, index) => ({
+      value: String(index + 1),
+      label: `${index + 1} visita${index === 0 ? "" : "s"} por quinzena`,
+    }),
+  );
+
+  static readonly monthlyTimesOptions: FrequencyOption[] = Array.from(
+    { length: 21 },
+    (_, index) => ({
+      value: String(index + 1),
+      label: `${index + 1} visita${index === 0 ? "" : "s"} por mês`,
+    }),
+  );
 
   static readonly schedulingSteps: SchedulingStep[] = [
     { label: "Agendar serviço" },

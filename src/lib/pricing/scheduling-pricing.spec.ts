@@ -19,7 +19,7 @@ describe("SchedulingPricing.calculate", () => {
     });
   });
 
-  it("applies 10% discount for weekly 1x", () => {
+  it("applies 5% discount for weekly 1x (4 monthly visits)", () => {
     expect(
       SchedulingPricing.calculate({
         ...base,
@@ -27,10 +27,10 @@ describe("SchedulingPricing.calculate", () => {
         recurrenceFrequency: "semanal",
         weeklyFrequency: 1,
       }),
-    ).toEqual({ subtotal: 150, discount: 15, total: 138 });
+    ).toEqual({ subtotal: 600, discount: 30, total: 573 });
   });
 
-  it("multiplies by weekly frequency and discounts the total (weekly 3x)", () => {
+  it("applies 8% discount for weekly 3x (13 monthly visits)", () => {
     expect(
       SchedulingPricing.calculate({
         ...base,
@@ -38,28 +38,28 @@ describe("SchedulingPricing.calculate", () => {
         recurrenceFrequency: "semanal",
         weeklyFrequency: 3,
       }),
-    ).toEqual({ subtotal: 450, discount: 45, total: 408 });
+    ).toEqual({ subtotal: 1950, discount: 156, total: 1797 });
   });
 
-  it("ignores weekly frequency for biweekly (10% on single base)", () => {
+  it("applies 3% discount for biweekly (2 monthly visits)", () => {
     expect(
       SchedulingPricing.calculate({
         ...base,
         recurrenceType: "recorrencia",
         recurrenceFrequency: "quinzenal",
-        weeklyFrequency: 3,
+        weeklyFrequency: 1,
       }),
-    ).toEqual({ subtotal: 150, discount: 15, total: 138 });
+    ).toEqual({ subtotal: 300, discount: 9, total: 294 });
   });
 
-  it("applies 5% discount for monthly", () => {
+  it("charges one visit for monthly", () => {
     expect(
       SchedulingPricing.calculate({
         ...base,
         recurrenceType: "recorrencia",
         recurrenceFrequency: "mensal",
-        weeklyFrequency: 3,
+        weeklyFrequency: 1,
       }),
-    ).toEqual({ subtotal: 150, discount: 7.5, total: 145.5 });
+    ).toEqual({ subtotal: 150, discount: 0, total: 153 });
   });
 });
