@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import {
   BellIcon,
   BroomIcon,
@@ -509,7 +509,11 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsDataTable">
           <div className="w-full max-w-2xl">
-            <DsDataTable columns={tableColumns} data={tableData} />
+            <DsDataTable
+              emptyMessage="No data available."
+              columns={tableColumns}
+              data={tableData}
+            />
           </div>
         </ComponentRow>
 
@@ -724,6 +728,7 @@ export default function DesignSystemPage() {
         </DsDialog>
 
         <DsConfirmDialog
+          cancelLabel="Cancel"
           open={confirmOpen}
           onOpenChange={setConfirmOpen}
           title="Delete booking?"
@@ -840,6 +845,10 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsAdminSidebar — Admin Navigation">
           <div className="h-225 overflow-hidden rounded-lg border">
             <DsAdminSidebar
+              items={[]}
+              signOutLabel="Sair"
+              expandLabel="Expandir menu"
+              collapseLabel="Recolher menu"
               activePath="/admin"
               collapsed={adminSidebarCollapsed}
               onCollapsedChange={setAdminSidebarCollapsed}
@@ -916,6 +925,8 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsServiceManageCard — Variants">
           <div className="flex flex-wrap gap-6">
             <DsServiceManageCard
+              editLabel="Editar"
+              deleteLabel="Excluir"
               icon={BroomIcon}
               title="Faxina Regular"
               description="Limpeza completa e manutenção periódica"
@@ -925,6 +936,8 @@ export default function DesignSystemPage() {
               className="w-85"
             />
             <DsServiceManageCard
+              editLabel="Editar"
+              deleteLabel="Excluir"
               icon={SketchLogoIcon}
               iconColor="text-nova-warning"
               iconBgColor="bg-nova-warning/10"
@@ -936,6 +949,8 @@ export default function DesignSystemPage() {
               className="w-85"
             />
             <DsServiceManageCard
+              editLabel="Editar"
+              deleteLabel="Excluir"
               icon={StarFourIcon}
               iconColor="text-nova-info"
               iconBgColor="bg-nova-info/10"
@@ -951,6 +966,14 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsServiceEditPopup — Service Edit Form">
           <DsServiceEditPopup
+            pricePrefix="A partir de R$"
+            paymentOptionsTitle="Opções de pagamento"
+            paymentOptionsDescription="Configure quais tipos de pagamento para o serviço."
+            changeIconLabel="Alterar ícone"
+            nameLabel="Nome"
+            descriptionLabel="Descrição"
+            priceLabel="Preço"
+            saveLabel="Salvar alterações"
             icon={BroomIcon}
             onClose={() => {}}
             onChangeIcon={() => {}}
@@ -985,6 +1008,13 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsServiceFormCard — Service Edit Card">
           <DsServiceFormCard
+            changeIconLabel="Alterar ícone"
+            nameLabel="Nome"
+            descriptionLabel="Descrição"
+            priceLabel="Preço"
+            pricePrefix="A partir de R$"
+            title="Opções de pagamento"
+            subtitle="Configure quais tipos de pagamento para o serviço."
             icon={BroomIcon}
             onChangeIcon={() => {}}
             name={svcEditName}
@@ -999,6 +1029,8 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsPaymentOptionsCard — Toggle Options with Frequencies">
           <DsPaymentOptionsCard
+            title="Opções de pagamento"
+            subtitle="Configure quais tipos de pagamento para o serviço."
             options={payOptCards}
             onOptionToggle={(id, enabled) =>
               setPayOptCards((prev) => prev.map((o) => (o.id === id ? { ...o, enabled } : o)))
@@ -1166,6 +1198,8 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsDateTimePicker — Calendar + Time Slots">
           <DsDateTimePicker
+            cancelLabel="Cancelar"
+            confirmLabel="Ok"
             date={pickerDate}
             time={pickerTime}
             onDateChange={setPickerDate}
@@ -1213,7 +1247,7 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsAuthLayout — Create Account Page">
           <div className="w-full max-w-4xl rounded-lg border">
             <DsAuthLayout className="min-h-0 py-8">
-              <h2 className="text-center text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+              <h2 className="text-center text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
                 Crie sua conta
               </h2>
               <div className="flex w-full flex-col gap-4">
@@ -1261,6 +1295,7 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsSavedCardList + DsSavedCardItem">
           <DsSavedCardList className="w-full max-w-lg">
             <DsSavedCardItem
+              removeLabel="Remover"
               lastFour="0123"
               expiration="01/30"
               brand="mastercard"
@@ -1269,6 +1304,7 @@ export default function DesignSystemPage() {
               onRemove={() => alert("Remove card 1")}
             />
             <DsSavedCardItem
+              removeLabel="Remover"
               lastFour="4567"
               expiration="06/28"
               brand="mastercard"
@@ -1280,7 +1316,7 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsDiscountCard">
-          <DsDiscountCard className="w-full max-w-lg">
+          <DsDiscountCard title="Descontos exclusivos" className="w-full max-w-lg">
             <p>
               Agende agora serviços recorrentes semanais e ganhe{" "}
               <span className="font-semibold">10% de desconto</span>
@@ -1314,6 +1350,7 @@ export default function DesignSystemPage() {
             className="w-full"
           >
             <DsTransactionTable
+              emptyMessage="Nenhuma transação encontrada."
               columns={[
                 { key: "date", header: "Data" },
                 { key: "service", header: "Serviço" },
@@ -1345,7 +1382,7 @@ export default function DesignSystemPage() {
                       R$ 53,00
                     </span>
                   ),
-                  receipt: <DsReceiptButton disabled />,
+                  receipt: <DsReceiptButton label="Baixar" disabled />,
                 },
                 {
                   date: (
@@ -1369,7 +1406,7 @@ export default function DesignSystemPage() {
                       R$ 57,00
                     </span>
                   ),
-                  receipt: <DsReceiptButton disabled />,
+                  receipt: <DsReceiptButton label="Baixar" disabled />,
                 },
                 {
                   date: (
@@ -1395,7 +1432,7 @@ export default function DesignSystemPage() {
                       R$ 120,00
                     </span>
                   ),
-                  receipt: <DsReceiptButton />,
+                  receipt: <DsReceiptButton label="Baixar" />,
                 },
               ]}
             />
@@ -1442,6 +1479,7 @@ export default function DesignSystemPage() {
         <ComponentRow label="DsUpcomingServiceCard + DsHighlightCard + DsRecurrenceCard">
           <div className="flex flex-col gap-4">
             <DsUpcomingServiceCard
+              title="Próximo serviço"
               date="16/10"
               subtitle="Cancelamento com 1h de antecedência"
               onReceipt={() => {}}
@@ -1509,40 +1547,71 @@ export default function DesignSystemPage() {
               </p>
               <div className="flex flex-col">
                 <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
                   date="30/10"
                   label="Faxina Pós-Obra"
                   onView={() => {}}
                   onEdit={() => {}}
                 />
                 <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
                   date="23/10"
                   label="Faxina Pós-Obra"
                   onView={() => {}}
                   onEdit={() => {}}
                 />
                 <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
                   date="16/10"
                   label="Faxina Pós-Obra"
                   onView={() => {}}
                   onEdit={() => {}}
                 />
-                <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
-                <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
-                <DsServiceHistoryItem date="25/09" label="Faxina Pós-Obra" onView={() => {}} />
+                <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
+                  date="25/09"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                />
+                <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
+                  date="25/09"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                />
+                <DsServiceHistoryItem
+                  viewLabel="Visualizar"
+                  editLabel="Editar"
+                  date="25/09"
+                  label="Faxina Pós-Obra"
+                  onView={() => {}}
+                />
               </div>
             </div>
           </div>
         </ComponentRow>
 
         <ComponentRow label="DsRegisteredCardList — Cartões cadastrados">
-          <DsRegisteredCardList onAdd={() => {}} className="w-full max-w-125">
+          <DsRegisteredCardList
+            addLabel="Adicionar"
+            title="Cartões cadastrados"
+            onAdd={() => {}}
+            className="w-full max-w-125"
+          >
             <DsRegisteredCardItem
+              actionLabel="Remover"
               brandSrc="/icons/mastercard.svg"
               lastDigits="0123"
               expiry="01/30"
               onAction={() => {}}
             />
             <DsRegisteredCardItem
+              actionLabel="Remover"
               brandSrc="/icons/mastercard.svg"
               lastDigits="0123"
               expiry="01/30"
@@ -1591,7 +1660,11 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <ComponentRow label="DsSecurePaymentBanner">
-          <DsSecurePaymentBanner className="w-full max-w-3xl" />
+          <DsSecurePaymentBanner
+            description="Seus dados são protegidos com criptografia SSL"
+            title="Pagamento Seguro"
+            className="w-full max-w-3xl"
+          />
         </ComponentRow>
 
         <ComponentRow label="DsServiceDetailPopup — Service Detail">
@@ -1636,7 +1709,7 @@ export default function DesignSystemPage() {
           <DsButton onClick={() => setPopupOpen(true)}>Open Popup</DsButton>
           <DsPopup open={popupOpen}>
             <div className="flex w-82.75 flex-col items-center gap-4 text-center">
-              <h2 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+              <h2 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
                 E-mail cadastrado com sucesso!
               </h2>
               <p className="text-base leading-normal text-nova-gray-600">
@@ -1888,6 +1961,10 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsProfileSection — Profile Fields">
           <DsProfileSection
+            editLabel="Editar"
+            changeImageLabel="Alterar imagem"
+            title="Informações pessoais"
+            cancelLabel="Cancelar"
             initials="C"
             onEdit={() => {}}
             onChangeImage={() => {}}
@@ -1903,6 +1980,10 @@ export default function DesignSystemPage() {
         </ComponentRow>
 
         <DsSchedulePopup
+          closeLabel="Fechar"
+          title="Escolher data e horário"
+          cancelLabel="Cancelar"
+          confirmLabel="Ok"
           open={schedulePopupOpen}
           date={scheduleDate}
           time={scheduleTime}
@@ -1914,6 +1995,7 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsServiceInfoCard — Service Info Form">
           <DsServiceInfoCard
+            title="Informações do serviço"
             className="w-125"
             fields={[
               {
@@ -1996,6 +2078,8 @@ export default function DesignSystemPage() {
 
         <ComponentRow label="DsApprovalPopup — Registration Approval">
           <DsApprovalPopup
+            rejectLabel="Reprovar cadastro"
+            approveLabel="Aprovar cadastro"
             title="Registro de clientes"
             subtitle="Solicitação de novo cadastro de cliente"
             entityName="Fábio Moraes"

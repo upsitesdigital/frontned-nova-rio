@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Check } from "@phosphor-icons/react/dist/ssr";
 
 interface DsStepperStep {
@@ -13,7 +13,7 @@ interface DsStepperProps {
 
 function DsStepper({ steps, currentStep, className }: DsStepperProps) {
   return (
-    <div className={cn("flex items-center gap-8", className)}>
+    <div className={cn("flex items-center gap-2 md:gap-8", className)}>
       {steps.map((step, index) => {
         const isActive = index === currentStep;
         const isCompleted = index < currentStep;
@@ -34,6 +34,7 @@ function DsStepper({ steps, currentStep, className }: DsStepperProps) {
               <span
                 className={cn(
                   "whitespace-nowrap text-base font-medium leading-[1.3] tracking-[-0.64px]",
+                  isActive ? "inline" : "hidden md:inline",
                   isActive || isCompleted ? "text-black" : "text-nova-gray-700",
                 )}
               >

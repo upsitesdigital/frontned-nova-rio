@@ -1,20 +1,15 @@
 import { DownloadSimpleIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsReceiptButtonProps {
-  label?: string;
+  label: string;
   disabled?: boolean;
   onClick?: () => void;
   className?: string;
 }
 
-function DsReceiptButton({
-  label = "Baixar",
-  disabled = false,
-  onClick,
-  className,
-}: DsReceiptButtonProps) {
+function DsReceiptButton({ label, disabled = false, onClick, className }: DsReceiptButtonProps) {
   return (
     <button
       type="button"

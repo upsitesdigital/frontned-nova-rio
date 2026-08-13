@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsImage } from "@/design-system/media";
 
 interface DsRegisteredCardItemProps {
   brandSrc: string;
   lastDigits: string;
   expiry: string;
-  actionLabel?: string;
+  actionLabel: string;
   onAction?: () => void;
   className?: string;
 }
@@ -14,7 +14,7 @@ function DsRegisteredCardItem({
   brandSrc,
   lastDigits,
   expiry,
-  actionLabel = "Remover",
+  actionLabel,
   onAction,
   className,
 }: DsRegisteredCardItemProps) {

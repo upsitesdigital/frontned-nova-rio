@@ -1,30 +1,32 @@
 import { ScrollIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-interface DsServiceDetailPopupProps {
+export interface DsServiceDetailPopupProps {
   icon: DsIconComponent;
   serviceName: string;
   date: string;
   onClose?: () => void;
   onReceipt?: () => void;
+  receiptDisabled?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 
-function DsServiceDetailPopup({
+export function DsServiceDetailPopup({
   icon,
   serviceName,
   date,
   onClose,
   onReceipt,
+  receiptDisabled,
   children,
   className,
 }: DsServiceDetailPopupProps) {
   return (
     <div
       className={cn(
-        "relative overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-[61px] py-16 shadow-[0px_16px_24px_0px_rgba(75,75,75,0.1)]",
+        "relative max-h-[90vh] overflow-y-auto rounded-4xl border border-nova-gray-100 bg-white px-6 py-10 shadow-(--nova-shadow-medium) sm:px-15.25 sm:py-16",
         className,
       )}
     >
@@ -52,7 +54,13 @@ function DsServiceDetailPopup({
             <button
               type="button"
               onClick={onReceipt}
-              className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-nova-gray-300 px-3 py-1.5 transition-colors hover:bg-nova-gray-50"
+              disabled={receiptDisabled}
+              className={cn(
+                "flex items-center gap-1 rounded-[6px] border border-nova-gray-300 px-3 py-1.5 transition-colors",
+                receiptDisabled
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer hover:bg-nova-gray-50",
+              )}
             >
               <DsIcon icon={ScrollIcon} size="md" className="text-primary" />
               <span className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -62,7 +70,7 @@ function DsServiceDetailPopup({
           )}
         </div>
 
-        <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-nova-primary-dark">
+        <p className="text-[32px] font-medium leading-none tracking-[-1.92px] sm:text-[48px] text-nova-primary-dark">
           {date}
         </p>
 
@@ -71,5 +79,3 @@ function DsServiceDetailPopup({
     </div>
   );
 }
-
-export { DsServiceDetailPopup, type DsServiceDetailPopupProps };

@@ -1,9 +1,9 @@
 "use client";
 
 import { DsFormField, DsSelect, DsInput, DsTextarea } from "@/design-system";
-import { useAdminCreateAppointmentStore } from "@/stores/admin-create-appointment-store";
+import { useAdminCreateAppointmentStore } from "@/stores/admin/admin-create-appointment-store";
 
-function AppointmentDetailsCard() {
+export function AppointmentDetailsCard() {
   const {
     clientId,
     employeeId,
@@ -72,5 +72,3 @@ function AppointmentDetailsCard() {
     </div>
   );
 }
-
-export { AppointmentDetailsCard };

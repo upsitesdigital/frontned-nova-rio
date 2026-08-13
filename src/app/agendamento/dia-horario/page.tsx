@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, isSameDay, startOfToday } from "date-fns";
 
 import {
   DsButton,
@@ -13,10 +13,10 @@ import {
   DsInput,
   DsSkeleton,
 } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatCep } from "@/lib/formatters";
-import { useAddressStore } from "@/stores/address-store";
-import { useSchedulingStore } from "@/stores/scheduling-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useAddressStore } from "@/stores/scheduling/address-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
 
 export default function DiaHorarioPage() {
   const router = useRouter();
@@ -36,14 +36,30 @@ export default function DiaHorarioPage() {
   const loadAddressByCep = useAddressStore((s) => s.loadAddressByCep);
   const clearAddress = useAddressStore((s) => s.clearAddress);
 
-  const allSlots = useMemo(() => timeSlots.map((slot) => slot.time), [timeSlots]);
-
-  const disabledSlots = useMemo(
-    () => timeSlots.filter((slot) => !slot.available).map((slot) => slot.time),
+  const allSlots = useMemo(
+    () =>
+      timeSlots.length > 0
+        ? timeSlots.map((slot) => slot.time)
+        : Array.from({ length: 23 }, (_, index) => {
+            const minutes = 7 * 60 + index * 30;
+            return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+          }),
     [timeSlots],
   );
 
-  const disabledDays = useMemo(() => ({ dayOfWeek: [0, 6] }), []);
+  const disabledSlots = useMemo(() => {
+    const now = new Date();
+    return allSlots.filter((time) => {
+      const slot = timeSlots.find((item) => item.time === time);
+      if (slot && !slot.available) return true;
+      if (!selectedDate || !isSameDay(selectedDate, now)) return false;
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes <= now.getHours() * 60 + now.getMinutes();
+    });
+  }, [allSlots, timeSlots, selectedDate]);
+
+  // Block weekends and past days (D-1/D-N); the API rejects them too.
+  const disabledDays = useMemo(() => [{ dayOfWeek: [0, 6] }, { before: startOfToday() }], []);
 
   useEffect(() => {
     if (selectedDate) {
@@ -69,17 +85,17 @@ export default function DiaHorarioPage() {
 
   const handleTimeChange = useCallback(
     (time: string) => {
-      setSelectedTime(time);
+      if (!disabledSlots.includes(time)) setSelectedTime(time);
     },
-    [setSelectedTime],
+    [disabledSlots, setSelectedTime],
   );
 
   const handleCepChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const formatted = formatCep(e.target.value);
+      const formatted = Formatters.formatCep(e.target.value);
       setCep(formatted);
 
-      const digits = formatted.replace(/\D/g, "");
+      const digits = Formatters.onlyDigits(formatted);
       if (digits.length === 8) {
         loadAddressByCep(formatted);
       } else {
@@ -97,12 +113,14 @@ export default function DiaHorarioPage() {
   const canProceed = selectedDate !== null && selectedTime !== null && address !== null;
 
   return (
-    <DsFlowCard className="mx-auto max-w-[1008px]">
+    <DsFlowCard className="mx-auto max-w-252">
       <DsFlowHeader title="Dia, horário e local da limpeza" />
 
-      <div className="flex w-full items-start gap-16">
-        <div className="shrink-0">
+      <div className="flex w-full flex-col items-start gap-8 lg:flex-row lg:gap-16">
+        <div className="w-full shrink-0 lg:w-auto">
           <DsDateTimePicker
+            cancelLabel="Cancelar"
+            confirmLabel="Ok"
             date={selectedDate ?? undefined}
             time={selectedTime ?? undefined}
             onDateChange={handleDateChange}
@@ -115,7 +133,7 @@ export default function DiaHorarioPage() {
           />
         </div>
 
-        <div className="flex w-full flex-col gap-[15px]">
+        <div className="flex w-full flex-col gap-3.75">
           <h3 className="text-xl font-medium leading-[1.3] text-nova-gray-700">Local da Limpeza</h3>
 
           <DsFormField label="CEP" error={cepError ?? undefined}>
@@ -123,7 +141,7 @@ export default function DiaHorarioPage() {
               placeholder="Digite seu CEP"
               value={cep}
               onChange={handleCepChange}
-              className={FLOW_INPUT_CLASS}
+              className={Constants.flowInputClass}
             />
           </DsFormField>
 
@@ -146,12 +164,12 @@ export default function DiaHorarioPage() {
         </div>
       </div>
 
-      <div className="flex w-full justify-between">
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:justify-between">
         <DsButton
           variant="outline"
           size="flow"
           onClick={() => router.push("/agendamento/servico")}
-          className="w-[257px] border-nova-gray-500 text-nova-gray-700"
+          className="w-full border-nova-gray-500 text-nova-gray-700 sm:w-64.25"
         >
           Voltar
         </DsButton>
@@ -159,7 +177,7 @@ export default function DiaHorarioPage() {
           size="flow"
           disabled={!canProceed}
           onClick={() => router.push("/agendamento/cadastro")}
-          className="w-[257px]"
+          className="w-full sm:w-64.25"
         >
           Continuar
         </DsButton>

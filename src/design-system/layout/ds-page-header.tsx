@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsPageHeaderProps {
@@ -31,9 +31,9 @@ function DsPageHeader({
           </span>
         </button>
       )}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+          <h1 className="text-3xl font-semibold leading-[1.3] tracking-[-1.92px] text-black sm:text-4xl md:text-5xl">
             {title}
           </h1>
           {subtitle && (

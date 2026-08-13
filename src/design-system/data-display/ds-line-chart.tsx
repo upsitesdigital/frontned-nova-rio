@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 interface DsLineChartDataPoint {
   label: string;
@@ -29,8 +29,8 @@ interface DsLineChartProps {
   className?: string;
 }
 
-const GRADIENT_ID = "ds-line-chart-area-gradient";
-const DOT_SHADOW_ID = "ds-line-chart-dot-shadow";
+const gradientId = "ds-line-chart-area-gradient";
+const dotShadowId = "ds-line-chart-dot-shadow";
 
 function ChartDot({ cx, cy, fill }: DotProps & { fill: string }) {
   if (cx == null || cy == null) return null;
@@ -42,7 +42,7 @@ function ChartDot({ cx, cy, fill }: DotProps & { fill: string }) {
       fill={fill}
       stroke="white"
       strokeWidth={2}
-      filter={`url(#${DOT_SHADOW_ID})`}
+      filter={`url(#${dotShadowId})`}
     />
   );
 }
@@ -57,14 +57,14 @@ function ChartActiveDot({ cx, cy, fill }: DotProps & { fill: string }) {
       fill={fill}
       stroke="white"
       strokeWidth={2}
-      filter={`url(#${DOT_SHADOW_ID})`}
+      filter={`url(#${dotShadowId})`}
     />
   );
 }
 
 function DsLineChart({
   data,
-  color = "#00a77e",
+  color = "var(--nova-primary)",
   yAxisFormatter,
   yAxisTicks,
   tooltipFormatter,
@@ -77,18 +77,16 @@ function DsLineChart({
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
           <defs>
-            <linearGradient id={GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.15} />
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
-            <filter id={DOT_SHADOW_ID} x="-100%" y="-100%" width="300%" height="300%">
+            <filter id={dotShadowId} x="-100%" y="-100%" width="300%" height="300%">
               <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor={color} floodOpacity="0.2" />
             </filter>
           </defs>
 
-          {showGrid && (
-            <CartesianGrid stroke="#efefef" strokeDasharray="0" />
-          )}
+          {showGrid && <CartesianGrid stroke="var(--nova-gray-100)" strokeDasharray="0" />}
 
           <XAxis
             dataKey="label"
@@ -96,7 +94,7 @@ function DsLineChart({
             tickLine={false}
             tick={{
               fontSize: 14,
-              fill: "#4b4b4b",
+              fill: "var(--nova-gray-700)",
               fontFamily: "var(--font-work-sans), sans-serif",
             }}
             dy={10}
@@ -107,7 +105,7 @@ function DsLineChart({
             tickLine={false}
             tick={{
               fontSize: 16,
-              fill: "#4b4b4b",
+              fill: "var(--nova-gray-700)",
               fontFamily: "var(--font-work-sans), sans-serif",
               letterSpacing: "-0.64px",
             }}
@@ -115,41 +113,32 @@ function DsLineChart({
             ticks={yAxisTicks}
             dx={-8}
             width={72}
-            domain={
-              yAxisTicks
-                ? [yAxisTicks[0]!, yAxisTicks[yAxisTicks.length - 1]!]
-                : undefined
-            }
+            domain={yAxisTicks ? [yAxisTicks[0]!, yAxisTicks[yAxisTicks.length - 1]!] : undefined}
           />
 
           <Tooltip
             contentStyle={{
               backgroundColor: "white",
-              border: "1px solid #efefef",
+              border: "1px solid var(--nova-gray-100)",
               borderRadius: "8px",
               fontSize: "14px",
               fontFamily: "var(--font-work-sans), sans-serif",
-              boxShadow: "0px 12px 44px rgba(111, 124, 142, 0.1)",
+              boxShadow: "var(--nova-shadow-soft-strong)",
               padding: "8px 12px",
             }}
-            formatter={(value: number | undefined) => [
-              value != null
+            formatter={(value) => [
+              typeof value === "number"
                 ? tooltipFormatter
                   ? tooltipFormatter(value)
                   : value.toLocaleString("pt-BR")
-                : "",
+                : String(value ?? ""),
               "",
             ]}
-            labelStyle={{ color: "#4b4b4b", fontWeight: 500, marginBottom: 2 }}
-            cursor={{ stroke: "#efefef", strokeWidth: 1 }}
+            labelStyle={{ color: "var(--nova-gray-700)", fontWeight: 500, marginBottom: 2 }}
+            cursor={{ stroke: "var(--nova-gray-100)", strokeWidth: 1 }}
           />
 
-          <Area
-            type="monotone"
-            dataKey="value"
-            stroke="none"
-            fill={`url(#${GRADIENT_ID})`}
-          />
+          <Area type="monotone" dataKey="value" stroke="none" fill={`url(#${gradientId})`} />
 
           <Line
             type="monotone"

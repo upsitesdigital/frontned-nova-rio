@@ -1,16 +1,16 @@
 import { ScrollIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
-interface DsUpcomingServiceCardAction {
+export interface DsUpcomingServiceCardAction {
   label: string;
   variant: "filled" | "outlined";
   disabled?: boolean;
   onClick?: () => void;
 }
 
-interface DsUpcomingServiceCardProps {
-  title?: string;
+export interface DsUpcomingServiceCardProps {
+  title: string;
   date: string;
   subtitle: string;
   actions?: DsUpcomingServiceCardAction[];
@@ -19,8 +19,8 @@ interface DsUpcomingServiceCardProps {
   className?: string;
 }
 
-function DsUpcomingServiceCard({
-  title = "Próximo serviço",
+export function DsUpcomingServiceCard({
+  title,
   date,
   subtitle,
   actions,
@@ -69,7 +69,7 @@ function DsUpcomingServiceCard({
 
       {/* Date & subtitle */}
       <div className="flex flex-col gap-2">
-        <p className="text-[48px] font-medium leading-none tracking-[-1.92px] text-primary">
+        <p className="text-[32px] font-medium leading-none tracking-[-1.92px] text-primary sm:text-[48px]">
           {date}
         </p>
         <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-400">{subtitle}</p>
@@ -86,15 +86,15 @@ function DsUpcomingServiceCard({
               onClick={action.onClick}
               className={cn(
                 "flex h-14 items-center justify-center rounded-[10px] px-8 py-4 text-[18px] font-medium leading-normal tracking-[-0.72px] transition-colors",
-                action.disabled
-                  ? "cursor-not-allowed text-nova-gray-400"
-                  : "cursor-pointer text-nova-gray-700",
+                action.disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
                 action.variant === "filled" &&
-                  (action.disabled ? "bg-nova-gray-50" : "bg-nova-gray-100 hover:bg-nova-gray-200"),
+                  (action.disabled
+                    ? "bg-nova-primary text-white"
+                    : "bg-nova-primary text-white hover:bg-nova-primary/90"),
                 action.variant === "outlined" &&
                   (action.disabled
-                    ? "border border-nova-gray-200"
-                    : "border border-nova-gray-300 hover:bg-nova-gray-50"),
+                    ? "border border-nova-gray-200 text-nova-gray-400"
+                    : "border border-nova-gray-300 text-nova-gray-700 hover:bg-nova-gray-50"),
               )}
             >
               {action.label}
@@ -105,5 +105,3 @@ function DsUpcomingServiceCard({
     </div>
   );
 }
-
-export { DsUpcomingServiceCard, type DsUpcomingServiceCardProps, type DsUpcomingServiceCardAction };

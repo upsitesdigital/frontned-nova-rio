@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 import { AccountPanel } from "./_components/account-panel";
 import { CardsPanel } from "./_components/cards-panel";
 
@@ -35,7 +35,7 @@ export default function ContaPage() {
 
   return (
     <div>
-      <h1 className="mb-16 text-[48px] font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+      <h1 className="mb-16 text-3xl font-semibold leading-[1.3] tracking-[-1.92px] sm:text-[48px] text-black">
         Minha conta
       </h1>
       <div className="flex flex-col gap-6 lg:flex-row">

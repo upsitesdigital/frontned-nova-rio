@@ -109,6 +109,13 @@ export { DsConfigSection, type DsConfigSectionProps } from "./composite";
 export { DsInfoPanel, type DsInfoPanelProps } from "./composite";
 export { DsFlowCard, type DsFlowCardProps } from "./composite";
 export { DsFlowHeader, type DsFlowHeaderProps } from "./composite";
+export { DsOrderSummary, type DsOrderSummaryProps, type DsOrderSummaryRow } from "./composite";
+export {
+  DsRecurrenceConfig,
+  type DsRecurrenceConfigProps,
+  type DsRecurrenceConfigOption,
+  type DsRecurrenceConfigSelectOption,
+} from "./composite";
 export { DsPopup, type DsPopupProps } from "./composite";
 export { DsTimeSlotPicker, type DsTimeSlotPickerProps } from "./composite";
 export { DsDateTimePicker, type DsDateTimePickerProps } from "./composite";
@@ -133,6 +140,7 @@ export { DsTransactionCard, type DsTransactionCardProps } from "./composite";
 export { DsReceiptButton, type DsReceiptButtonProps } from "./composite";
 export { DsHighlightCard, type DsHighlightCardProps } from "./composite";
 export { DsServiceHistoryItem, type DsServiceHistoryItemProps } from "./composite";
+export { DsAgendaListItem, type DsAgendaListItemProps } from "./composite";
 export { DsRegisteredCardItem, type DsRegisteredCardItemProps } from "./composite";
 export { DsRegisteredCardList, type DsRegisteredCardListProps } from "./composite";
 export {
@@ -157,8 +165,8 @@ export {
 } from "./composite";
 export { DsCollapsibleSection, type DsCollapsibleSectionProps } from "./composite";
 export { DsUserActions, type DsUserActionsProps } from "./composite";
-export { DsAdminSidebar, type DsAdminSidebarProps } from "./composite";
-export { DsClientSidebar, type DsClientSidebarProps } from "./composite";
+export { DsAdminSidebar, type DsAdminSidebarProps, type DsAdminNavItem } from "./composite";
+export { DsClientSidebar, type DsClientSidebarProps, type DsClientNavItem } from "./composite";
 export { DsClientDashboardShell, type DsClientDashboardShellProps } from "./composite";
 export { DsProfileCard, type DsProfileCardProps, type DsProfileCardAction } from "./composite";
 export {
@@ -219,5 +227,16 @@ export {
 export { DsQuickActionCard, type DsQuickActionCardProps } from "./composite";
 export { DsAdminDashboardShell, type DsAdminDashboardShellProps } from "./composite";
 export { DsAppointmentRow, type DsAppointmentRowProps } from "./composite";
+export { DsAppointmentCard, type DsAppointmentCardProps } from "./composite";
+export { DsAppointmentTabletCard, type DsAppointmentTabletCardProps } from "./composite";
 export { DsAppointmentTableHeader, type DsAppointmentTableHeaderProps } from "./composite";
 export { DsAppointmentCalendar, type DsAppointmentCalendarProps } from "./composite";
+export { DsClientCard, type DsClientCardProps, type DsClientCardField } from "./composite";
+export { DsRecordCard, type DsRecordCardProps, type DsRecordCardField } from "./composite";
+export {
+  DsClientTable,
+  type DsClientTableProps,
+  type DsClientTableClient,
+  type DsClientTableFilter,
+  type DsClientTableStatus,
+} from "./composite";

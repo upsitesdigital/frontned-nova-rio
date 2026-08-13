@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Checkbox } from "@/design-system/ui/checkbox";
 
 interface DsCheckboxProps {

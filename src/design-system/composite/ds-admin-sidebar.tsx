@@ -1,48 +1,43 @@
 "use client";
 
-import {
-  HouseIcon,
-  BroomIcon,
-  UsersIcon,
-  UsersThreeIcon,
-  CurrencyDollarSimpleIcon,
-  NoteIcon,
-  SignOutIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { SignOutIcon, CaretLeftIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/core/utils";
 import { DsSidebar, DsSidebarItem, DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
+import type { DsIconComponent } from "@/design-system/media";
+
+type DsAdminNavItem = {
+  path: string;
+  label: string;
+  icon: DsIconComponent;
+  disabled?: boolean;
+};
 
 interface DsAdminSidebarProps {
+  items: DsAdminNavItem[];
+  signOutLabel: string;
+  expandLabel: string;
+  collapseLabel: string;
   activePath?: string;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
+  onMobileClose?: () => void;
+  closeLabel?: string;
   onNavigate?: (path: string) => void;
   onSignOut?: () => void;
   className?: string;
 }
 
-const adminNavItems = [
-  { path: "/admin", label: "Minha Área", icon: HouseIcon },
-  { path: "/admin/agendamentos", label: "Agendamentos", icon: BroomIcon },
-  { path: "/admin/funcionarios", label: "Funcionários", icon: UsersIcon },
-  { path: "/admin/clientes", label: "Clientes", icon: UsersThreeIcon },
-  {
-    path: "/admin/pagamentos",
-    label: "Pagamentos",
-    icon: CurrencyDollarSimpleIcon,
-  },
-  { path: "/admin/relatorios", label: "Relatórios", icon: NoteIcon },
-  { path: "/admin/servicos", label: "Serviços", icon: BroomIcon },
-  { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon },
-];
-
 function DsAdminSidebar({
+  items,
+  signOutLabel,
+  expandLabel,
+  collapseLabel,
   activePath,
   collapsed,
   onCollapsedChange,
+  onMobileClose,
+  closeLabel = "Fechar menu",
   onNavigate,
   onSignOut,
   className,
@@ -59,19 +54,28 @@ function DsAdminSidebar({
             {!collapsed && <DsLogo />}
             <DsIconButton
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
-              ariaLabel={collapsed ? "Expandir menu" : "Recolher menu"}
+              ariaLabel={collapsed ? expandLabel : collapseLabel}
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary max-md:hidden",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
               onClick={handleToggle}
             />
+            <DsIconButton
+              icon={XIcon}
+              iconSize="lg"
+              ariaLabel={closeLabel}
+              variant="outline"
+              size="icon-sm"
+              className="absolute right-0 top-5.5 size-9 rounded-[10px] border-nova-gray-300 text-nova-primary md:hidden"
+              onClick={onMobileClose}
+            />
           </div>
         </div>
         <nav className="flex flex-col gap-2">
-          {adminNavItems.map((item) => (
+          {items.map((item) => (
             <DsSidebarItem
               key={item.path}
               icon={item.icon}
@@ -82,15 +86,21 @@ function DsAdminSidebar({
                   : (activePath?.startsWith(item.path) ?? false)
               }
               collapsed={collapsed}
+              disabled={item.disabled}
               href={item.path}
-              onClick={onNavigate ? () => onNavigate(item.path) : undefined}
+              onClick={onNavigate && !item.disabled ? () => onNavigate(item.path) : undefined}
             />
           ))}
         </nav>
       </div>
-      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
+      <DsSidebarItem
+        icon={SignOutIcon}
+        label={signOutLabel}
+        collapsed={collapsed}
+        onClick={onSignOut}
+      />
     </DsSidebar>
   );
 }
 
-export { DsAdminSidebar, type DsAdminSidebarProps };
+export { DsAdminSidebar, type DsAdminSidebarProps, type DsAdminNavItem };

@@ -1,18 +1,18 @@
 import { Plus } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 
 interface DsRegisteredCardListProps {
-  title?: string;
-  addLabel?: string;
+  title: string;
+  addLabel: string;
   onAdd?: () => void;
   children: React.ReactNode;
   className?: string;
 }
 
 function DsRegisteredCardList({
-  title = "Cartões cadastrados",
-  addLabel = "Adicionar",
+  title,
+  addLabel,
   onAdd,
   children,
   className,
@@ -20,14 +20,12 @@ function DsRegisteredCardList({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-clip rounded-[20px] border border-nova-gray-100 bg-white px-6 py-8",
+        "flex flex-col gap-6 overflow-clip rounded-4xl border border-nova-gray-100 bg-white px-6 py-8",
         className,
       )}
     >
       <div className="flex items-center justify-between">
-        <p className="text-[20px] font-medium leading-[1.3] text-black">
-          {title}
-        </p>
+        <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
         {onAdd && (
           <button
             type="button"

@@ -5,6 +5,7 @@ interface Service {
   description: string | null;
   icon: string | null;
   basePrice: number;
+  durationMinutes: number;
   allowSingle: boolean;
   allowPackage: boolean;
   allowRecurrence: boolean;

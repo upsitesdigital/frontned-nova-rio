@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback } from "react";
-import { useDashboardStore } from "@/stores/dashboard-store";
+import { useDashboardStore } from "@/stores/client/dashboard-store";
+import { useToastStore } from "@/stores/ui/toast-store";
+import { DownloadReceipt } from "@/use-cases/client-cards/download-receipt";
 import { ServicesHistoryPanel } from "./_components/services-history-panel";
 import { ServicesSidePanel } from "./_components/services-side-panel";
 import { ServiceDetailModal } from "./_components/service-detail-modal";
@@ -17,6 +19,16 @@ export default function ServicesPage() {
     setEditEntry,
     loadSummary,
   } = useDashboardStore();
+  const showToast = useToastStore((s) => s.showToast);
+
+  const receiptPaymentId = summary?.nextAppointment?.receiptPaymentId ?? null;
+
+  const handleReceipt = useCallback(() => {
+    if (!receiptPaymentId) return;
+    DownloadReceipt.downloadReceipt(receiptPaymentId).catch(() =>
+      showToast("Erro ao baixar recibo. Tente novamente.", "error"),
+    );
+  }, [receiptPaymentId, showToast]);
 
   const handleEditEntry = useCallback(
     (id: number) => {
@@ -36,8 +48,8 @@ export default function ServicesPage() {
   }
 
   return (
-    <div className="flex items-start gap-8">
-      <div className="min-w-0 flex-1">
+    <div className="flex flex-col items-start gap-6 xl:flex-row xl:gap-8">
+      <div className="w-full min-w-0 flex-1">
         <ServicesHistoryPanel
           months={summary?.serviceHistory ?? []}
           onViewEntry={(entry) => setSelectedDetailEntry(entry)}
@@ -53,6 +65,7 @@ export default function ServicesPage() {
         appointmentsLabel={summary?.appointmentsCountLabel ?? "Nos últimos 2 meses"}
         hasNextService={summary?.nextAppointment !== null && summary?.nextAppointment !== undefined}
         onChanged={loadSummary}
+        onReceipt={receiptPaymentId ? handleReceipt : undefined}
       />
       <ServiceDetailModal
         entry={selectedDetailEntry}

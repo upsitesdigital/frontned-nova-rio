@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { FloppyDiskIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsAlert, DsButton, DsIcon, DsPageHeader, DsSkeleton } from "@/design-system";
-import { useAdminEmployeeEditStore } from "@/stores/admin-employee-edit-store";
-import { waitForAuthHydration } from "@/stores/auth-store";
+import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
 import { PersonalInfoSection } from "./_components/personal-info-section";
 import { ServicesSection } from "./_components/services-section";
 import { AgendaSection } from "./_components/agenda-section";
@@ -67,14 +67,14 @@ export default function AdminEmployeeEditPage() {
         }
       />
 
-      <div className="flex items-start gap-4">
-        <div className="w-157.75 shrink-0">
+      <div className="flex flex-col items-start gap-4 xl:flex-row">
+        <div className="w-full xl:w-157.75 xl:shrink-0">
           <PersonalInfoSection />
         </div>
-        <div className="w-125 shrink-0">
+        <div className="w-full xl:w-125 xl:shrink-0">
           <ServicesSection />
         </div>
-        <div className="w-93 shrink-0">
+        <div className="w-full xl:w-93 xl:shrink-0">
           <AgendaSection />
         </div>
       </div>

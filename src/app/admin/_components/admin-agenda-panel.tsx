@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  DsFilterDropdown,
-  DsServiceHistoryItem,
-  DsEmptyState,
-  DsPagination,
-} from "@/design-system";
-import { appConfig } from "@/config/app";
-import { formatShortDate } from "@/lib/date-helpers";
-import { useAdminAgendaStore } from "@/stores/admin-agenda-store";
+import { DsFilterDropdown, DsAgendaListItem, DsEmptyState, DsPagination } from "@/design-system";
+import { AppConfig } from "@/config/app";
+import { DateHelpers } from "@/lib/formatting/date-helpers";
+import { useAdminAgendaStore } from "@/stores/admin/admin-agenda-store";
 
-function AdminAgendaPanel() {
+export function AdminAgendaPanel() {
   const {
     agendaItems,
     agendaTotal,
@@ -44,11 +39,13 @@ function AdminAgendaPanel() {
         <DsEmptyState message="Nenhum agendamento para hoje." />
       ) : (
         <div className="flex flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             {agendaItems.map((entry) => (
-              <DsServiceHistoryItem
+              <DsAgendaListItem
+                viewLabel="Visualizar"
+                editLabel="Editar"
                 key={entry.appointmentId}
-                date={formatShortDate(entry.date)}
+                date={DateHelpers.formatShortDate(entry.date)}
                 clientName={entry.clientName}
                 label={entry.serviceName}
               />
@@ -58,7 +55,7 @@ function AdminAgendaPanel() {
             currentPage={agendaPage}
             totalPages={totalPages()}
             totalItems={agendaTotal}
-            pageSize={appConfig.agendaPageSize}
+            pageSize={AppConfig.agendaPageSize}
             onPageChange={setAgendaPage}
           />
         </div>
@@ -66,5 +63,3 @@ function AdminAgendaPanel() {
     </div>
   );
 }
-
-export { AdminAgendaPanel };

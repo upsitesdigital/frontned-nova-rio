@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
 
 interface DsTransactionTableColumn {
@@ -10,16 +10,11 @@ interface DsTransactionTableColumn {
 interface DsTransactionTableProps {
   columns: DsTransactionTableColumn[];
   data: Record<string, React.ReactNode>[];
-  emptyMessage?: string;
+  emptyMessage: string;
   className?: string;
 }
 
-function DsTransactionTable({
-  columns,
-  data,
-  emptyMessage = "Nenhuma transação encontrada.",
-  className,
-}: DsTransactionTableProps) {
+function DsTransactionTable({ columns, data, emptyMessage, className }: DsTransactionTableProps) {
   return (
     <div className={cn("rounded-2.5 bg-nova-gray-50 p-6", className)}>
       <div className="flex items-center p-4">

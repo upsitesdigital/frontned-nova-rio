@@ -1,16 +1,13 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 
 interface DsLoadingStateProps {
   message?: string;
   className?: string;
 }
 
-function DsLoadingState({
-  message = "Carregando...",
-  className,
-}: DsLoadingStateProps) {
+function DsLoadingState({ message = "Carregando...", className }: DsLoadingStateProps) {
   return (
     <div
       className={cn(

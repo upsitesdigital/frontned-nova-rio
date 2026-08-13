@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  XIcon,
-  FloppyDiskIcon,
-  CheckCircleIcon,
-} from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { XIcon, FloppyDiskIcon, CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 import { DsSwitch } from "@/design-system/primitives";
 
@@ -28,28 +24,24 @@ interface DsServiceEditPopupProps {
   iconColor?: string;
   iconBgColor?: string;
   onChangeIcon?: () => void;
-  changeIconLabel?: string;
+  changeIconLabel: string;
   name: string;
   onNameChange: (value: string) => void;
-  nameLabel?: string;
+  nameLabel: string;
   description: string;
   onDescriptionChange: (value: string) => void;
-  descriptionLabel?: string;
+  descriptionLabel: string;
   price: string;
   onPriceChange: (value: string) => void;
-  priceLabel?: string;
-  pricePrefix?: string;
-  paymentOptionsTitle?: string;
-  paymentOptionsDescription?: string;
+  priceLabel: string;
+  pricePrefix: string;
+  paymentOptionsTitle: string;
+  paymentOptionsDescription: string;
   paymentOptions: DsServiceEditPopupPaymentOption[];
   onPaymentOptionToggle: (id: string, enabled: boolean) => void;
-  onFrequencyToggle: (
-    optionId: string,
-    frequencyValue: string,
-    selected: boolean,
-  ) => void;
+  onFrequencyToggle: (optionId: string, frequencyValue: string, selected: boolean) => void;
   onSave: () => void;
-  saveLabel?: string;
+  saveLabel: string;
   saveIcon?: DsIconComponent;
   className?: string;
 }
@@ -60,31 +52,31 @@ function DsServiceEditPopup({
   iconColor = "text-nova-success",
   iconBgColor = "bg-nova-success/10",
   onChangeIcon,
-  changeIconLabel = "Alterar ícone",
+  changeIconLabel,
   name,
   onNameChange,
-  nameLabel = "Nome",
+  nameLabel,
   description,
   onDescriptionChange,
-  descriptionLabel = "Descrição",
+  descriptionLabel,
   price,
   onPriceChange,
-  priceLabel = "Preço",
-  pricePrefix = "A partir de R$",
-  paymentOptionsTitle = "Opções de pagamento",
-  paymentOptionsDescription = "Configure quais tipos de pagamento para o serviço.",
+  priceLabel,
+  pricePrefix,
+  paymentOptionsTitle,
+  paymentOptionsDescription,
   paymentOptions,
   onPaymentOptionToggle,
   onFrequencyToggle,
   onSave,
-  saveLabel = "Salvar alterações",
+  saveLabel,
   saveIcon = FloppyDiskIcon,
   className,
 }: DsServiceEditPopupProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-12 bg-white px-[60px] py-[120px]",
+        "relative flex max-h-[90vh] flex-col gap-8 overflow-y-auto bg-white px-6 py-10 sm:gap-12 sm:px-15 sm:py-30",
         className,
       )}
     >
@@ -123,30 +115,30 @@ function DsServiceEditPopup({
 
         {/* Form fields */}
         <div className="flex flex-col gap-1.5">
-          <p className="text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700">
+          <p className="text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
             {nameLabel}
           </p>
           <input
             type="text"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
-            className="rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-[1.5] tracking-[-0.64px] text-black outline-none focus:border-nova-primary"
+            className="rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black outline-none focus:border-nova-primary"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <p className="text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700">
+          <p className="text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
             {descriptionLabel}
           </p>
           <textarea
             value={description}
             onChange={(e) => onDescriptionChange(e.target.value)}
-            className="h-[100px] resize-none rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-[1.5] text-nova-primary-dark outline-none focus:border-nova-primary"
+            className="h-25 resize-none rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-normal text-nova-primary-dark outline-none focus:border-nova-primary"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <p className="text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700">
+          <p className="text-lg font-medium leading-normal tracking-[-0.72px] text-nova-gray-700">
             {priceLabel}
           </p>
           <div className="flex items-center gap-1.5">
@@ -157,7 +149,7 @@ function DsServiceEditPopup({
               type="text"
               value={price}
               onChange={(e) => onPriceChange(e.target.value)}
-              className="rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-[1.5] tracking-[-0.64px] text-black outline-none focus:border-nova-primary"
+              className="rounded-[6px] border border-nova-gray-300 px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black outline-none focus:border-nova-primary"
             />
           </div>
         </div>
@@ -184,14 +176,10 @@ function DsServiceEditPopup({
               )}
             >
               <div className="flex h-6 items-center justify-between">
-                <p className="text-base font-medium leading-[1.3] text-black">
-                  {option.label}
-                </p>
+                <p className="text-base font-medium leading-[1.3] text-black">{option.label}</p>
                 <DsSwitch
                   checked={option.enabled}
-                  onCheckedChange={(checked) =>
-                    onPaymentOptionToggle(option.id, checked)
-                  }
+                  onCheckedChange={(checked) => onPaymentOptionToggle(option.id, checked)}
                 />
               </div>
 
@@ -201,13 +189,7 @@ function DsServiceEditPopup({
                     <button
                       key={freq.value}
                       type="button"
-                      onClick={() =>
-                        onFrequencyToggle(
-                          option.id,
-                          freq.value,
-                          !freq.selected,
-                        )
-                      }
+                      onClick={() => onFrequencyToggle(option.id, freq.value, !freq.selected)}
                       className={cn(
                         "flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-base font-medium leading-[1.3] text-nova-gray-700 transition-colors",
                         freq.selected
@@ -216,11 +198,7 @@ function DsServiceEditPopup({
                       )}
                     >
                       {freq.selected && (
-                        <DsIcon
-                          icon={CheckCircleIcon}
-                          size="md"
-                          className="text-nova-success"
-                        />
+                        <DsIcon icon={CheckCircleIcon} size="md" className="text-nova-success" />
                       )}
                       {freq.label}
                     </button>
@@ -236,7 +214,7 @@ function DsServiceEditPopup({
       <button
         type="button"
         onClick={onSave}
-        className="flex h-[60px] w-fit cursor-pointer items-center justify-center gap-1 rounded-xl bg-nova-success px-8 py-4 text-lg font-medium leading-[1.5] tracking-[-0.72px] text-white transition-colors hover:bg-nova-success/90"
+        className="flex h-15 w-fit cursor-pointer items-center justify-center gap-1 rounded-xl bg-nova-success px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-nova-success/90"
       >
         <DsIcon icon={saveIcon} size="lg" />
         {saveLabel}

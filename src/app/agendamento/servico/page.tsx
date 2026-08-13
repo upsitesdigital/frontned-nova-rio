@@ -2,36 +2,41 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowClockwise } from "@phosphor-icons/react/dist/ssr";
 
 import {
   DsButton,
+  DsEmptyState,
   DsFlowCard,
   DsFlowHeader,
-  DsRadioOptionCard,
-  DsSelect,
+  DsRecurrenceConfig,
   DsServiceOptionCard,
   DsSkeleton,
 } from "@/design-system";
-import { FREQUENCY_OPTIONS, RECURRENCE_OPTIONS } from "@/config/scheduling";
-import { formatPrice } from "@/lib/formatters";
-import { getServiceIcon } from "@/lib/icon-map";
-import { useSchedulingStore } from "@/stores/scheduling-store";
-import { useServicesStore } from "@/stores/services-store";
-import type { RecurrenceFrequency } from "@/types/scheduling";
+import { SchedulingConfig } from "@/config/scheduling";
+import { Messages } from "@/lib/core/messages";
+import { Formatters } from "@/lib/formatting/formatters";
+import { IconMap } from "@/lib/display/icon-map";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+import { useServicesStore } from "@/stores/client/services-store";
+import type { RecurrenceFrequency, RecurrenceType } from "@/types/scheduling";
 
 export default function ServicoPage() {
   const router = useRouter();
 
   const services = useServicesStore((s) => s.services);
   const isLoadingServices = useServicesStore((s) => s.isLoadingServices);
+  const servicesError = useServicesStore((s) => s.error);
   const selectedServiceId = useServicesStore((s) => s.selectedServiceId);
   const loadServices = useServicesStore((s) => s.loadServices);
   const setSelectedServiceId = useServicesStore((s) => s.setSelectedServiceId);
 
   const recurrenceType = useSchedulingStore((s) => s.recurrenceType);
   const recurrenceFrequency = useSchedulingStore((s) => s.recurrenceFrequency);
+  const weeklyFrequency = useSchedulingStore((s) => s.weeklyFrequency);
   const setRecurrenceType = useSchedulingStore((s) => s.setRecurrenceType);
   const setRecurrenceFrequency = useSchedulingStore((s) => s.setRecurrenceFrequency);
+  const setWeeklyFrequency = useSchedulingStore((s) => s.setWeeklyFrequency);
 
   useEffect(() => {
     if (services.length === 0) {
@@ -42,36 +47,51 @@ export default function ServicoPage() {
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
 
   const availableRecurrenceOptions = selectedService
-    ? RECURRENCE_OPTIONS.filter((opt) => selectedService[opt.field])
-    : RECURRENCE_OPTIONS;
+    ? SchedulingConfig.recurrenceOptions.filter((opt) => selectedService[opt.field])
+    : SchedulingConfig.recurrenceOptions;
 
   const canProceed =
     selectedServiceId !== null &&
     recurrenceType !== null &&
     (recurrenceType !== "recorrencia" || recurrenceFrequency !== null);
 
+  const frequencyOptions =
+    recurrenceFrequency === "quinzenal"
+      ? SchedulingConfig.biweeklyTimesOptions
+      : recurrenceFrequency === "mensal"
+        ? SchedulingConfig.monthlyTimesOptions
+        : SchedulingConfig.weeklyTimesOptions;
+
   return (
-    <DsFlowCard className="mx-auto max-w-[1008px]">
+    <DsFlowCard className="mx-auto max-w-252">
       <DsFlowHeader
         title="Agendar serviço"
         subtitle="Selecione o tipo de serviço e a duração desejada."
       />
 
-      {isLoadingServices || services.length === 0 ? (
-        <div className="flex w-full gap-4">
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
-          <DsSkeleton className="h-[220px] flex-1 rounded-[10px]" />
+      {isLoadingServices ? (
+        <div className="flex w-full flex-col gap-4 sm:flex-row">
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
+          <DsSkeleton className="h-55 flex-1 rounded-[10px]" />
         </div>
+      ) : servicesError ? (
+        <DsEmptyState
+          title={Messages.services.loadErrorTitle}
+          message={servicesError}
+          actionLabel={Messages.services.retry}
+          actionIcon={ArrowClockwise}
+          onAction={loadServices}
+        />
       ) : (
-        <div className="flex w-full gap-4">
+        <div className="flex w-full flex-col gap-4 sm:flex-row">
           {services.map((service) => (
             <DsServiceOptionCard
               key={service.id}
-              icon={getServiceIcon(service.icon)}
+              icon={IconMap.getServiceIcon(service.icon)}
               title={service.name}
               description={service.description ?? ""}
-              price={formatPrice(service.basePrice)}
+              price={Formatters.formatPrice(service.basePrice)}
               selected={selectedServiceId === service.id}
               onClick={() => setSelectedServiceId(service.id)}
             />
@@ -79,55 +99,50 @@ export default function ServicoPage() {
         </div>
       )}
 
-      <div className="flex w-full flex-col gap-8 rounded-2xl border border-nova-gray-300 px-10 py-12">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
-            Configurar Recorrência
-          </h3>
-          <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
-            Escolha como deseja agendar seus serviços de limpeza
-          </p>
-        </div>
-
-        <div className="flex gap-3">
-          {availableRecurrenceOptions.map((option) => (
-            <DsRadioOptionCard
-              key={option.type}
-              label={option.label}
-              badge={option.badge}
-              selected={recurrenceType === option.type}
-              onClick={() => setRecurrenceType(option.type)}
-            />
-          ))}
-        </div>
-
-        {recurrenceType === "recorrencia" && (
-          <div className="flex w-full flex-col gap-4 rounded-[10px] bg-nova-gray-50 p-6">
-            <div className="flex flex-col gap-1.5">
-              <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
-                Selecione o tipo de recorrência
-              </p>
-              <DsSelect
-                options={FREQUENCY_OPTIONS}
-                value={recurrenceFrequency ?? "mensal"}
-                onValueChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
-                placeholder="Selecione..."
-                className="w-full rounded-[6px] border-[#efefef] bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-[#4d4d4f] shadow-none data-[size=default]:h-auto [&_svg]:size-5 [&_svg]:opacity-100"
-              />
-            </div>
-            <p className="text-xs leading-[1.3] tracking-[-0.48px] text-nova-gray-700">
-              <span className="font-bold">5%</span> de desconto para recorrências mensais e{" "}
-              <span className="font-bold">10%</span> para semanais e quinzenais.
-            </p>
-          </div>
-        )}
-      </div>
+      <DsRecurrenceConfig
+        title="Configurar Recorrência"
+        subtitle="Escolha como deseja agendar seus serviços de limpeza"
+        options={availableRecurrenceOptions}
+        selectedType={recurrenceType}
+        onSelectType={(type) => setRecurrenceType(type as RecurrenceType)}
+        selectPlaceholder="Selecione..."
+        showFrequency={recurrenceType === "recorrencia"}
+        frequencyLabel="Selecione o tipo de recorrência"
+        frequencyOptions={SchedulingConfig.frequencyOptions}
+        frequencyValue={recurrenceFrequency ?? "mensal"}
+        onFrequencyChange={(value) => setRecurrenceFrequency(value as RecurrenceFrequency)}
+        showWeeklyTimes={recurrenceFrequency !== null}
+        weeklyTimesLabel={
+          recurrenceFrequency === "quinzenal"
+            ? "Quantas visitas por quinzena?"
+            : recurrenceFrequency === "mensal"
+              ? "Quantas visitas por mês?"
+              : "Quantas vezes por semana?"
+        }
+        weeklyTimesOptions={frequencyOptions}
+        weeklyTimesValue={String(weeklyFrequency)}
+        onWeeklyTimesChange={(value) => setWeeklyFrequency(Number(value))}
+        discountNote={
+          <>
+            Quanto mais visitas você agenda no mês, maior o desconto:
+            <ul className="mt-1 list-disc pl-4">
+              <li>1 visita: sem desconto</li>
+              <li>2 visitas: 3% de desconto</li>
+              <li>4 visitas: 5% de desconto</li>
+              <li>8 visitas: 7% de desconto</li>
+              <li>13 visitas: 8% de desconto</li>
+              <li>17 visitas: 9% de desconto</li>
+              <li>21 visitas: até 10% de desconto</li>
+            </ul>
+          </>
+        }
+      />
 
       <DsButton
         size="flow"
         disabled={!canProceed}
         onClick={() => router.push("/agendamento/dia-horario")}
-        className="w-[257px]"
+        className="w-64.25"
       >
         Continuar
       </DsButton>

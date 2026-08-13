@@ -1,7 +1,7 @@
 "use client";
 
 import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import {
   Select,
@@ -39,13 +39,13 @@ function DsFilterDropdown({
         {label}
       </span>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="h-auto w-[154px] gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black shadow-none [&>svg]:hidden">
+        <SelectTrigger className="h-auto w-38.5 gap-1 rounded-md border-nova-gray-100 bg-white px-4 py-3 text-base leading-normal tracking-[-0.64px] text-black shadow-none [&>svg]:hidden">
           <SelectValue placeholder={placeholder} />
           <span className="flex shrink-0 items-center">
             <DsIcon icon={CaretDownIcon} size="md" className="text-black" />
           </span>
         </SelectTrigger>
-        <SelectContent className="rounded-[10px] border-nova-gray-100 p-2 shadow-[0px_12px_44px_0px_rgba(111,124,142,0.05)]">
+        <SelectContent className="rounded-[10px] border-nova-gray-100 p-2 shadow-(--nova-shadow-soft)">
           {options.map((option) => (
             <SelectItem
               key={option.value}

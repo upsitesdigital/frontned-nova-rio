@@ -10,16 +10,16 @@ import {
   DsCheckbox,
   DsLabel,
 } from "@/design-system";
-import { formatCardNumber } from "@/lib/formatters";
-import { getDetectedBrandLabel } from "@/lib/card-format";
-import { useCardsStore } from "@/stores/cards-store";
+import { Formatters } from "@/lib/formatting/formatters";
+import { CardFormat } from "@/lib/formatting/card-format";
+import { useCardsStore } from "@/stores/client/cards-store";
 
-const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => {
+const monthOptions = Array.from({ length: 12 }, (_, i) => {
   const month = String(i + 1).padStart(2, "0");
   return { value: String(i + 1), label: month };
 });
 
-function AddCardDialog() {
+export function AddCardDialog() {
   const {
     addDialogOpen,
     isAdding,
@@ -38,8 +38,8 @@ function AddCardDialog() {
     });
   }, []);
 
-  const digits = addForm.cardNumber.replace(/\s/g, "");
-  const detectedBrand = getDetectedBrandLabel(addForm.cardNumber);
+  const digits = Formatters.onlyDigits(addForm.cardNumber);
+  const detectedBrand = CardFormat.getDetectedBrandLabel(addForm.cardNumber);
 
   const isValid =
     digits.length >= 13 &&
@@ -71,7 +71,9 @@ function AddCardDialog() {
         <DsFormField label="Número do cartão" error={addFormErrors.cardNumber}>
           <DsInput
             value={addForm.cardNumber}
-            onChange={(e) => setAddFormField("cardNumber", formatCardNumber(e.target.value))}
+            onChange={(e) =>
+              setAddFormField("cardNumber", Formatters.formatCardNumber(e.target.value))
+            }
             placeholder="0000 0000 0000 0000"
             maxLength={19}
             inputMode="numeric"
@@ -92,7 +94,7 @@ function AddCardDialog() {
         <div className="flex gap-3">
           <DsFormField label="Mês de validade" error={addFormErrors.expiryMonth} className="flex-1">
             <DsSelect
-              options={MONTH_OPTIONS}
+              options={monthOptions}
               placeholder="MM"
               value={addForm.expiryMonth}
               onValueChange={(v) => setAddFormField("expiryMonth", v)}
@@ -112,7 +114,7 @@ function AddCardDialog() {
             <DsInput
               value={addForm.cvv}
               onChange={(e) =>
-                setAddFormField("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))
+                setAddFormField("cvv", Formatters.onlyDigits(e.target.value).slice(0, 4))
               }
               placeholder="000"
               maxLength={4}
@@ -136,5 +138,3 @@ function AddCardDialog() {
     </DsDialog>
   );
 }
-
-export { AddCardDialog };

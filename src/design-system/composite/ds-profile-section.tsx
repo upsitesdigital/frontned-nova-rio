@@ -1,40 +1,41 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsInput } from "@/design-system/primitives";
 
-interface DsProfileField {
+export interface DsProfileField {
   label: string;
   value: string;
   editable?: boolean;
   onChange?: (value: string) => void;
+  format?: (value: string) => string;
 }
 
-interface DsProfileSectionProps {
-  title?: string;
+export interface DsProfileSectionProps {
+  title: string;
   initials: string;
   fields: DsProfileField[];
   onEdit?: () => void;
   onCancel?: () => void;
   onChangeImage?: () => void;
-  editLabel?: string;
-  cancelLabel?: string;
+  editLabel: string;
+  cancelLabel: string;
   editDisabled?: boolean;
-  changeImageLabel?: string;
+  changeImageLabel: string;
   className?: string;
 }
 
-function DsProfileSection({
-  title = "Informações pessoais",
+export function DsProfileSection({
+  title,
   initials,
   fields,
   onEdit,
   onCancel,
   onChangeImage,
-  editLabel = "Editar",
-  cancelLabel = "Cancelar",
+  editLabel,
+  cancelLabel,
   editDisabled = false,
-  changeImageLabel = "Alterar imagem",
+  changeImageLabel,
   className,
 }: DsProfileSectionProps) {
   return (
@@ -47,12 +48,12 @@ function DsProfileSection({
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col-reverse items-end gap-2 sm:flex-row sm:items-center sm:gap-3">
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="cursor-pointer text-base font-medium leading-[1.3] text-nova-gray-500 transition-colors hover:text-nova-gray-700"
+              className="cursor-pointer text-base font-medium leading-[1.3] text-nova-error transition-colors hover:text-nova-error/80"
             >
               {cancelLabel}
             </button>
@@ -101,7 +102,13 @@ function DsProfileSection({
               {field.label}
             </p>
             {field.editable ? (
-              <DsInput value={field.value} onChange={(e) => field.onChange?.(e.target.value)} />
+              <DsInput
+                value={field.value}
+                onChange={(e) =>
+                  field.onChange?.(field.format ? field.format(e.target.value) : e.target.value)
+                }
+                className="border-nova-primary focus-visible:border-nova-primary focus-visible:ring-nova-primary/30"
+              />
             ) : (
               <div className="flex items-center rounded-[6px] border border-nova-gray-200 px-4 py-3">
                 <p
@@ -120,5 +127,3 @@ function DsProfileSection({
     </div>
   );
 }
-
-export { DsProfileSection, type DsProfileSectionProps, type DsProfileField };

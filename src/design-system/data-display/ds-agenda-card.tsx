@@ -1,10 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import {
-  CaretLeftIcon,
-  CaretRightIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import {
   startOfMonth,
   endOfMonth,
@@ -19,10 +16,10 @@ import {
   isWeekend,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIconButton } from "@/design-system/primitives";
 
-const WEEKDAY_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const weekdayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 interface DsAgendaCardProps {
   currentMonth: Date;
@@ -50,9 +47,7 @@ function DsAgendaCard({
   }, [currentMonth]);
 
   const busySet = useMemo(() => {
-    return new Set(
-      busyDates.map((d) => format(d, "yyyy-MM-dd")),
-    );
+    return new Set(busyDates.map((d) => format(d, "yyyy-MM-dd")));
   }, [busyDates]);
 
   const handlePrevMonth = useCallback(() => {
@@ -79,9 +74,7 @@ function DsAgendaCard({
       )}
     >
       <div className="flex w-full items-center">
-        <h3 className="text-xl font-medium leading-[1.3] text-black">
-          Agenda
-        </h3>
+        <h3 className="text-xl font-medium leading-[1.3] text-black">Agenda</h3>
       </div>
 
       <div className="flex w-full flex-col gap-2.5">
@@ -106,7 +99,7 @@ function DsAgendaCard({
         </div>
 
         <div className="flex w-full">
-          {WEEKDAY_LABELS.map((day) => (
+          {weekdayLabels.map((day) => (
             <div
               key={day}
               className="flex h-9 flex-1 items-center justify-center text-center text-sm font-normal leading-[1.4] text-nova-gray-500"
@@ -121,8 +114,7 @@ function DsAgendaCard({
             {week.map((day) => {
               const inMonth = isSameMonth(day, currentMonth);
               const isBusy = busySet.has(format(day, "yyyy-MM-dd"));
-              const isSelected =
-                selectedDate && isSameDay(day, selectedDate);
+              const isSelected = selectedDate && isSameDay(day, selectedDate);
               const isWeekendDay = isWeekend(day);
 
               return (

@@ -1,0 +1,205 @@
+import { create } from "zustand";
+import type { AdminEmployee } from "@/api/admin/admin-employees-api";
+import type { RawUnit } from "@/api/admin/admin-appointments-api";
+import { LoadAdminEmployeeDetail } from "@/use-cases/admin-employees/load-admin-employee-detail";
+import { SaveAdminEmployee } from "@/use-cases/admin-employees/save-admin-employee";
+import { LoadEmployeeBusyDates } from "@/use-cases/admin-employees/load-employee-busy-dates";
+import { useToastStore } from "@/stores/ui/toast-store";
+import { Messages } from "@/lib/core/messages";
+
+interface EmployeeFormData {
+  name: string;
+  email: string;
+  phone: string;
+  cpf: string;
+  address: string;
+  status: string;
+  availabilityFrom: string;
+  availabilityTo: string;
+  unitId: number | null;
+  unitName: string;
+  notes: string;
+  weeklyHours: string;
+}
+
+interface AdminEmployeeEditState {
+  employee: AdminEmployee | null;
+  form: EmployeeFormData;
+  isLoading: boolean;
+  isSaving: boolean;
+  error: string | null;
+  saveError: string | null;
+  isAuthError: boolean;
+  currentMonth: Date;
+  busyDates: Date[];
+  unitOptions: RawUnit[];
+}
+
+interface AdminEmployeeEditActions {
+  loadEmployee: (id: number) => Promise<void>;
+  loadUnits: () => Promise<void>;
+  updateField: <K extends keyof EmployeeFormData>(field: K, value: EmployeeFormData[K]) => void;
+  saveEmployee: () => Promise<boolean>;
+  setCurrentMonth: (date: Date) => void;
+  loadBusyDates: () => Promise<void>;
+  reset: () => void;
+}
+
+type AdminEmployeeEditStore = AdminEmployeeEditState & AdminEmployeeEditActions;
+let employeeLoadSeq = 0;
+let busyDatesLoadSeq = 0;
+
+const initialForm: EmployeeFormData = {
+  name: "",
+  email: "",
+  phone: "",
+  cpf: "",
+  address: "",
+  status: "ACTIVE",
+  availabilityFrom: "",
+  availabilityTo: "",
+  unitId: null,
+  unitName: "",
+  notes: "",
+  weeklyHours: "",
+};
+
+const useAdminEmployeeEditStore = create<AdminEmployeeEditStore>((set, get) => ({
+  employee: null,
+  form: { ...initialForm },
+  isLoading: false,
+  isSaving: false,
+  error: null,
+  saveError: null,
+  isAuthError: false,
+  currentMonth: new Date(),
+  busyDates: [],
+  unitOptions: [],
+
+  loadEmployee: async (id: number) => {
+    const seq = ++employeeLoadSeq;
+    set({ isLoading: true, error: null, isAuthError: false });
+
+    const result = await LoadAdminEmployeeDetail.loadAdminEmployeeDetail(id);
+    if (seq !== employeeLoadSeq) return;
+
+    if (result.data) {
+      const { employee, units } = result.data;
+      set({
+        employee,
+        unitOptions: units,
+        form: {
+          name: employee.name,
+          email: employee.email,
+          phone: employee.phone ?? "",
+          cpf: employee.cpf,
+          address: employee.address ?? "",
+          status: employee.status,
+          availabilityFrom: employee.availabilityFrom ?? "",
+          availabilityTo: employee.availabilityTo ?? "",
+          unitId: employee.unit?.id ?? null,
+          unitName: employee.unit?.name ?? "",
+          notes: employee.notes ?? "",
+          weeklyHours: "",
+        },
+        isLoading: false,
+      });
+      get().loadBusyDates();
+    } else {
+      set({
+        isLoading: false,
+        error: result.error,
+        isAuthError: result.isAuthError,
+      });
+    }
+  },
+
+  loadUnits: async () => {
+    try {
+      const { AdminAppointmentsApi } = await import("@/api/admin/admin-appointments-api");
+      const units = await AdminAppointmentsApi.fetchUnits();
+      set({ unitOptions: units });
+    } catch {
+      // Silent fail — non-critical
+    }
+  },
+
+  updateField: (field, value) => {
+    set((state) => ({
+      form: { ...state.form, [field]: value },
+    }));
+  },
+
+  saveEmployee: async () => {
+    const { employee, form } = get();
+    if (!employee) return false;
+    if (get().isSaving) return false;
+
+    set({ isSaving: true, saveError: null });
+
+    const result = await SaveAdminEmployee.saveAdminEmployee({
+      id: employee.id,
+      name: form.name,
+      email: form.email,
+      cpf: form.cpf,
+      phone: form.phone || undefined,
+      address: form.address || undefined,
+      availabilityFrom: form.availabilityFrom || undefined,
+      availabilityTo: form.availabilityTo || undefined,
+      notes: form.notes || undefined,
+      unitId: form.unitId ?? undefined,
+      status: form.status as "ACTIVE" | "INACTIVE",
+    });
+
+    if (result.success) {
+      set({ isSaving: false });
+      useToastStore.getState().showToast(Messages.adminEmployees.saveSuccess, "success");
+      return true;
+    }
+
+    set({ isSaving: false, saveError: result.error });
+    useToastStore.getState().showToast(result.error, "error");
+    return false;
+  },
+
+  setCurrentMonth: (date: Date) => {
+    set({ currentMonth: date });
+    get().loadBusyDates();
+  },
+
+  loadBusyDates: async () => {
+    const { employee, currentMonth } = get();
+    if (!employee) return;
+    const seq = ++busyDatesLoadSeq;
+
+    try {
+      const dates = await LoadEmployeeBusyDates.loadEmployeeBusyDates({
+        employeeId: employee.id,
+        currentMonth,
+      });
+      if (seq !== busyDatesLoadSeq) return;
+      set({ busyDates: dates });
+    } catch {
+      // Silent fail for calendar — non-critical
+    }
+  },
+
+  reset: () => {
+    employeeLoadSeq++;
+    busyDatesLoadSeq++;
+    set({
+      employee: null,
+      form: { ...initialForm },
+      isLoading: false,
+      isSaving: false,
+      error: null,
+      saveError: null,
+      isAuthError: false,
+      currentMonth: new Date(),
+      busyDates: [],
+      unitOptions: [],
+    });
+  },
+}));
+
+export { useAdminEmployeeEditStore, type AdminEmployeeEditStore, type EmployeeFormData };

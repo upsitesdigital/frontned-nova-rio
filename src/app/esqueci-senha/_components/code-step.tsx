@@ -3,13 +3,13 @@
 import { useCallback } from "react";
 
 import { DsButton, DsFormField, DsInput, DsPasswordInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { useForgotPasswordStore } from "@/stores/forgot-password-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { Constants } from "@/lib/core/constants";
+import { useForgotPasswordStore } from "@/stores/auth/forgot-password-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 
 import { PasswordRequirements } from "./password-requirements";
 
-function CodeStep() {
+export function CodeStep() {
   const code = useForgotPasswordStore((s) => s.code);
   const newPassword = useForgotPasswordStore((s) => s.newPassword);
   const confirmPassword = useForgotPasswordStore((s) => s.confirmPassword);
@@ -47,7 +47,7 @@ function CodeStep() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             maxLength={6}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
 
@@ -59,7 +59,7 @@ function CodeStep() {
               onChange={(e) => setNewPassword(e.target.value)}
               visible={newPwdVisible}
               onVisibilityChange={(v) => setPwdVisibility("forgot-new", v)}
-              className={FLOW_INPUT_CLASS}
+              className={Constants.flowInputClass}
             />
           </DsFormField>
           <PasswordRequirements hints={passwordHints} />
@@ -72,7 +72,7 @@ function CodeStep() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             visible={confirmPwdVisible}
             onVisibilityChange={(v) => setPwdVisibility("forgot-confirm", v)}
-            className={FLOW_INPUT_CLASS}
+            className={Constants.flowInputClass}
           />
         </DsFormField>
       </div>
@@ -83,5 +83,3 @@ function CodeStep() {
     </>
   );
 }
-
-export { CodeStep };

@@ -1,8 +1,8 @@
 import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIcon, type DsIconComponent } from "@/design-system/media";
 
-interface DsServiceManageCardProps {
+export interface DsServiceManageCardProps {
   icon: DsIconComponent;
   iconColor?: string;
   iconBgColor?: string;
@@ -10,13 +10,13 @@ interface DsServiceManageCardProps {
   description: string;
   price?: string;
   onEdit?: () => void;
-  editLabel?: string;
+  editLabel: string;
   onDelete?: () => void;
-  deleteLabel?: string;
+  deleteLabel: string;
   className?: string;
 }
 
-function DsServiceManageCard({
+export function DsServiceManageCard({
   icon,
   iconColor = "text-nova-success",
   iconBgColor = "bg-nova-success/10",
@@ -24,9 +24,9 @@ function DsServiceManageCard({
   description,
   price,
   onEdit,
-  editLabel = "Editar",
+  editLabel,
   onDelete,
-  deleteLabel = "Excluir",
+  deleteLabel,
   className,
 }: DsServiceManageCardProps) {
   return (
@@ -46,16 +46,12 @@ function DsServiceManageCard({
           <DsIcon icon={icon} size="xl" className={iconColor} />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-[20px] font-medium leading-[1.3] text-black">
-            {title}
-          </p>
+          <p className="text-[20px] font-medium leading-[1.3] text-black">{title}</p>
           <p className="text-base leading-[1.3] tracking-[-0.64px] text-nova-primary-dark">
             {description}
           </p>
           {price && (
-            <p className="text-sm font-medium leading-[1.5] text-nova-gray-400">
-              {price}
-            </p>
+            <p className="text-sm font-medium leading-normal text-nova-gray-400">{price}</p>
           )}
         </div>
       </div>
@@ -66,7 +62,7 @@ function DsServiceManageCard({
             <button
               type="button"
               onClick={onEdit}
-              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-gray-100 px-8 py-4 text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-gray-700 transition-colors hover:bg-nova-gray-200"
+              className="flex h-14 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-nova-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-nova-primary/90"
             >
               {editLabel}
             </button>
@@ -75,7 +71,7 @@ function DsServiceManageCard({
             <button
               type="button"
               onClick={onDelete}
-              className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-[1.5] tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
+              className="flex h-14 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border border-nova-error px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-nova-error transition-colors hover:bg-red-50"
             >
               <DsIcon icon={TrashIcon} size="lg" />
               {deleteLabel}
@@ -86,5 +82,3 @@ function DsServiceManageCard({
     </div>
   );
 }
-
-export { DsServiceManageCard, type DsServiceManageCardProps };

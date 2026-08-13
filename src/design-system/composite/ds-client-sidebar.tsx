@@ -1,41 +1,54 @@
 "use client";
 
 import {
-  HouseIcon,
-  BroomIcon,
-  CurrencyDollarSimpleIcon,
   SignOutIcon,
   CaretLeftIcon,
   CaretRightIcon,
   PlusIcon,
+  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsSidebar } from "@/design-system/navigation";
 import { DsSidebarItem } from "@/design-system/navigation";
 import { DsLogo } from "@/design-system/navigation";
 import { DsIconButton } from "@/design-system/primitives";
 import { DsIcon } from "@/design-system/media";
+import type { DsIconComponent } from "@/design-system/media";
+
+type DsClientNavItem = {
+  path: string;
+  label: string;
+  icon: DsIconComponent;
+};
 
 interface DsClientSidebarProps {
+  items: DsClientNavItem[];
+  scheduleLabel: string;
+  signOutLabel: string;
+  expandLabel: string;
+  collapseLabel: string;
   activePath?: string;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
+  onMobileClose?: () => void;
+  closeLabel?: string;
   onNavigate?: (path: string) => void;
   onScheduleService?: () => void;
   onSignOut?: () => void;
   className?: string;
 }
 
-const clientNavItems = [
-  { path: "/dashboard", label: "Minha Área", icon: HouseIcon },
-  { path: "/dashboard/servicos", label: "Meus serviços", icon: BroomIcon },
-  { path: "/dashboard/pagamentos", label: "Pagamentos", icon: CurrencyDollarSimpleIcon },
-];
-
 function DsClientSidebar({
+  items,
+  scheduleLabel,
+  signOutLabel,
+  expandLabel,
+  collapseLabel,
   activePath,
   collapsed,
   onCollapsedChange,
+  onMobileClose,
+  closeLabel = "Fechar menu",
   onNavigate,
   onScheduleService,
   onSignOut,
@@ -55,14 +68,24 @@ function DsClientSidebar({
               icon={collapsed ? CaretRightIcon : CaretLeftIcon}
               iconSize="lg"
               iconWeight="bold"
-              ariaLabel={collapsed ? "Expandir menu" : "Recolher menu"}
+              ariaLabel={collapsed ? expandLabel : collapseLabel}
               variant="outline"
               size="icon-sm"
               className={cn(
-                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary",
+                "size-9 rounded-[10px] border-nova-gray-300 text-nova-primary max-md:hidden",
+                collapsed && "px-0",
                 collapsed ? "mx-auto" : "absolute right-0 top-5.5",
               )}
               onClick={handleToggle}
+            />
+            <DsIconButton
+              icon={XIcon}
+              iconSize="lg"
+              ariaLabel={closeLabel}
+              variant="outline"
+              size="icon-sm"
+              className="absolute right-0 top-5.5 size-9 rounded-[10px] border-nova-gray-300 text-nova-primary md:hidden"
+              onClick={onMobileClose}
             />
           </div>
           <button
@@ -74,11 +97,11 @@ function DsClientSidebar({
             )}
           >
             <DsIcon icon={PlusIcon} size="lg" className="shrink-0 text-white" />
-            {!collapsed && <span>Agendar serviço</span>}
+            {!collapsed && <span>{scheduleLabel}</span>}
           </button>
         </div>
         <nav className="flex flex-col gap-2">
-          {clientNavItems.map((item) => (
+          {items.map((item) => (
             <DsSidebarItem
               key={item.path}
               icon={item.icon}
@@ -91,9 +114,14 @@ function DsClientSidebar({
           ))}
         </nav>
       </div>
-      <DsSidebarItem icon={SignOutIcon} label="Sair" collapsed={collapsed} onClick={onSignOut} />
+      <DsSidebarItem
+        icon={SignOutIcon}
+        label={signOutLabel}
+        collapsed={collapsed}
+        onClick={onSignOut}
+      />
     </DsSidebar>
   );
 }
 
-export { DsClientSidebar, type DsClientSidebarProps };
+export { DsClientSidebar, type DsClientSidebarProps, type DsClientNavItem };
