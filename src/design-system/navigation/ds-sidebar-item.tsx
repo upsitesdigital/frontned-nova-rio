@@ -38,6 +38,13 @@ function DsSidebarItem({
     onClick?.();
   };
 
+  const handleClick = (e: MouseEvent) => {
+    if (href && onClick) {
+      e.preventDefault();
+    }
+    onClick?.();
+  };
+
   return (
     <Component
       href={disabled ? undefined : href}

@@ -69,6 +69,10 @@ export {
   type DsClientDashboardShellProps,
 } from "./ds-client-dashboard-shell";
 export {
+  DsClientDashboardShell,
+  type DsClientDashboardShellProps,
+} from "./ds-client-dashboard-shell";
+export {
   DsProfileCard,
   type DsProfileCardProps,
   type DsProfileCardAction,
