@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { DsLogo, DsStepper } from "@/design-system";
-import { SCHEDULING_STEPS, STEP_PATH_MAP } from "@/config/scheduling";
+import { SchedulingConfig } from "@/config/scheduling";
 
 interface AgendamentoLayoutProps {
   children: React.ReactNode;
@@ -13,12 +13,12 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
   const pathname = usePathname();
   const segment = pathname.split("/").pop() ?? "servico";
   const isConfirmation = segment === "confirmacao";
-  const currentStep = STEP_PATH_MAP[segment] ?? 0;
+  const currentStep = SchedulingConfig.stepPathMap[segment] ?? 0;
 
   if (isConfirmation) {
     return (
       <div className="relative min-h-screen bg-nova-gray-50">
-        <DsLogo className="fixed left-[80px] top-[60px] h-[84px]! w-[156px]!" />
+        <DsLogo className="mx-auto mt-6 block h-14! w-auto! md:fixed md:left-20 md:top-15 md:mx-0 md:mt-0 md:h-21! md:w-39!" />
         <main className="flex min-h-screen items-center justify-center px-(--page-padding)">
           {children}
         </main>
@@ -28,18 +28,16 @@ export default function AgendamentoLayout({ children }: AgendamentoLayoutProps) 
 
   return (
     <div className="relative min-h-screen bg-white">
-      <DsLogo className="fixed left-[80px] top-[60px] h-[84px]! w-[156px]!" />
+      <DsLogo className="mx-auto mt-6 block h-14! w-auto! md:fixed md:left-20 md:top-15 md:mx-0 md:mt-0 md:h-21! md:w-39!" />
 
-      <header className="flex justify-center px-(--page-padding) pb-8 pt-[94px]">
+      <header className="flex justify-center px-(--page-padding) pb-8 pt-8 md:pt-23.5">
         <DsStepper
-          steps={SCHEDULING_STEPS}
+          steps={SchedulingConfig.getStepsForUser(false)}
           currentStep={currentStep}
-          className="w-full max-w-[1008px]"
+          className="w-full max-w-252"
         />
       </header>
-      <main className="mx-auto w-full max-w-[1216px] px-(--page-padding) pb-8 pt-16">
-        {children}
-      </main>
+      <main className="mx-auto w-full max-w-304 px-(--page-padding) pb-8 pt-16">{children}</main>
     </div>
   );
 }

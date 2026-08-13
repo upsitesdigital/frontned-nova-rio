@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FloppyDiskIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsButton, DsIcon, DsLoadingState, DsPageHeader, DsAlert } from "@/design-system";
-import { useAdminCreateAppointmentStore } from "@/stores/admin-create-appointment-store";
-import { waitForAuthHydration } from "@/stores/auth-store";
-import { useToastStore } from "@/stores/toast-store";
-import { MESSAGES } from "@/lib/messages";
+import { useAdminCreateAppointmentStore } from "@/stores/admin/admin-create-appointment-store";
+import { waitForAuthHydration } from "@/stores/auth/auth-store";
+import { useToastStore } from "@/stores/ui/toast-store";
+import { Messages } from "@/lib/core/messages";
 import { ServiceInfoCard } from "./_components/service-info-card";
 import { AppointmentDetailsCard } from "./_components/appointment-details-card";
 import { DateTimeCard } from "./_components/date-time-card";
@@ -34,7 +34,7 @@ export default function AdminCreateAppointmentPage() {
   const handleSave = async () => {
     const success = await submitAppointment();
     if (success) {
-      useToastStore.getState().showToast(MESSAGES.adminAppointments.createSuccess, "success");
+      useToastStore.getState().showToast(Messages.adminAppointments.createSuccess, "success");
       router.push("/admin/agendamentos");
     }
   };
@@ -72,7 +72,7 @@ export default function AdminCreateAppointmentPage() {
         />
       )}
 
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col items-start gap-4 xl:flex-row">
         <ServiceInfoCard />
         <AppointmentDetailsCard />
         <DateTimeCard />

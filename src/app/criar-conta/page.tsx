@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { formatPhone } from "@/lib/formatters";
-import { useCreateAccountStore } from "@/stores/create-account-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useCreateAccountStore } from "@/stores/auth/create-account-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 
 export default function CriarContaPage() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function CriarContaPage() {
 
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPhone(formatPhone(e.target.value));
+      setPhone(Formatters.formatPhone(e.target.value));
     },
     [setPhone],
   );
@@ -60,12 +60,12 @@ export default function CriarContaPage() {
   }, [submit, router]);
 
   return (
-    <div className="flex min-h-screen">
-      <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-15.25" />
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <div className="relative flex w-full flex-col items-center overflow-hidden px-6 md:w-1/2 md:px-0">
+        <DsLogo className="mt-16 md:mt-15.25" />
 
         <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
-          <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+          <h1 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
             Crie sua conta
           </h1>
 
@@ -76,7 +76,7 @@ export default function CriarContaPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 aria-invalid={!!errors.name}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -87,7 +87,7 @@ export default function CriarContaPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={!!errors.email}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -98,7 +98,7 @@ export default function CriarContaPage() {
                 value={phone}
                 onChange={handlePhoneChange}
                 aria-invalid={!!errors.phone}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -110,7 +110,7 @@ export default function CriarContaPage() {
                 visible={pwdVisible}
                 onVisibilityChange={(v) => setPwdVisibility("register-password", v)}
                 aria-invalid={!!errors.password}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
 
@@ -122,7 +122,7 @@ export default function CriarContaPage() {
                 visible={confirmPwdVisible}
                 onVisibilityChange={(v) => setPwdVisibility("register-confirm", v)}
                 aria-invalid={!!errors.confirmPassword}
-                className={FLOW_INPUT_CLASS}
+                className={Constants.flowInputClass}
               />
             </DsFormField>
           </div>
@@ -146,7 +146,7 @@ export default function CriarContaPage() {
         </p>
       </div>
 
-      <div className="relative w-1/2 bg-nova-gray-700">
+      <div className="relative hidden w-1/2 bg-nova-gray-700 md:block">
         <Image
           src="/images/woman-cleaner.png"
           alt="Profissional de limpeza"

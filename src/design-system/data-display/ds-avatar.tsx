@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/design-system/ui/avatar";
 
 type DsAvatarSize = "sm" | "md" | "lg" | "xl";

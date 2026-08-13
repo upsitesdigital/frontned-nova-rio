@@ -6,9 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DsButton, DsFormField, DsInput, DsLogo, DsPasswordInput } from "@/design-system";
-import { FLOW_INPUT_CLASS } from "@/lib/constants";
-import { useLoginStore } from "@/stores/login-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { Constants } from "@/lib/core/constants";
+import { useLoginStore } from "@/stores/auth/login-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 
 import { PendingApprovalDialog } from "./_components/pending-approval-dialog";
 
@@ -35,8 +35,6 @@ export default function LoginPage() {
     reset();
   }, [reset]);
 
-  const canSubmit = email.trim().length > 0 && password.trim().length > 0 && !isSubmitting;
-
   const handleSubmit = useCallback(async () => {
     const userType = await submit();
     if (userType === "admin") {
@@ -47,41 +45,49 @@ export default function LoginPage() {
   }, [submit, router]);
 
   return (
-    <div className="flex min-h-screen">
-      <div className="relative flex w-1/2 flex-col items-center overflow-hidden">
-        <DsLogo className="mt-38.75" />
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <div className="relative flex w-full flex-col items-center overflow-hidden px-6 md:w-1/2 md:px-0">
+        <DsLogo className="mt-16 md:mt-38.75" />
 
         <div className="mt-12 flex w-full max-w-147.25 flex-col items-center gap-12">
-          <h1 className="text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+          <h1 className="text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
             Entrar
           </h1>
 
-          <div className="flex w-full flex-col gap-4">
-            <DsFormField label="E-mail">
-              <DsInput
-                type="email"
-                placeholder="Digite seu e-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={FLOW_INPUT_CLASS}
-              />
-            </DsFormField>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleSubmit();
+            }}
+            className="flex w-full flex-col items-center gap-12"
+          >
+            <div className="flex w-full flex-col gap-4">
+              <DsFormField label="E-mail">
+                <DsInput
+                  type="email"
+                  placeholder="Digite seu e-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={Constants.flowInputClass}
+                />
+              </DsFormField>
 
-            <DsFormField label="Senha">
-              <DsPasswordInput
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                visible={pwdVisible}
-                onVisibilityChange={(v) => setPwdVisible("login-password", v)}
-                className={FLOW_INPUT_CLASS}
-              />
-            </DsFormField>
-          </div>
+              <DsFormField label="Senha">
+                <DsPasswordInput
+                  placeholder="Digite sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  visible={pwdVisible}
+                  onVisibilityChange={(v) => setPwdVisible("login-password", v)}
+                  className={Constants.flowInputClass}
+                />
+              </DsFormField>
+            </div>
 
-          <DsButton size="flow" disabled={!canSubmit} onClick={handleSubmit} className="w-64.25">
-            {isSubmitting ? "Entrando..." : "Entrar"}
-          </DsButton>
+            <DsButton type="submit" size="flow" disabled={isSubmitting} className="w-64.25">
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </DsButton>
+          </form>
         </div>
 
         {error && <p className="mt-4 text-sm leading-normal text-nova-error">{error}</p>}
@@ -98,7 +104,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="relative w-1/2 bg-nova-gray-700">
+      <div className="relative hidden w-1/2 bg-nova-gray-700 md:block">
         <Image
           src="/images/woman-cleaner.png"
           alt="Profissional de limpeza"

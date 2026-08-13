@@ -2,11 +2,9 @@
 
 import { useEffect } from "react";
 import { DsSkeleton } from "@/design-system";
-import { useProfileInfoStore } from "@/stores/profile-info-store";
+import { useProfileInfoStore } from "@/stores/client/profile-info-store";
 import { ProfileInfoPanel } from "./_components/profile-info-panel";
-import { EmailChangeDialog } from "./_components/email-change-dialog";
-import { PasswordChangeDialog } from "./_components/password-change-dialog";
-import { DeleteAccountDialog } from "./_components/delete-account-dialog";
+import { ProfileActionsPanel } from "./_components/profile-actions-panel";
 
 export default function ProfilePage() {
   const { isLoading, error, loadProfile } = useProfileInfoStore();
@@ -34,15 +32,13 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <h1 className="mb-16 text-[48px] font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+      <h1 className="mb-16 text-3xl font-semibold leading-[1.3] tracking-[-1.92px] sm:text-[48px] text-black">
         Perfil
       </h1>
-      <div className="max-w-125.25">
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2">
         <ProfileInfoPanel />
+        <ProfileActionsPanel />
       </div>
-      <EmailChangeDialog />
-      <PasswordChangeDialog />
-      <DeleteAccountDialog />
     </div>
   );
 }

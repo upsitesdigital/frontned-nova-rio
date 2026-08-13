@@ -1,14 +1,14 @@
 "use client";
 
-import { X, FloppyDisk } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { XIcon, FloppyDiskIcon } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/core/utils";
 import { DsIcon } from "@/design-system/media";
 import { DsInput } from "@/design-system/primitives";
 import { DsPasswordInput } from "@/design-system/primitives";
 import { DsSelect, type DsSelectOption } from "@/design-system/primitives";
 import { DsFormField } from "@/design-system/forms";
 
-interface DsUserFormPopupValues {
+export interface DsUserFormPopupValues {
   name: string;
   email: string;
   password: string;
@@ -16,8 +16,18 @@ interface DsUserFormPopupValues {
   active: string;
 }
 
-interface DsUserFormPopupProps {
-  title?: string;
+export interface DsUserFormPopupProps {
+  nameLabel: string;
+  emailLabel: string;
+  passwordLabel: string;
+  roleLabel: string;
+  activeLabel: string;
+  namePlaceholder: string;
+  emailPlaceholder: string;
+  passwordPlaceholder: string;
+  rolePlaceholder: string;
+  statusPlaceholder: string;
+  title: string;
   values: DsUserFormPopupValues;
   passwordVisible: boolean;
   onPasswordVisibilityChange: (visible: boolean) => void;
@@ -26,7 +36,7 @@ interface DsUserFormPopupProps {
   onFieldChange?: (field: keyof DsUserFormPopupValues, value: string) => void;
   onSave?: () => void;
   onClose?: () => void;
-  saveLabel?: string;
+  saveLabel: string;
   className?: string;
 }
 
@@ -40,8 +50,18 @@ const defaultActiveOptions: DsSelectOption[] = [
   { value: "inactive", label: "Inativo" },
 ];
 
-function DsUserFormPopup({
-  title = "Criar novo usuario",
+export function DsUserFormPopup({
+  nameLabel,
+  emailLabel,
+  passwordLabel,
+  roleLabel,
+  activeLabel,
+  namePlaceholder,
+  emailPlaceholder,
+  passwordPlaceholder,
+  rolePlaceholder,
+  statusPlaceholder,
+  title,
   values,
   passwordVisible,
   onPasswordVisibilityChange,
@@ -50,74 +70,74 @@ function DsUserFormPopup({
   onFieldChange,
   onSave,
   onClose,
-  saveLabel = "Salvar alterações",
+  saveLabel,
   className,
 }: DsUserFormPopupProps) {
   return (
     <div
       className={cn(
-        "relative flex w-full max-w-[600px] flex-col gap-8 rounded-2xl bg-white p-8",
+        "relative flex max-h-[90vh] w-full max-w-150 flex-col gap-8 overflow-y-auto rounded-2xl bg-white p-8",
         className,
       )}
     >
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          className="cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
-        >
-          <DsIcon icon={X} size="lg" />
-        </button>
-      )}
-
       <div className="flex w-full flex-col items-center justify-center">
-        <p className="w-full text-center text-4xl font-medium leading-[1.3] tracking-[-1.44px] text-black">
+        <p className="w-full text-center text-2xl font-medium leading-[1.3] tracking-[-1.44px] sm:text-4xl text-black">
           {title}
         </p>
       </div>
 
-      <DsFormField label="Nome">
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-6 top-6 cursor-pointer text-nova-gray-700 transition-colors hover:text-black"
+        >
+          <DsIcon icon={XIcon} size="lg" />
+        </button>
+      )}
+
+      <DsFormField label={nameLabel}>
         <DsInput
           value={values.name}
           onChange={(e) => onFieldChange?.("name", e.target.value)}
-          placeholder="Nome do usuário"
+          placeholder={namePlaceholder}
         />
       </DsFormField>
 
-      <DsFormField label="Email">
+      <DsFormField label={emailLabel}>
         <DsInput
           type="email"
           value={values.email}
           onChange={(e) => onFieldChange?.("email", e.target.value)}
-          placeholder="email@exemplo.com"
+          placeholder={emailPlaceholder}
         />
       </DsFormField>
 
-      <DsFormField label="Senha">
+      <DsFormField label={passwordLabel}>
         <DsPasswordInput
           value={values.password}
           onChange={(e) => onFieldChange?.("password", e.target.value)}
           visible={passwordVisible}
           onVisibilityChange={onPasswordVisibilityChange}
-          placeholder="••••••••••••"
+          placeholder={passwordPlaceholder}
         />
       </DsFormField>
 
-      <div className="flex items-center justify-between gap-8">
-        <DsFormField label="Role" className="w-[248px]">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <DsFormField label={roleLabel} className="w-full sm:w-62">
           <DsSelect
             options={[...roleOptions]}
             value={values.role}
             onValueChange={(v) => onFieldChange?.("role", v)}
-            placeholder="Selecionar role"
+            placeholder={rolePlaceholder}
           />
         </DsFormField>
-        <DsFormField label="Ativo" className="w-[248px]">
+        <DsFormField label={activeLabel} className="w-full sm:w-62">
           <DsSelect
             options={[...activeOptions]}
             value={values.active}
             onValueChange={(v) => onFieldChange?.("active", v)}
-            placeholder="Selecionar status"
+            placeholder={statusPlaceholder}
           />
         </DsFormField>
       </div>
@@ -126,14 +146,12 @@ function DsUserFormPopup({
         <button
           type="button"
           onClick={onSave}
-          className="flex h-[60px] w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
+          className="flex h-15 w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-primary px-8 py-4 text-lg font-medium leading-normal tracking-[-0.72px] text-white transition-colors hover:bg-primary/90"
         >
-          <DsIcon icon={FloppyDisk} size="lg" />
+          <DsIcon icon={FloppyDiskIcon} size="lg" />
           {saveLabel}
         </button>
       )}
     </div>
   );
 }
-
-export { DsUserFormPopup, type DsUserFormPopupProps, type DsUserFormPopupValues };

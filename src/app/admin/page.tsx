@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { BroomIcon, UsersThreeIcon, HourglassIcon } from "@phosphor-icons/react/dist/ssr";
 import { DsHighlightCard, DsLoadingState, DsAlert } from "@/design-system";
-import { useAdminProfileStore } from "@/stores/admin-profile-store";
+import { useAdminProfileStore } from "@/stores/admin/admin-profile-store";
 import { AdminAgendaPanel } from "./_components/admin-agenda-panel";
 import { AdminQuickActionsPanel } from "./_components/admin-quick-actions-panel";
 
@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-5xl font-semibold leading-[1.3] tracking-[-1.92px] text-black">
+        <h1 className="text-3xl font-semibold leading-[1.3] tracking-[-1.92px] sm:text-5xl text-black">
           Olá, {profile?.name ?? "Admin"}
         </h1>
         <p className="mt-2 text-base leading-[1.3] tracking-[-0.64px] text-nova-gray-700">
@@ -41,7 +41,7 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <DsHighlightCard
           title="Agendamentos Hoje"
           value={String(todayAppointmentsCount)}
@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
         <div className="min-w-0 flex-1">
           <AdminAgendaPanel />
         </div>
-        <div className="w-full shrink-0 lg:w-125">
+        <div className="w-full shrink-0 lg:w-96">
           <AdminQuickActionsPanel onNavigate={(path) => router.push(path)} />
         </div>
       </div>

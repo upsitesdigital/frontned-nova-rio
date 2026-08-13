@@ -1,0 +1,187 @@
+"use client";
+
+import { useCallback, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { format, isSameDay, startOfToday } from "date-fns";
+
+import {
+  DsButton,
+  DsDateTimePicker,
+  DsFlowCard,
+  DsFlowHeader,
+  DsFormField,
+  DsInput,
+  DsSkeleton,
+} from "@/design-system";
+import { Constants } from "@/lib/core/constants";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useAddressStore } from "@/stores/scheduling/address-store";
+import { useSchedulingStore } from "@/stores/scheduling/scheduling-store";
+
+export default function DashboardDiaHorarioPage() {
+  const router = useRouter();
+
+  const selectedDate = useSchedulingStore((s) => s.selectedDate);
+  const selectedTime = useSchedulingStore((s) => s.selectedTime);
+  const timeSlots = useSchedulingStore((s) => s.timeSlots);
+  const setSelectedDate = useSchedulingStore((s) => s.setSelectedDate);
+  const setSelectedTime = useSchedulingStore((s) => s.setSelectedTime);
+  const loadTimeSlots = useSchedulingStore((s) => s.loadTimeSlots);
+
+  const cep = useAddressStore((s) => s.cep);
+  const address = useAddressStore((s) => s.address);
+  const isLoadingAddress = useAddressStore((s) => s.isLoadingAddress);
+  const cepError = useAddressStore((s) => s.cepError);
+  const setCep = useAddressStore((s) => s.setCep);
+  const loadAddressByCep = useAddressStore((s) => s.loadAddressByCep);
+  const clearAddress = useAddressStore((s) => s.clearAddress);
+
+  const allSlots = useMemo(
+    () =>
+      timeSlots.length > 0
+        ? timeSlots.map((slot) => slot.time)
+        : Array.from({ length: 23 }, (_, index) => {
+            const minutes = 7 * 60 + index * 30;
+            return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+          }),
+    [timeSlots],
+  );
+
+  const disabledSlots = useMemo(() => {
+    const now = new Date();
+    return allSlots.filter((time) => {
+      const slot = timeSlots.find((item) => item.time === time);
+      if (slot && !slot.available) return true;
+      if (!selectedDate || !isSameDay(selectedDate, now)) return false;
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes <= now.getHours() * 60 + now.getMinutes();
+    });
+  }, [allSlots, timeSlots, selectedDate]);
+
+  // Block weekends and past days (D-1/D-N); the API rejects them too.
+  const disabledDays = useMemo(() => [{ dayOfWeek: [0, 6] }, { before: startOfToday() }], []);
+
+  useEffect(() => {
+    if (selectedDate) {
+      loadTimeSlots(format(selectedDate, "yyyy-MM-dd"));
+    }
+  }, [selectedDate, loadTimeSlots]);
+
+  useEffect(() => {
+    if (selectedTime && timeSlots.length > 0) {
+      const slot = timeSlots.find((s) => s.time === selectedTime);
+      if (!slot || !slot.available) {
+        setSelectedTime(null);
+      }
+    }
+  }, [timeSlots, selectedTime, setSelectedTime]);
+
+  const handleDateChange = useCallback(
+    (date: Date | undefined) => {
+      setSelectedDate(date ?? null);
+    },
+    [setSelectedDate],
+  );
+
+  const handleTimeChange = useCallback(
+    (time: string) => {
+      if (!disabledSlots.includes(time)) setSelectedTime(time);
+    },
+    [disabledSlots, setSelectedTime],
+  );
+
+  const handleCepChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formatted = Formatters.formatCep(e.target.value);
+      setCep(formatted);
+
+      const digits = Formatters.onlyDigits(formatted);
+      if (digits.length === 8) {
+        loadAddressByCep(formatted);
+      } else {
+        clearAddress();
+      }
+    },
+    [setCep, loadAddressByCep, clearAddress],
+  );
+
+  const handleCancel = useCallback(() => {
+    setSelectedDate(null);
+    setSelectedTime(null);
+  }, [setSelectedDate, setSelectedTime]);
+
+  const canProceed = selectedDate !== null && selectedTime !== null && address !== null;
+
+  return (
+    <DsFlowCard className="mx-auto max-w-252">
+      <DsFlowHeader title="Dia, horário e local da limpeza" />
+
+      <div className="flex w-full flex-col items-start gap-8 lg:flex-row lg:gap-16">
+        <div className="w-full shrink-0 lg:w-auto">
+          <DsDateTimePicker
+            cancelLabel="Cancelar"
+            confirmLabel="Ok"
+            date={selectedDate ?? undefined}
+            time={selectedTime ?? undefined}
+            onDateChange={handleDateChange}
+            onTimeChange={handleTimeChange}
+            onCancel={handleCancel}
+            showActions={false}
+            timeSlots={allSlots.length > 0 ? allSlots : undefined}
+            disabledSlots={disabledSlots}
+            disabledDays={disabledDays}
+          />
+        </div>
+
+        <div className="flex w-full flex-col gap-3.75">
+          <h3 className="text-xl font-medium leading-[1.3] text-nova-gray-700">Local da Limpeza</h3>
+
+          <DsFormField label="CEP" error={cepError ?? undefined}>
+            <DsInput
+              placeholder="Digite seu CEP"
+              value={cep}
+              onChange={handleCepChange}
+              className={Constants.flowInputClass}
+            />
+          </DsFormField>
+
+          {isLoadingAddress && (
+            <div className="flex flex-col gap-2">
+              <DsSkeleton className="h-4 w-3/4" />
+              <DsSkeleton className="h-4 w-1/2" />
+            </div>
+          )}
+
+          {address && !isLoadingAddress && (
+            <div className="flex flex-col gap-1 text-sm leading-[1.4] text-nova-gray-700">
+              <p>{address.street}</p>
+              <p>{address.neighborhood}</p>
+              <p>
+                {address.city} - {address.state}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:justify-between">
+        <DsButton
+          variant="outline"
+          size="flow"
+          onClick={() => router.push("/dashboard/agendamento/servico")}
+          className="w-full border-nova-gray-500 text-nova-gray-700 sm:w-64.25"
+        >
+          Voltar
+        </DsButton>
+        <DsButton
+          size="flow"
+          disabled={!canProceed}
+          onClick={() => router.push("/dashboard/agendamento/pagamento")}
+          className="w-full sm:w-64.25"
+        >
+          Continuar
+        </DsButton>
+      </div>
+    </DsFlowCard>
+  );
+}

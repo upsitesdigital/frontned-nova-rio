@@ -1,14 +1,15 @@
 "use client";
 
-import { DsAvatar, DsButton, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
-import { useAdminEmployeeEditStore } from "@/stores/admin-employee-edit-store";
+import { DsAvatar, DsFormCard, DsFormField, DsInput, DsSelect } from "@/design-system";
+import { Formatters } from "@/lib/formatting/formatters";
+import { useAdminEmployeeEditStore } from "@/stores/admin/admin-employee-edit-store";
 
-const STATUS_OPTIONS = [
+const statusOptions = [
   { value: "ACTIVE", label: "Ativo" },
   { value: "INACTIVE", label: "Inativo" },
 ];
 
-function PersonalInfoSection() {
+export function PersonalInfoSection() {
   const form = useAdminEmployeeEditStore((s) => s.form);
   const updateField = useAdminEmployeeEditStore((s) => s.updateField);
 
@@ -17,14 +18,11 @@ function PersonalInfoSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <DsAvatar fallback={form.name.charAt(0).toUpperCase() || "?"} size="xl" variant="brand" />
-          <DsButton variant="soft" size="soft-md">
-            Alterar imagem
-          </DsButton>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-base font-medium leading-[1.3] text-nova-gray-700">Status</span>
           <DsSelect
-            options={STATUS_OPTIONS}
+            options={statusOptions}
             value={form.status}
             onValueChange={(v) => updateField("status", v)}
             className="w-30"
@@ -46,11 +44,17 @@ function PersonalInfoSection() {
         </DsFormField>
 
         <DsFormField label="Telefone">
-          <DsInput value={form.phone} onChange={(e) => updateField("phone", e.target.value)} />
+          <DsInput
+            value={form.phone}
+            onChange={(e) => updateField("phone", Formatters.formatPhone(e.target.value))}
+          />
         </DsFormField>
 
         <DsFormField label="CPF">
-          <DsInput value={form.cpf} onChange={(e) => updateField("cpf", e.target.value)} />
+          <DsInput
+            value={form.cpf}
+            onChange={(e) => updateField("cpf", Formatters.formatCpfCnpj(e.target.value))}
+          />
         </DsFormField>
 
         <DsFormField label="Endereço">
@@ -64,5 +68,3 @@ function PersonalInfoSection() {
     </DsFormCard>
   );
 }
-
-export { PersonalInfoSection };

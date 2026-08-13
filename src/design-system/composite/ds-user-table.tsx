@@ -7,12 +7,13 @@ import {
   CheckIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsIconButton, DsToggleButton } from "@/design-system/primitives";
 import { DsSearchInput } from "@/design-system/forms";
 import { DsEmptyState } from "@/design-system/data-display/ds-empty-state";
 import { DsTableCell } from "@/design-system/data-display/ds-table-cell";
 import { DsStatusPill, type DsStatusPillVariant } from "./ds-status-pill";
+import { DsRecordCard } from "./ds-record-card";
 
 type DsUserTableFilter = "all" | "active";
 
@@ -28,6 +29,10 @@ interface DsUserTableUser {
 }
 
 interface DsUserTableProps {
+  headerTitle: string;
+  searchPlaceholder: string;
+  allLabel: string;
+  activeLabel: string;
   users: readonly DsUserTableUser[];
   filter?: DsUserTableFilter;
   onFilterChange?: (filter: DsUserTableFilter) => void;
@@ -50,6 +55,10 @@ const statusConfig: Record<
 const columns = ["Nome", "Role", "E-mail", "Status", "Cadastro", "Ações"];
 
 function DsUserTable({
+  headerTitle,
+  searchPlaceholder,
+  allLabel,
+  activeLabel,
   users,
   filter = "all",
   onFilterChange,
@@ -67,32 +76,34 @@ function DsUserTable({
         className,
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-12">
-          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">Usuários</p>
-          <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-12">
+          <p className="whitespace-nowrap text-xl font-medium leading-[1.3] text-black">
+            {headerTitle}
+          </p>
+          <div className="flex flex-wrap items-start gap-4">
             <DsToggleButton
-              label="Todos"
+              label={allLabel}
               active={filter === "all"}
               onClick={() => onFilterChange?.("all")}
             />
             <DsToggleButton
-              label="Ativos"
+              label={activeLabel}
               active={filter === "active"}
               onClick={() => onFilterChange?.("active")}
             />
           </div>
         </div>
         <DsSearchInput
-          placeholder="Pesquisar"
+          placeholder={searchPlaceholder}
           value={searchValue}
           onChange={(e) => onSearchChange?.(e.target.value)}
-          className="w-86.5"
+          className="w-full lg:w-86.5"
         />
       </div>
 
-      <div className="rounded-2.5 bg-nova-gray-50 p-6">
-        <div className="flex items-center p-4">
+      <div className="hidden overflow-x-auto rounded-2.5 bg-nova-gray-50 p-6 lg:block">
+        <div className="flex min-w-200 items-center p-4">
           {columns.map((col, i) => (
             <DsTableCell key={col} variant="header" align={i === 0 ? "start" : "center"}>
               {col}
@@ -100,7 +111,7 @@ function DsUserTable({
           ))}
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-200 flex-col gap-2">
           {users.length === 0 ? (
             <DsEmptyState
               message="Nenhum usuário encontrado."
@@ -169,6 +180,67 @@ function DsUserTable({
             })
           )}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3 lg:hidden">
+        {users.length === 0 ? (
+          <DsEmptyState message="Nenhum usuário encontrado." className="rounded-md bg-white p-4" />
+        ) : (
+          users.map((user) => {
+            const status = statusConfig[user.status];
+            return (
+              <DsRecordCard
+                key={user.id}
+                title={user.name}
+                status={
+                  <DsStatusPill icon={status.icon} label={status.label} variant={status.variant} />
+                }
+                fields={[
+                  { label: "Role", value: user.role },
+                  { label: "E-mail", value: user.email },
+                  { label: "Cadastro", value: user.registrationDate },
+                ]}
+                actions={
+                  <>
+                    {onView && (
+                      <DsIconButton
+                        icon={EyeIcon}
+                        iconSize="md"
+                        variant="ghost"
+                        size="icon-sm"
+                        ariaLabel={`Visualizar ${user.name}`}
+                        onClick={() => onView(user)}
+                        className="text-nova-gray-700 hover:bg-transparent hover:text-black"
+                      />
+                    )}
+                    {onEdit && (
+                      <DsIconButton
+                        icon={PencilSimpleLineIcon}
+                        iconSize="md"
+                        variant="ghost"
+                        size="icon-sm"
+                        ariaLabel={`Editar ${user.name}`}
+                        onClick={() => onEdit(user)}
+                        className="text-nova-gray-700 hover:bg-transparent hover:text-black"
+                      />
+                    )}
+                    {onDelete && (
+                      <DsIconButton
+                        icon={TrashIcon}
+                        iconSize="lg"
+                        variant="ghost"
+                        size="icon-sm"
+                        ariaLabel={`Excluir ${user.name}`}
+                        onClick={() => onDelete(user)}
+                        className="text-nova-gray-700 hover:bg-transparent hover:text-nova-error"
+                      />
+                    )}
+                  </>
+                }
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );

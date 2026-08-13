@@ -1,23 +1,19 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
+
+type DsAppointmentTableColumn = {
+  label: string;
+  align?: "right";
+};
 
 interface DsAppointmentTableHeaderProps {
+  columns: DsAppointmentTableColumn[];
   className?: string;
 }
 
-const COLUMNS = [
-  { label: "Data" },
-  { label: "Serviço" },
-  { label: "Duração/ Horário" },
-  { label: "Funcionário" },
-  { label: "Status" },
-  { label: "Pacote" },
-  { label: "Ações", align: "right" as const },
-];
-
-function DsAppointmentTableHeader({ className }: DsAppointmentTableHeaderProps) {
+function DsAppointmentTableHeader({ columns, className }: DsAppointmentTableHeaderProps) {
   return (
-    <div className={cn("flex items-center p-4", className)}>
-      {COLUMNS.map((col) => (
+    <div className={cn("flex items-center gap-4 p-4", className)}>
+      {columns.map((col) => (
         <p
           key={col.label}
           className={cn(
@@ -32,4 +28,8 @@ function DsAppointmentTableHeader({ className }: DsAppointmentTableHeaderProps) 
   );
 }
 
-export { DsAppointmentTableHeader, type DsAppointmentTableHeaderProps };
+export {
+  DsAppointmentTableHeader,
+  type DsAppointmentTableHeaderProps,
+  type DsAppointmentTableColumn,
+};

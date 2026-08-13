@@ -163,6 +163,18 @@
   --nova-gray-100: #efefef;
   --nova-gray-50: #f6f7f9;
 
+  --nova-shadow-soft: 0px 18px 30px -18px rgba(0, 0, 0, 0.35);
+  --nova-shadow-strong: 0px 10px 20px -12px rgba(0, 0, 0, 0.45);
+  --nova-shadow-medium: 0px 16px 24px 0px rgba(75, 75, 75, 0.1);
+  --nova-shadow-soft-strong: 0px 12px 44px 0px rgba(111, 124, 142, 0.1);
+  --nova-shadow-card: 0px 4px 20px 0px rgba(0, 0, 0, 0.05);
+
+  --nova-overlay-white-28: rgba(255, 255, 255, 0.28);
+  --nova-overlay-black-full: rgba(0, 0, 0, 1);
+  --nova-overlay-black-75: rgba(0, 0, 0, 0.75);
+  --nova-overlay-black-30: rgba(0, 0, 0, 0.3);
+  --nova-overlay-black-transparent: rgba(0, 0, 0, 0);
+
   /* ── Spacing tokens ── */
   --sidebar-width: 320px;
   --sidebar-collapsed-width: 64px;

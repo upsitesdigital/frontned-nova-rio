@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/core/utils";
 import { DsImage } from "@/design-system/media";
 import type { DsCreditCardBrand } from "@/design-system/data-display";
 
@@ -15,7 +15,7 @@ interface DsSavedCardItemProps {
   selected?: boolean;
   onSelect?: () => void;
   onRemove?: () => void;
-  removeLabel?: string;
+  removeLabel: string;
   className?: string;
 }
 
@@ -26,7 +26,7 @@ function DsSavedCardItem({
   selected = false,
   onSelect,
   onRemove,
-  removeLabel = "Remover",
+  removeLabel,
   className,
 }: DsSavedCardItemProps) {
   return (

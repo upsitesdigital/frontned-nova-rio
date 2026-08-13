@@ -2,12 +2,12 @@
 
 import { useMemo } from "react";
 import { DsDialog, DsFormField, DsInput, DsPasswordInput, DsButton } from "@/design-system";
-import { usePasswordChangeStore } from "@/stores/password-change-store";
-import { usePasswordVisibilityStore } from "@/stores/password-visibility-store";
+import { usePasswordChangeStore } from "@/stores/client/password-change-store";
+import { usePasswordVisibilityStore } from "@/stores/auth/password-visibility-store";
 import { PasswordRequirements } from "@/app/esqueci-senha/_components/password-requirements";
 import { getPasswordHints } from "@/validation/reset-password-schema";
 
-function PasswordChangeDialog() {
+export function PasswordChangeDialog() {
   const {
     passwordDialogOpen,
     passwordChangeStep,
@@ -110,5 +110,3 @@ function PasswordChangeDialog() {
     </DsDialog>
   );
 }
-
-export { PasswordChangeDialog };

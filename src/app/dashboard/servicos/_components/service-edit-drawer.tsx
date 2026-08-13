@@ -13,28 +13,36 @@ import {
   DsInput,
   DsFormField,
   DsButton,
+  DsIconButton,
   DsCancelConfirmPopup,
   DsAlert,
 } from "@/design-system";
 import { DsIcon } from "@/design-system/media";
 import { Sheet, SheetContent } from "@/design-system/ui";
-import { getServiceIcon } from "@/lib/icon-map";
-import { resolvePaymentStatus } from "@/lib/payment-status-map";
-import { useServiceEditStore, type RecurrenceType } from "@/stores/service-edit-store";
-import { useToastStore } from "@/stores/toast-store";
-import type { ServiceHistoryEntry } from "@/api/dashboard-api";
+import { IconMap } from "@/lib/display/icon-map";
+import { PaymentStatus } from "@/lib/display/payment-status-map";
+import { useServiceEditStore, type RecurrenceType } from "@/stores/client/service-edit-store";
+import { useToastStore } from "@/stores/ui/toast-store";
+import type { ServiceHistoryEntry } from "@/api/client/dashboard-api";
 
-interface ServiceEditDrawerProps {
+export interface ServiceEditDrawerProps {
   entry: ServiceHistoryEntry | null;
   onClose: () => void;
   onSaved?: () => void;
 }
 
-function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) {
+export function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) {
   const {
     recurrence,
     setRecurrence,
     initRecurrence,
+    locationZip,
+    locationAddress,
+    locationComplement,
+    setLocationZip,
+    setLocationAddress,
+    setLocationComplement,
+    initAddress,
     rescheduleOpen,
     rescheduleDate,
     rescheduleTime,
@@ -59,16 +67,19 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
   useEffect(() => {
     if (entry) {
       initRecurrence((entry.recurrenceType as RecurrenceType) ?? "SINGLE");
+      initAddress(entry.locationZip ?? "", entry.locationAddress ?? "");
     }
     return () => {
       reset();
     };
-  }, [entry, initRecurrence, reset]);
+  }, [entry, initRecurrence, initAddress, reset]);
 
   if (!entry) return null;
 
-  const serviceIcon = getServiceIcon(entry.icon);
-  const paymentStatus = entry.payment ? resolvePaymentStatus(entry.payment.status) : null;
+  const serviceIcon = IconMap.getServiceIcon(entry.icon);
+  const paymentStatus = entry.payment
+    ? PaymentStatus.resolvePaymentStatus(entry.payment.status)
+    : null;
 
   return (
     <Sheet
@@ -84,13 +95,14 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
       >
         <div className="flex flex-col gap-8 px-15 py-30">
           {/* Close button */}
-          <button
-            type="button"
+          <DsIconButton
+            icon={XIcon}
+            iconSize="lg"
+            ariaLabel="Fechar"
+            variant="ghost"
             onClick={onClose}
-            className="absolute left-16 top-10 flex size-11 cursor-pointer items-center justify-center rounded-[6px] bg-nova-gray-50 transition-colors hover:bg-nova-gray-100"
-          >
-            <DsIcon icon={XIcon} size="lg" className="text-nova-gray-700" />
-          </button>
+            className="absolute left-16 top-10 size-11 cursor-pointer rounded-[6px] bg-nova-gray-50 text-nova-gray-700 hover:bg-nova-gray-100"
+          />
 
           {/* Header via DsServiceDetailPopup (stripped popup styling for drawer context) */}
           <DsServiceDetailPopup
@@ -106,6 +118,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                   }
                 : undefined
             }
+            receiptDisabled={paymentStatus?.status !== "approved"}
             className="rounded-none border-none p-0 shadow-none"
           >
             <></>
@@ -181,18 +194,25 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                 <DsInput
                   id="edit-cep"
                   placeholder="00000-000"
-                  defaultValue={entry.locationZip ?? ""}
+                  value={locationZip}
+                  onChange={(e) => setLocationZip(e.target.value)}
                 />
               </DsFormField>
               <DsFormField label="Endereço" htmlFor="edit-address">
                 <DsInput
                   id="edit-address"
                   placeholder="Endereço"
-                  defaultValue={entry.locationAddress ?? ""}
+                  value={locationAddress}
+                  onChange={(e) => setLocationAddress(e.target.value)}
                 />
               </DsFormField>
               <DsFormField label="Complemento" htmlFor="edit-complement">
-                <DsInput id="edit-complement" placeholder="Complemento" defaultValue="" />
+                <DsInput
+                  id="edit-complement"
+                  placeholder="Complemento"
+                  value={locationComplement}
+                  onChange={(e) => setLocationComplement(e.target.value)}
+                />
               </DsFormField>
             </DsCollapsibleSection>
           </div>
@@ -206,7 +226,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
                 className="bg-nova-gray-100 text-nova-gray-700 hover:bg-nova-gray-200"
                 disabled={!entry.canEdit || isSaving}
                 onClick={() =>
-                  openReschedule(parse(entry.date, "dd/MM", new Date()), entry.startTime)
+                  openReschedule(parse(entry.isoDate, "yyyy-MM-dd", new Date()), entry.startTime)
                 }
               >
                 Reagendar
@@ -233,7 +253,7 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
           <DsButton
             size="flow"
             className="self-start"
-            disabled={!entry.canEdit || isSaving || (!rescheduleDate && !rescheduleTime)}
+            disabled={!entry.canEdit || isSaving}
             onClick={async () => {
               const success = await confirmReschedule(entry.id);
               if (success) {
@@ -249,6 +269,10 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
         </div>
 
         <DsSchedulePopup
+          closeLabel="Fechar"
+          title="Escolher data e horário"
+          cancelLabel="Cancelar"
+          confirmLabel="Ok"
           open={rescheduleOpen}
           date={rescheduleDate}
           time={rescheduleTime}
@@ -257,9 +281,15 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
           onCancel={closeReschedule}
           onClose={closeReschedule}
           onConfirm={closeReschedule}
+          confirmDisabled={isSaving}
         />
 
         <DsCancelConfirmPopup
+          closeLabel="Fechar"
+          description="Cancelamento com 1h de antecedência"
+          title="Deseja cancelar o serviço?"
+          confirmLabel="Sim, cancelar"
+          cancelLabel="Manter agendamento"
           open={cancelOpen}
           onCancel={closeCancel}
           onClose={closeCancel}
@@ -271,10 +301,9 @@ function ServiceEditDrawer({ entry, onClose, onSaved }: ServiceEditDrawerProps) 
               onSaved?.();
             }
           }}
+          confirmDisabled={isSaving}
         />
       </SheetContent>
     </Sheet>
   );
 }
-
-export { ServiceEditDrawer, type ServiceEditDrawerProps };

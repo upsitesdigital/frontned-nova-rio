@@ -1,8 +1,8 @@
 "use client";
 
 import { DsFlowHeader, DsPaymentMethodOption, DsSecurePaymentBanner } from "@/design-system";
-import { PAYMENT_METHODS } from "@/config/payment";
-import { usePaymentStore } from "@/stores/payment-store";
+import { PaymentConfig } from "@/config/payment";
+import { usePaymentStore } from "@/stores/scheduling/payment-store";
 
 import { BillingInfo } from "./_components/billing-info";
 import { CardDetails } from "./_components/card-details";
@@ -18,8 +18,8 @@ export default function PagamentoPage() {
     <div className="flex flex-col items-center gap-12">
       <DsFlowHeader title="Realizar pagamento" />
 
-      <div className="flex w-full items-start gap-4">
-        <div className="flex min-w-0 flex-1 flex-col gap-8">
+      <div className="flex w-full flex-col items-start gap-8 lg:flex-row lg:gap-4">
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-8">
           <div className="flex flex-col gap-8 rounded-2xl border border-nova-gray-300 px-10 py-12">
             <div className="flex flex-col gap-2">
               <h3 className="text-2xl font-medium leading-[1.3] tracking-[-0.96px] text-black">
@@ -30,7 +30,7 @@ export default function PagamentoPage() {
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              {PAYMENT_METHODS.map((pm) => (
+              {PaymentConfig.paymentMethods.map((pm) => (
                 <DsPaymentMethodOption
                   key={pm.method}
                   icon={pm.icon}
@@ -47,7 +47,10 @@ export default function PagamentoPage() {
 
           <BillingInfo />
 
-          <DsSecurePaymentBanner />
+          <DsSecurePaymentBanner
+            description="Seus dados são protegidos com criptografia SSL"
+            title="Pagamento Seguro"
+          />
         </div>
 
         <OrderSummary />
