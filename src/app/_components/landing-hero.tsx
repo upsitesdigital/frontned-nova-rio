@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "motion/react";
 import { DsButton } from "@/design-system";
@@ -9,9 +10,14 @@ import { LandingNavbar } from "./landing-navbar";
 export function LandingHero() {
   return (
     <section className="relative min-h-150 overflow-hidden bg-black md:min-h-214">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/landing/bg-hero.png')" }}
+      <Image
+        src="/images/landing/bg-hero.png"
+        alt=""
+        fill
+        priority
+        quality={85}
+        sizes="100vw"
+        className="object-cover object-center"
       />
 
       <LandingNavbar />

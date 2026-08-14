@@ -1,11 +1,23 @@
+import dynamic from "next/dynamic";
 import { LandingHero } from "./_components/landing-hero";
 import { LandingHowItWorks } from "./_components/landing-how-it-works";
 import { LandingBenefits } from "./_components/landing-benefits";
-import { LandingTestimonials } from "./_components/landing-testimonials";
-import { LandingSegments } from "./_components/landing-segments";
-import { LandingFAQ } from "./_components/landing-faq";
-import { LandingCTABanner } from "./_components/landing-cta-banner";
-import { LandingFooter } from "./_components/landing-footer";
+
+const LandingTestimonials = dynamic(() =>
+  import("./_components/landing-testimonials").then((m) => ({ default: m.LandingTestimonials })),
+);
+const LandingSegments = dynamic(() =>
+  import("./_components/landing-segments").then((m) => ({ default: m.LandingSegments })),
+);
+const LandingFAQ = dynamic(() =>
+  import("./_components/landing-faq").then((m) => ({ default: m.LandingFAQ })),
+);
+const LandingCTABanner = dynamic(() =>
+  import("./_components/landing-cta-banner").then((m) => ({ default: m.LandingCTABanner })),
+);
+const LandingFooter = dynamic(() =>
+  import("./_components/landing-footer").then((m) => ({ default: m.LandingFooter })),
+);
 
 export default function Home() {
   return (
