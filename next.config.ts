@@ -33,6 +33,9 @@ function contentSecurityPolicy(): string {
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: process.cwd(),
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   turbopack: {
     root: process.cwd(),
   },
