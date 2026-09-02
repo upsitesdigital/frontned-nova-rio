@@ -13,6 +13,7 @@ import {
   CalendarBlankIcon,
   CurrencyDollarSimpleIcon,
   NoteIcon,
+  BellIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import type { DsAdminNavItem } from "@/design-system";
 import { AppToastContainer } from "@/app/_components/app-toast-container";
@@ -35,6 +36,11 @@ const adminNavItems: DsAdminNavItem[] = [
   { path: "/admin/pacotes", label: "Pacotes", icon: TimerIcon },
   { path: "/admin/feriados", label: "Feriados", icon: CalendarBlankIcon },
   { path: "/admin/usuarios", label: "Usuários", icon: UsersThreeIcon },
+  {
+    path: "/admin/configuracoes/notificacoes",
+    label: "Notificações",
+    icon: BellIcon,
+  },
 ];
 
 // Direct file import required for next/dynamic code-splitting
