@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -59,4 +60,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Source maps upload is skipped when the token is absent (local/dev builds).
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Same-origin tunnel: keeps events flowing under our strict CSP and past ad-blockers.
+  // The path is deliberately opaque — a literal `/sentry-*` is the first thing
+  // blocklists match, which is why the SDK randomises it when left unset.
+  tunnelRoute: "/px-a7f31c",
+  silent: !process.env.CI,
+});
